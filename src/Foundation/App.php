@@ -2,6 +2,7 @@
 namespace OffbeatWP\Foundation;
 
 use DI\ContainerBuilder;
+use OffbeatWP\Config\Config;
 
 class App
 {
