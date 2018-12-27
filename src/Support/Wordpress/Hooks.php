@@ -26,13 +26,13 @@ class Hooks
             if (is_string($callback)) {
                 $callback = [$callback, 'action'];
             }
-                
+
             return container()->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
 
-    public function doAction($action)
+    public function doAction($action, ...$args)
     {
-        do_action($action);
+        do_action_ref_array($action, $args);
     }
 }

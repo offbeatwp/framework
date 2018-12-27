@@ -5,7 +5,7 @@ abstract class AbstractServicePageBuilder extends AbstractService {
     public function register()
     {
         if (method_exists($this, 'onRegisterComponent')) {
-            offbeat('hooks')->addAction('offbeat.component.register', [$this, '_onRegisterComponent']);
+            offbeat('hooks')->addAction('offbeat.component.register', [$this, '_onRegisterComponent'], 10, 1);
         }
 
         if (method_exists($this, 'afterRegister')) {

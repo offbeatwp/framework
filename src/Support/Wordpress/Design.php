@@ -6,6 +6,8 @@ class Design
     public function getRowThemeClasses($id)
     {
         $rowThemes  = config('design.row_themes');
+        if (!$rowThemes) return null;
+
         $subId      = null;
 
         if (strpos($id, '**') !== false) {
@@ -29,7 +31,10 @@ class Design
 
     public function getMarginClasses($id, $context, $prefix)
     {
-        $margins = config('design.margins')($context);
+        $margins = config('design.margins');
+        if (!$margins) return null;
+
+        $margins = $margins($context);
 
         if (!isset($margins[$id])) {
             return null;
@@ -40,7 +45,10 @@ class Design
 
     public function getPaddingClasses($id, $context, $prefix)
     {
-        $paddings = config('design.paddings')($context);
+        $paddings = config('design.paddings');
+        if (!$paddings) return null;
+
+        $paddings = $paddings($context);
 
         if (!isset($paddings[$id])) {
             return null;
@@ -52,6 +60,7 @@ class Design
     public function getRowThemesList()
     {
         $rowThemes = config('design.row_themes');
+        if(!$rowThemes) return [];
 
         $rowThemesList = [];
 
@@ -82,6 +91,8 @@ class Design
     public function getMarginsList($context = null)
     {
         $margins = config('design.margins');
+        if(!$margins) return [];
+
         if ($margins instanceof \Closure) {
             $margins = collect($margins($context));
         }
@@ -94,6 +105,8 @@ class Design
     public function getPaddingsList($context = null)
     {
         $paddings = config('design.paddings');
+        if(!$paddings) return [];
+
         if ($paddings instanceof \Closure) {
             $paddings = collect($paddings($context));
         }

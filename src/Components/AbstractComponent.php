@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Fields\Toggle;
