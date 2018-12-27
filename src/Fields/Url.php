@@ -10,6 +10,6 @@ class Url {
         $field['label'] = $label;
         $field['type']  = 'link';
 
-        return [$field];
+        return $field;
     }
 }

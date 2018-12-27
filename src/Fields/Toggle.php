@@ -32,14 +32,12 @@ class Toggle
         }
 
         return [
-            [
-                'name'         => $name,
-                'label'        => (!is_null($label) ? $label : __('Toggle', 'raow')),
-                'type'         => 'select',
-                'default'      => $default,
-                'options'      => $options,
-                'toggle'       => $toggle,
-            ],
+            'name'         => $name,
+            'label'        => (!is_null($label) ? $label : __('Toggle', 'raow')),
+            'type'         => 'select',
+            'default'      => $default,
+            'options'      => $options,
+            'toggle'       => $toggle,
         ];
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class Link
@@ -79,6 +78,6 @@ class Link
             ];
         }
 
-        return $return;
+        return new FieldGroup($return);
     }
 }

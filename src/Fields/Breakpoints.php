@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class Breakpoints {

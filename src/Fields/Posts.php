@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class Posts {
@@ -11,6 +10,6 @@ class Posts {
         $field['type']       = 'posts';
         $field['postTypes']  = $postTypes;
 
-        return [$field];
+        return $field;
     }
 }

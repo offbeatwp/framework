@@ -1,10 +1,8 @@
 <?php
-
 namespace OffbeatWP\Components;
 
 use OffbeatWP\AcfCore\FieldsMapper as AcfFieldsMapper;
 use OffbeatWP\Components\ComponentInterfaceTrait;
-use OffbeatWP\Fields\DisplaySettings;
 use OffbeatWP\Fields\Helper as FieldsHelper;
 
 

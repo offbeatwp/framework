@@ -10,6 +10,6 @@ class Textarea {
         $field['label'] = $label;
         $field['type']  = 'textarea';
 
-        return [$field];
+        return $field;
     }
 }

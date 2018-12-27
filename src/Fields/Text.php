@@ -10,6 +10,6 @@ class Text {
         $field['label'] = $label;
         $field['type']  = 'text';
 
-        return [$field];
+        return $field;
     }
 }

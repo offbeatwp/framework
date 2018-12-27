@@ -3,7 +3,6 @@ namespace OffbeatWP\Components;
 
 use OffbeatWP\Fields\Toggle;
 use OffbeatWP\Contracts\View;
-use OffbeatWP\Fields\DisplaySettings;
 use OffbeatWP\Views\ViewableTrait;
 
 abstract class AbstractComponent
@@ -50,7 +49,19 @@ abstract class AbstractComponent
         if (isset($settings['form']))
             $form = $settings['form'];
 
-        array_push($form, DisplaySettings::get($settings));
+        if (isset($settings['variations'])) {
+            array_push($form, [
+                'id'       => 'variations',
+                'title'    => __('Variations', 'offbeatwp'),
+                'sections' => [
+                    [
+                        'id'     => 'variation',
+                        'title'  => __('Variations', 'raow'),
+                        'fields' => Toggle::get($settings['variations'], null, 'variation', __('Variation', 'raow')),
+                    ]
+                ],
+            ]);
+        }
 
         return $form;
     }

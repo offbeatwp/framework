@@ -11,6 +11,6 @@ class Select {
         $field['type']      = 'select';
         $field['options']   = $options;
 
-        return [$field];
+        return $field;
     }
 }

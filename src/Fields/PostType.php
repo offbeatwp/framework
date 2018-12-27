@@ -1,15 +1,15 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
-class PostType {
+class PostType
+{
     public static function get($name, $label, $attr = [])
     {
-        $field               = $attr;
-        $field['name']       = $name;
-        $field['label']      = $label;
-        $field['type']       = 'post_type';
+        $field          = $attr;
+        $field['name']  = $name;
+        $field['label'] = $label;
+        $field['type']  = 'post_type';
 
-        return [$field];
+        return $field;
     }
 }

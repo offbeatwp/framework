@@ -11,6 +11,6 @@ class Terms {
         $field['type']        = 'terms';
         $field['taxonomies']  = $taxonomies;
 
-        return [$field];
+        return $field;
     }
 }

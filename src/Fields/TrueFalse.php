@@ -10,6 +10,6 @@ class TrueFalse {
         $field['label'] = $label;
         $field['type']  = 'true_false';
 
-        return [$field];
+        return $field;
     }
 }

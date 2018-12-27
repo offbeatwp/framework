@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class NavMenus {
@@ -11,7 +10,7 @@ class NavMenus {
         $field['type']      = 'select';
         $field['options']   = __NAMESPACE__ . '\NavMenus::options';
 
-        return [$field];
+        return $field;
     }
 
     public static function options()

@@ -1,11 +1,10 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class Heading {
     public static function get($defaultHeading = 'h3', $includeLead = false)
     {
-        return [
+        return new FieldGroup([
             [
                 'name'          => 'heading_title',
                 'label'         => __('Title', 'raow'),
@@ -43,6 +42,6 @@ class Heading {
                 ],
                 'save_always' => true,
             ],
-        ];
+        ]);
     }
 }

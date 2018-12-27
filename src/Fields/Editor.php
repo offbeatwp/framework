@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class Editor {
@@ -10,6 +9,6 @@ class Editor {
         $field['label'] = $label;
         $field['type']  = 'editor';
 
-        return [$field];
+        return $field;
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Fields;
 
 class Image {
@@ -10,6 +9,6 @@ class Image {
         $field['label'] = $label;
         $field['type']  = 'image';
 
-        return [$field];
+        return $field;
     }
 }

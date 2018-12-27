@@ -11,6 +11,6 @@ class Repeater {
         $field['type']      = 'repeater';
         $field['fields']    = $fields;
 
-        return [$field];
+        return $field;
     }
 }
