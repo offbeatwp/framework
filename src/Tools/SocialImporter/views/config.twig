@@ -1,0 +1,21 @@
+<div class="wrap">
+    <h1>{{ __('Social Importers', 'raow') }}</h1>
+
+    {% for channel in channels %}
+        <h3>{{ channel.config('type') }} ({{ channel.config('id') }})</h3>
+
+        
+
+        {% if channel.getStatus() == 'not_configured' %}
+            <a href="{{ channel.getLoginUrl() }}">Login into this channel</a><br>
+            <small><i>{{ channel.getRedirectUrl() }}</i></small>
+        {% elseif channel.getStatus() == 'ready'  %}
+            {{ __('This channel is ready to pull posts', 'raow') }} (<a href="{{ channel.getResetUrl() }}" onClick="return confirm('{{ __('Are you sure?', 'raow') }}')">Reset channel</a>)
+        {% elseif channel.getStatus() == 'failed'  %}
+            {{ __('Oops, something went wrong, please try again.', 'raow') }}
+        {% else %}
+            {{ channel.getStatus() }}
+        {% endif %}
+        <hr>
+    {% endfor %}
+</div>
