@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Components;
 
-use OffbeatWP\Tools\Acf\FieldsMapper as AcfFieldsMapper;
+use OffbeatWP\AcfCore\FieldsMapper as AcfFieldsMapper;
 use OffbeatWP\Components\ComponentInterfaceTrait;
 use OffbeatWP\Fields\DisplaySettings;
 use OffbeatWP\Fields\Helper as FieldsHelper;
