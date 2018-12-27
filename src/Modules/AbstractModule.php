@@ -4,7 +4,6 @@ namespace OffbeatWP\Modules;
 
 use OffbeatWP\Commands\Commands;
 use OffbeatWP\Services\AbstractService;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 abstract class AbstractModule extends AbstractService
 {
@@ -16,7 +15,7 @@ abstract class AbstractModule extends AbstractService
         parent::__construct($app);
 
         if (method_exists($this, 'boot')) {
-            $eventDispatcher->addListener('raow.ready', [$this, 'boot']);
+            offbeat('hooks')->addAction('raow.ready', [$this, 'boot']);
         }
 
         add_action('init', function () {

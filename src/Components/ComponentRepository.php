@@ -1,20 +1,20 @@
 <?php
 namespace OffbeatWP\Components;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
 class ComponentRepository {
 
     public $eventDispatcher;
 
-    public function __construct (EventDispatcher $eventDispatcher) {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct () {
     }
 
     public function register($name, $componentClass)
     {
         $event = new EventRegisterComponent($name, $componentClass);
-        $this->eventDispatcher->dispatch($event::NAME, $event);
+        offbeat('hooks')->doAction('offbeat.component.register', [
+            'name' => $name,
+            'class' => $componentClass,
+        ]);
 
         if ($componentClass::supports('widget')) {
             $this->registerWidget($componentClass);
@@ -45,7 +45,7 @@ class ComponentRepository {
 
         $componentSettings = $componentClass::settings();
 
-        add_shortcode('raow-' . $componentSettings['slug'], function ($atts, $content = '') use ($app, $componentClass) {
+        add_shortcode('offbeat-' . $componentSettings['slug'], function ($atts, $content = '') use ($app, $componentClass) {
             $shortcode = $app->container->make(GenericShortcode::class, ['componentClass' => $componentClass]);
             return $shortcode->renderShortcode($atts, $content);
         });

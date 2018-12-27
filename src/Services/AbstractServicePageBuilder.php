@@ -1,14 +1,11 @@
 <?php
-
 namespace OffbeatWP\Services;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
 abstract class AbstractServicePageBuilder extends AbstractService {
-    public function register(EventDispatcher $eventDispatcher)
+    public function register()
     {
         if (method_exists($this, 'onRegisterComponent')) {
-            $eventDispatcher->addListener('raow.component.register', [$this, '_onRegisterComponent']);
+            offbeat('hooks')->addAction('offbeat.component.register', [$this, '_onRegisterComponent']);
         }
 
         if (method_exists($this, 'afterRegister')) {
@@ -16,12 +13,12 @@ abstract class AbstractServicePageBuilder extends AbstractService {
         }
     }
 
-    public function _onRegisterComponent($event)
+    public function _onRegisterComponent($component)
     {
-        $componentClass = $event->getComponentClass();
+        $componentClass = $component['class'];
 
         if(!$componentClass::supports('pagebuilder')) return null;
 
-        $this->onRegisterComponent($event);
+        $this->onRegisterComponent($component['name'], $class);
     }
 }

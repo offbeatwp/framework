@@ -32,6 +32,8 @@ class App
         $this->container = $containerBuilder->build();
 
         $this->registerServices();
+
+        offbeat('hooks')->doAction('offbeat.ready');
     }
 
     private function baseBindings()

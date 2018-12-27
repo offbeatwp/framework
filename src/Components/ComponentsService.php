@@ -2,7 +2,6 @@
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Services\AbstractService;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ComponentsService extends AbstractService
 {
@@ -10,9 +9,9 @@ class ComponentsService extends AbstractService
         'components' => ComponentRepository::class
     ];
 
-    public function register(EventDispatcher $eventDispatcher)
+    public function register()
     {
-        $eventDispatcher->addListener('raow.ready', [$this, 'registerComponents']);
+        offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents'], 10);
     }
 
     public function registerComponents()
