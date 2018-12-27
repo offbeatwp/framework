@@ -44,10 +44,10 @@ class App
     private function initiateBaseServices($containerBuilder)
     {
         foreach ([
-            // \OffbeatWP\Wordpress\WordpressService::class,
-            // \OffbeatWP\Routes\RoutesService::class,
-            // \OffbeatWP\Components\ComponentsService::class,
-            // \OffbeatWP\Services\ServiceEnqueueScripts::class,
+            \OffbeatWP\Wordpress\WordpressService::class,
+            \OffbeatWP\Routes\RoutesService::class,
+            \OffbeatWP\Components\ComponentsService::class,
+            \OffbeatWP\Services\ServiceEnqueueScripts::class,
             // \OffbeatWP\Services\ServiceRaowAdminAppearance::class,
         ] as $service) {
             $this->initiateService($service, $containerBuilder);
