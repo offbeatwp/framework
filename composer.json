@@ -1,0 +1,17 @@
+{
+  "name": "offbeatwp/framework",
+  "type": "library",
+  "require": {
+    "twig/twig": "^2.0",
+    "php-di/php-di": "^6.0",
+    "illuminate/support": "^5.7"
+  },
+  "autoload": {
+    "files": [
+      "src/Foundation/helpers.php"
+    ],
+    "psr-4": {
+      "OffbeatWP\\": "src"
+    }
+  }
+}
