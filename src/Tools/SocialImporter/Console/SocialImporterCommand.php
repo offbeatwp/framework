@@ -14,7 +14,7 @@ class SocialImporterCommand extends AbstractCommand {
             $this->dryRun = true;
         }
 
-        $channels = raowApp('social_importer')->getChannels();
+        $channels = offbeat('social_importer')->getChannels();
 
         $channels->each(function ($channel) {
             if($channel->isNotStatus('ready')) {

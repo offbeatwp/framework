@@ -71,7 +71,7 @@ class Wordpress
 
     public function setting($name)
     {
-        return raowApp(SiteSettings::class)->get($name);
+        return offbeat(SiteSettings::class)->get($name);
     }
 
     public function sidebar($name)

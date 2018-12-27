@@ -24,16 +24,16 @@ class SocialImporterService extends AbstractService {
             return $remove;
         });
 
-        raowApp('admin-page')->makeSub('tools', __('Social Importer', 'raow'), 'social-importer', 'edit_posts', 'controller');
+        offbeat('admin-page')->makeSub('tools', __('Social Importer', 'raow'), 'social-importer', 'edit_posts', 'controller');
 
-        raowApp('console')->register(Console\SocialImporterCommand::class);
+        offbeat('console')->register(Console\SocialImporterCommand::class);
 
-        raowApp('ajax')->make('social_embed', Actions\SocialEmbed::class);
+        offbeat('ajax')->make('social_embed', Actions\SocialEmbed::class);
     }
 
     public function registerPostType()
     {
-        raowApp('post-type')
+        offbeat('post-type')
             ->make(Models\SocialPostModel::POST_TYPE, __('Social Posts', 'raow'), __('Social Post', 'raow'))
             ->supports(['title', 'editor', 'thumbnail', 'custom-fields'])
             ->notPubliclyQueryable()
@@ -44,7 +44,7 @@ class SocialImporterService extends AbstractService {
 
     public function registerRoutes()
     {
-        raowApp('routes')->register([Controllers\SocialImporterController::class, 'actionConfig'], function () {
+        offbeat('routes')->register([Controllers\SocialImporterController::class, 'actionConfig'], function () {
             return is_admin() && $_GET['page'] == 'social-importer';
         });
     }

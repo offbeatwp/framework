@@ -113,7 +113,7 @@ class Fields {
         ];
 
         $appearanceFields = [];
-        $rowComponent = raowApp('components')->get('row');
+        $rowComponent = offbeat('components')->get('row');
         if (method_exists($rowComponent, 'variations')) {
             $variations = collect($rowComponent::variations());
             $variations = $variations->map(function ($item, $key) {
@@ -145,7 +145,7 @@ class Fields {
             ];
         }
 
-        $rowThemes   = raowApp('design')->getRowThemesList();
+        $rowThemes   = offbeat('design')->getRowThemesList();
         if(is_array($rowThemes)) {
             $appearanceFields[] = [
                 'key' => 'field_5c16d32c41786',
@@ -183,7 +183,7 @@ class Fields {
         ];
 
 
-        $margins    = raowApp('design')->getMarginsList('row');
+        $margins    = offbeat('design')->getMarginsList('row');
 
         $rowSettings[] = [
             'key'           => 'field_5c16d30841781',
@@ -241,7 +241,7 @@ class Fields {
             ]
         ];
 
-        $paddings   = raowApp('design')->getPaddingsList('row');
+        $paddings   = offbeat('design')->getPaddingsList('row');
 
         $rowSettings[] = [
             'key'           => 'field_5c16d30841782',

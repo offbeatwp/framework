@@ -45,7 +45,7 @@ class TermModel implements TermModelInterface {
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = raowApp('hooks')->applyFilters('term_attribute', null, $method, $this))) {
+        if (!is_null($hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this))) {
             return $hookValue;
         }
 

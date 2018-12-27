@@ -7,7 +7,7 @@ class SocialEmbed extends AbstractAction {
     function execute() {
         $postId = $_GET['post'];
 
-        $post = raowApp('social_importer')->findById($postId);
+        $post = offbeat('social_importer')->findById($postId);
 
         echo $post->getEmbed();
     }

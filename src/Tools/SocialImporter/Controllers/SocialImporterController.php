@@ -8,7 +8,7 @@ class SocialImporterController extends AbstractController
 {
     public function actionConfig()
     {
-        $channels = raowApp('social_importer')->getChannels();
+        $channels = offbeat('social_importer')->getChannels();
 
         $channels->each(function ($channel) {
             if (isset($_GET['channel_id']) && $_GET['channel_id'] == $channel->config('id')) {

@@ -62,21 +62,21 @@ class Renderer
 
         $rowSettings['rowContent'] = $rowContent;
 
-        return raowApp('components')->render('row', $rowSettings);
+        return offbeat('components')->render('row', $rowSettings);
     }
 
     public function renderComponent($componentSettings)
     {
         $componentName = get_row_layout();
 
-        if (raowApp('components')->exists($componentName)) {
-            $componentSettings['componentContent'] = raowApp('components')->render($componentName, $componentSettings);
+        if (offbeat('components')->exists($componentName)) {
+            $componentSettings['componentContent'] = offbeat('components')->render($componentName, $componentSettings);
         } else {
             $componentSettings['componentContent'] = __('Component does not exists', 'raow');
         }
 
 
-        return raowApp('components')->render('component', $componentSettings);
+        return offbeat('components')->render('component', $componentSettings);
     }
 
     public function getFields($data, $ignoreKeys = [])

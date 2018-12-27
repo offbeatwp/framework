@@ -20,7 +20,7 @@ class AdminPage
 
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capabilities, $callback) {
                 add_menu_page($title, $title, $capabilities, $slug, function () use ($callback) {
-                    raowApp()->container->call($callback);
+                    offbeat()->container->call($callback);
                 }, $icon, $position);
             });
         }
@@ -63,7 +63,7 @@ class AdminPage
 
             add_action('admin_menu', function () use ($parent, $title, $slug, $capabilities, $callback) {
                 add_submenu_page($parent, $title, $title, $capabilities, $slug, function () use ($callback) {
-                    raowApp()->container->call($callback);
+                    offbeat()->container->call($callback);
                 });
             });
         }
@@ -71,6 +71,6 @@ class AdminPage
 
     public function callbackController()
     {
-        raowApp()->run();
+        offbeat()->run();
     }
 }

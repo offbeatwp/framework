@@ -11,7 +11,7 @@ class PostsCollection extends Collection
             $postItems = [];
 
             foreach ($items->posts as $post) {
-                array_push($postItems, raowApp('post')->convertWpPostToModel($post));
+                array_push($postItems, offbeat('post')->convertWpPostToModel($post));
             }
 
             $items = $postItems;
@@ -19,7 +19,7 @@ class PostsCollection extends Collection
         } elseif (is_array($items)) {
             foreach ($items as $itemKey => $item) {
                 if ($item instanceof \WP_Post) {
-                    $items[$itemKey] = raowApp('post')->convertWpPostToModel($item);
+                    $items[$itemKey] = offbeat('post')->convertWpPostToModel($item);
                 }
             }
         }

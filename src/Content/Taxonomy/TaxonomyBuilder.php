@@ -100,7 +100,7 @@ class TaxonomyBuilder
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);
 
         if (!is_null($this->modelClass)) {
-            raowApp('taxonomy')->registerTaxonomyModel($this->taxonomy, $this->modelClass);
+            offbeat('taxonomy')->registerTaxonomyModel($this->taxonomy, $this->modelClass);
         }
 
     }

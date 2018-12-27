@@ -39,7 +39,7 @@ class TwigView implements View
 
         $twig = new \Twig_Environment($loader, $settings);
 
-        $twig->addGlobal('wp', raowApp()->container->make(\OffbeatWP\Views\Wordpress::class));
+        $twig->addGlobal('wp', offbeat()->container->make(\OffbeatWP\Views\Wordpress::class));
 
         if (!empty($this->viewGlobals)) foreach ($this->viewGlobals as $globalNamespace => $globalValue) {
             $twig->addGlobal($globalNamespace, $globalValue);

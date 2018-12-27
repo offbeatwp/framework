@@ -4,8 +4,8 @@ namespace OffbeatWP\Support\Wordpress;
 class Post
 {
     public function convertWpPostToModel(\WP_Post $post) {
-        $model = raowApp('post-type')->getModelByPostType($post->post_type);
-        $model = raowApp('hooks')->applyFilters('post_model', $model, $post);
+        $model = offbeat('post-type')->getModelByPostType($post->post_type);
+        $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
 
         return new $model($post);
     }

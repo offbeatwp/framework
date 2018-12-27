@@ -125,7 +125,7 @@ class PostTypeBuilder
         register_post_type($this->postType, $this->postTypeArgs);
 
         if (!is_null($this->modelClass)) {
-            raowApp('post-type')->registerPostModel($this->postType, $this->modelClass);
+            offbeat('post-type')->registerPostModel($this->postType, $this->modelClass);
         }
 
     }

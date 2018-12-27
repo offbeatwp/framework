@@ -13,8 +13,8 @@ class Service extends AbstractService {
     ];
 
     public function register() {
-        raowApp('hooks')->addFilter('post_attribute', Hooks\AcfPostAttributeFilter::class, 10, 3);
-        raowApp('hooks')->addFilter('term_attribute', Hooks\AcfTermAttributeFilter::class, 10, 3);
+        offbeat('hooks')->addFilter('post_attribute', Hooks\AcfPostAttributeFilter::class, 10, 3);
+        offbeat('hooks')->addFilter('term_attribute', Hooks\AcfTermAttributeFilter::class, 10, 3);
 
         PostModel::macro('getField', function ($name, $format = true) {
             return get_field($name, $this->id, $format);
@@ -29,7 +29,7 @@ class Service extends AbstractService {
 
     public function registerIntegrations() {
         if (class_exists('\GFAPI')) {
-            raowApp('hooks')->addAction('acf/include_field_types', function () {
+            offbeat('hooks')->addAction('acf/include_field_types', function () {
                 new Integrations\AcfFieldGravityForms();
             }); 
         }

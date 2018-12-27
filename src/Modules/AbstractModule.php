@@ -47,7 +47,7 @@ abstract class AbstractModule extends AbstractService
             foreach ($registerableComponents as $name => $class) {
                 $componentName = lcfirst($this->getName()) . '.' . lcfirst($name);
 
-                raowApp('components')->register($componentName, $class);
+                offbeat('components')->register($componentName, $class);
             }
         }
     }

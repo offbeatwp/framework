@@ -13,7 +13,7 @@ class PageTypesService extends AbstractService
 
     public function register()
     {
-        raowApp('taxonomy')::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
+        offbeat('taxonomy')::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
             ->metaBox([$this, 'metaBox'])
             ->model(Models\PageTypeModel::class)
             ->showAdminColumn()
@@ -114,7 +114,7 @@ class PageTypesService extends AbstractService
         
         if($terms->isEmpty()) return null;
 
-        $pagePageType = raowApp('post')->get()->getTerms(self::TAXONOMY);
+        $pagePageType = offbeat('post')->get()->getTerms(self::TAXONOMY);
 
         $slug  = '';
         if ( $pagePageType->isNotEmpty() ) {

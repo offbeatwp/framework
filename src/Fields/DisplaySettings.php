@@ -16,7 +16,7 @@ class DisplaySettings
             ]);
         }
 
-        $margins  = raowApp('design')->getMarginsList('component');
+        $margins  = offbeat('design')->getMarginsList('component');
 
         array_push($sections, [
             'id'     => 'margins',

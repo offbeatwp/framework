@@ -26,7 +26,7 @@ class WoocommerceService extends AbstractService
             return $templates;
         });
 
-        raowApp('routes')->register([WoocommerceController::class, 'actionWoo'],
+        offbeat('routes')->register([WoocommerceController::class, 'actionWoo'],
             function () {
                 return is_woocommerce();
             }

@@ -157,7 +157,7 @@ class App
 
     public function run($config = [])
     {
-        $route = raowApp('routes')->findMatch();
+        $route = offbeat('routes')->findMatch();
 
         if ($route !== false && is_callable($route['actionCallback'])) {
             $parameters = $route['parameters'];

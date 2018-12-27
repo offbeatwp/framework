@@ -47,7 +47,7 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = raowApp('hooks')->applyFilters('post_attribute', null, $method, $this))) {
+        if (!is_null($hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this))) {
             return $hookValue;
         }
 
@@ -139,7 +139,7 @@ class PostModel implements PostModelInterface
 
     public function getTerms($taxonomy, $args = [])
     {
-        $model = raowApp('taxonomy')->getModelByTaxonomy($taxonomy);
+        $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
         return $model::whereRelatedToPost($this->id)->get();
     }

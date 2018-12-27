@@ -41,7 +41,7 @@ class ComponentRepository {
     }
 
     public function registerShortcode($componentClass) {
-        $app = raowApp();
+        $app = offbeat();
 
         $componentSettings = $componentClass::settings();
 
@@ -69,7 +69,7 @@ class ComponentRepository {
     public function make($name)
     {
         $componentClass = $this->get($name);
-        return raowApp()->container->make($componentClass);
+        return offbeat()->container->make($componentClass);
     }
 
     public function exists($name)

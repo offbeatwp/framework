@@ -155,7 +155,7 @@ abstract class AbstractSocialChannel
     public function requestAndSavePosts()
     {
         $this->requestPosts()->each(function ($post) {
-            raowApp('social_importer')->saveSocialPost($post, $this);
+            offbeat('social_importer')->saveSocialPost($post, $this);
         });
     }
 
