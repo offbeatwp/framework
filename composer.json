@@ -1,5 +1,7 @@
 {
   "name": "offbeatwp/framework",
+  "description": "The OffbeatWP framework",
+  "license": "MIT",
   "type": "library",
   "require": {
     "php-di/php-di": "^6.0",
