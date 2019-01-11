@@ -112,11 +112,11 @@ class TermQueryBuilder
     public function order($order = null, $direction = null)
     {
         if (!is_null($order)) {
-            $this->queryVars['order'] = $order;
+            $this->queryVars['orderby'] = $order;
         }
 
         if (!is_null($direction)) {
-            $this->queryVars['orderby'] = $direction;
+            $this->queryVars['order'] = $direction;
         }
 
         return $this;

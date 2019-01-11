@@ -49,8 +49,8 @@ class App
             \OffbeatWP\Wordpress\WordpressService::class,
             \OffbeatWP\Routes\RoutesService::class,
             \OffbeatWP\Components\ComponentsService::class,
-            \OffbeatWP\Services\ServiceEnqueueScripts::class,
-            // \OffbeatWP\Services\ServiceRaowAdminAppearance::class,
+            \OffbeatWP\Assets\ServiceEnqueueScripts::class,
+            OffbeatWP\Content\Post\Relations\Service::class,
         ] as $service) {
             $this->initiateService($service, $containerBuilder);
         }

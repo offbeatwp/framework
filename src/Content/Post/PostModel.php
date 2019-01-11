@@ -1,7 +1,10 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Content\Post\Relations\BelongsTo;
+use OffbeatWP\Content\Post\Relations\BelongsToMany;
+use OffbeatWP\Content\Post\Relations\HasMany;
+use OffbeatWP\Content\Post\Relations\HasOne;
 
 class PostModel implements PostModelInterface
 {
@@ -31,10 +34,10 @@ class PostModel implements PostModelInterface
     public static function __callStatic($method, $parameters)
     {
         if (static::hasMacro($method)) {
-            return $this->macroCallStatic($method, $parameters);
+            return static::macroCallStatic($method, $parameters);
         }
 
-        return (new WpQueryBuilder(static::class))->$method(...$parameters);
+        return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
     }
 
     public function __call($method, $parameters)
@@ -68,7 +71,29 @@ class PostModel implements PostModelInterface
 
     public function getContent()
     {
-        return apply_filters('the_content', $this->wpPost->post_content);
+        $content = $this->wpPost->post_content;
+
+        // When the_content filter is already running with Gutenberg content
+        // it adds another filter that prevents wpautop to be executed.
+        // In this case we manually run a series of filters
+        if (has_filter('the_content', '_restore_wpautop_hook')) {
+            collect([
+                'wptexturize',
+                'wpautop',
+                'shortcode_unautop',
+                'prepend_attachment',
+                'wp_make_content_images_responsive',
+                'do_shortcode',
+            ])->each(function ($filter) use (&$content) {
+                if (function_exists($filter)) {
+                    $content = $filter($content);
+                }
+            });
+
+            return $content;
+        }
+
+        return apply_filters('the_content', $content);
     }
 
     public function getSlug()
@@ -104,13 +129,13 @@ class PostModel implements PostModelInterface
 
     public function getAuthor()
     {
-        $currentPost = $GLOBALS['post'];
+        $currentPost     = $GLOBALS['post'];
         $GLOBALS['post'] = $this->wpPost;
 
         $author = get_the_author();
 
         $GLOBALS['post'] = $currentPost;
-        
+
         return $author;
     }
 
@@ -126,8 +151,8 @@ class PostModel implements PostModelInterface
     {
         if (isset($this->getMetas()[$key])) {
             return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
+            ? reset($this->getMetas()[$key])
+            : $this->getMetas()[$key];
         }
         return null;
     }
@@ -192,4 +217,42 @@ class PostModel implements PostModelInterface
     {
         return wp_update_post($this->wpPost);
     }
+
+    /* Relations */
+
+    public function getMethodByRelationKey($key)
+    {
+        $method = $key;
+
+        if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
+            $method = $this->relationKeyMethods[$key];
+        }
+
+        if (is_callable([$this, $method])) {
+            return $method;
+        }
+
+        return null;
+    }
+
+    public function hasMany($key)
+    {
+        return new HasMany($this, $key);
+    }
+
+    public function hasOne($key)
+    {
+        return new HasOne($this, $key);
+    }
+
+    public function belongsTo($key)
+    {
+        return new BelongsTo($this, $key);
+    }
+
+    public function belongsToMany($key)
+    {
+        return new BelongsToMany($this, $key);
+    }
+
 }

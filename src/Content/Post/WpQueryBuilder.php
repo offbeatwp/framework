@@ -5,26 +5,7 @@ use OffbeatWP\Content\Post\PostsCollection;
 
 class WpQueryBuilder
 {
-
-    protected $model;
     protected $queryVars = [];
-
-    public function __construct($model)
-    {
-        $this->model = $model;
-
-        $this->queryVars = [
-            'post_type' => $model::POST_TYPE,
-        ];
-
-        if (defined("{$model}::ORDER")) {
-            $this->queryVars['order'] = $model::ORDER;
-        }
-
-        if (defined("{$model}::ORDER_BY")) {
-            $this->queryVars['order_by'] = $model::ORDER_BY;
-        }
-    }
 
     public function all()
     {
@@ -33,13 +14,18 @@ class WpQueryBuilder
         return $this->get();
     }
 
+    public function postToModel($post)
+    {
+        return offbeat('post')->convertWpPostToModel($post);
+    }
+
     public function get()
     {
         $postModels = [];
         $posts = new \WP_Query($this->queryVars);
 
         if (!empty($posts->posts)) foreach ($posts->posts as $post) {
-            array_push($postModels, new $this->model($post));
+            array_push($postModels, $this->postToModel($post));
         }
 
         return new PostsCollection($postModels);
@@ -73,10 +59,27 @@ class WpQueryBuilder
         return $this;
     }
 
+    public function wherePostType($postTypes)
+    {
+        if (!isset($this->queryVars['post_type'])) {
+            $this->queryVars['post_type'] = [];
+        }
+
+        if (is_string($postTypes)) $postTypes = [$postTypes];
+
+        $this->queryVars['post_type'] = array_merge($this->queryVars['post_type'], $postTypes);
+
+        return $this;
+    }
+
     public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN')
     {
         if (is_null($field)) {
             $field = 'slug';
+        }
+
+        if (!is_array($terms)) {
+            $terms = [$terms];
         }
 
         if (is_null($operator)) {
@@ -131,13 +134,33 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function order($order = null, $direction = null) {
-        if (!is_null($order)) {
-            $this->queryVars['order'] = $order;
+    public function order($orderBy = null, $direction = null) {
+        if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
+            $this->queryVars['meta_key'] = $match[3];
+            $this->queryVars['orderby'] = 'meta_value';
+
+            if (isset($match[2]) && $match[2] == 'meta_num') {
+                $this->queryVars['orderby'] = 'meta_value_num';                
+            }
+
+        } elseif (!is_null($orderBy)) {
+            $this->queryVars['orderby'] = $orderBy;
         }
 
         if (!is_null($direction)) {
-            $this->queryVars['order_by'] = $direction;
+            $this->queryVars['order'] = $direction;
         }
+
+        return $this;
+    }
+
+    public function hasRelationshipWith($model, $key, $direction = null) {
+        $this->queryVars['relationships'] = [
+            'id' => $model->id,
+            'key' => $key,
+            'direction' => $direction,
+        ];
+
+        return $this;
     }
 }
