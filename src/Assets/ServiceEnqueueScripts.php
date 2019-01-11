@@ -1,6 +1,7 @@
 <?php
-
 namespace OffbeatWP\Assets;
+
+use OffbeatWP\Services\AbstractService;
 
 class ServiceEnqueueScripts extends AbstractService
 {
