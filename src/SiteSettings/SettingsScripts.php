@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\SiteSettings;
 
 class SettingsScripts
@@ -15,8 +14,8 @@ class SettingsScripts
     public function fields()
     {
         return [[
-            'id'     => 'contact',
-            'title'  => 'Core settings',
+            'id'     => 'scripts',
+            'title'  => 'Scripts',
             'fields' => [
                 [
                     'name'        => 'scripts_head',
