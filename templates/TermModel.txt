@@ -1,7 +1,7 @@
 <?php
 namespace {{ namespace }};
 
-use Raow\Content\Taxonomy\TermModel;
+use OffbeatWP\Content\Taxonomy\TermModel;
 
 class {{ classname }} extends TermModel
 {

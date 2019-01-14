@@ -1,7 +1,7 @@
 <?php
 namespace {{ namepsace }};
 
-use Raow\Modules\AbstractModule;
+use OffbeatWP\Modules\AbstractModule;
 
 class {{ classname }} extends AbstractModule
 {
