@@ -5,7 +5,7 @@ class RoutesManager
 {
     public $actions = [];
 
-    public function callback($actionCallback, $checkCallback, $parameters = [])
+    public function callback($checkCallback, $actionCallback, $parameters = [])
     {
         $action = [[
             'actionCallback' => $actionCallback,
