@@ -1,0 +1,14 @@
+<?php
+namespace {{ namepsace }};
+
+use Raow\Modules\AbstractModule;
+
+class {{ classname }} extends AbstractModule
+{
+
+    public function register()
+    {
+
+    }
+
+}

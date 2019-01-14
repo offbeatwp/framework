@@ -1,0 +1,10 @@
+<?php
+namespace {{ namespace }};
+
+use OffbeatWP\Content\Post\PostModel as OffbeatWpPostModel;
+
+class {{ classname }} extends OffbeatWpPostModel {
+    const POST_TYPE = '{{ post_type }}';
+    const ORDERBY   = 'post_date';
+    const ORDER     = 'DESC';
+}

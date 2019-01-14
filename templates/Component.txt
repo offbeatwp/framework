@@ -1,0 +1,56 @@
+<?php
+namespace {{ namespace }};
+
+use \OffbeatWP\Components\AbstractComponent;
+
+class {{ classname }} extends AbstractComponent
+{
+    public static function settings()
+    {
+        return [
+            'name'       => '{{ name }}',
+            'slug'       => '{{ slug }}',
+            'supports'   => [{{ supports }}],
+            // 'variations' => self::variations(),
+            // 'form'       => self::form(),
+        ];
+    }
+
+    public function render($settings)
+    {
+        return $this->view('component', [
+            'settings' => $settings,
+        ]);
+    }
+
+    // public static function variations()
+    // {
+    //     return [
+    //         'default' => [
+    //             'label'    => __('Default', 'raow'),
+    //             'sections' => [],
+    //         ],
+    //         'alternative' => [
+    //             'label'    => __('Alternative', 'raow'),
+    //             'sections' => [],
+    //         ],
+    //     ];
+    // }
+
+    public static function form()
+    {
+        return [
+            [ // Tab
+                'id'       => 'general',
+                'title'    => 'General',
+                'sections' => [
+                    [ // Section
+                        'id'     => 'content',
+                        'title'  => 'General',
+                        'fields' => [],
+                    ],
+                ],
+            ],
+        ];
+    }
+}

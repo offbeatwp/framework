@@ -1,0 +1,14 @@
+<?php
+namespace {{ namespace }};
+
+use OffbeatWP\Services\AbstractService;
+
+class {{ classname }} extends AbstractService
+{
+
+    public function register()
+    {
+
+    }
+
+}

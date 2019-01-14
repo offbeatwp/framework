@@ -1,0 +1,11 @@
+<?php
+namespace {{ namespace }};
+
+use Raow\Content\Taxonomy\TermModel;
+
+class {{ classname }} extends TermModel
+{
+    const TAXONOMY  = '{{ taxonomy }}';
+    const ORDER_BY  = 'menu_order';
+    const ORDER     = 'ASC';
+}
