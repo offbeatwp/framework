@@ -11,7 +11,7 @@ class RoutesService extends AbstractService
 
     public function register()
     {
-        $this->loadRoutes();
+        add_action('before_route_matching', [$this, 'loadRoutes'], 20);
     }
 
     protected function loadRoutes()

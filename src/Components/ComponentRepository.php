@@ -61,10 +61,6 @@ class ComponentRepository
             return $this->components[$name];
         }
 
-        $trace = debug_backtrace();
-
-        var_dump($trace[0]['file'] . ":" . $trace[0]['line']);
-
         throw new \Exception("Component does not exists ({$name})");
     }
 

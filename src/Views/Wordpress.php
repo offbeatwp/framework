@@ -1,5 +1,4 @@
 <?php
-
 namespace OffbeatWP\Views;
 
 use OffbeatWP\Contracts\SiteSettings;
@@ -69,11 +68,6 @@ class Wordpress
         return do_shortcode($code);
     }
 
-    public function setting($name)
-    {
-        return offbeat(SiteSettings::class)->get($name);
-    }
-
     public function sidebar($name)
     {
         ob_start();
@@ -88,11 +82,6 @@ class Wordpress
         if (!$attachment) { return false; }
 
         return $attachment[0];
-    }
-
-    public function postThumbnail($postID, $size = 'thumbnail')
-    {
-        return get_the_post_thumbnail($postID, $size, ['class' => 'img-fluid']);
     }
 
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', $classes = ['img-fluid'])

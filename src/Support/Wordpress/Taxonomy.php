@@ -15,7 +15,7 @@ class Taxonomy
         return (new TaxonomyBuilder)->make($name, $postTypes, $pluralName, $singleName);
     }
 
-    public function registerTaxonomyModel($taxonomy, $modelClass)
+    public function registerTermModel($taxonomy, $modelClass)
     {
         $this->taxonomyModels[$taxonomy] = $modelClass;
     }

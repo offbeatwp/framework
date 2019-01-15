@@ -3,8 +3,12 @@ namespace OffbeatWP\Content\Post\Relations;
 
 class BelongsToOneOrMany extends Relation
 {
-    public function associate($ids)
+    public function associate($ids, $append = true)
     {
+        if (!$append) {
+            $this->dissociateAll();
+        }
+        
         if (is_array($ids)) {
             $this->makeRelationships($ids, 'reverse');
         } else {
@@ -15,5 +19,10 @@ class BelongsToOneOrMany extends Relation
     public function dissociate()
     {
         $this->removeRelationship('reverse');
+    }
+
+    public function dissociateAll()
+    {
+        $this->removeAllRelationships('reverse');
     }
 }

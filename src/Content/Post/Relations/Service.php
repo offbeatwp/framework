@@ -9,6 +9,10 @@ class Service extends AbstractService
 {
     public function register () {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2 );
+
+        if(offbeat('console')->isConsole()) {
+            offbeat('console')->register(Console\Install::class);
+        }
     }
 
     public function insertRelationshipsSql($clauses, $query) {
@@ -42,7 +46,7 @@ class Service extends AbstractService
         $sql = [];
         $sql['join'] = " INNER JOIN {$wpdb->prefix}posts_relationships AS pr ON ({$wpdb->posts}.ID = pr.{$columnOn}) ";
 
-        $sql['where'] = " AND pr.{$columnWhere} = " . $query->query_vars['relationships']['id'] . " AND pr.key = '" . $query->query_vars['relationships']['key'] . "'";
+        $sql['where'] = " AND pr.key = '" . $query->query_vars['relationships']['key'] . "' AND pr.{$columnWhere} = " . $query->query_vars['relationships']['id'];
 
         return $sql;
     }

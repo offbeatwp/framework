@@ -52,9 +52,9 @@ class WpQueryBuilder
         return $this->first();
     }
 
-    public function where($parameters)
+    public function where($args)
     {
-        $this->queryVars = array_merge($this->queryVars, $parameters);
+        $this->queryVars = array_merge($this->queryVars, $args);
 
         return $this;
     }
@@ -104,13 +104,13 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereDate($parameters)
+    public function whereDate($args)
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
         }
 
-        array_push($this->queryVars['date_query'], $parameters);
+        array_push($this->queryVars['date_query'], $args);
 
         return $this;
     }
@@ -139,7 +139,7 @@ class WpQueryBuilder
             $this->queryVars['meta_key'] = $match[3];
             $this->queryVars['orderby'] = 'meta_value';
 
-            if (isset($match[2]) && $match[2] == 'meta_num') {
+            if (isset($match[1]) && $match[1] == 'meta_num') {
                 $this->queryVars['orderby'] = 'meta_value_num';                
             }
 

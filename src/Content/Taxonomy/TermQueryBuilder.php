@@ -41,8 +41,22 @@ class TermQueryBuilder
         return new TermsCollection($termModels);
     }
 
-    public function find() {
-        return $this->get()->first();
+    public function all()
+    {
+        $this->queryVars['number'] = 0;
+        
+        return $this->get();
+    }
+
+    public function take($numberOfItems)
+    {
+        $this->queryVars['number'] = $numberOfItems;
+        
+        return $this->get();
+    }
+
+    public function first() {
+        return $this->take(1)->first();
     }
 
     public function findById($id)
@@ -111,8 +125,16 @@ class TermQueryBuilder
 
     public function order($order = null, $direction = null)
     {
-        if (!is_null($order)) {
-            $this->queryVars['orderby'] = $order;
+        if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
+            $this->queryVars['meta_key'] = $match[3];
+            $this->queryVars['orderby'] = 'meta_value';
+
+            if (isset($match[1]) && $match[1] == 'meta_num') {
+                $this->queryVars['orderby'] = 'meta_value_num';                
+            }
+
+        } elseif (!is_null($orderBy)) {
+            $this->queryVars['orderby'] = $orderBy;
         }
 
         if (!is_null($direction)) {

@@ -1,17 +1,10 @@
 <?php
 namespace OffbeatWP\Content\Post\Relations;
 
-use OffbeatWP\Content\Post\WpQueryBuilder;
-
-class HasOneOrMany extends Relation {
-    public function get() {
-        return (new WpQueryBuilder())
-            ->wherePostType('any')
-            ->hasRelationshipWith($this->model, $this->key)
-            ->all();
-    }
-
-    public function attach($ids, $append = true) {
+class HasOneOrMany extends Relation
+{
+    public function attach($ids, $append = true)
+    {
         if (!$append) {
             $this->detachAll();
         }
@@ -23,11 +16,13 @@ class HasOneOrMany extends Relation {
         }
     }
 
-    public function detach($id) {
+    public function detach($id)
+    {
         $this->removeRelationship($id);
     }
 
-    public function detachAll() {
+    public function detachAll()
+    {
         $this->removeAllRelationships();
     }
 }

@@ -159,6 +159,8 @@ class App
 
     public function run($config = [])
     {
+        do_action('before_route_matching');
+
         $route = offbeat('routes')->findMatch();
 
         if ($route !== false && is_callable($route['actionCallback'])) {
@@ -168,7 +170,14 @@ class App
                 $parameters = $route['parameters']();
             }
 
-            $this->container->call($route['actionCallback'], $parameters);
+            $actionReturn = $this->container->call($route['actionCallback'], $parameters);
+
+            if (is_array($actionReturn)) {
+                header('Content-type: application/json');
+                echo json_encode($actionReturn);
+            } else {
+                echo $actionReturn;
+            }
 
             return;
         }

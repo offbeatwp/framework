@@ -167,7 +167,7 @@ class PostModel implements PostModelInterface
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
-        return $model::whereRelatedToPost($this->id)->get();
+        return $model::whereRelatedToPost($this->id)
     }
 
     public function hasFeaturedImage()
@@ -187,7 +187,7 @@ class PostModel implements PostModelInterface
 
     public function getFeaturedImageId()
     {
-        return get_post_thumbnail_id($this->wpPost);
+        return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
     }
 
     /* Display methods */
