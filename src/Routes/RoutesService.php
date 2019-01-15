@@ -14,7 +14,7 @@ class RoutesService extends AbstractService
         add_action('before_route_matching', [$this, 'loadRoutes'], 20);
     }
 
-    protected function loadRoutes()
+    public function loadRoutes()
     {
         $routeFiles = glob($this->app->routesPath() . '/*.php');
 

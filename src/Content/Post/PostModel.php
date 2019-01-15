@@ -167,7 +167,7 @@ class PostModel implements PostModelInterface
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
-        return $model::whereRelatedToPost($this->id)
+        return $model::whereRelatedToPost($this->id);
     }
 
     public function hasFeaturedImage()
