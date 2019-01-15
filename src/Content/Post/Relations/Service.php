@@ -44,7 +44,7 @@ class Service extends AbstractService
         }
 
         $sql = [];
-        $sql['join'] = " INNER JOIN {$wpdb->prefix}posts_relationships AS pr ON ({$wpdb->posts}.ID = pr.{$columnOn}) ";
+        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr ON ({$wpdb->posts}.ID = pr.{$columnOn}) ";
 
         $sql['where'] = " AND pr.key = '" . $query->query_vars['relationships']['key'] . "' AND pr.{$columnWhere} = " . $query->query_vars['relationships']['id'];
 

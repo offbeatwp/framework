@@ -23,7 +23,7 @@ class Relation
             $column2 = 'relation_from';
         }
 
-        $query = "DELETE FROM {$wpdb->prefix}posts_relationships WHERE `key` = %s AND {$column1} = %d AND {$column2} = %d";
+        $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column1} = %d AND {$column2} = %d";
         $params = [
             $this->key,
             $model->id,
@@ -44,7 +44,7 @@ class Relation
             $column = 'relation_to';
         }
 
-        $query = "DELETE FROM {$wpdb->prefix}posts_relationships WHERE `key` = %s AND {$column} = %d";
+        $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column} = %d";
         $params = [
             $this->key,
             $this->model->id,
@@ -67,7 +67,7 @@ class Relation
         }
 
         return $wpdb->insert( 
-            $wpdb->prefix . 'posts_relationships', 
+            $wpdb->prefix . 'post_relationships', 
             [
                 'key' => $this->key, 
                 $column1 => $this->model->id,

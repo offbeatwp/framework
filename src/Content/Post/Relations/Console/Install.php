@@ -12,7 +12,7 @@ class Install extends AbstractCommand
         global $wpdb;
 
         $wpdb->query("
-            CREATE TABLE `{$wpdb->prefix}posts_relationships` (
+            CREATE TABLE `{$wpdb->prefix}post_relationships` (
             `relation_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
             `key` varchar(255) NOT NULL DEFAULT '',
             `relation_from` int(11) NOT NULL,
