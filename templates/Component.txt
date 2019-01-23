@@ -2,6 +2,7 @@
 namespace {{ namespace }};
 
 use \OffbeatWP\Components\AbstractComponent;
+use \OffbeatWP\Form\Form;
 
 class {{ classname }} extends AbstractComponent
 {
@@ -39,18 +40,12 @@ class {{ classname }} extends AbstractComponent
 
     public static function form()
     {
-        return [
-            [ // Tab
-                'id'       => 'general',
-                'title'    => 'General',
-                'sections' => [
-                    [ // Section
-                        'id'     => 'content',
-                        'title'  => 'General',
-                        'fields' => [],
-                    ],
-                ],
-            ],
-        ];
+        $form = new Form();
+
+        $form->addTab('general', 'General')
+                ->addSection('general', 'General')
+                    ->addField(new \OffbeatWP\Form\Fields\Text('title', 'Title'))
+
+        return $form;
     }
 }

@@ -1,9 +1,7 @@
 <?php
-
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Components\ComponentInterfaceTrait;
-use OffbeatWP\Fields\Helper as FieldsHelper;
 
 class GenericShortcode
 {
@@ -19,7 +17,6 @@ class GenericShortcode
     public function renderShortcode($atts, $content = "")
     {
         $form = $this->componentClass::getForm();
-        $defaultAtts = FieldsHelper::getDefaults($form);
 
         if (!is_array($atts)) {
             $atts = [];

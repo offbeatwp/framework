@@ -45,7 +45,7 @@ class ComponentRepository
 
         $componentSettings = $componentClass::settings();
 
-        add_shortcode('offbeat-' . $componentSettings['slug'], function ($atts, $content = '') use ($app, $componentClass) {
+        add_shortcode($componentSettings['slug'], function ($atts, $content = '') use ($app, $componentClass) {
             $shortcode = $app->container->make(GenericShortcode::class, ['componentClass' => $componentClass]);
             return $shortcode->renderShortcode($atts, $content);
         });
