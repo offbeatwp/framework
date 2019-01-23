@@ -29,3 +29,9 @@ if (!function_exists('assetUrl')) {
         return offbeat('assets')->getUrl($file);
     }
 }
+
+if (!function_exists('setting')) {
+    function setting($key) {
+        return offbeat(\OffbeatWP\Contracts\SiteSettings::class)->get($key);
+    }
+}
