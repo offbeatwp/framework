@@ -7,14 +7,18 @@ class AbstractField implements FieldInterface
     public $label;
     public $attributes = [];
 
-    public function __construct($id, $label)
+    public static function make($id, $label)
     {
-        $this->setId($id);
-        $this->setLabel($label);
+        $field = new static();
+
+        $field->setId($id);
+        $field->setLabel($label);
 
         if (!empty($attr)) {
-            $this->setAttributes($attr);
+            $field->setAttributes($attr);
         }
+
+        return $field;
     }
 
     public function setId($id)

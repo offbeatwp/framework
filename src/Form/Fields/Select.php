@@ -6,8 +6,14 @@ class Select extends AbstractField {
 
     public $options = [];
 
-    public function options($options = []) {
+    public function addOptions($options = []) {
         $this->options = $options;
+
+        return $this;
+    }
+
+    public function addOption($key, $value) {
+        $this->options[$key] = $value;
 
         return $this;
     }

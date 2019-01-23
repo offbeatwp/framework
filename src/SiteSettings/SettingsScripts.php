@@ -11,35 +11,14 @@ class SettingsScripts
         return __('Scripts', 'raow');
     }
 
-    public function fields()
+    public function form()
     {
-        return [[
-            'id'     => 'scripts',
-            'title'  => 'Scripts',
-            'fields' => [
-                [
-                    'name'        => 'scripts_head',
-                    'label'       => 'Head',
-                    'type'        => 'textarea',
-                    'default'     => '',
-                    'placeholder' => '',
-                ],
-                [
-                    'name'        => 'scripts_open_body',
-                    'label'       => 'Body open',
-                    'type'        => 'textarea',
-                    'default'     => '',
-                    'placeholder' => '',
-                ],
-                [
-                    'name'        => 'scripts_footer',
-                    'label'       => 'Footer',
-                    'type'        => 'textarea',
-                    'default'     => '',
-                    'placeholder' => '',
-                ],
-            ],
-        ],
-        ];
+        $form = new \OffbeatWP\Form\Form();
+
+        $form ->addField(\OffbeatWP\Form\Fields\TextArea::make('scripts_head', 'Head'));
+        $form ->addField(\OffbeatWP\Form\Fields\TextArea::make('scripts_open_body', 'Body open'));
+        $form ->addField(\OffbeatWP\Form\Fields\TextArea::make('scripts_footer', 'Footer'));
+
+        return $form;
     }
 }

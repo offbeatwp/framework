@@ -1,6 +1,6 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Text extends AbstractField {
+class TextArea extends AbstractField {
     const FIELD_TYPE = 'textarea';
 }

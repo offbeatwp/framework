@@ -5,7 +5,7 @@ namespace OffbeatWP\Contracts;
 interface SiteSettings {
     public function register();
 
-    public function addSection($class);
+    public function addPage($class);
 
     public function get($key);
 

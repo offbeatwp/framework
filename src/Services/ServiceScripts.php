@@ -16,7 +16,7 @@ class ServiceScripts extends AbstractService
         add_action('body_open',     [$this, 'scriptsBodyOpen']);
         add_action('wp_footer',     [$this, 'scriptsFooter']);
 
-        $settings->addSection(\OffbeatWP\SiteSettings\SettingsScripts::class);
+        $settings->addPage(\OffbeatWP\SiteSettings\SettingsScripts::class);
     }
 
     public function scriptsHead()

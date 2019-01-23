@@ -1,26 +1,29 @@
 <?php
 namespace OffbeatWP\Form;
 
-use OffbeatWP\Form\FieldsContainers\Tab;
-use OffbeatWP\Form\FieldsContainers\Section;
-use OffbeatWP\Form\FieldsContainers\Repeater;
-use OffbeatWP\Form\Fields\FieldInterface;
-use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
-use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use Illuminate\Support\Collection;
+use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
+use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
+use OffbeatWP\Form\FieldsContainers\Repeater;
+use OffbeatWP\Form\FieldsContainers\Section;
+use OffbeatWP\Form\FieldsContainers\Tab;
+use OffbeatWP\Form\Fields\FieldInterface;
 
-class Form extends Collection {
+class Form extends Collection
+{
     private $activeItem;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->activeItem = $this;
     }
 
-    private function add($item) {
+    private function add($item)
+    {
         // If item is Tab and active itme is Section move back to parent
-        
+
         if ($this->getActiveItem() != $this && $item instanceof FieldsContainerInterface) {
-            while($item::LEVEL < $this->getActiveItem()::LEVEL) {
+            while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
                 $this->setActiveItem($this->getActiveItem()->getParent());
             }
         }
@@ -60,7 +63,7 @@ class Form extends Collection {
     public function setActiveItem($item, $setParent = false)
     {
         if ($setParent) {
-             $item->setParent($this->getActiveItem());
+            $item->setParent($this->getActiveItem());
         }
 
         $this->activeItem = $item;
@@ -68,31 +71,36 @@ class Form extends Collection {
         return $this->activeItem;
     }
 
-    public function addTab ($id, $label) {
+    public function addTab($id, $label)
+    {
         $this->add(new Tab($id, $label));
 
         return $this;
     }
 
-    public function addSection ($id, $label) {
+    public function addSection($id, $label)
+    {
         $this->add(new Section($id, $label));
 
         return $this;
     }
 
-    public function addRepeater($id, $label) {
+    public function addRepeater($id, $label)
+    {
         $this->add(new Repeater($id, $label));
 
         return $this;
     }
 
-    public function addField (FieldInterface $field) {
+    public function addField(FieldInterface $field)
+    {
         $this->add($field);
 
         return $this;
     }
 
-    public function addFieldsCollection (FieldsCollectionInterface $fieldsCollection) {
+    public function addFields(FieldsCollectionInterface $fieldsCollection)
+    {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
         });
