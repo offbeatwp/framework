@@ -44,7 +44,7 @@ class {{ classname }} extends AbstractComponent
 
         $form->addTab('general', 'General')
                 ->addSection('general', 'General')
-                    ->addField(new \OffbeatWP\Form\Fields\Text('title', 'Title'));
+                    ->addField(\OffbeatWP\Form\Fields\Text::make('title', 'Title'));
 
         return $form;
     }
