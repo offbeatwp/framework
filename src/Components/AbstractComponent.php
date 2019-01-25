@@ -27,6 +27,29 @@ abstract class AbstractComponent
         return true;
     }
 
+    public static function getSetting($key){
+        if(!method_exists(get_called_class(), 'settings')) return false;
+
+        $componentSettings = static::settings();
+
+        return isset($componentSettings[$key]) ? $componentSettings[$key] : null;
+    }
+
+    public static function getName()
+    {
+        return static::getSetting('name');
+    }
+
+    public static function getSlug()
+    {
+        return static::getSetting('slug');
+    }
+
+    public static function getDescription()
+    {
+        return static::getSetting('description');
+    }
+
     public function getViewsDirectory()
     {
         return $this->getDirectory() . '/views';
