@@ -1,7 +1,8 @@
 <?php
 namespace OffbeatWP\Components;
 
-use OffbeatWP\Fields\Toggle;
+use OffbeatWP\Form\Form;
+use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Views\ViewableTrait;
 
@@ -72,18 +73,13 @@ abstract class AbstractComponent
         if (isset($settings['form']))
             $form = $settings['form'];
 
-        if (isset($settings['variations'])) {
-            array_push($form, [
-                'id'       => 'variations',
-                'title'    => __('Variations', 'offbeatwp'),
-                'sections' => [
-                    [
-                        'id'     => 'variation',
-                        'title'  => __('Variations', 'raow'),
-                        'fields' => Toggle::get($settings['variations'], null, 'variation', __('Variation', 'raow')),
-                    ]
-                ],
-            ]);
+        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
+            $form->addField(
+                Select::make(
+                    'variations',
+                    __('Variations', 'offbeatwp')
+                )->addOptions($settings['variations'])
+            );
         }
 
         return $form;
