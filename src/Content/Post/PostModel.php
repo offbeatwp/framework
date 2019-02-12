@@ -55,6 +55,10 @@ class PostModel implements PostModelInterface
             return $hookValue;
         }
 
+        if (method_exists(WpQueryBuilderModel::class, $method)) {
+            return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
+        }
+        
         return false;
     }
 
