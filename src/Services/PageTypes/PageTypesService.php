@@ -114,7 +114,7 @@ class PageTypesService extends AbstractService
         
         if($terms->isEmpty()) return null;
 
-        $pagePageType = offbeat('post')->get()->getTerms(self::TAXONOMY);
+        $pagePageType = offbeat('post')->get()->getTerms(self::TAXONOMY)->all();
 
         $slug  = '';
         if ( $pagePageType->isNotEmpty() ) {
