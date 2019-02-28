@@ -18,7 +18,7 @@ class Form extends Collection
         $this->activeItem = $this;
     }
 
-    private function add($item)
+    public function add($item)
     {
         // If item is Tab and active itme is Section move back to parent
 
