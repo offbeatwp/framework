@@ -161,7 +161,11 @@ class App
     {
         do_action('before_route_matching');
 
-        $route = offbeat('routes')->findMatch();
+        $route = offbeat('routes')->findUrlMatch();
+        
+        if (!$route) {
+            $route = offbeat('routes')->findMatch();
+        }
 
         if ($route !== false && is_callable($route['actionCallback'])) {
             $parameters = $route['parameters'];

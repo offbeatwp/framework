@@ -11,7 +11,8 @@ class RoutesService extends AbstractService
 
     public function register()
     {
-        add_action('before_route_matching', [$this, 'loadRoutes'], 20);
+        add_action('init', [$this, 'loadRoutes'], 10);
+        add_action('init', [$this, 'urlRoutePreps'], 15);
     }
 
     public function loadRoutes()
@@ -21,5 +22,34 @@ class RoutesService extends AbstractService
         foreach ($routeFiles as $routeFile) {
             require $routeFile;
         }
+    }
+
+    public function urlRoutePreps()
+    {
+        if (!offbeat('routes')->findUrlMatch()) {
+            return null;
+        }
+
+        add_filter('do_parse_request', function ($doParseQuery, $wp) {
+            $wp->query_vars = [];
+            return false;
+        }, 10, 2);
+
+        add_filter('posts_pre_query', function ($posts, \WP_Query $q) {
+            if ($q->is_home() && $q->is_main_query()) {
+                $posts          = [];
+                $q->found_posts = 0;
+            }
+            return $posts;
+        }, 10, 2);
+
+        add_action('pre_handle_404', function ($preHandle404, $query) {
+            global $wp_the_query;
+
+            $wp_the_query->is_singular = false;
+            $wp_the_query->is_home     = false;
+
+            return true;
+        }, 10, 2);
     }
 }
