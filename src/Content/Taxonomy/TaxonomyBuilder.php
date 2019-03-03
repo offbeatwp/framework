@@ -83,6 +83,13 @@ class TaxonomyBuilder
         return $this;
     }
 
+    public function inRest($rest = true)
+    {
+        $this->args['show_in_rest'] = $rest;
+
+        return $this;
+    }
+    
     public function showAdminColumn($showAdminColumn = true) {
         $this->args['show_admin_column'] = $showAdminColumn;
 
