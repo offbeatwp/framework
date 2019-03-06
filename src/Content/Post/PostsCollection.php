@@ -5,9 +5,13 @@ use Illuminate\Support\Collection;
 
 class PostsCollection extends Collection
 {
+    protected $query = null;
+
     public function __construct($items)
     {
         if ($items instanceof \WP_Query) {
+            $this->query = $items;
+
             $postItems = [];
 
             foreach ($items->posts as $post) {
@@ -30,5 +34,9 @@ class PostsCollection extends Collection
     public function getIterator()
     {
         return new WpPostsIterator($this->items);
+    }
+
+    public function getQuery() {
+        return $this->query;
     }
 }
