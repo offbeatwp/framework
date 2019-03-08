@@ -18,7 +18,7 @@ class Relation
         $column1 = 'relation_from';
         $column2 = 'relation_to';
 
-        if ($direction == 'reverve') {
+        if ($direction == 'reverse') {
             $column1 = 'relation_to';
             $column2 = 'relation_from';
         }
@@ -40,7 +40,7 @@ class Relation
 
         $column = 'relation_from';
 
-        if ($direction == 'reverve') {
+        if ($direction == 'reverse') {
             $column = 'relation_to';
         }
 
@@ -61,7 +61,7 @@ class Relation
         $column1 = 'relation_from';
         $column2 = 'relation_to';
 
-        if ($direction == 'reverve') {
+        if ($direction == 'reverse') {
             $column1 = 'relation_to';
             $column2 = 'relation_from';
         }
