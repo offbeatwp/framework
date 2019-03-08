@@ -1,6 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Post\Relations;
 
+use OffbeatWP\Content\Post\WpQueryBuilder;
+
 class HasMany extends HasOneOrMany
 {
     public function get()
