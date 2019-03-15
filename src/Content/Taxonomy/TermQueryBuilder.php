@@ -61,7 +61,7 @@ class TermQueryBuilder
 
     public function findById($id)
     {
-        return $this->findBy('id', $slug);
+        return $this->findBy('id', $id);
     }
 
     public function findBySlug($slug)
