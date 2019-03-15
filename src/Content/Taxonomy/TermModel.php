@@ -50,6 +50,10 @@ class TermModel implements TermModelInterface
         if (!is_null($hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this))) {
             return $hookValue;
         }
+        
+        if (method_exists(TermQueryBuilder::class, $method)) {
+            return (new TermQueryBuilder(static::class))->$method(...$parameters);
+        }
 
         return false;
     }
