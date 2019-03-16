@@ -18,13 +18,21 @@ class TermQueryBuilder
             'taxonomy' => $model::TAXONOMY,
         ];
 
-        if (defined("{$model}::ORDER")) {
-            $this->queryVars['order'] = $model::ORDER;
+        if (method_exists($model, 'defaultQuery')) {
+            $model::defaultQuery($this);
         }
 
-        if (defined("{$model}::ORDER_BY")) {
-            $this->queryVars['orderby'] = $model::ORDER_BY;
+        $order = null;
+        if (defined("{$model}::ORDER")) {
+            $order = $model::ORDER;
         }
+
+        $orderBy = null;
+        if (defined("{$model}::ORDER_BY")) {
+            $orderBy = $model::ORDER_BY;
+        }
+
+        $this->order($orderBy, $order);
     }
 
     public function get()
