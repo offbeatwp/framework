@@ -51,6 +51,13 @@ class WpQueryBuilder
 
         return $this->first();
     }
+    
+    public function findByName($name)
+    {
+        $this->queryVars['name'] = $name;
+
+        return $this->first();
+    }
 
     public function where($args)
     {
