@@ -10,7 +10,7 @@ use OffbeatWP\Content\Post\Relations\HasOne;
 class PostModel implements PostModelInterface
 {
     public $wpPost;
-    public $id;
+    public $metaInput = [];
 
     protected $metas = false;
 
@@ -19,16 +19,19 @@ class PostModel implements PostModelInterface
         __callStatic as macroCallStatic;
     }
 
-    public function __construct($post)
+    public function __construct($post = null)
     {
-        if ($post instanceof \WP_Post) {
+        
+        if (is_null($post)) {
+            $this->wpPost = (object)[];
+            $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
+            $this->wpPost->post_status = 'publish';
+            $this->wpPost->comment_status = 'closed';
+            $this->wpPost->ping_status = 'closed';
+        } elseif ($post instanceof \WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
-        }
-
-        if (isset($this->wpPost)) {
-            $this->id = $this->wpPost->ID;
         }
     }
 
@@ -66,12 +69,12 @@ class PostModel implements PostModelInterface
 
     public function getId()
     {
-        return $this->id;
+        return isset($this->wpPost->ID) ? $this->wpPost->ID : null;
     }
 
     public function getTitle()
     {
-        return apply_filters('the_title', $this->wpPost->post_title, $this->id);
+        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
 
     public function getContent()
@@ -108,7 +111,7 @@ class PostModel implements PostModelInterface
 
     public function getPermalink()
     {
-        return get_permalink($this->id);
+        return get_permalink($this->getId());
     }
 
     public function getPostDate($format = '')
@@ -147,7 +150,7 @@ class PostModel implements PostModelInterface
     public function getMetas()
     {
         if ($this->metas === false) {
-            $this->metas = get_post_meta($this->id);
+            $this->metas = get_post_meta($this->getId());
         }
         return $this->metas;
     }
@@ -164,14 +167,14 @@ class PostModel implements PostModelInterface
 
     public function setMeta($key, $value)
     {
-        return update_post_meta($this->id, $key, $value);
+        $this->metaInput[$key] = $value;
     }
 
     public function getTerms($taxonomy, $args = [])
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
-        return $model::whereRelatedToPost($this->id);
+        return $model::whereRelatedToPost($this->getId());
     }
 
     public function hasFeaturedImage()
@@ -194,6 +197,16 @@ class PostModel implements PostModelInterface
         return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
     }
 
+    public function setTitle($title)
+    {
+        $this->wpPost->post_title = $title;
+    }
+
+    public function setPostName($postName)
+    {
+        $this->wpPost->post_name = $postName;
+    }   
+
     /* Display methods */
 
     public function setup()
@@ -215,12 +228,24 @@ class PostModel implements PostModelInterface
 
     public function delete($force = true)
     {
-        return wp_delete_post($this->id, $force);
+        return wp_delete_post($this->getId(), $force);
     }
 
     public function save()
-    {
-        return wp_update_post($this->wpPost);
+    {   
+        if (!empty($this->metaInput)) {
+            $this->wpPost->meta_input = $this->metaInput;
+        }
+
+        if (is_null($this->getId())) {
+            $postId = wp_insert_post((array)$this->wpPost);
+
+            $this->wpPost = get_post($postId);
+
+            return $postId;
+        } else {
+            return wp_update_post($this->wpPost);
+        }
     }
 
     /* Relations */
