@@ -163,7 +163,7 @@ class WpQueryBuilder
 
     public function hasRelationshipWith($model, $key, $direction = null) {
         $this->queryVars['relationships'] = [
-            'id' => $model->id,
+            'id' => $model->getId(),
             'key' => $key,
             'direction' => $direction,
         ];
