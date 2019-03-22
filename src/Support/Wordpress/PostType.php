@@ -28,4 +28,9 @@ class PostType
 
         return self::DEFAULT_POST_MODEL;
     }
+
+    public function getPostTypeByModel($model)
+    {
+        return array_search($model, $this->postTypeModels);
+    }
 }
