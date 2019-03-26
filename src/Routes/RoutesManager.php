@@ -80,7 +80,7 @@ class RoutesManager
         $matcher = new UrlMatcher($this->routesCollection, $context);
 
         try {
-            $parameters = $matcher->match($request->getRequestUri());
+            $parameters = $matcher->match($request->getPathInfo());
 
             return [
                 'actionCallback' => $parameters['_callback'],
