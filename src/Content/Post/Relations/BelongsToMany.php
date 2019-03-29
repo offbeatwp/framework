@@ -5,12 +5,16 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 
 class BelongsToMany extends BelongsToOneOrMany
 {
-    public function get()
+    public function query()
     {
         return (new WpQueryBuilder())
             ->wherePostType('any')
-            ->hasRelationshipWith($this->model, $this->key, 'reverse')
-            ->all();
+            ->hasRelationshipWith($this->model, $this->key, 'reverse');
+    }
+
+    public function get()
+    {
+        return $this->query()->all();
     }
 
     public function dissociateAll()
