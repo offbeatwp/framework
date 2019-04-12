@@ -232,11 +232,11 @@ class PostModel implements PostModelInterface
     }
     
     public function trash(){
-       return wp_trash_post($this->getId() ); 
+       return wp_trash_post($this->getId()); 
     }
     
     public function untrash(){
-        return wp_untrash_post($this->getId() )
+        return wp_untrash_post($this->getId());
     }
     
     
