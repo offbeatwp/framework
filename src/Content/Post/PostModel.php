@@ -230,6 +230,10 @@ class PostModel implements PostModelInterface
     {
         return wp_delete_post($this->getId(), $force);
     }
+    
+    public function trash(){
+       wp_trash_post( $this->getId() ); 
+    }
 
     public function save()
     {   
