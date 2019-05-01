@@ -12,7 +12,6 @@ class ServiceEnqueueScripts extends AbstractService
         }
 
         add_action('wp_enqueue_scripts',    [$this, 'enqueueScripts'], 1);
-        add_filter('script_loader_src',     [$this, 'scriptLoaderSrc'], 10, 2);
     }
 
     public function enqueueScripts()
@@ -22,6 +21,7 @@ class ServiceEnqueueScripts extends AbstractService
         wp_deregister_script('wp-embed');
 
         wp_enqueue_style('theme-style', assetUrl('main.css'), [], false, false);
+        wp_enqueue_script('theme-script', assetUrl('main.js'), ['jquery'], false, true);
 
         wp_scripts()->add_data('jquery', 'group', 1);
         wp_scripts()->add_data('jquery-core', 'group', 1);
@@ -34,23 +34,9 @@ class ServiceEnqueueScripts extends AbstractService
         wp_scripts()->add_data('debug-bar-js', 'group', 1);
 
         wp_localize_script(
-            'jquery-core', 
+            'theme-script', 
             'wp_js',
             apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')])
         );
-    }
-
-    public function scriptLoaderSrc($src, $handle)
-    {
-        switch ($handle) {
-            case 'jquery-core':
-                $src = assetUrl('main.js');
-                break;
-            case 'jquery-migrate':
-                $src = false;
-                break;
-        }
-
-        return $src;
     }
 }
