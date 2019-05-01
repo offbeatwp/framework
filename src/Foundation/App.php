@@ -104,7 +104,7 @@ class App
 
     public function getService($serviceClass)
     {
-        if ($this->isServiceLoaded($serviceClass)) {
+        if ($this->isServiceInitiated($serviceClass)) {
             return $this->services[$serviceClass];
         }
 
