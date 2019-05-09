@@ -28,8 +28,6 @@ class PostTypeBuilder
         }
         $this->postTypeArgs['rewrite'] = array_merge($this->postTypeArgs['rewrite'], $rewrite);
 
-        var_dump($this->postTypeArgs['rewrite']);
-
         return $this;
     }
 
