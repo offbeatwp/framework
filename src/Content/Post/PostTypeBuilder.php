@@ -26,7 +26,9 @@ class PostTypeBuilder
         if (!isset($this->postTypeArgs['rewrite'])) {
             $this->postTypeArgs['rewrite'] = [];
         }
-        array_push($this->postTypeArgs['rewrite'], $rewrite);
+        $this->postTypeArgs['rewrite'] = array_merge($this->postTypeArgs['rewrite'], $rewrite);
+
+        var_dump($this->postTypeArgs['rewrite']);
 
         return $this;
     }
