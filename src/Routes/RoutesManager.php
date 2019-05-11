@@ -73,7 +73,8 @@ class RoutesManager
 
     public function findUrlMatch()
     {
-        $request = Request::createFromGlobals();
+        // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
+        $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER[''], $_REQUEST, $_COOKIE, [], $_SERVER);
 
         $context = new RequestContext();
         $context->fromRequest($request);
