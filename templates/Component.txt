@@ -3,6 +3,8 @@ namespace {{ namespace }};
 
 use \OffbeatWP\Components\AbstractComponent;
 use \OffbeatWP\Form\Form;
+use \OffbeatWP\AcfLayout\Fields\ComponentsField;
+use \OffbeatWP\Form\Fields\Text;
 
 class {{ classname }} extends AbstractComponent
 {
@@ -13,7 +15,7 @@ class {{ classname }} extends AbstractComponent
             'slug'       => '{{ slug }}',
             'supports'   => [{{ supports }}],
             // 'variations' => self::variations(),
-            // 'form'       => self::form(),
+            'form'       => self::form(),
         ];
     }
 
@@ -42,9 +44,7 @@ class {{ classname }} extends AbstractComponent
     {
         $form = new Form();
 
-        $form->addTab('general', 'General')
-                ->addSection('general', 'General')
-                    ->addField(\OffbeatWP\Form\Fields\Text::make('title', 'Title'));
+        $form->addField(Text::make('utility_classes', __('Utility Classes', 'lynx')));
 
         return $form;
     }
