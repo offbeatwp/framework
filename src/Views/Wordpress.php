@@ -29,6 +29,11 @@ class Wordpress
         return get_language_attributes();
     }
 
+    public function archiveUrl($arg = 'post')
+    {
+        return get_post_type_archive_link($arg);
+    }
+
     public function navMenu($args = [])
     {
         $args['echo'] = false;
