@@ -4,7 +4,7 @@ namespace OffbeatWP\Components;
 use OffbeatWP\AcfCore\FieldsMapper as AcfFieldsMapper;
 use OffbeatWP\Components\ComponentInterfaceTrait;
 use OffbeatWP\Fields\Helper as FieldsHelper;
-
+use OffbeatWP\AcfCore\ComponentFields;
 
 class GenericWidget extends \WP_Widget
 {
@@ -93,14 +93,21 @@ class GenericWidget extends \WP_Widget
     public function registerForm () {
         if( ! function_exists('acf_add_local_field_group') ) return null;
 
-        $form = $this->componentClass::getForm();
+        $fields = ComponentFields::get($this->settings['id_base'], 'acfeditor');
 
-        $fieldsMapper = new AcfFieldsMapper($form);
+        if (!empty($componentComponentForm = $this->componentClass::getForm())) {
+            $fieldsMapper = new AcfFieldsMapper($componentComponentForm);
+            $mappedFields = $fieldsMapper->map();
+
+            if (!empty($mappedFields)) {
+                $fields = array_merge($fields, $mappedFields);
+            }
+        }
 
         acf_add_local_field_group(array (
             'key' => 'group_widget_' . $this->settings['id_base'],
             'title' => 'Widget settings - ' . $this->settings['name'],
-            'fields' => $fieldsMapper->map(),
+            'fields' => $fields,
             'location' => array (
                 array (
                     array (
