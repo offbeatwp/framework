@@ -95,15 +95,6 @@ class GenericWidget extends \WP_Widget
 
         $fields = ComponentFields::get($this->settings['id_base'], 'acfeditor');
 
-        if (!empty($componentComponentForm = $this->componentClass::getForm())) {
-            $fieldsMapper = new AcfFieldsMapper($componentComponentForm);
-            $mappedFields = $fieldsMapper->map();
-
-            if (!empty($mappedFields)) {
-                $fields = array_merge($fields, $mappedFields);
-            }
-        }
-
         acf_add_local_field_group(array (
             'key' => 'group_widget_' . $this->settings['id_base'],
             'title' => 'Widget settings - ' . $this->settings['name'],
