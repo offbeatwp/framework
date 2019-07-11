@@ -61,7 +61,7 @@ class ComponentRepository
             return $this->components[$name];
         }
 
-        throw new \Exception("Component does not exists ({$name})");
+        throw new \Exception("Component does not exist ({$name})");
     }
 
     public function make($name)
