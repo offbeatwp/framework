@@ -5,6 +5,7 @@ class AbstractField implements FieldInterface
 {
     public $id;
     public $label;
+    public $required;
     public $attributes = [];
 
     public static function make($id, $label)
@@ -29,6 +30,11 @@ class AbstractField implements FieldInterface
     public function setLabel($label)
     {
         $this->label = $label;
+    }
+
+    public function setRequired($required)
+    {
+        $this->required = $required;
     }
 
     public function getType()
@@ -59,6 +65,11 @@ class AbstractField implements FieldInterface
     public function getLabel()
     {
         return $this->label;
+    }
+
+    public function getRequired()
+    {
+        return $this->required;
     }
 
     public function setAttribute($key, $value = null)
@@ -123,6 +134,7 @@ class AbstractField implements FieldInterface
             'id'         => $this->getId(),
             'label'      => $this->getLabel(),
             'attributes' => $this->getAttributes(),
+            'required'   => $this->getRequired(),
         ];
     }
 }

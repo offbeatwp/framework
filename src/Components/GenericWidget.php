@@ -3,7 +3,7 @@ namespace OffbeatWP\Components;
 
 use OffbeatWP\AcfCore\FieldsMapper as AcfFieldsMapper;
 use OffbeatWP\Components\ComponentInterfaceTrait;
-use OffbeatWP\Fields\Helper as FieldsHelper;
+use OffbeatWP\Form\Fields\Helper as FieldsHelper;
 use OffbeatWP\AcfCore\ComponentFields;
 
 class GenericWidget extends \WP_Widget
@@ -49,9 +49,8 @@ class GenericWidget extends \WP_Widget
         echo $args['before_widget'];
 
         $form = $this->componentClass::getForm();
-        $defaultAtts = FieldsHelper::getDefaults($form);
 
-        echo $this->render($this->getFieldValues(array_keys($defaultAtts)));
+        echo $this->render($this->getFieldValues($form->getFieldKeys()));
 
         echo $args['after_widget'];
     }

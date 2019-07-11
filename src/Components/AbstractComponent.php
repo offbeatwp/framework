@@ -67,11 +67,15 @@ abstract class AbstractComponent
     {
         if (!method_exists(get_called_class(), 'settings')) return [];
 
-        $form = [];
+        $form = null;
         $settings = static::settings();
 
         if (isset($settings['form']))
             $form = $settings['form'];
+
+        if (!($form instanceof Form)) {
+            $form = new Form();
+        }
 
         if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
             $form->addField(
@@ -81,6 +85,8 @@ abstract class AbstractComponent
                 )->addOptions($settings['variations'])
             );
         }
+
+        $form = apply_filters('offbeatwp/component/form', $form, static::class);
 
         return $form;
     }

@@ -12,13 +12,16 @@ use OffbeatWP\Form\Fields\FieldInterface;
 class Form extends Collection
 {
     private $activeItem;
+    private $fieldKeys = [];
+    private $fieldPrefix = '';
+    public $parent;
 
     public function __construct()
     {
         $this->activeItem = $this;
     }
 
-    public function add($item)
+    public function add($item, $prepend = false)
     {
         // If item is Tab and active itme is Section move back to parent
 
@@ -29,13 +32,18 @@ class Form extends Collection
         }
 
         // If item is of the same type as the active item move back to parent
-        if (get_class($item) == get_class($this->getActiveItem())) {
+        if (get_class($item) == get_class($this->getActiveItem()) && get_class($item) != self::class) {
             $this->setActiveItem($this->getActiveItem()->getParent());
         }
 
         // If active item is the form, push item directly the the items
         if ($this->getActiveItem() === $this) {
-            $this->push($item);
+            if ($prepend) {
+                $this->prepend($item);
+            } else {
+                $this->push($item);
+            }
+
 
             if ($item instanceof FieldsContainerInterface) {
                 $this->setActiveItem($item, true);
@@ -94,6 +102,7 @@ class Form extends Collection
 
     public function addField(FieldInterface $field)
     {
+        $this->fieldKeys[] = $field->getId();
         $this->add($field);
 
         return $this;
@@ -113,6 +122,16 @@ class Form extends Collection
         return 'form';
     }
 
+    public function getFieldPrefix() 
+    {
+        return $this->fieldPrefix;
+    }
+
+    public function setFieldPrefix($fieldPrefix) 
+    {
+        $this->fieldPrefix = $fieldPrefix;
+    }
+
     public function toArray()
     {
         $items = $this->map(function ($item) {
@@ -120,5 +139,30 @@ class Form extends Collection
         });
 
         return $items->toArray();
+    }
+
+    public function getFieldKeys()
+    {
+        return $this->fieldKeys;
+    }
+
+    public function addComponentForm($component, $fieldPrefix) {
+        $activeItem = $this->getActiveItem();
+        $form = clone $component::getForm();
+        $form->setFieldPrefix($fieldPrefix);
+
+        $this->addSection($fieldPrefix, $component::getName())->add($form);
+
+        $this->setActiveItem($activeItem);
+    }
+
+    public function setParent($item)
+    {
+        $this->parent = $item;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
     }
 }
