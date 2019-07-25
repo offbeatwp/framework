@@ -8,13 +8,6 @@ class Http
 
         status_header($code, $description);
 
-        return apply_filters('ofbeatwp/http_status', null, $code);
-
-        // query_posts(['page_id' => 4307]);
-        // the_post();
-
-        // $route = offbeat('routes')->findMatch();
-
-        // return offbeat()->runRoute($route);
+        return apply_filters('offbeatwp/http_status', null, $code);
     }
 }
