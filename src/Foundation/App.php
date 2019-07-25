@@ -40,6 +40,7 @@ class App
     {
         return [
             'assets' => \DI\create(\OffbeatWP\Assets\AssetsManager::class),
+            'http' => \DI\create(\OffbeatWP\Http\Http::class),
         ];
     }
 
@@ -167,6 +168,11 @@ class App
             $route = offbeat('routes')->findMatch();
         }
 
+        echo  $this->runRoute($route);
+    }
+
+    public function runRoute($route)
+    {
         if ($route !== false && is_callable($route['actionCallback'])) {
             $parameters = $route['parameters'];
 
@@ -174,13 +180,13 @@ class App
                 $parameters = $route['parameters']();
             }
 
-            $actionReturn = $this->container->call($route['actionCallback'], $parameters);
+            $actionReturn = container()->call($route['actionCallback'], $parameters);
 
             if (is_array($actionReturn)) {
                 header('Content-type: application/json');
-                echo json_encode($actionReturn);
+                return json_encode($actionReturn);
             } else {
-                echo $actionReturn;
+                return $actionReturn;
             }
 
             return;
