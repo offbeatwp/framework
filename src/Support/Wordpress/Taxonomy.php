@@ -27,4 +27,30 @@ class Taxonomy
 
         return self::DEFAULT_TERM_MODEL;
     }
+
+    public function convertWpPostToModel(\WP_Term $term) {
+        $model = $this->getModelByTaxonomy($term->taxonomy);
+        // $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
+
+        return new $model($term);
+    }
+
+    public function get($term = null) {
+        if ($term instanceof \WP_Term) {
+            return $this->convertWpPostToModel($term);
+        }
+
+        if ($term == null && is_tax()) {
+            return $this->convertWpPostToModel(get_queried_object());
+        }
+
+
+        $term = get_term($term);
+
+        if (!empty($term)) {
+            return $this->convertWpPostToModel($term);
+        }
+
+        return null;
+    }
 }
