@@ -40,7 +40,7 @@ class Taxonomy
             return $this->convertWpPostToModel($term);
         }
 
-        if ($term == null && is_tax()) {
+        if ($term == null && (is_tax() || is_tag() || is_category()) ) {
             return $this->convertWpPostToModel(get_queried_object());
         }
 
