@@ -268,7 +268,7 @@ class PostModel implements PostModelInterface
             $method = $this->relationKeyMethods[$key];
         }
 
-        if (is_callable([$this, $method])) {
+        if (method_exists($this, $method)) {
             return $method;
         }
 
