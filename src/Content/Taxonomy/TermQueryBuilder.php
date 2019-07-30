@@ -37,16 +37,16 @@ class TermQueryBuilder
 
     public function get()
     {
-        $termModels = [];
+        $termModels = new TermsCollection();
         $terms      = (new \WP_Term_Query($this->queryVars))->get_terms();
 
         if (!empty($terms)) {
             foreach ($terms as $term) {
-                array_push($termModels, new $this->model($term));
+                $termModels->push(new $this->model($term));
             }
         }
 
-        return new TermsCollection($termModels);
+        return $termModels;
     }
 
     public function all()

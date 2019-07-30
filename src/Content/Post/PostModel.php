@@ -104,14 +104,29 @@ class PostModel implements PostModelInterface
         return apply_filters('the_content', $content);
     }
 
-    public function getSlug()
+    public function getPostName()
     {
         return $this->wpPost->post_name;
+    }
+
+    public function getSlug()
+    {
+        return $this->getPostName();
     }
 
     public function getPermalink()
     {
         return get_permalink($this->getId());
+    }
+
+    public function getPostType()
+    {
+        return $this->wpPost->post_type;
+    }
+
+    public function isPostType($postType)
+    {
+        return $this->getPostType() == $postType;
     }
 
     public function getPostDate($format = '')

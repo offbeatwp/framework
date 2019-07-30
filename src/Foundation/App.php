@@ -168,12 +168,12 @@ class App
             $route = offbeat('routes')->findMatch();
         }
 
-        echo  $this->runRoute($route);
+        echo $this->runRoute($route);
     }
 
     public function runRoute($route)
     {
-        $route = apply_filters('offbeatwp/route/run', $route);
+        $route = apply_filters('offbeatwp/route/run/init', $route);
 
         if ($route !== false && is_callable($route['actionCallback'])) {
             $parameters = $route['parameters'];
@@ -182,7 +182,13 @@ class App
                 $parameters = $route['parameters']();
             }
 
-            $actionReturn = container()->call($route['actionCallback'], $parameters);
+            $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
+
+            if (!$actionReturn) {
+                $actionReturn = container()->call($route['actionCallback'], $parameters);
+            }
+
+            $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);
 
             if (is_array($actionReturn)) {
                 header('Content-type: application/json');
