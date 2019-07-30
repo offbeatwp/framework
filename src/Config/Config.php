@@ -20,7 +20,7 @@ class Config {
             $configValues = require $configFile;
 
             if (is_multisite() && isset($configValues['sites']) && isset($configValues['sites'][get_current_blog_id()])) {
-                $configValues = array_merge($configValues, $configValues['sites'][get_current_blog_id()]);
+                $configValues = array_merge_recursive($configValues, $configValues['sites'][get_current_blog_id()]);
             }
 
             $this->set(basename($configFile, '.php'), $configValues);
