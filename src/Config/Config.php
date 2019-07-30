@@ -17,7 +17,13 @@ class Config {
         $configFiles = glob($this->app->configPath() . '/*.php');
 
         foreach ($configFiles as $configFile) {
-            $this->set(basename($configFile, '.php'), require $configFile);
+            $configValues = require $configFile;
+
+            if (is_multisite() && isset($configValues['sites']) && isset($configValues['sites'][get_current_blog_id()])) {
+                $configValues = array_merge($configValues, $configValues['sites'][get_current_blog_id()]);
+            }
+
+            $this->set(basename($configFile, '.php'), $configValues);
         }
     }
 

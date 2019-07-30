@@ -173,6 +173,8 @@ class App
 
     public function runRoute($route)
     {
+        $route = apply_filters('offbeatwp/route/run', $route);
+
         if ($route !== false && is_callable($route['actionCallback'])) {
             $parameters = $route['parameters'];
 

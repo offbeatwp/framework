@@ -83,6 +83,10 @@ class RoutesManager
         try {
             $parameters = $matcher->match($request->getPathInfo());
 
+            if (apply_filters('offbeatwp/route/match/url', true, $matcher)) {
+                throw new Exception('Route not match (override)');
+            }
+
             return [
                 'actionCallback' => $parameters['_callback'],
                 'parameters'     => $parameters,
@@ -95,7 +99,10 @@ class RoutesManager
     public function findMatch()
     {
         foreach ($this->actions as $action) {
-            if ($action['checkCallback']()) {
+            if (
+                apply_filters('offbeatwp/route/match/wp', true, $action) && 
+                $action['checkCallback']()
+            ) {
                 return $action;
             }
 
