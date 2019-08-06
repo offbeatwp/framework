@@ -29,7 +29,7 @@ class GenericWidget extends \WP_Widget
 
         $componentSettings = $componentClass::settings();
 
-        add_action('admin_init', [$this, 'registerForm']);
+        add_action('init', [$this, 'registerForm']);
     }
 
     public function widget($args, $instance)
@@ -48,9 +48,7 @@ class GenericWidget extends \WP_Widget
     {
         echo $args['before_widget'];
 
-        $form = $this->componentClass::getForm();
-
-        echo $this->render($this->getFieldValues($form->getFieldKeys()));
+        echo $this->render($this->getFieldValues());
 
         echo $args['after_widget'];
     }
@@ -78,9 +76,11 @@ class GenericWidget extends \WP_Widget
         return get_field($key, $this->widgetId);
     }
 
-    public function getFieldValues($keys)
+    public function getFieldValues()
     {
         $settings = (object)[];
+
+        $keys = array_keys(get_fields($this->widgetId));
 
         foreach ($keys as $key) {
             $settings->{$key} = $this->get_field($key);
