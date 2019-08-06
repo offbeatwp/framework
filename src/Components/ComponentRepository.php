@@ -15,31 +15,32 @@ class ComponentRepository
         ]);
 
         if ($componentClass::supports('widget')) {
-            $this->registerWidget($componentClass);
+            $this->registerWidget($name, $componentClass);
         }
 
         if ($componentClass::supports('shortcode')) {
-            $this->registerShortcode($componentClass);
+            $this->registerShortcode($name, $componentClass);
         }
 
         $this->components[$name] = $componentClass;
     }
 
-    public function registerWidget($componentClass)
+    public function registerWidget($name, $componentClass)
     {
         $componentSettings = $componentClass::settings();
 
-        $widget_settings = [
-            'id_base' => $componentSettings['slug'],
-            'name'    => $componentSettings['name'],
+        $widgetSettings = [
+            'id_base'           => $componentSettings['slug'],
+            'name'              => $componentSettings['name'],
+            'component_name'    => $name,
         ];
 
-        $widget = new GenericWidget($widget_settings, $componentClass);
+        $widget = new GenericWidget($widgetSettings, $componentClass);
 
         register_widget($widget);
     }
 
-    public function registerShortcode($componentClass)
+    public function registerShortcode($name, $componentClass)
     {
         $app = offbeat();
 

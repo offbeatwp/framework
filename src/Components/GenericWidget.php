@@ -92,7 +92,7 @@ class GenericWidget extends \WP_Widget
     public function registerForm () {
         if( ! function_exists('acf_add_local_field_group') ) return null;
 
-        $fields = ComponentFields::get($this->settings['id_base'], 'acfeditor');
+        $fields = ComponentFields::get($this->settings['component_name'], 'acfeditor');
 
         acf_add_local_field_group(array (
             'key' => 'group_widget_' . $this->settings['id_base'],
