@@ -83,7 +83,7 @@ class RoutesManager
         try {
             $parameters = $matcher->match($request->getPathInfo());
 
-            if (apply_filters('offbeatwp/route/match/url', true, $matcher)) {
+            if (!apply_filters('offbeatwp/route/match/url', true, $matcher)) {
                 throw new Exception('Route not match (override)');
             }
 
