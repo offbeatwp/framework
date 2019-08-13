@@ -222,6 +222,29 @@ class PostModel implements PostModelInterface
         $this->wpPost->post_name = $postName;
     }   
 
+    public function getParentId()
+    {
+        if ($this->wpPost->post_parent) {
+            return $this->wpPost->post_parent;
+        }
+
+        return null;
+    }
+
+    public function getParent()
+    {
+        if (empty($this->getParentId())) {
+            return null;
+        }
+
+        return new static($this->getParentId());
+    }
+
+    public function getChilds()
+    {
+        return static::where(['post_parent' => $this->getId()])->all();
+    }
+
     /* Display methods */
 
     public function setup()
