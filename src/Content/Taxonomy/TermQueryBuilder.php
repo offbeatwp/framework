@@ -131,7 +131,7 @@ class TermQueryBuilder
         return $this;
     }
 
-    public function order($order = null, $direction = null)
+    public function order($orderBy = null, $direction = null)
     {
         if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
