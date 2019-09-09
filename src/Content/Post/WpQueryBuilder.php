@@ -141,6 +141,22 @@ class WpQueryBuilder
         return $this;
     }
 
+    public function whereIdNotIn($ids) {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        $this->queryVars['post__not_in'] = $ids;
+    }
+
+    public function whereIdIn($ids) {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        $this->queryVars['post__in'] = $ids;
+    }
+
     public function order($orderBy = null, $direction = null) {
         if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
