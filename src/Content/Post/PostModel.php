@@ -231,6 +231,15 @@ class PostModel implements PostModelInterface
         return null;
     }
 
+    public function hasParent()
+    {
+        if (!is_null($this->getParentId())) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getParent()
     {
         if (empty($this->getParentId())) {
@@ -243,6 +252,25 @@ class PostModel implements PostModelInterface
     public function getChilds()
     {
         return static::where(['post_parent' => $this->getId()])->all();
+    }
+
+    public function getAncestorIds()
+    {
+        return get_post_ancestors($this->getId());
+    }
+
+    public function getAncestors()
+    {
+        if ($this->hasParent()) {
+            $ancestors = collect();
+            foreach ($this->getAncestorIds() as $ancestorId) {
+                $ancestors->push(offbeat('post')->get($ancestorId));
+            }
+
+            return $ancestors;
+        }
+
+        return false;
     }
 
     /* Display methods */
