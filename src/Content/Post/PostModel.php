@@ -183,6 +183,8 @@ class PostModel implements PostModelInterface
     public function setMeta($key, $value)
     {
         $this->metaInput[$key] = $value;
+
+        return $this;
     }
 
     public function getTerms($taxonomy, $args = [])
