@@ -30,6 +30,12 @@ class RoutesService extends AbstractService
             return null;
         }
 
+        add_action('parse_query', function ($query) {
+            if ($query->is_main_query()) {
+                $query->is_page = false;
+            }
+        });
+
         add_filter('do_parse_request', function ($doParseQuery, $wp) {
             $wp->query_vars = [];
             return false;
