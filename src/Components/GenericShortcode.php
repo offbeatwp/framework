@@ -22,6 +22,10 @@ class GenericShortcode
             $atts = [];
         }
 
+        if (!empty($content)) {
+            $atts['content'] = $content;
+        }
+
         if (!empty($defaultAtts)) {
             $atts = array_merge($defaultAtts, $atts);
         }
