@@ -1,8 +1,6 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\Post\PostsCollection;
-
 class WpQueryBuilder
 {
     protected $queryVars = [];
@@ -169,6 +167,12 @@ class WpQueryBuilder
             $this->queryVars['order'] = $direction;
         }
 
+        return $this;
+    }
+    
+    public function paginated() {
+        $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+        $this->queryVars['paged'] = $paged;
         return $this;
     }
 
