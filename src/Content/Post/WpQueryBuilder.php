@@ -21,14 +21,9 @@ class WpQueryBuilder
 
     public function get()
     {
-        $postModels = [];
         $posts = new \WP_Query($this->queryVars);
 
-        if (!empty($posts->posts)) foreach ($posts->posts as $post) {
-            array_push($postModels, $this->postToModel($post));
-        }
-
-        return new PostsCollection($postModels);
+        return new PostsCollection($posts);
     }
 
     public function take($numberOfItems)
