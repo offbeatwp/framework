@@ -194,6 +194,11 @@ class PostModel implements PostModelInterface
         return $model::whereRelatedToPost($this->getId());
     }
 
+    public function hasTerm($term, $taxonomy)
+    {
+        return has_term($term, $taxonomy, $this->getId());
+    }
+
     public function hasFeaturedImage()
     {
         return has_post_thumbnail($this->wpPost);

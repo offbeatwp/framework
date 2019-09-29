@@ -17,18 +17,13 @@ trait ViewableTrait
         $this->view->addTemplatePath($directory . '/views');
     }
 
-    public function setRecursiveParentViewsPath()
+    public function setRecursiveViewsPath($path, $depth = 5)
     {
-        $reflector = new \ReflectionClass($this);
-        $fn        = $reflector->getFileName();
-
-        $path = dirname($fn);
-
         $itemI = 0;
         while (true) {
             $folderName = basename($path);
 
-            if ($folderName == 'app' || $itemI > 10) {
+            if ($folderName == 'app' || $itemI > $depth) {
                 break;
             }
 
@@ -37,10 +32,20 @@ trait ViewableTrait
                 $this->view->addTemplatePath($viewsPath);
             }
 
-            $path       = dirname($path);
+            $path = dirname($path);
 
             $itemI++;
         }
+    }
+
+    public function setRecursiveParentViewsPath()
+    {
+        $reflector = new \ReflectionClass($this);
+        $fn        = $reflector->getFileName();
+
+        $path = dirname($fn);
+
+        $this->setRecursiveViewsPath($path, 10);
     }
 
     public function setModuleViewsPath()
