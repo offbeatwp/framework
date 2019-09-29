@@ -1,8 +1,6 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\Post\PostsCollection;
-
 class WpQueryBuilder
 {
     protected $queryVars = [];
@@ -21,14 +19,9 @@ class WpQueryBuilder
 
     public function get()
     {
-        $postModels = [];
         $posts = new \WP_Query($this->queryVars);
 
-        if (!empty($posts->posts)) foreach ($posts->posts as $post) {
-            array_push($postModels, $this->postToModel($post));
-        }
-
-        return new PostsCollection($postModels);
+        return new PostsCollection($posts);
     }
 
     public function take($numberOfItems)
@@ -174,6 +167,12 @@ class WpQueryBuilder
             $this->queryVars['order'] = $direction;
         }
 
+        return $this;
+    }
+    
+    public function paginated() {
+        $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+        $this->queryVars['paged'] = $paged;
         return $this;
     }
 

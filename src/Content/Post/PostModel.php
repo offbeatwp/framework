@@ -280,6 +280,34 @@ class PostModel implements PostModelInterface
         return false;
     }
 
+    public function getPreviousPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
+    {
+        return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
+
+    }
+
+    public function getNextPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
+    {
+        return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
+    }
+
+
+    public function getAdjacentPost($inSameTerm = false, $excludedTerms = '', $previous = true, $taxonomy = 'category') {
+        $currentPost = $GLOBALS['post'];
+
+        $GLOBALS['post'] = $this->wpPost;
+
+        $adjacentPost = get_adjacent_post( $inSameTerm, $excludedTerms, $previous, $taxonomy );
+
+        $GLOBALS['post'] = $currentPost;
+
+        if (!empty($adjacentPost)) {
+            return offbeat('post')->convertWpPostToModel($adjacentPost);
+        }
+
+        return false;
+    }
+
     /* Display methods */
 
     public function setup()
