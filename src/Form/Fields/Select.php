@@ -7,7 +7,7 @@ class Select extends AbstractField {
     public $options = [];
 
     public function addOptions($options = []) {
-        $this->options = $options;
+        $this->options = array_merge($this->options, $options);
 
         return $this;
     }
