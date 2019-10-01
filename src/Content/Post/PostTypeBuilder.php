@@ -1,8 +1,11 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use Illuminate\Support\Traits\Macroable;
+
 class PostTypeBuilder
 {
+    use Macroable;
 
     private $postType     = null;
     private $postTypeArgs = [];
@@ -19,6 +22,11 @@ class PostTypeBuilder
         ];
 
         return $this;
+    }
+
+    public function getPostType()
+    {
+        return $this->postType;
     }
 
     public function rewrite($rewrite)
