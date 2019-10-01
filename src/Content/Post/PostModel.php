@@ -65,6 +65,28 @@ class PostModel implements PostModelInterface
         return false;
     }
 
+    public function __get($name)
+    {
+        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
+
+        if (method_exists($this, $methodName)) {
+            return $this->$methodName();
+        }
+
+        return null;
+    }
+
+    public function __isset($name)
+    {
+        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
+
+        if (method_exists($this, $methodName)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /* Attribute methods */
 
     public function getId()
