@@ -23,5 +23,6 @@ class Select extends AbstractField {
             return call_user_func($this->options);
         }
         return $this->options;
+ 
     }
 }
