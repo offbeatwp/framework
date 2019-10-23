@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
@@ -21,9 +22,9 @@ class PostModel implements PostModelInterface
 
     public function __construct($post = null)
     {
-        
+
         if (is_null($post)) {
-            $this->wpPost = (object)[];
+            $this->wpPost = (object) [];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = 'publish';
             $this->wpPost->comment_status = 'closed';
@@ -61,7 +62,7 @@ class PostModel implements PostModelInterface
         if (method_exists(WpQueryBuilderModel::class, $method)) {
             return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
         }
-        
+
         return false;
     }
 
@@ -156,8 +157,12 @@ class PostModel implements PostModelInterface
         return get_the_date($format, $this->wpPost);
     }
 
-    public function getExcerpt()
+    public function getExcerpt($formatted = true)
     {
+        if (!$formatted) {
+            return get_the_excerpt($this->wpPost);
+        }
+
         $currentPost = $GLOBALS['post'];
 
         $GLOBALS['post'] = $this->wpPost;
@@ -196,8 +201,8 @@ class PostModel implements PostModelInterface
     {
         if (isset($this->getMetas()[$key])) {
             return $single && is_array($this->getMetas()[$key])
-            ? reset($this->getMetas()[$key])
-            : $this->getMetas()[$key];
+                ? reset($this->getMetas()[$key])
+                : $this->getMetas()[$key];
         }
         return null;
     }
@@ -249,7 +254,7 @@ class PostModel implements PostModelInterface
     public function setPostName($postName)
     {
         $this->wpPost->post_name = $postName;
-    }   
+    }
 
     public function getParentId()
     {
@@ -305,7 +310,6 @@ class PostModel implements PostModelInterface
     public function getPreviousPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
-
     }
 
     public function getNextPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
@@ -314,12 +318,13 @@ class PostModel implements PostModelInterface
     }
 
 
-    public function getAdjacentPost($inSameTerm = false, $excludedTerms = '', $previous = true, $taxonomy = 'category') {
+    public function getAdjacentPost($inSameTerm = false, $excludedTerms = '', $previous = true, $taxonomy = 'category')
+    {
         $currentPost = $GLOBALS['post'];
 
         $GLOBALS['post'] = $this->wpPost;
 
-        $adjacentPost = get_adjacent_post( $inSameTerm, $excludedTerms, $previous, $taxonomy );
+        $adjacentPost = get_adjacent_post($inSameTerm, $excludedTerms, $previous, $taxonomy);
 
         $GLOBALS['post'] = $currentPost;
 
@@ -353,25 +358,27 @@ class PostModel implements PostModelInterface
     {
         return wp_delete_post($this->getId(), $force);
     }
-    
-    public function trash(){
-       return wp_trash_post($this->getId()); 
+
+    public function trash()
+    {
+        return wp_trash_post($this->getId());
     }
-    
-    public function untrash(){
+
+    public function untrash()
+    {
         return wp_untrash_post($this->getId());
     }
-    
-    
+
+
 
     public function save()
-    {   
+    {
         if (!empty($this->metaInput)) {
             $this->wpPost->meta_input = $this->metaInput;
         }
 
         if (is_null($this->getId())) {
-            $postId = wp_insert_post((array)$this->wpPost);
+            $postId = wp_insert_post((array) $this->wpPost);
 
             $this->wpPost = get_post($postId);
 
@@ -417,5 +424,4 @@ class PostModel implements PostModelInterface
     {
         return new BelongsToMany($this, $key);
     }
-
 }
