@@ -114,21 +114,28 @@ class PostTypeBuilder
 
     public function inMenu($menu)
     {
-       $this->postTypeArgs['show_in_menu'] = $menu;
+        $this->postTypeArgs['show_in_menu'] = $menu;
+
+        return $this;
+    }
+
+    public function taxonomies($taxonomies)
+    {
+        $this->postTypeArgs['taxonomies'] = $taxonomies;
 
         return $this;
     }
 
     public function inRest($showInRest = true)
     {
-       $this->postTypeArgs['show_in_rest'] = $showInRest;
+        $this->postTypeArgs['show_in_rest'] = $showInRest;
 
         return $this;
     }
 
     public function position($position = null)
     {
-       $this->postTypeArgs['position'] = $position;
+        $this->postTypeArgs['position'] = $position;
 
         return $this;
     }
