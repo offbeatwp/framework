@@ -140,6 +140,8 @@ class WpQueryBuilder
         }
 
         $this->queryVars['post__not_in'] = $ids;
+
+        return $this;
     }
 
     public function whereIdIn($ids) {
@@ -148,6 +150,8 @@ class WpQueryBuilder
         }
 
         $this->queryVars['post__in'] = $ids;
+
+        return $this;
     }
 
     public function order($orderBy = null, $direction = null) {
