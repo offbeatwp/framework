@@ -30,29 +30,29 @@ class RoutesManager
         $this->actions = array_merge($action, $this->actions);
     }
 
-    public function get($route, $actionCallback, $parameters = [])
+    public function get($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], [], [], '', [], ['GET']);
+        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['GET']);
     }
 
-    public function post($route, $actionCallback, $parameters = [])
+    public function post($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], [], [], '', [], ['POST']);
+        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['POST']);
     }
 
-    public function put($route, $actionCallback, $parameters = [])
+    public function put($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], [], [], '', [], ['PUT']);
+        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['PUT']);
     }
 
-    public function patch($route, $actionCallback, $parameters = [])
+    public function patch($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], [], [], '', [], ['PATCH']);
+        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['PATCH']);
     }
 
-    public function delete($route, $actionCallback, $parameters = [])
+    public function delete($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], [], [], '', [], ['DELETE']);
+        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['DELETE']);
     }
 
     public function addRoute(string $path, array $defaults = [], array $requirements = [], array $options = [],  ? string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
