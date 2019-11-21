@@ -44,9 +44,7 @@ abstract class AbstractModule extends AbstractService
 
         if (!empty($registerableComponents)) {
             foreach ($registerableComponents as $name => $class) {
-                $componentName = lcfirst($this->getName()) . '.' . lcfirst($name);
-
-                offbeat('components')->register($componentName, $class);
+                offbeat('components')->register($class::getSlug(), $class);
             }
         }
     }
