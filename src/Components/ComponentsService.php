@@ -20,7 +20,7 @@ class ComponentsService extends AbstractService
 
         if (!empty($components)) {
             foreach ($components as $component => $class) {
-                container('components')->register(lcfirst($component), $class);
+                container('components')->register($class::getSlug(), $class);
             }
         }
     }
