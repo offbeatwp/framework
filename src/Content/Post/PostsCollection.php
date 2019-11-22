@@ -9,7 +9,7 @@ class PostsCollection extends Collection
 
     public function __construct($items)
     {
-        if ($items instanceof \WP_Query) {
+        if (is_object($items)) {
             $this->query = $items;
 
             $postItems = [];
