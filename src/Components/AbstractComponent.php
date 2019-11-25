@@ -51,6 +51,11 @@ abstract class AbstractComponent
         return static::getSetting('description');
     }
 
+    public static function getCategory()
+    {
+        return static::getSetting('category');
+    }
+
     public function getViewsDirectory()
     {
         return $this->getDirectory() . '/views';
