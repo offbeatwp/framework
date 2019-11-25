@@ -46,7 +46,13 @@ class ComponentRepository
 
         $componentSettings = $componentClass::settings();
 
-        add_shortcode($componentSettings['slug'], function ($atts, $content = '') use ($app, $componentClass) {
+        $tag = $componentClass::getSetting('shortcode');
+
+        if (empty($tag)) {
+            $tag = $componentClass::getSlug();
+        }
+
+        add_shortcode($tag, function ($atts, $content = '') use ($app, $componentClass) {
             $shortcode = $app->container->make(GenericShortcode::class, ['componentClass' => $componentClass]);
             return $shortcode->renderShortcode($atts, $content);
         });
