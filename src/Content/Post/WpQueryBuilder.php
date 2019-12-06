@@ -127,6 +127,8 @@ class WpQueryBuilder
                 'value'   => $value,
                 'compare' => $compare,
             ];
+        } else {
+            $parameters = $key;
         }
 
         array_push($this->queryVars['meta_query'], $parameters);

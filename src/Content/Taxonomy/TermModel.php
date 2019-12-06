@@ -83,6 +83,11 @@ class TermModel implements TermModelInterface
         return get_term_link($this->wpTerm);
     }
 
+    public function getTaxonomy()
+    {
+        return $this->wpTerm->taxonomy;
+    }
+
     public function getParentId()
     {
         return ($this->wpTerm->parent) ? $this->wpTerm->parent : false;
