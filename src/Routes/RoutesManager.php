@@ -13,6 +13,7 @@ class RoutesManager
     protected $routesCollection;
     protected $routesContext;
     protected $routeIterator = 0;
+    protected $lastMatchRoute;
 
     public function __construct()
     {
@@ -87,6 +88,8 @@ class RoutesManager
                 throw new Exception('Route not match (override)');
             }
 
+            $this->lastMatchRoute = $parameters['_route'];
+
             return [
                 'actionCallback' => $parameters['_callback'],
                 'parameters'     => $parameters,
@@ -109,6 +112,15 @@ class RoutesManager
         }
 
         return false;
+    }
+
+    public function removeLastMatchRoute()
+    {
+        if (isset($this->lastMatchRoute) && !empty($this->lastMatchRoute)) {
+            error_log($this->lastMatchRoute);
+
+            $this->routesCollection->remove($this->lastMatchRoute);
+        }
     }
 
     public function getNextRouteName()
