@@ -148,7 +148,12 @@ class Form extends Collection
 
     public function addComponentForm($component, $fieldPrefix) {
         $activeItem = $this->getActiveItem();
-        $form = clone $component::getForm();
+
+        if (!is_object($componentForm = $component::getForm())) {
+            return ;
+        }
+
+        $form = clone $componentForm;
         $form->setFieldPrefix($fieldPrefix);
 
         $this->addSection($fieldPrefix, $component::getName())->add($form);

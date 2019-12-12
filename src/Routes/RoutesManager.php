@@ -33,27 +33,32 @@ class RoutesManager
 
     public function get($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['GET']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['GET']);
     }
 
     public function post($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['POST']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['POST']);
     }
 
     public function put($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['PUT']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['PUT']);
     }
 
     public function patch($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['PATCH']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['PATCH']);
     }
 
     public function delete($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['DELETE']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['DELETE']);
     }
 
     public function addRoute(string $path, array $defaults = [], array $requirements = [], array $options = [],  ? string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
@@ -117,8 +122,6 @@ class RoutesManager
     public function removeLastMatchRoute()
     {
         if (isset($this->lastMatchRoute) && !empty($this->lastMatchRoute)) {
-            error_log($this->lastMatchRoute);
-
             $this->routesCollection->remove($this->lastMatchRoute);
         }
     }

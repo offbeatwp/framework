@@ -168,6 +168,8 @@ class App
             $route = offbeat('routes')->findMatch();
         }
 
+        error_log(print_r($GLOBALS['post'], true));
+
         try {
             $output = $this->runRoute($route);
 
@@ -178,6 +180,7 @@ class App
             echo $output;
         } catch (\Exception $e) {
             offbeat('routes')->removeLastMatchRoute();
+
 
             $this->run($config);
         }

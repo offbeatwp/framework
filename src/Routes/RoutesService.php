@@ -26,7 +26,22 @@ class RoutesService extends AbstractService
 
     public function urlRoutePreps()
     {
-        if (!offbeat('routes')->findUrlMatch()) {
+        $preventParseRequest = true;
+
+        if (!($urlMatch = offbeat('routes')->findUrlMatch())) {
+            return null;
+        }
+
+        if (
+            is_array($urlMatch) && 
+            isset($urlMatch['parameters']) && 
+            isset($urlMatch['parameters']['preventParseRequest']) && 
+            is_bool($urlMatch['parameters']['preventParseRequest'])
+        ) {
+            $preventParseRequest = $urlMatch['parameters']['preventParseRequest'];
+        }
+
+        if (!$preventParseRequest) {
             return null;
         }
 
