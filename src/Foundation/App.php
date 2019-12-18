@@ -168,8 +168,6 @@ class App
             $route = offbeat('routes')->findMatch();
         }
 
-        error_log(print_r($GLOBALS['post'], true));
-
         try {
             $output = $this->runRoute($route);
 
