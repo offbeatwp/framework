@@ -129,7 +129,9 @@ class WpQueryBuilder
             ];
         }
 
-        array_push($this->queryVars['meta_query'], $parameters);
+        if (isset($parameters)) {
+            array_push($this->queryVars['meta_query'], $parameters);
+        }
 
         return $this;
     }
