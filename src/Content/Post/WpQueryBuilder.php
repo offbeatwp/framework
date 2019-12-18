@@ -41,6 +41,7 @@ class WpQueryBuilder
     public function findById($id)
     {
         $this->queryVars['p'] = $id;
+        $this->queryVars['post_type'] = 'any';
 
         return $this->first();
     }
