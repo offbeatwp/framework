@@ -106,7 +106,9 @@ class TermQueryBuilder
             $this->queryVars['meta_query'] = [];
         }
 
-        if (!is_array($key)) {
+        $parameters = $key;
+
+        if (!is_array($parameters)) {
             $parameters = [
                 'key'     => $key,
                 'value'   => $value,
