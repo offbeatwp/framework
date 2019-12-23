@@ -133,10 +133,6 @@ class WpQueryBuilder
 
         array_push($this->queryVars['meta_query'], $parameters);
 
-        echo "<pre>";
-        var_dump($this->queryVars['meta_query']);
-        echo "</pre>";
-
         return $this;
     }
 
