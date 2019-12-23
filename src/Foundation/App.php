@@ -163,12 +163,25 @@ class App
         do_action('before_route_matching');
 
         $route = offbeat('routes')->findUrlMatch();
-        
+
         if (!$route) {
             $route = offbeat('routes')->findMatch();
         }
 
-        echo $this->runRoute($route);
+        try {
+            $output = $this->runRoute($route);
+
+            if ($output === false) {
+                throw new \Exception('Route return false, try to find next match');
+            }
+
+            echo $output;
+        } catch (\Exception $e) {
+            offbeat('routes')->removeLastMatchRoute();
+
+
+            $this->run($config);
+        }
     }
 
     public function runRoute($route)
@@ -196,8 +209,6 @@ class App
             } else {
                 return $actionReturn;
             }
-
-            return;
         }
 
         return new \WP_Error('broke', __("No route matched", 'raow'));

@@ -13,6 +13,7 @@ class RoutesManager
     protected $routesCollection;
     protected $routesContext;
     protected $routeIterator = 0;
+    protected $lastMatchRoute;
 
     public function __construct()
     {
@@ -32,27 +33,32 @@ class RoutesManager
 
     public function get($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['GET']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['GET']);
     }
 
     public function post($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['POST']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['POST']);
     }
 
     public function put($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['PUT']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['PUT']);
     }
 
     public function patch($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['PATCH']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['PATCH']);
     }
 
     public function delete($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $this->addRoute($route, ['_callback' => $actionCallback], $requirements, [], '', [], ['DELETE']);
+        $parameters['_callback'] = $actionCallback;
+        $this->addRoute($route, $parameters, $requirements, [], '', [], ['DELETE']);
     }
 
     public function addRoute(string $path, array $defaults = [], array $requirements = [], array $options = [],  ? string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
@@ -87,6 +93,8 @@ class RoutesManager
                 throw new Exception('Route not match (override)');
             }
 
+            $this->lastMatchRoute = $parameters['_route'];
+
             return [
                 'actionCallback' => $parameters['_callback'],
                 'parameters'     => $parameters,
@@ -109,6 +117,13 @@ class RoutesManager
         }
 
         return false;
+    }
+
+    public function removeLastMatchRoute()
+    {
+        if (isset($this->lastMatchRoute) && !empty($this->lastMatchRoute)) {
+            $this->routesCollection->remove($this->lastMatchRoute);
+        }
     }
 
     public function getNextRouteName()
