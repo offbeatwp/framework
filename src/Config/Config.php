@@ -25,6 +25,22 @@ class Config {
 
             $this->set(basename($configFile, '.php'), $configValues);
         }
+
+        $this->loadConfigEnv();
+    }
+
+    protected function loadConfigEnv()
+    {
+        $env = get_template_directory() . '/env.php';
+        if (file_exists($env)) {
+            $configValues = require $env;
+            foreach ($configValues as $key => $value) {
+                if (!$this->get($key)) {
+                    continue;
+                }
+                $this->config[$key] = array_replace_recursive($this->config[$key], $value);
+            }
+        }
     }
 
     public function get($key, $default = null) {

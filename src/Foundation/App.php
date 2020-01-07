@@ -11,6 +11,9 @@ class App
     private $services = [];
     protected $config = null;
 
+    /**
+     * @return App
+     */
     public static function singleton()
     {
         if (!isset(static::$instance)) {
