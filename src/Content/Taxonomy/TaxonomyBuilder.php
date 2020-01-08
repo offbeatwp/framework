@@ -27,7 +27,12 @@ class TaxonomyBuilder
         if (!isset($this->args['rewrite'])) {
             $this->args['rewrite'] = [];
         }
-        array_push($this->args['rewrite'], $rewrite);
+
+        if ($rewrite === false) {
+            $this->args['rewrite'] = false;
+        } elseif (is_array($rewrite)) {
+            array_push($this->args['rewrite'], $rewrite);
+        }
 
         return $this;
     }

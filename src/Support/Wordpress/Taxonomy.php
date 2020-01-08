@@ -3,6 +3,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
+use Symfony\Component\HttpFoundation\Request;
 
 class Taxonomy
 {
@@ -53,4 +54,22 @@ class Taxonomy
 
         return null;
     }
+
+    public function maybeRedirect($term)
+    {
+        $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
+        $requestUri = strtok($request->getUri(), '?');
+        $postUri    = $term->getLink();
+
+        if ($requestUri !== $postUri) {
+            $url = $term->getLink();
+
+            if (!empty($_GET))
+                $url .= '?' . http_build_query($_GET);
+
+            offbeat('http')->redirect($url);
+            exit;
+        }
+    }
+
 }
