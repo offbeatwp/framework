@@ -3,7 +3,6 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Post\PostTypeBuilder;
 use OffbeatWP\Content\Post\PostModel;
-use WP_Post;
 
 class PostType
 {
