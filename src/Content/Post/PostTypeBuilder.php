@@ -28,6 +28,13 @@ class PostTypeBuilder
     {
         return $this->postType;
     }
+    
+    public function isHierarchical($hierarchical = true)
+    {
+        $this->postTypeArgs['hierarchical'] = $hierarchical;
+
+        return $this;
+    }
 
     public function rewrite($rewrite)
     {
