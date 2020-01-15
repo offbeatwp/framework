@@ -54,7 +54,7 @@ class App
             \OffbeatWP\Routes\RoutesService::class,
             \OffbeatWP\Components\ComponentsService::class,
             \OffbeatWP\Assets\ServiceEnqueueScripts::class,
-            OffbeatWP\Content\Post\Relations\Service::class,
+            \OffbeatWP\Content\Post\Relations\Service::class,
         ] as $service) {
             $this->initiateService($service, $containerBuilder);
         }

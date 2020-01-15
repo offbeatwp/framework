@@ -10,6 +10,8 @@ abstract class AbstractController
 
     protected function render($name, $data = [])
     {
+        $name = apply_filters('offbeatwp/controller/template', $name, $data);
+
         return $this->view($name, $data);
     }
 }

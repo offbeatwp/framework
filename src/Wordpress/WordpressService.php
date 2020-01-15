@@ -10,6 +10,7 @@ class WordpressService
         'hooks'      => \OffbeatWP\Support\Wordpress\Hooks::class,
         'post-type'  => \OffbeatWP\Support\Wordpress\PostType::class,
         'post'       => \OffbeatWP\Support\Wordpress\Post::class,
+        'page'       => \OffbeatWP\Support\Wordpress\Page::class,
         'taxonomy'   => \OffbeatWP\Support\Wordpress\Taxonomy::class,
         'design'     => \OffbeatWP\Support\Wordpress\Design::class,
     ];
@@ -20,7 +21,11 @@ class WordpressService
         $this->registerImageSizes();
         $this->registerSidebars();
 
-        add_filter( 'style_loader_tag', [$this, 'deferStyles'], 10, 4);
+        add_filter('style_loader_tag', [$this, 'deferStyles'], 10, 4);
+
+        // Page Template
+        add_action('init', [$this, 'registerPageTemplate'], 99);
+        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate']);
     }
 
     public function registerMenus()
@@ -62,5 +67,30 @@ class WordpressService
         }
 
         return $tag;
+    }
+
+    public function registerPageTemplate()
+    {
+        add_filter('theme_page_templates', function ($postTemplates) {
+            $pageTemplates = offbeat('page')->getPageTemplates();
+
+            if (is_array($pageTemplates)) {
+                $postTemplates = array_merge($postTemplates, $pageTemplates);
+            }
+
+            return $postTemplates;
+        }, 10, 1);
+    }
+
+    public function applyPageTemplate($template)
+    {
+        if (is_singular('page')) {
+            $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
+            if (!empty($pageTemplate) && $pageTemplate != 'default') {
+                return $pageTemplate;
+            }
+        }
+
+        return $template;
     }
 }
