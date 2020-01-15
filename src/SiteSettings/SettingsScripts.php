@@ -15,9 +15,9 @@ class SettingsScripts
     {
         $form = new \OffbeatWP\Form\Form();
 
-        $form ->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_head', 'Head'));
-        $form ->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_open_body', 'Body open'));
-        $form ->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_footer', 'Footer'));
+        $form->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_head', 'Head')->attribute('new_lines', 0));
+        $form->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_open_body', 'Body open')->attribute('new_lines', 0));
+        $form->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_footer', 'Footer')->attribute('new_lines', 0));
 
         return $form;
     }
