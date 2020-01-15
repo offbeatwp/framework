@@ -4,17 +4,51 @@ namespace OffbeatWP\Components;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
+use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\ViewableTrait;
 
 abstract class AbstractComponent
 {
     use ViewableTrait;
 
+    /**
+     * @var View
+     */
     public $view;
+    /**
+     * @var null|ContextInterface
+     */
+    protected $context;
+
     public $form = null;
 
-    public function __construct (View $view) {
+    public function __construct (View $view, ContextInterface $context = null) {
         $this->view = $view;
+        $this->context = $context;
+    }
+
+    /**
+     * Can this component be rendered?
+     *
+     * @return bool
+     */
+    public function isRenderable()
+    {
+        return true;
+    }
+
+    /**
+     * Render the component.
+     *
+     * @param $settings
+     * @return string
+     */
+    public function renderComponent($settings)
+    {
+        if (!$this->isRenderable()) {
+            return '';
+        }
+        return container()->call([$this, 'render'], ['settings' => $settings]);
     }
 
     public static function supports($service)

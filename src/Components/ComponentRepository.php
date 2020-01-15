@@ -1,10 +1,36 @@
 <?php
 namespace OffbeatWP\Components;
 
+use OffbeatWP\Layout\ContextInterface;
+use OffbeatWP\Layout\Frontend;
+
 class ComponentRepository
 {
+    /**
+     * @var ContextInterface
+     */
+    protected $layoutContext;
+
     public function __construct()
     {
+
+    }
+
+    public function getLayoutContext()
+    {
+        return $this->layoutContext;
+    }
+
+    /**
+     * Set the context to be distributed when rendering components.
+     *
+     * @param ContextInterface|null $context
+     * @return $this
+     */
+    public function setLayoutContext(ContextInterface $context = null)
+    {
+        $this->layoutContext = $context;
+        return $this;
     }
 
     public function register($name, $componentClass)
@@ -74,7 +100,7 @@ class ComponentRepository
     public function make($name)
     {
         $componentClass = $this->get($name);
-        return offbeat()->container->make($componentClass);
+        return offbeat()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
     public function exists($name)
@@ -90,6 +116,6 @@ class ComponentRepository
     {
         $component = $this->make($name);
 
-        return container()->call([$component, 'render'], ['settings' => (object) $args]);
+        return container()->call([$component, 'renderComponent'], ['settings' => (object) $args]);
     }
 }
