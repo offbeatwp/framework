@@ -48,7 +48,8 @@ abstract class AbstractComponent
         if (!$this->isRenderable()) {
             return '';
         }
-        return container()->call([$this, 'render'], ['settings' => $settings]);
+        return apply_filters('offbeat.component.render', container()->call([$this, 'render'], ['settings' => $settings]), $this);
+        
     }
 
     public static function supports($service)
