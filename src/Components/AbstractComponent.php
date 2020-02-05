@@ -90,7 +90,7 @@ abstract class AbstractComponent
 
     protected function setCachedObject(string $id, $object)
     {
-        container('componentCache')->save($id, (string)$object);
+        container('componentCache')->save($id, (string)$object, 60);
         return (string)$object;
     }
 
