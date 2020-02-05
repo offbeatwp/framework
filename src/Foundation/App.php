@@ -1,12 +1,16 @@
 <?php
 namespace OffbeatWP\Foundation;
 
+use DI\Container;
 use DI\ContainerBuilder;
 use OffbeatWP\Config\Config;
 
 class App
 {
     private static $instance;
+    /**
+     * @var Container
+     */
     public $container;
     private $services = [];
     protected $config = null;

@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Components;
 
+use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
@@ -15,6 +16,7 @@ abstract class AbstractComponent
      * @var View
      */
     public $view;
+
     /**
      * @var null|ContextInterface
      */
@@ -25,6 +27,11 @@ abstract class AbstractComponent
     public function __construct (View $view, ContextInterface $context = null) {
         $this->view = $view;
         $this->context = $context;
+
+        if (!offbeat()->container->has('componentCache')) {
+            // just a simple light weight cache if none is set
+            offbeat()->container->set('componentCache', new ArrayCache());
+        }
     }
 
     /**
@@ -48,8 +55,43 @@ abstract class AbstractComponent
         if (!$this->isRenderable()) {
             return '';
         }
-        return apply_filters('offbeat.component.render', container()->call([$this, 'render'], ['settings' => $settings]), $this);
-        
+
+        $cachedId = $this->getCacheId($settings);
+        $object = $this->getCachedComponent($cachedId);
+        if ($object !== false) {
+            return $object;
+        }
+        if ($this->context) {
+            $this->context->initContext();
+        }
+        $render = apply_filters('offbeat.component.render', $this->render($settings), $this);
+        return $this->setCachedObject($cachedId, $render);
+    }
+
+    protected function getCacheId($settings)
+    {
+        $prefix = $this->context ? $this->context->getCacheId() : '';
+        return md5($prefix . get_class($this) . json_encode($settings));
+    }
+
+    protected function getCachedComponent($id)
+    {
+        $object = $this->getCachedObject($id);
+        if ($object !== false) {
+            return $object;
+        }
+        return false;
+    }
+
+    protected function getCachedObject($id)
+    {
+        return container('componentCache')->fetch($id);
+    }
+
+    protected function setCachedObject(string $id, $object)
+    {
+        container('componentCache')->save($id, (string)$object);
+        return (string)$object;
     }
 
     public static function supports($service)
