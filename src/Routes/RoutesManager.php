@@ -20,15 +20,21 @@ class RoutesManager
         $this->routesCollection = new RouteCollection();
     }
 
+    /**
+     * Callbacks are executed in LiFo order.
+     *
+     * @param $checkCallback
+     * @param $actionCallback
+     * @param array $parameters
+     */
     public function callback($checkCallback, $actionCallback, $parameters = [])
     {
-        $action = [[
+        $action = [
             'actionCallback' => $actionCallback,
             'checkCallback'  => $checkCallback,
             'parameters'     => $parameters,
-        ]];
-
-        $this->actions = array_merge($action, $this->actions);
+        ];
+        array_push($this->actions, $action);
     }
 
     public function get($route, $actionCallback, $parameters = [], $requirements = [])

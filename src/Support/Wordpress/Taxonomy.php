@@ -58,10 +58,10 @@ class Taxonomy
     public function maybeRedirect($term)
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
-        $requestUri = strtok($request->getUri(), '?');
+        $requestUri = $request->getPathInfo();
         $postUri    = $term->getLink();
 
-        if ($requestUri !== $postUri) {
+        if (rtrim($requestUri, '/') !== rtrim($postUri, '/')) {
             $url = $term->getLink();
 
             if (!empty($_GET))

@@ -11,7 +11,7 @@ class RoutesService extends AbstractService
 
     public function register()
     {
-        add_action('init', [$this, 'loadRoutes'], 10);
+        add_action('init', [$this, 'loadRoutes'], 9999);
         add_action('init', [$this, 'urlRoutePreps'], 15);
     }
 
