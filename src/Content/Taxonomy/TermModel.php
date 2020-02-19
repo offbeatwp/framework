@@ -104,7 +104,7 @@ class TermModel implements TermModelInterface
 
     public function getMeta($key, $single = true)
     {
-        return get_term_meta($this->getID(), $single);
+        return get_term_meta($this->getID(), $key, $single);
     }
 
     public function setMeta($key, $value)
