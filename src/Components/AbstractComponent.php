@@ -64,7 +64,8 @@ abstract class AbstractComponent
         if ($this->context) {
             $this->context->initContext();
         }
-        $render = apply_filters('offbeat.component.render', $this->render($settings), $this);
+        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+        $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
     }
 
