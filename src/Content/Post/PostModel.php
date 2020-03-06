@@ -295,16 +295,15 @@ class PostModel implements PostModelInterface
 
     public function getAncestors()
     {
+        $ancestors = collect();
+
         if ($this->hasParent()) {
-            $ancestors = collect();
             foreach ($this->getAncestorIds() as $ancestorId) {
                 $ancestors->push(offbeat('post')->get($ancestorId));
             }
-
-            return $ancestors;
         }
 
-        return false;
+        return $ancestors;
     }
 
     public function getPreviousPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
