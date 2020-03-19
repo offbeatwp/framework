@@ -287,6 +287,11 @@ class PostModel implements PostModelInterface
     {
         return static::where(['post_parent' => $this->getId()])->all();
     }
+    
+    public function getChildren()
+    {
+        return $this->getChilds();
+    }
 
     public function getAncestorIds()
     {
