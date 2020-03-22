@@ -100,6 +100,7 @@ class ComponentRepository
     public function make($name)
     {
         $componentClass = $this->get($name);
+
         return offbeat()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
@@ -115,7 +116,6 @@ class ComponentRepository
     public function render($name, $args = [])
     {
         $component = $this->make($name);
-
-        return container()->call([$component, 'renderComponent'], ['settings' => (object) $args]);
+        return $component->renderComponent((object)$args);
     }
 }

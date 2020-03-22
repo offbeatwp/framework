@@ -1,12 +1,16 @@
 <?php
 namespace OffbeatWP\Foundation;
 
+use DI\Container;
 use DI\ContainerBuilder;
 use OffbeatWP\Config\Config;
 
 class App
 {
     private static $instance;
+    /**
+     * @var Container
+     */
     public $container;
     private $services = [];
     protected $config = null;
@@ -201,7 +205,12 @@ class App
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
-                $actionReturn = container()->call($route['actionCallback'], $parameters);
+                $controllerAction = $route['actionCallback'];
+                if ($controllerAction instanceof \Closure) {
+                    $controllerAction = $controllerAction();
+                }
+
+                $actionReturn = container()->call($controllerAction, $parameters);
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);

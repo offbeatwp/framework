@@ -8,6 +8,8 @@ trait ViewableTrait
 {
     public $view;
 
+    public static $loaded = [];
+
     public function setElementViewsPath()
     {
         if (!isset($this->hasViewsDirectory) || $this->hasViewsDirectory !== true) return null;
@@ -19,6 +21,10 @@ trait ViewableTrait
 
     public function setRecursiveViewsPath($path, $depth = 5)
     {
+        if (in_array($path, static::$loaded)) {
+            return;
+        }
+
         $itemI = 0;
         while (true) {
             $folderName = basename($path);
@@ -36,6 +42,8 @@ trait ViewableTrait
 
             $itemI++;
         }
+
+        static::$loaded[] = $path;
     }
 
     public function setRecursiveParentViewsPath()
@@ -54,6 +62,10 @@ trait ViewableTrait
 
         if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $reflector->getName(), $matches)) return null;
 
+        if (in_array($reflector->getName(), static::$loaded)) {
+            return;
+        }
+
         $moduleClass = $matches[0] . '\\' . '' . $matches[1];
 
         if(container()->has($moduleClass)) {
@@ -61,6 +73,8 @@ trait ViewableTrait
 
             $this->view->addTemplatePath($module->getViewsDirectory());
         }
+
+        static::$loaded[] = $reflector->getName();
     }
 
     public function setTemplatePaths()
