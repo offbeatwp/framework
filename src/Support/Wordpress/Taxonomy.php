@@ -60,7 +60,10 @@ class Taxonomy
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
         $requestUri = $request->getPathInfo();
-        $postUri    = new Uri($term->getLink());
+
+        $url = $term->getLink();
+        $url = str_replace(home_url(), '', $url);
+        $postUri    = new Uri($url);
 
         if (rtrim($requestUri, '/') !== rtrim($postUri->getPath(), '/')) {
             $url = $term->getLink();
