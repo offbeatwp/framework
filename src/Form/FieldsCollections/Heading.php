@@ -16,13 +16,15 @@ class Heading extends AbstractFieldsCollection {
                 'h5' => __('h5', 'offbeatwp'),
                 'h6' => __('h6', 'offbeatwp'),
             ])
-            ->description(__('The heading type is used to let search indexers know what is important on a page', 'offbeatwp'));
+            ->description(__('The heading type is used to let search indexers know what is important on a page', 'offbeatwp'))
+            ->default($defaultHeading);
 
         $this->addField($headingTypeField);
 
         $headingStyleField = \OffbeatWP\Form\Fields\Select::make('heading_style', __('Style', 'offbeatwp'));
         $headingStyleField
             ->addOptions([
+                '' => __('Default', 'offbeatwp'),
                 'h1' => __('h1', 'offbeatwp'),
                 'h2' => __('h2', 'offbeatwp'),
                 'h3' => __('h3', 'offbeatwp'),
