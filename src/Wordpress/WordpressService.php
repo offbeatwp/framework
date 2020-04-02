@@ -6,6 +6,7 @@ class WordpressService
     public $bindings = [
         'admin-page' => \OffbeatWP\Support\Wordpress\AdminPage::class,
         'ajax'       => \OffbeatWP\Support\Wordpress\Ajax::class,
+        'rest-api'   => \OffbeatWP\Support\Wordpress\RestApi::class,
         'console'    => \OffbeatWP\Support\Wordpress\Console::class,
         'hooks'      => \OffbeatWP\Support\Wordpress\Hooks::class,
         'post-type'  => \OffbeatWP\Support\Wordpress\PostType::class,
