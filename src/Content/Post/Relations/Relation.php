@@ -26,7 +26,7 @@ class Relation
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column1} = %d AND {$column2} = %d";
         $params = [
             $this->key,
-            $model->getId(),
+            $this->model->getId(),
             $id
         ];
 
