@@ -22,8 +22,6 @@ class WordpressService
         $this->registerImageSizes();
         $this->registerSidebars();
 
-        add_filter('style_loader_tag', [$this, 'deferStyles'], 10, 4);
-
         // Page Template
         add_action('init', [$this, 'registerPageTemplate'], 99);
         add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate']);
@@ -59,15 +57,6 @@ class WordpressService
                 register_sidebar($sidebar);
             });
         }
-    }
-
-    public function deferStyles($tag, $handle, $href, $media)
-    {
-        if ($handle == 'wp-block-library') {
-            $tag = str_replace('rel=\'stylesheet\'', 'rel=\'preload\'', $tag);
-        }
-
-        return $tag;
     }
 
     public function registerPageTemplate()
