@@ -44,7 +44,7 @@ class {{ classname }} extends AbstractComponent
     {
         $form = new Form();
 
-        $form->addField(Text::make('utility_classes', __('Utility Classes', 'lynx')));
+        $form->addField(Text::make('utility_classes', __('Utility Classes', 'offbeatwp')));
 
         return $form;
     }
