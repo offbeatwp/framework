@@ -154,6 +154,12 @@ class PostTypeBuilder
         return $this;
     }
 
+    public function capabilities($capabilities = []){
+        $this->postTypeArgs['capabilities'] = $capabilities;
+
+        return $this;
+    }
+
     public function set()
     {
         register_post_type($this->postType, $this->postTypeArgs);
