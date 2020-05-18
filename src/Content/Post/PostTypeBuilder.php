@@ -147,6 +147,12 @@ class PostTypeBuilder
         return $this;
     }
 
+    public function setArgument($key, $value)
+    {
+        $this->postTypeArgs[$key] = $value;
+
+        return $this;
+    }
     public function set()
     {
         register_post_type($this->postType, $this->postTypeArgs);

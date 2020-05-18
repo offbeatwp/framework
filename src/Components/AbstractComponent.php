@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Components;
 
 use Doctrine\Common\Cache\ArrayCache;
@@ -24,7 +25,8 @@ abstract class AbstractComponent
 
     public $form = null;
 
-    public function __construct (View $view, ContextInterface $context = null) {
+    public function __construct(View $view, ContextInterface $context = null)
+    {
         $this->view = $view;
         $this->context = $context;
 
@@ -90,23 +92,25 @@ abstract class AbstractComponent
 
     protected function setCachedObject(string $id, $object)
     {
+
         container('componentCache')->save($id, (string)$object, 60);
         return (string)$object;
     }
 
     public static function supports($service)
     {
-        if(!method_exists(get_called_class(), 'settings')) return false;
+        if (!method_exists(get_called_class(), 'settings')) return false;
 
         $componentSettings = static::settings();
 
-        if (!array_key_exists('supports', $componentSettings) || ! in_array($service, $componentSettings['supports'])) return false;
+        if (!array_key_exists('supports', $componentSettings) || !in_array($service, $componentSettings['supports'])) return false;
 
         return true;
     }
 
-    public static function getSetting($key){
-        if(!method_exists(get_called_class(), 'settings')) return false;
+    public static function getSetting($key)
+    {
+        if (!method_exists(get_called_class(), 'settings')) return false;
 
         $componentSettings = static::settings();
 

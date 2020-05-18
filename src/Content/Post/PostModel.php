@@ -102,6 +102,10 @@ class PostModel implements PostModelInterface
 
     public function getContent()
     {
+        if ($this->isPasswordRequired()) {
+            return get_the_password_form($this->wpPost);
+        }
+
         $content = $this->wpPost->post_content;
 
         // When the_content filter is already running with Gutenberg content
@@ -333,6 +337,11 @@ class PostModel implements PostModelInterface
         }
 
         return false;
+    }
+
+    public function isPasswordRequired()
+    {
+        return post_password_required($this->wpPost);
     }
 
     /* Display methods */
