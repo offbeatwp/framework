@@ -11,8 +11,11 @@ class RoutesService extends AbstractService
 
     public function register()
     {
-        add_action('init', [$this, 'loadRoutes'], 9999);
-        add_action('init', [$this, 'urlRoutePreps'], 15);
+        add_action('init', [$this, 'loadRoutes'], 10);
+        
+        if (!is_admin()) {
+            add_action('init', [$this, 'urlRoutePreps'], 15);
+        }
     }
 
     public function loadRoutes()
@@ -28,20 +31,7 @@ class RoutesService extends AbstractService
     {
         $preventParseRequest = true;
 
-        if (!($urlMatch = offbeat('routes')->findUrlMatch())) {
-            return null;
-        }
-
-        if (
-            is_array($urlMatch) && 
-            isset($urlMatch['parameters']) && 
-            isset($urlMatch['parameters']['preventParseRequest']) && 
-            is_bool($urlMatch['parameters']['preventParseRequest'])
-        ) {
-            $preventParseRequest = $urlMatch['parameters']['preventParseRequest'];
-        }
-
-        if (!$preventParseRequest) {
+        if (!offbeat('routes')->findUrlMatch() && !offbeat('routes')->findMatch(true)) {
             return null;
         }
 

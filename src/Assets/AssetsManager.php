@@ -15,6 +15,15 @@ class AssetsManager
         return false;
     }
 
+    public function getPath($filename)
+    {
+        if ($this->getEntryFromAssetsManifest($filename) !== false) {
+            return $this->getAssetsPath($this->getEntryFromAssetsManifest($filename));
+        }
+
+        return false;
+    }
+
     public function getEntryFromAssetsManifest($filename)
     {
         if(isset($this->getAssetsManifest()->$filename)) {

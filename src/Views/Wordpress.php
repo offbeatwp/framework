@@ -61,10 +61,10 @@ class Wordpress
         return body_class($class);
     }
 
-    public function action($action)
+    public function action($action, $args = [])
     {
         ob_start();
-        do_action($action);
+        do_action($action, $args);
         return ob_get_clean();
     }
 

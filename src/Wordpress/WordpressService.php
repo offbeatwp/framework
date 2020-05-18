@@ -6,6 +6,7 @@ class WordpressService
     public $bindings = [
         'admin-page' => \OffbeatWP\Support\Wordpress\AdminPage::class,
         'ajax'       => \OffbeatWP\Support\Wordpress\Ajax::class,
+        'rest-api'   => \OffbeatWP\Support\Wordpress\RestApi::class,
         'console'    => \OffbeatWP\Support\Wordpress\Console::class,
         'hooks'      => \OffbeatWP\Support\Wordpress\Hooks::class,
         'post-type'  => \OffbeatWP\Support\Wordpress\PostType::class,
@@ -20,8 +21,6 @@ class WordpressService
         $this->registerMenus();
         $this->registerImageSizes();
         $this->registerSidebars();
-
-        add_filter('style_loader_tag', [$this, 'deferStyles'], 10, 4);
 
         // Page Template
         add_action('init', [$this, 'registerPageTemplate'], 99);
@@ -58,15 +57,6 @@ class WordpressService
                 register_sidebar($sidebar);
             });
         }
-    }
-
-    public function deferStyles($tag, $handle, $href, $media)
-    {
-        if ($handle == 'wp-block-library') {
-            $tag = str_replace('rel=\'stylesheet\'', 'rel=\'preload\'', $tag);
-        }
-
-        return $tag;
     }
 
     public function registerPageTemplate()
