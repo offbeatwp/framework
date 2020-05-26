@@ -73,7 +73,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN')
+    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true)
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -97,6 +97,7 @@ class WpQueryBuilder
                 'field'    => $field,
                 'terms'    => $terms,
                 'operator' => $operator,
+                'include_children' => $includeChildren,
             ];
         }
 
