@@ -15,10 +15,10 @@ class TermModel implements TermModelInterface
     public $wpTerm;
     public $id;
 
-    public function __construct($post)
+    public function __construct($term)
     {
-        if ($post instanceof \WP_Term) {
-            $this->wpTerm = $post;
+        if ($term instanceof \WP_Term) {
+            $this->wpTerm = $term;
         } elseif (is_numeric($term)) {
             $this->wpTerm = get_term($term, static::TAXONOMY);
         }
