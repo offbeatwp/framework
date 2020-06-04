@@ -63,6 +63,13 @@ abstract class AbstractModule extends AbstractService
         return dirname($classPath);
     }
 
+    public function getUrl()
+    {
+        $path = str_replace(get_stylesheet_directory(), '', $this->getDirectory());
+
+        return get_stylesheet_directory_uri() . $path;
+    }
+
     public function getRegisterableObjects($path, $findDirs = false)
     {
         $objects = [];
