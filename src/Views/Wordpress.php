@@ -123,4 +123,9 @@ class Wordpress
 
         return $url;
     }
+    
+        public function isSearchPage()
+    {
+        return is_search();
+    }
 }

@@ -29,11 +29,19 @@ class RoutesService extends AbstractService
 
     public function urlRoutePreps()
     {
-        $preventParseRequest = true;
-
         if (!offbeat('routes')->findUrlMatch() && !offbeat('routes')->findMatch(true)) {
             return null;
         }
+
+        add_filter('user_trailingslashit', function ($url) {
+            $urlUnTrailingSlashed = untrailingslashit($url);
+            
+            if (preg_match('/\.json$/', $urlUnTrailingSlashed)) {
+                return $urlUnTrailingSlashed;
+            }
+            
+            return $url;
+        }, 20, 1);
 
         add_action('parse_query', function ($query) {
             if ($query->is_main_query()) {
