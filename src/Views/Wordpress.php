@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Views;
 
 use OffbeatWP\Contracts\SiteSettings;
@@ -84,7 +85,9 @@ class Wordpress
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
 
-        if (!$attachment) { return false; }
+        if (!$attachment) {
+            return false;
+        }
 
         return $attachment[0];
     }
@@ -117,15 +120,21 @@ class Wordpress
     {
         $url = untrailingslashit(get_template_directory_uri());
 
-        if(!is_null($path)) {
+        if (!is_null($path)) {
             $url .= $path;
         }
 
         return $url;
     }
-    
-        public function isSearchPage()
+
+    public function isSearchPage()
     {
         return is_search();
+    }
+
+    public function getSearchQuery()
+    {
+        if ($this->isSearchPage())
+            return get_search_query();
     }
 }
