@@ -137,4 +137,9 @@ class Wordpress
         if ($this->isSearchPage())
             return get_search_query();
     }
+
+    public function getPageTitle()
+    {
+        return get_the_title();
+    }
 }
