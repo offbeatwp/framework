@@ -20,8 +20,8 @@ class ServiceEnqueueScripts extends AbstractService
 
         wp_deregister_script('wp-embed');
 
-        wp_enqueue_style('theme-style', assetUrl('main.css'), [], false, false);
-        wp_enqueue_script('theme-script', assetUrl('main.js'), ['jquery'], false, true);
+        offbeat('assets')->enqueueStyles('main');
+        offbeat('assets')->enqueueScripts('main');
 
         wp_scripts()->add_data('jquery', 'group', 1);
         wp_scripts()->add_data('jquery-core', 'group', 1);
