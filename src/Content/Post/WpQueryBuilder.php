@@ -178,9 +178,13 @@ class WpQueryBuilder
         return $this;
     }
     
-    public function paginated() {
-        $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-        $this->queryVars['paged'] = $paged;
+    public function paginated($paginated = true) {
+        if ($paginated) {
+            $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+            $this->queryVars['paged'] = $paged;
+        } else {
+            unset($this->queryVars['paged']);
+        }
         return $this;
     }
 
