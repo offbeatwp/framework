@@ -182,7 +182,7 @@ class App
                 throw new \Exception('Route return false, try to find next match');
             }
 
-            echo $output;
+            echo apply_filters('route_render_output', $output);
         } catch (\Exception $e) {
             offbeat('routes')->removeLastMatchRoute();
 
