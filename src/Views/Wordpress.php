@@ -143,8 +143,11 @@ class Wordpress
         return get_the_title();
     }
     
-        public function getAllPostMeta()
+    public function getAllPostMeta($postId = null)
     {
+
+        if ($postId)
+            return get_post_meta($postId);
 
         global $post;
 
