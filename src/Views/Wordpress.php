@@ -142,4 +142,17 @@ class Wordpress
     {
         return get_the_title();
     }
+    
+        public function getAllPostMeta()
+    {
+
+        global $post;
+
+        if (!$post)
+            return false;
+
+        return get_post_meta($post->ID);
+
+    }
+    
 }
