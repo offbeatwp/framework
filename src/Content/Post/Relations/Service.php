@@ -33,8 +33,10 @@ class Service extends AbstractService
         if ($operator) {
             $multipleRelationships = $query->query_vars['relationships'];
             unset($multipleRelationships['operator']);
+            $n = 0;
             foreach ($multipleRelationships as $relationship) {
-                $sql[] = $this->buildQuery($relationship, $operator);
+                $sql[] = $this->buildQuery($relationship, $operator,$n);
+                $n++;
             }
         } else {
             //single relationship
@@ -44,11 +46,13 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $relationshipQuery
-     *
+     * @param array $relationshipQuery
+     * @param string $operator
+     * @param int $n
      * @return array
+     * @throws \Exception
      */
-    private function buildQuery(array $relationshipQuery, $operator = 'AND'): array {
+    private function buildQuery(array $relationshipQuery, $operator = 'AND',$n = 0): array {
         $this->checkOperator($operator);
         global $wpdb;
         $direction = null;
@@ -63,11 +67,10 @@ class Service extends AbstractService
             $columnOn = 'relation_from';
             $columnWhere = 'relation_to';
         }
-
         $sql = [];
-        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr ON ({$wpdb->posts}.ID = pr.{$columnOn}) ";
+        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
 
-        $sql['where'] = " $operator pr.key = '" . $relationshipQuery['key'] . "' AND pr.{$columnWhere} = " . $relationshipQuery['id'];
+        $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} = " . $relationshipQuery['id'];
 
         return $sql;
     }
