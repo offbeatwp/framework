@@ -183,15 +183,14 @@ class PostModel implements PostModelInterface
 
     public function getAuthor()
     {
-        $currentPost     = $GLOBALS['post'];
-        $GLOBALS['post'] = $this->wpPost;
+        $userId = $this->wpPost->post_author;
 
-        $author = get_the_author();
+        if(!isset($userId) || empty($userId)) return false;
 
-        $GLOBALS['post'] = $currentPost;
-
-        return $author;
+        return get_userdata($userId);
     }
+
+
 
     public function getMetas()
     {
