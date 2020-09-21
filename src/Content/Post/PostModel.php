@@ -183,11 +183,20 @@ class PostModel implements PostModelInterface
 
     public function getAuthor()
     {
-        $userId = $this->wpPost->post_author;
+        $authorId = $this->getAuthorId();
 
-        if(!isset($userId) || empty($userId)) return false;
+        if(!isset($authorId) || empty($authorId)) return false;
 
-        return get_userdata($userId);
+        return get_userdata($authorId);
+    }
+
+    public function getAuthorId(){
+
+        $authorId = $this->wpPost->post_author;
+
+        if(!isset($authorId) || empty($authorId)) return false;
+
+        return $authorId;
     }
 
 
