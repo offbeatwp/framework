@@ -80,7 +80,11 @@ class GenericWidget extends \WP_Widget
     {
         $settings = (object)[];
 
-        $keys = array_keys(get_fields($this->widgetId));
+        $fields = get_fields($this->widgetId);
+
+        if (empty($fields)) return $settings;
+
+        $keys = array_keys($fields);
 
         foreach ($keys as $key) {
             $settings->{$key} = $this->get_field($key);
