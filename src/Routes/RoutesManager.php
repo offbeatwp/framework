@@ -113,19 +113,24 @@ class RoutesManager
         }
     }
 
-    public function findMatch($onlyNonWpCallbacks = false)
+    public function findMatch($dryCheck = false)
     {
         $actions = $this->actions;
 
-        if ($onlyNonWpCallbacks) {
+        if ($dryCheck) {
             $actions = $actions->where('isWpCallback', false);
         }
 
-        foreach ($actions as $action) {
+        foreach ($actions as $actionKey => $action) {
             if (
                 apply_filters('offbeatwp/route/match/wp', true, $action) && 
                 $action['checkCallback']()
             ) {
+                if (!$dryCheck) {
+                    // Forget this "route". When a findMatch is performed again later in the process it prevents an endless loop.
+                    $actions->forget($actionKey);
+                }
+
                 return $action;
             }
 
