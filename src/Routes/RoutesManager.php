@@ -126,7 +126,7 @@ class RoutesManager
                 apply_filters('offbeatwp/route/match/wp', true, $action) && 
                 $action['checkCallback']()
             ) {
-                if (!$dryCheck) {
+                if (!$dryCheck && !$action['isWpCallback']) {
                     // Forget this "route". When a findMatch is performed again later in the process it prevents an endless loop.
                     $actions->forget($actionKey);
                 }
