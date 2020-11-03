@@ -96,7 +96,7 @@ class TermModel implements TermModelInterface
     public function getParent()
     {
         if ($this->getParentId()) {
-            return (new static())->findById($this->getParentId());
+            return (new static($this))->findById($this->getParentId());
         }
 
         return false;
