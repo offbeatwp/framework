@@ -24,7 +24,7 @@ class PostModel implements PostModelInterface
     {
 
         if (is_null($post)) {
-            $this->wpPost = (object) [];
+            $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = 'publish';
             $this->wpPost->comment_status = 'closed';
@@ -146,6 +146,16 @@ class PostModel implements PostModelInterface
         return get_permalink($this->getId());
     }
 
+    public function getPostTypeLabel()
+    {
+
+        $postType = get_post_type_object(get_post_type($this->wpPost));
+
+        if(empty($postType) || empty($postType->label)) return false;
+
+        return $postType->label;
+    }
+
     public function getPostType()
     {
         return $this->wpPost->post_type;
@@ -185,20 +195,20 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->getAuthorId();
 
-        if(!isset($authorId) || empty($authorId)) return false;
+        if (!isset($authorId) || empty($authorId)) return false;
 
         return get_userdata($authorId);
     }
 
-    public function getAuthorId(){
+    public function getAuthorId()
+    {
 
         $authorId = $this->wpPost->post_author;
 
-        if(!isset($authorId) || empty($authorId)) return false;
+        if (!isset($authorId) || empty($authorId)) return false;
 
         return $authorId;
     }
-
 
 
     public function getMetas()
@@ -299,7 +309,7 @@ class PostModel implements PostModelInterface
     {
         return static::where(['post_parent' => $this->getId()])->all();
     }
-    
+
     public function getChildren()
     {
         return $this->getChilds();
@@ -391,7 +401,6 @@ class PostModel implements PostModelInterface
     }
 
 
-
     public function save()
     {
         if (!empty($this->metaInput)) {
@@ -399,7 +408,7 @@ class PostModel implements PostModelInterface
         }
 
         if (is_null($this->getId())) {
-            $postId = wp_insert_post((array) $this->wpPost);
+            $postId = wp_insert_post((array)$this->wpPost);
 
             $this->wpPost = get_post($postId);
 
