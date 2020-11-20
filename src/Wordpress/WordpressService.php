@@ -24,7 +24,7 @@ class WordpressService
 
         // Page Template
         add_action('init', [$this, 'registerPageTemplate'], 99);
-        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate']);
+        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10 ,2);
     }
 
     public function registerMenus()
@@ -72,9 +72,9 @@ class WordpressService
         }, 10, 1);
     }
 
-    public function applyPageTemplate($template)
+    public function applyPageTemplate($template, $data)
     {
-        if (is_singular('page')) {
+        if (is_singular('page') && empty($data['ignore_page_template'])) {
             $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
             if (!empty($pageTemplate) && $pageTemplate != 'default') {
                 return $pageTemplate;
