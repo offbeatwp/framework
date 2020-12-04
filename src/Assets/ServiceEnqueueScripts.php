@@ -34,7 +34,7 @@ class ServiceEnqueueScripts extends AbstractService
         wp_scripts()->add_data('debug-bar-js', 'group', 1);
 
         wp_localize_script(
-            'theme-script', 
+            'theme-script-main', 
             'wp_js',
             apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')])
         );
