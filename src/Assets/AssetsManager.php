@@ -111,7 +111,7 @@ class AssetsManager
             return ;
         }
 
-        wp_enqueue_style('theme-style', $this->getUrl($entry . '.css'), [], false, false);
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false, false);
     }
 
     public function enqueueScripts($entry) {
@@ -127,6 +127,6 @@ class AssetsManager
             return ;
         }
 
-        wp_enqueue_script('theme-script', $this->getUrl($entry . '.js'), ['jquery'], false, true);
+        wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), ['jquery'], false, true);
     }
 }
