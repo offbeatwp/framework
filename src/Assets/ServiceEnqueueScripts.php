@@ -12,6 +12,7 @@ class ServiceEnqueueScripts extends AbstractService
         }
 
         add_action('wp_enqueue_scripts',    [$this, 'enqueueScripts'], 1);
+        add_action('wp_footer',    [$this, 'footerVars'], 5);
     }
 
     public function enqueueScripts()
@@ -32,11 +33,19 @@ class ServiceEnqueueScripts extends AbstractService
         wp_scripts()->add_data('gform_textarea_counter', 'group', 1);
 
         wp_scripts()->add_data('debug-bar-js', 'group', 1);
+    }
 
-        wp_localize_script(
-            'theme-script-main', 
-            'wp_js',
-            apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')])
-        );
+    public function footerVars()
+    {
+        $vars = apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')]);
+
+        if (empty($vars)) return;
+
+        echo "<script type='text/javascript'>
+            /* <![CDATA[ */
+                var wp_js = " . json_encode($vars) . ";
+            /* ]]> */
+        </script>
+        ";
     }
 }
