@@ -33,10 +33,8 @@ class ServiceEnqueueScripts extends AbstractService
 
         wp_scripts()->add_data('debug-bar-js', 'group', 1);
 
-        wp_localize_script(
-            'theme-script-main', 
-            'wp_js',
-            apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')])
-        );
+        add_action('wp_footer', function () {
+            echo '<script>window.wp_js = ' . json_encode(apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')])) . '</script>';
+        }, 5);
     }
 }
