@@ -24,15 +24,17 @@ class ServiceEnqueueScripts extends AbstractService
         offbeat('assets')->enqueueStyles('main');
         offbeat('assets')->enqueueScripts('main');
 
-        wp_scripts()->add_data('jquery', 'group', 1);
-        wp_scripts()->add_data('jquery-core', 'group', 1);
-        wp_scripts()->add_data('jquery-migrate', 'group', 1);
+        if (apply_filters('offbeatwp/scripts/move_to_footer', true)) {
+            wp_scripts()->add_data('jquery', 'group', 1);
+            wp_scripts()->add_data('jquery-core', 'group', 1);
+            wp_scripts()->add_data('jquery-migrate', 'group', 1);
 
-        wp_scripts()->add_data('gform_gravityforms', 'group', 1);
-        wp_scripts()->add_data('gform_json', 'group', 1);
-        wp_scripts()->add_data('gform_textarea_counter', 'group', 1);
+            wp_scripts()->add_data('gform_gravityforms', 'group', 1);
+            wp_scripts()->add_data('gform_json', 'group', 1);
+            wp_scripts()->add_data('gform_textarea_counter', 'group', 1);
 
-        wp_scripts()->add_data('debug-bar-js', 'group', 1);
+            wp_scripts()->add_data('debug-bar-js', 'group', 1);
+        }
     }
 
     public function footerVars()
