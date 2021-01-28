@@ -111,7 +111,7 @@ class AssetsManager
             return ;
         }
 
-        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false, false);
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false, 'all');
     }
 
     public function enqueueScripts($entry) {
