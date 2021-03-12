@@ -24,6 +24,11 @@ class WpQueryBuilder
         return new PostsCollection($posts);
     }
 
+    public function getQueryVars()
+    {
+        return $this->queryVars;
+    }
+
     public function take($numberOfItems)
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
@@ -180,7 +185,12 @@ class WpQueryBuilder
     
     public function paginated($paginated = true) {
         if ($paginated) {
-            $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+            $paged = $paginated;
+
+            if (is_bool($paginated)) {
+                $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+            }
+
             $this->queryVars['paged'] = $paged;
         } else {
             unset($this->queryVars['paged']);
