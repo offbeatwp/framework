@@ -395,6 +395,10 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
+    /**
+     * @return mixed
+     * @deprecated Use getChildren instead
+     */
     public function getChilds()
     {
         return static::where(['post_parent' => $this->getId()])->all();
