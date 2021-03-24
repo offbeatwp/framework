@@ -52,9 +52,14 @@ class PostModel implements PostModelInterface
             return static::macroCallStatic($method, $parameters);
         }
 
-        return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
+        return static::query()->$method(...$parameters);
     }
 
+    /**
+     * @param $method
+     * @param $parameters
+     * @return array|false|WpQueryBuilder|mixed
+     */
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
@@ -70,7 +75,7 @@ class PostModel implements PostModelInterface
         }
 
         if (method_exists(WpQueryBuilderModel::class, $method)) {
-            return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
+            return static::query()->$method(...$parameters);
         }
 
         return false;
@@ -585,14 +590,8 @@ class PostModel implements PostModelInterface
         return new BelongsToMany($this, $key);
     }
 
-    /**
-     * The query function returns a new PostModel instance
-     * We pretend that it can be a WpQueryBuilder so we'll get some of that code completion
-     * In reality, it will NEVER return a true WpQueryBuilder
-     * @return WpQueryBuilder|PostModel
-     */
-    public static function query()
+    public static function query(): WpQueryBuilderModel
     {
-        return new self();
+        return new WpQueryBuilderModel(static::class);
     }
 }
