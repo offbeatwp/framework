@@ -21,8 +21,7 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('container')) {
-    function container($definition = null)
-    {
+    function container($definition = null) {
         if (!is_null($definition))
             return offbeat()->container->get($definition);
 
