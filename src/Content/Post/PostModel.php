@@ -92,7 +92,11 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function __isset($name): bool
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name)
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
@@ -590,7 +594,10 @@ class PostModel implements PostModelInterface
         return new BelongsToMany($this, $key);
     }
 
-    public static function query(): WpQueryBuilderModel
+    /**
+     * @return WpQueryBuilderModel
+     */
+    public static function query()
     {
         return new WpQueryBuilderModel(static::class);
     }
