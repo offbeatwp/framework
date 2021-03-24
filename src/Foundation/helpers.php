@@ -1,6 +1,5 @@
 <?php
 
-use DI\Container;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
@@ -22,10 +21,6 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('container')) {
-    /**
-     * @param null $definition
-     * @return Container
-     */
     function container($definition = null)
     {
         if (!is_null($definition))
