@@ -390,7 +390,6 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @return mixed
      * @deprecated Use getChildren instead
      */
     public function getChilds()
