@@ -96,7 +96,7 @@ class PostModel implements PostModelInterface
      * @param string $name
      * @return bool
      */
-    public function __isset($name)
+    public function __isset($name): bool
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
@@ -153,18 +153,12 @@ class PostModel implements PostModelInterface
         return apply_filters('the_content', $content);
     }
 
-    /**
-     * @return string
-     */
-    public function getPostName()
+    public function getPostName(): string
     {
         return $this->wpPost->post_name;
     }
 
-    /**
-     * @return string
-     */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->getPostName();
     }
@@ -395,6 +389,10 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
+    /**
+     * @return mixed
+     * @deprecated Use getChildren instead
+     */
     public function getChilds()
     {
         return static::where(['post_parent' => $this->getId()])->all();
@@ -558,46 +556,27 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @param $key
-     * @return HasMany
-     */
-    public function hasMany($key)
+    public function hasMany($key): HasMany
     {
         return new HasMany($this, $key);
     }
 
-    /**
-     * @param $key
-     * @return HasOne
-     */
-    public function hasOne($key)
+    public function hasOne($key): HasOne
     {
         return new HasOne($this, $key);
     }
 
-    /**
-     * @param $key
-     * @return BelongsTo
-     */
-    public function belongsTo($key)
+    public function belongsTo($key): BelongsTo
     {
         return new BelongsTo($this, $key);
     }
 
-    /**
-     * @param $key
-     * @return BelongsToMany
-     */
-    public function belongsToMany($key)
+    public function belongsToMany($key): BelongsToMany
     {
         return new BelongsToMany($this, $key);
     }
 
-    /**
-     * @return WpQueryBuilderModel
-     */
-    public static function query()
+    public static function query(): WpQueryBuilderModel
     {
         return new WpQueryBuilderModel(static::class);
     }
