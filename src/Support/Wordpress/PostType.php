@@ -10,7 +10,7 @@ class PostType
 
     private $postTypeModels = [];
 
-    public static function make($name, $pluralName, $singleName)
+    public static function make($name, $pluralName, $singleName): PostTypeBuilder
     {
         return (new PostTypeBuilder)->make($name, $pluralName, $singleName);
     }
