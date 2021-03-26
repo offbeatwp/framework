@@ -1,20 +1,21 @@
 <?php
+
 namespace OffbeatWP\Content\Taxonomy;
 
 class TaxonomyBuilder
 {
-    private $taxonomy   = null;
-    private $postTypes  = null;
-    private $args       = [];
+    private $taxonomy = null;
+    private $postTypes = null;
+    private $args = [];
     private $modelClass = null;
 
-    public function make($taxonomy, $postTypes, $pluralName, $singularLabel)
+    public function make($taxonomy, $postTypes, $pluralName, $singularLabel): TaxonomyBuilder
     {
-        $this->taxonomy     = $taxonomy;
-        $this->postTypes    = $postTypes;
+        $this->taxonomy = $taxonomy;
+        $this->postTypes = $postTypes;
         $this->args = [
             'labels' => [
-                'name'          => $pluralName,
+                'name' => $pluralName,
                 'singular_name' => $singularLabel,
             ],
         ];
@@ -22,7 +23,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function rewrite($rewrite)
+    public function rewrite($rewrite): TaxonomyBuilder
     {
         if (!isset($this->args['rewrite'])) {
             $this->args['rewrite'] = [];
@@ -37,7 +38,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function labels($labels)
+    public function labels($labels): TaxonomyBuilder
     {
         if (!isset($this->args['labels'])) {
             $this->args['labels'] = [];
@@ -48,60 +49,64 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function hierarchical($hierarchical = false) {
+    public function hierarchical($hierarchical = false): TaxonomyBuilder
+    {
         $this->args['hierarchical'] = $hierarchical;
 
         return $this;
     }
 
-    public function model($modelClass)
+    public function model($modelClass): TaxonomyBuilder
     {
         $this->modelClass = $modelClass;
 
         return $this;
     }
 
-    public function notPubliclyQueryable()
+    public function notPubliclyQueryable(): TaxonomyBuilder
     {
         $this->args['publicly_queryable'] = false;
 
         return $this;
     }
 
-    public function public ($public = true) {
+    public function public($public = true): TaxonomyBuilder
+    {
         $this->args['public'] = $public;
 
         return $this;
     }
 
-    public function showUI($showUi = true)
+    public function showUI($showUi = true): TaxonomyBuilder
     {
-        $this->args['show_ui'] = $showUI;
+        $this->args['show_ui'] = $showUi;
 
         return $this;
     }
 
-    public function inMenu($menu)
+    public function inMenu($menu): TaxonomyBuilder
     {
         $this->args['show_in_menu'] = $menu;
 
         return $this;
     }
 
-    public function inRest($rest = true)
+    public function inRest($rest = true): TaxonomyBuilder
     {
         $this->args['show_in_rest'] = $rest;
 
         return $this;
     }
-    
-    public function showAdminColumn($showAdminColumn = true) {
+
+    public function showAdminColumn($showAdminColumn = true): TaxonomyBuilder
+    {
         $this->args['show_admin_column'] = $showAdminColumn;
 
         return $this;
     }
 
-    public function metaBox($metaBoxCallback) {
+    public function metaBox($metaBoxCallback): TaxonomyBuilder
+    {
         $this->args['meta_box_cb'] = $metaBoxCallback;
 
         return $this;
