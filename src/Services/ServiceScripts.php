@@ -3,6 +3,7 @@
 namespace OffbeatWP\Services;
 
 use OffbeatWP\Contracts\SiteSettings;
+use OffbeatWP\SiteSettings\SettingsScripts;
 
 class ServiceScripts extends AbstractService
 {
@@ -16,7 +17,7 @@ class ServiceScripts extends AbstractService
         add_action('body_open',     [$this, 'scriptsBodyOpen']);
         add_action('wp_footer',     [$this, 'scriptsFooter']);
 
-        $settings->addPage(\OffbeatWP\SiteSettings\SettingsScripts::class);
+        $settings->addPage(SettingsScripts::class);
     }
 
     public function scriptsHead()

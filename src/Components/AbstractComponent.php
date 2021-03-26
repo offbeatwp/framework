@@ -8,6 +8,7 @@ use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\ViewableTrait;
+use ReflectionClass;
 
 abstract class AbstractComponent
 {
@@ -145,7 +146,7 @@ abstract class AbstractComponent
 
     public function getDirectory()
     {
-        $classInfo = new \ReflectionClass($this);
+        $classInfo = new ReflectionClass($this);
 
         return dirname($classInfo->getFileName());
     }

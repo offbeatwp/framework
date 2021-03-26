@@ -4,6 +4,7 @@ namespace OffbeatWP\Modules;
 
 use OffbeatWP\Commands\Commands;
 use OffbeatWP\Services\AbstractService;
+use ReflectionClass;
 
 abstract class AbstractModule extends AbstractService
 {
@@ -33,7 +34,7 @@ abstract class AbstractModule extends AbstractService
 
     public function getName()
     {
-        return (new \ReflectionClass($this))->getShortName();
+        return (new ReflectionClass($this))->getShortName();
     }
 
     public function registerComponents()
@@ -51,13 +52,13 @@ abstract class AbstractModule extends AbstractService
 
     public function getNamespace()
     {
-        $classInfo = new \ReflectionClass($this);
+        $classInfo = new ReflectionClass($this);
         return substr($classInfo->name, 0, strrpos($classInfo->name, "\\"));
     }
 
     public function getDirectory()
     {
-        $classInfo = new \ReflectionClass($this);
+        $classInfo = new ReflectionClass($this);
         $classPath = $classInfo->getFileName();
 
         return dirname($classPath);
