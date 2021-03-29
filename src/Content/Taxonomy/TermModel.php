@@ -4,9 +4,6 @@ namespace OffbeatWP\Content\Taxonomy;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
-/**
- * @method mixed getField(string $selector, mixed $post_id = false, bool $format_value = true)
- */
 class TermModel implements TermModelInterface
 {
     use Macroable {

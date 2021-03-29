@@ -1,5 +1,7 @@
 <?php
 
+use OffbeatWP\Content\Post\PostTypeBuilder;
+use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Support\Wordpress\AdminPage;
@@ -16,7 +18,7 @@ use OffbeatWP\Support\Wordpress\Taxonomy;
 if (!function_exists('offbeat')) {
     /**
      * @param string|null $service
-     * @return App|Taxonomy|AdminPage|Ajax|RestApi|Console|Hooks|PostType|Post|Page|Design|mixed
+     * @return App|Taxonomy|AdminPage|Ajax|RestApi|Console|Hooks|PostType|Post|Page|Design|PostTypeBuilder|TaxonomyBuilder
      */
     function offbeat($service = null) {
         if (!is_null($service)) {

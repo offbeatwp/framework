@@ -11,10 +11,6 @@ use WP_Error;
 use WP_Post;
 use WP_User;
 
-/**
- * @method mixed getField(string $selector, mixed $post_id = false, bool $format_value = true)
- * @method bool updateField(string $selector, mixed $value = false, bool $post_id = true)
- */
 class PostModel implements PostModelInterface
 {
     public $wpPost;
