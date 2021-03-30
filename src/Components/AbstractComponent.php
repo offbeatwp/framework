@@ -26,6 +26,14 @@ abstract class AbstractComponent
 
     public $form = null;
 
+	/**
+	 * This method is public for retro-compatibility, please use getForm() instead.
+	 * @return null | Form
+	 */
+	static public function form(){
+		return null;
+	}
+
     public function __construct(View $view, ContextInterface $context = null)
     {
         $this->view = $view;
@@ -153,17 +161,20 @@ abstract class AbstractComponent
 
     public static function getForm()
     {
-        if (!method_exists(get_called_class(), 'settings')) return [];
+	    $form = static::form();
+	    if(is_null($form)){
+		    if (!method_exists(get_called_class(), 'settings')) return [];
 
-        $form = null;
-        $settings = static::settings();
+		    $settings = static::settings();
 
-        if (isset($settings['form']))
-            $form = $settings['form'];
+		    if (isset($settings['form']))
+			    $form = $settings['form'];
 
-        if (!($form instanceof Form)) {
-            $form = new Form();
-        }
+		    if (!($form instanceof Form)) {
+			    $form = new Form();
+		    }
+	    }
+
 
         if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
             $form->addField(
