@@ -18,7 +18,7 @@ use OffbeatWP\Support\Wordpress\Taxonomy;
 if (!function_exists('offbeat')) {
     /**
      * @param string|null $service
-     * @return App|Taxonomy|AdminPage|Ajax|RestApi|Console|Hooks|PostType|Post|Page|Design|PostTypeBuilder|TaxonomyBuilder
+     * @return App|Taxonomy|AdminPage|Ajax|RestApi|Console|Hooks|PostType|Post|Page|Design|PostTypeBuilder|TaxonomyBuilder|mixed
      */
     function offbeat($service = null) {
         if (!is_null($service)) {
