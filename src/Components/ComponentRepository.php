@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Components;
 
+use Exception;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Layout\Frontend;
 
@@ -94,7 +95,7 @@ class ComponentRepository
             return $this->components[$name];
         }
 
-        throw new \Exception("Component does not exist ({$name})");
+        throw new Exception("Component does not exist ({$name})");
     }
 
     public function make($name)

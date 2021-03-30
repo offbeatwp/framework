@@ -1,23 +1,26 @@
 <?php
 namespace OffbeatWP\SiteSettings;
 
+use OffbeatWP\Form\Fields\Textarea;
+use OffbeatWP\Form\Form;
+
 class SettingsScripts
 {
     const ID = 'scripts';
     const PRIORITY = 90;
 
-    public function title()
+    public function title(): string
     {
         return __('Scripts', 'raow');
     }
 
-    public function form()
+    public function form(): Form
     {
-        $form = new \OffbeatWP\Form\Form();
+        $form = new Form();
 
-        $form->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_head', 'Head')->attribute('new_lines', 0));
-        $form->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_open_body', 'Body open')->attribute('new_lines', 0));
-        $form->addField(\OffbeatWP\Form\Fields\Textarea::make('scripts_footer', 'Footer')->attribute('new_lines', 0));
+        $form->addField(Textarea::make('scripts_head', 'Head')->attribute('new_lines', 0));
+        $form->addField(Textarea::make('scripts_open_body', 'Body open')->attribute('new_lines', 0));
+        $form->addField(Textarea::make('scripts_footer', 'Footer')->attribute('new_lines', 0));
 
         return $form;
     }

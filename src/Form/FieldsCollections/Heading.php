@@ -1,12 +1,15 @@
 <?php
 namespace OffbeatWP\Form\FieldsCollections;
 
+use OffbeatWP\Form\Fields\Select;
+use OffbeatWP\Form\Fields\Text;
+
 class Heading extends AbstractFieldsCollection {
     public function __construct($defaultHeading = 'h3', $includeLead = false)
     {
-        $this->addField(\OffbeatWP\Form\Fields\Text::make('heading_title', __('Title', 'offbeatwp')));
+        $this->addField(Text::make('heading_title', __('Title', 'offbeatwp')));
 
-        $headingTypeField = \OffbeatWP\Form\Fields\Select::make('heading_type', __('Type', 'offbeatwp'));
+        $headingTypeField = Select::make('heading_type', __('Type', 'offbeatwp'));
         $headingTypeField
             ->addOptions([
                 'h1' => __('h1', 'offbeatwp'),
@@ -21,7 +24,7 @@ class Heading extends AbstractFieldsCollection {
 
         $this->addField($headingTypeField);
 
-        $headingStyleField = \OffbeatWP\Form\Fields\Select::make('heading_style', __('Style', 'offbeatwp'));
+        $headingStyleField = Select::make('heading_style', __('Style', 'offbeatwp'));
         $headingStyleField
             ->addOptions([
                 '' => __('Default', 'offbeatwp'),

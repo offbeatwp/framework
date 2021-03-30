@@ -2,10 +2,11 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use Symfony\Component\HttpFoundation\Request;
+use WP_Post;
 
 class Post
 {
-    public function convertWpPostToModel(\WP_Post $post)
+    public function convertWpPostToModel(WP_Post $post)
     {
         $model = offbeat('post-type')->getModelByPostType($post->post_type);
         $model = offbeat('hooks')->applyFilters('post_model', $model, $post);

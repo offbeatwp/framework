@@ -6,7 +6,6 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 
 class TermModel implements TermModelInterface
 {
-
     use Macroable {
         __call as macroCall;
         __callStatic as macroCallStatic;

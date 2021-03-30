@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\Taxonomy\TermsCollection;
+use WP_Term_Query;
 
 class TermQueryBuilder
 {
@@ -38,7 +39,7 @@ class TermQueryBuilder
     public function get()
     {
         $termModels = new TermsCollection();
-        $terms      = (new \WP_Term_Query($this->queryVars))->get_terms();
+        $terms      = (new WP_Term_Query($this->queryVars))->get_terms();
 
         if (!empty($terms)) {
             foreach ($terms as $term) {
