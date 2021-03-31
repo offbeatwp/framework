@@ -3,7 +3,11 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
+use WP_Term;
 
+/**
+ * @method mixed getField() getField(string $selector, bool $format_value = true)
+ */
 class TermModel implements TermModelInterface
 {
     use Macroable {
@@ -16,7 +20,7 @@ class TermModel implements TermModelInterface
 
     public function __construct($term)
     {
-        if ($term instanceof \WP_Term) {
+        if ($term instanceof WP_Term) {
             $this->wpTerm = $term;
         } elseif (is_numeric($term)) {
             $this->wpTerm = get_term($term, static::TAXONOMY);
