@@ -14,14 +14,10 @@ abstract class AbstractComponent
 {
     use ViewableTrait;
 
-    /**
-     * @var View
-     */
+    /** @var View */
     public $view;
 
-    /**
-     * @var null|ContextInterface
-     */
+    /** @var null|ContextInterface */
     protected $context;
 
     public $form = null;
@@ -39,10 +35,8 @@ abstract class AbstractComponent
 
     /**
      * Can this component be rendered?
-     *
-     * @return bool
      */
-    public function isRenderable()
+    public function isRenderable(): bool
     {
         return true;
     }
@@ -92,14 +86,13 @@ abstract class AbstractComponent
         return container('componentCache')->fetch($id);
     }
 
-    protected function setCachedObject(string $id, $object)
+    protected function setCachedObject(string $id, $object): string
     {
-
         container('componentCache')->save($id, (string)$object, 60);
         return (string)$object;
     }
 
-    public static function supports($service)
+    public static function supports($service): bool
     {
         if (!method_exists(get_called_class(), 'settings')) return false;
 
