@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Views;
 
 use OffbeatWP\Contracts\SiteSettings;
@@ -80,11 +81,29 @@ class Wordpress
         return ob_get_clean();
     }
 
+    public function getAllPostMeta($postId = null)
+    {
+
+        if ($postId)
+            return get_post_meta($postId);
+
+        global $post;
+
+        if (!$post)
+            return false;
+
+        return get_post_meta($post->ID);
+
+    }
+
+
     public function attachmentUrl($attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
 
-        if (!$attachment) { return false; }
+        if (!$attachment) {
+            return false;
+        }
 
         return $attachment[0];
     }
@@ -117,7 +136,7 @@ class Wordpress
     {
         $url = untrailingslashit(get_template_directory_uri());
 
-        if(!is_null($path)) {
+        if (!is_null($path)) {
             $url .= $path;
         }
 
