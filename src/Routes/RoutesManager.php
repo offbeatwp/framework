@@ -9,7 +9,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 class RoutesManager
 {
-    public $actions = [];
+    protected $actions;
     protected $routesCollection;
     protected $routesContext;
     protected $routeIterator = 0;
@@ -18,17 +18,26 @@ class RoutesManager
     public function __construct()
     {
         $this->routesCollection = new RouteCollection();
+        $this->actions = collect();
     }
 
-    public function callback($checkCallback, $actionCallback, $parameters = [])
+    /**
+     * Callbacks are executed in LiFo order.
+     *
+     * @param $checkCallback
+     * @param $actionCallback
+     * @param array $parameters
+     */
+    public function callback($checkCallback, $actionCallback, $parameters = [], $settings = [])
     {
-        $action = [[
+        $action = [
             'actionCallback' => $actionCallback,
             'checkCallback'  => $checkCallback,
             'parameters'     => $parameters,
-        ]];
+            'isWpCallback'   => (isset($settings['isWpCallback']) && is_bool($settings['isWpCallback'])) ? $settings['isWpCallback'] : true
+        ];
 
-        $this->actions = array_merge($action, $this->actions);
+        $this->actions->push($action);
     }
 
     public function get($route, $actionCallback, $parameters = [], $requirements = [])
@@ -104,13 +113,24 @@ class RoutesManager
         }
     }
 
-    public function findMatch()
+    public function findMatch($dryCheck = false)
     {
-        foreach ($this->actions as $action) {
+        $actions = $this->actions;
+
+        if ($dryCheck) {
+            $actions = $actions->where('isWpCallback', false);
+        }
+
+        foreach ($actions as $actionKey => $action) {
             if (
                 apply_filters('offbeatwp/route/match/wp', true, $action) && 
                 $action['checkCallback']()
             ) {
+                if (!$dryCheck && !$action['isWpCallback']) {
+                    // Forget this "route". When a findMatch is performed again later in the process it prevents an endless loop.
+                    $actions->forget($actionKey);
+                }
+
                 return $action;
             }
 

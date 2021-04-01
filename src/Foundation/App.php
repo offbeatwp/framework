@@ -1,9 +1,20 @@
 <?php
 namespace OffbeatWP\Foundation;
 
+use Closure;
 use DI\Container;
 use DI\ContainerBuilder;
+use Exception;
+use OffbeatWP\Assets\AssetsManager;
+use OffbeatWP\Assets\ServiceEnqueueScripts;
+use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
+use OffbeatWP\Content\Post\Relations\Service;
+use OffbeatWP\Http\Http;
+use OffbeatWP\Routes\RoutesService;
+use OffbeatWP\Wordpress\WordpressService;
+use WP_Error;
+use function DI\create;
 
 class App
 {
@@ -46,19 +57,19 @@ class App
     private function baseBindings()
     {
         return [
-            'assets' => \DI\create(\OffbeatWP\Assets\AssetsManager::class),
-            'http' => \DI\create(\OffbeatWP\Http\Http::class),
+            'assets' => create(AssetsManager::class),
+            'http' => create(Http::class),
         ];
     }
 
     private function initiateBaseServices($containerBuilder)
     {
         foreach ([
-            \OffbeatWP\Wordpress\WordpressService::class,
-            \OffbeatWP\Routes\RoutesService::class,
-            \OffbeatWP\Components\ComponentsService::class,
-            \OffbeatWP\Assets\ServiceEnqueueScripts::class,
-            \OffbeatWP\Content\Post\Relations\Service::class,
+            WordpressService::class,
+            RoutesService::class,
+            ComponentsService::class,
+            ServiceEnqueueScripts::class,
+            Service::class,
         ] as $service) {
             $this->initiateService($service, $containerBuilder);
         }
@@ -179,11 +190,11 @@ class App
             $output = $this->runRoute($route);
 
             if ($output === false) {
-                throw new \Exception('Route return false, try to find next match');
+                throw new Exception('Route return false, try to find next match');
             }
 
-            echo $output;
-        } catch (\Exception $e) {
+            echo apply_filters('route_render_output', $output);
+        } catch (Exception $e) {
             offbeat('routes')->removeLastMatchRoute();
 
 
@@ -198,14 +209,19 @@ class App
         if ($route !== false && is_callable($route['actionCallback'])) {
             $parameters = $route['parameters'];
 
-            if ($parameters instanceof \Closure) {
+            if ($parameters instanceof Closure) {
                 $parameters = $route['parameters']();
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
-                $actionReturn = container()->call($route['actionCallback'], $parameters);
+                $controllerAction = $route['actionCallback'];
+                if ($controllerAction instanceof Closure) {
+                    $controllerAction = $controllerAction();
+                }
+
+                $actionReturn = container()->call($controllerAction, $parameters);
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);
@@ -218,7 +234,7 @@ class App
             }
         }
 
-        return new \WP_Error('broke', __("No route matched", 'raow'));
+        return new WP_Error('broke', __("No route matched", 'raow'));
     }
 
 }

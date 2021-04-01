@@ -24,6 +24,11 @@ class WpQueryBuilder
         return new PostsCollection($posts);
     }
 
+    public function getQueryVars()
+    {
+        return $this->queryVars;
+    }
+
     public function take($numberOfItems)
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
@@ -73,7 +78,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN')
+    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true)
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -97,6 +102,7 @@ class WpQueryBuilder
                 'field'    => $field,
                 'terms'    => $terms,
                 'operator' => $operator,
+                'include_children' => $includeChildren,
             ];
         }
 
@@ -177,9 +183,18 @@ class WpQueryBuilder
         return $this;
     }
     
-    public function paginated() {
-        $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-        $this->queryVars['paged'] = $paged;
+    public function paginated($paginated = true) {
+        if ($paginated) {
+            $paged = $paginated;
+
+            if (is_bool($paginated)) {
+                $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+            }
+
+            $this->queryVars['paged'] = $paged;
+        } else {
+            unset($this->queryVars['paged']);
+        }
         return $this;
     }
 

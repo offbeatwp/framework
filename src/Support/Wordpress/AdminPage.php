@@ -3,7 +3,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 class AdminPage
 {
-    public static function make($title, $slug, $icon = '', $position = 30, $capabilities = null, $callback = null)
+    public function make($title, $slug, $icon = '', $position = 30, $capabilities = null, $callback = null)
     {
         if (is_admin()) {
             if (is_null($callback)) {
@@ -26,7 +26,7 @@ class AdminPage
         }
     }
 
-    public static function makeSub($parent, $title, $slug, $capabilities = null, $callback = null)
+    public function makeSub($parent, $title, $slug, $capabilities = null, $callback = null)
     {
         if (is_admin()) {
             if (is_null($callback)) {

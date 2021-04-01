@@ -1,18 +1,30 @@
 <?php
 namespace OffbeatWP\Wordpress;
 
+use OffbeatWP\Support\Wordpress\AdminPage;
+use OffbeatWP\Support\Wordpress\Ajax;
+use OffbeatWP\Support\Wordpress\Console;
+use OffbeatWP\Support\Wordpress\Design;
+use OffbeatWP\Support\Wordpress\Hooks;
+use OffbeatWP\Support\Wordpress\Page;
+use OffbeatWP\Support\Wordpress\Post;
+use OffbeatWP\Support\Wordpress\PostType;
+use OffbeatWP\Support\Wordpress\RestApi;
+use OffbeatWP\Support\Wordpress\Taxonomy;
+
 class WordpressService
 {
     public $bindings = [
-        'admin-page' => \OffbeatWP\Support\Wordpress\AdminPage::class,
-        'ajax'       => \OffbeatWP\Support\Wordpress\Ajax::class,
-        'console'    => \OffbeatWP\Support\Wordpress\Console::class,
-        'hooks'      => \OffbeatWP\Support\Wordpress\Hooks::class,
-        'post-type'  => \OffbeatWP\Support\Wordpress\PostType::class,
-        'post'       => \OffbeatWP\Support\Wordpress\Post::class,
-        'page'       => \OffbeatWP\Support\Wordpress\Page::class,
-        'taxonomy'   => \OffbeatWP\Support\Wordpress\Taxonomy::class,
-        'design'     => \OffbeatWP\Support\Wordpress\Design::class,
+        'admin-page' => AdminPage::class,
+        'ajax'       => Ajax::class,
+        'rest-api'   => RestApi::class,
+        'console'    => Console::class,
+        'hooks'      => Hooks::class,
+        'post-type'  => PostType::class,
+        'post'       => Post::class,
+        'page'       => Page::class,
+        'taxonomy'   => Taxonomy::class,
+        'design'     => Design::class,
     ];
 
     public function register()
@@ -21,11 +33,9 @@ class WordpressService
         $this->registerImageSizes();
         $this->registerSidebars();
 
-        add_filter('style_loader_tag', [$this, 'deferStyles'], 10, 4);
-
         // Page Template
         add_action('init', [$this, 'registerPageTemplate'], 99);
-        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate']);
+        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10 ,2);
     }
 
     public function registerMenus()
@@ -60,15 +70,6 @@ class WordpressService
         }
     }
 
-    public function deferStyles($tag, $handle, $href, $media)
-    {
-        if ($handle == 'wp-block-library') {
-            $tag = str_replace('rel=\'stylesheet\'', 'rel=\'preload\'', $tag);
-        }
-
-        return $tag;
-    }
-
     public function registerPageTemplate()
     {
         add_filter('theme_page_templates', function ($postTemplates) {
@@ -82,9 +83,9 @@ class WordpressService
         }, 10, 1);
     }
 
-    public function applyPageTemplate($template)
+    public function applyPageTemplate($template, $data)
     {
-        if (is_singular('page')) {
+        if (is_singular('page') && empty($data['ignore_page_template'])) {
             $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
             if (!empty($pageTemplate) && $pageTemplate != 'default') {
                 return $pageTemplate;

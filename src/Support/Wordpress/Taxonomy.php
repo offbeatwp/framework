@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Support\Wordpress;
 
+use GuzzleHttp\Psr7\Uri;
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,10 +59,13 @@ class Taxonomy
     public function maybeRedirect($term)
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
-        $requestUri = strtok($request->getUri(), '?');
-        $postUri    = $term->getLink();
+        $requestUri = $request->getPathInfo();
 
-        if ($requestUri !== $postUri) {
+        $url = $term->getLink();
+        $url = str_replace(home_url(), '', $url);
+        $postUri    = new Uri($url);
+
+        if (rtrim($requestUri, '/') !== rtrim($postUri->getPath(), '/')) {
             $url = $term->getLink();
 
             if (!empty($_GET))

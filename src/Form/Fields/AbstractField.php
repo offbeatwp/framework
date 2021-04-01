@@ -92,7 +92,7 @@ class AbstractField implements FieldInterface
         if (isset($this->getAttributes()[$key])) {
             return $this->getAttributes()[$key];
         }
-        return false;
+        return null;
     }
 
     /* Chain setters */

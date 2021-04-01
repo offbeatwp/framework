@@ -12,7 +12,10 @@ class RoutesService extends AbstractService
     public function register()
     {
         add_action('init', [$this, 'loadRoutes'], 10);
-        add_action('init', [$this, 'urlRoutePreps'], 15);
+        
+        if (!is_admin()) {
+            add_action('init', [$this, 'urlRoutePreps'], 15);
+        }
     }
 
     public function loadRoutes()
@@ -26,24 +29,19 @@ class RoutesService extends AbstractService
 
     public function urlRoutePreps()
     {
-        $preventParseRequest = true;
-
-        if (!($urlMatch = offbeat('routes')->findUrlMatch())) {
+        if (!offbeat('routes')->findUrlMatch() && !offbeat('routes')->findMatch(true, true)) {
             return null;
         }
 
-        if (
-            is_array($urlMatch) && 
-            isset($urlMatch['parameters']) && 
-            isset($urlMatch['parameters']['preventParseRequest']) && 
-            is_bool($urlMatch['parameters']['preventParseRequest'])
-        ) {
-            $preventParseRequest = $urlMatch['parameters']['preventParseRequest'];
-        }
-
-        if (!$preventParseRequest) {
-            return null;
-        }
+        add_filter('user_trailingslashit', function ($url) {
+            $urlUnTrailingSlashed = untrailingslashit($url);
+            
+            if (preg_match('/\.json$/', $urlUnTrailingSlashed)) {
+                return $urlUnTrailingSlashed;
+            }
+            
+            return $url;
+        }, 20, 1);
 
         add_action('parse_query', function ($query) {
             if ($query->is_main_query()) {

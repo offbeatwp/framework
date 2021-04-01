@@ -3,10 +3,13 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
+use WP_Term;
 
+/**
+ * @method mixed getField() getField(string $selector, bool $format_value = true)
+ */
 class TermModel implements TermModelInterface
 {
-
     use Macroable {
         __call as macroCall;
         __callStatic as macroCallStatic;
@@ -15,10 +18,10 @@ class TermModel implements TermModelInterface
     public $wpTerm;
     public $id;
 
-    public function __construct($post)
+    public function __construct($term)
     {
-        if ($post instanceof \WP_Term) {
-            $this->wpTerm = $post;
+        if ($term instanceof WP_Term) {
+            $this->wpTerm = $term;
         } elseif (is_numeric($term)) {
             $this->wpTerm = get_term($term, static::TAXONOMY);
         }
@@ -96,7 +99,7 @@ class TermModel implements TermModelInterface
     public function getParent()
     {
         if ($this->getParentId()) {
-            return (new static())->findById($this->getParentId());
+            return (new static($this))->findById($this->getParentId());
         }
 
         return false;
@@ -104,7 +107,7 @@ class TermModel implements TermModelInterface
 
     public function getMeta($key, $single = true)
     {
-        return get_term_meta($this->getID(), $single);
+        return get_term_meta($this->getID(), $key, $single);
     }
 
     public function setMeta($key, $value)

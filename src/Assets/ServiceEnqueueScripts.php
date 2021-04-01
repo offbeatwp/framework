@@ -12,6 +12,7 @@ class ServiceEnqueueScripts extends AbstractService
         }
 
         add_action('wp_enqueue_scripts',    [$this, 'enqueueScripts'], 1);
+        add_action('wp_footer',    [$this, 'footerVars'], 5);
     }
 
     public function enqueueScripts()
@@ -20,23 +21,33 @@ class ServiceEnqueueScripts extends AbstractService
 
         wp_deregister_script('wp-embed');
 
-        wp_enqueue_style('theme-style', assetUrl('main.css'), [], false, false);
-        wp_enqueue_script('theme-script', assetUrl('main.js'), ['jquery'], false, true);
+        offbeat('assets')->enqueueStyles('main');
+        offbeat('assets')->enqueueScripts('main');
 
-        wp_scripts()->add_data('jquery', 'group', 1);
-        wp_scripts()->add_data('jquery-core', 'group', 1);
-        wp_scripts()->add_data('jquery-migrate', 'group', 1);
+        if (apply_filters('offbeatwp/scripts/move_to_footer', true)) {
+            wp_scripts()->add_data('jquery', 'group', 1);
+            wp_scripts()->add_data('jquery-core', 'group', 1);
+            wp_scripts()->add_data('jquery-migrate', 'group', 1);
 
-        wp_scripts()->add_data('gform_gravityforms', 'group', 1);
-        wp_scripts()->add_data('gform_json', 'group', 1);
-        wp_scripts()->add_data('gform_textarea_counter', 'group', 1);
+            wp_scripts()->add_data('gform_gravityforms', 'group', 1);
+            wp_scripts()->add_data('gform_json', 'group', 1);
+            wp_scripts()->add_data('gform_textarea_counter', 'group', 1);
 
-        wp_scripts()->add_data('debug-bar-js', 'group', 1);
+            wp_scripts()->add_data('debug-bar-js', 'group', 1);
+        }
+    }
 
-        wp_localize_script(
-            'theme-script', 
-            'wp_js',
-            apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')])
-        );
+    public function footerVars()
+    {
+        $vars = apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')]);
+
+        if (empty($vars)) return;
+
+        echo "<script type='text/javascript'>
+            /* <![CDATA[ */
+                var wp_js = " . json_encode($vars) . ";
+            /* ]]> */
+        </script>
+        ";
     }
 }

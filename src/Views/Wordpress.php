@@ -62,10 +62,10 @@ class Wordpress
         return body_class($class);
     }
 
-    public function action($action)
+    public function action($action, $args = [])
     {
         ob_start();
-        do_action($action);
+        do_action($action, $args);
         return ob_get_clean();
     }
 
@@ -142,4 +142,36 @@ class Wordpress
 
         return $url;
     }
+
+    public function isSearchPage()
+    {
+        return is_search();
+    }
+
+    public function getSearchQuery()
+    {
+        if ($this->isSearchPage())
+            return get_search_query();
+    }
+
+    public function getPageTitle()
+    {
+        return get_the_title();
+    }
+    
+    public function getAllPostMeta($postId = null)
+    {
+
+        if ($postId)
+            return get_post_meta($postId);
+
+        global $post;
+
+        if (!$post)
+            return false;
+
+        return get_post_meta($post->ID);
+
+    }
+    
 }

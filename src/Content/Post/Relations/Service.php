@@ -2,8 +2,6 @@
 namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Services\AbstractService;
-use OffbeatWP\Content\Post\PostModel;
-use OffbeatWP\Content\Post\WpQueryBuilder;
 
 class Service extends AbstractService
 {
@@ -18,22 +16,49 @@ class Service extends AbstractService
     public function insertRelationshipsSql($clauses, $query) {
         if (!isset($query->query_vars['relationships']) || empty($query->query_vars['relationships'])) return $clauses;
 
-        $sql = $this->getSql($query);
-            
-        if (isset($sql['join']) && !empty($sql['join']))
-            $clauses['join'] .= $sql['join'];
+        $relationshipSqlClauses = $this->getSqlClauses($query);
+        foreach ($relationshipSqlClauses as $sql) {
+            if (isset($sql['join']) && !empty($sql['join']))
+                $clauses['join'] .= $sql['join'];
 
-        if (isset($sql['where']) && !empty($sql['where']))
-            $clauses['where'] .= $sql['where'];
+            if (isset($sql['where']) && !empty($sql['where']))
+                $clauses['where'] .= $sql['where'];
+        }
 
         return $clauses;
     }
 
-    private function getSql($query) {
-        global $wpdb;
+    private function getSqlClauses($query) {
+        $operator = $query->query_vars['relationships']['operator'] ?? false;
+        if ($operator) {
+            $multipleRelationships = $query->query_vars['relationships'];
+            unset($multipleRelationships['operator']);
+            $n = 0;
+            foreach ($multipleRelationships as $relationship) {
+                $sql[] = $this->buildQuery($relationship, $operator,$n);
+                $n++;
+            }
+        } else {
+            //single relationship
+            $sql[] = $this->buildQuery($query->query_vars['relationships']);
+        }
+        return $sql;
+    }
 
+    /**
+     * @param array $relationshipQuery
+     * @param string $operator
+     * @param int $n
+     * @return array
+     * @throws \Exception
+     */
+    private function buildQuery(array $relationshipQuery, $operator = 'AND',$n = 0): array {
+        $this->checkOperator($operator);
+        global $wpdb;
         $direction = null;
-        if (isset($query->query_vars['relationships']['direction']) && $query->query_vars['relationships']['direction']) $direction = $query->query_vars['relationships']['direction'];
+        if (isset($relationshipQuery['direction']) && $relationshipQuery['direction']) {
+            $direction = $relationshipQuery['direction'];
+        }
 
         $columnOn = 'relation_to';
         $columnWhere = 'relation_from';
@@ -42,12 +67,17 @@ class Service extends AbstractService
             $columnOn = 'relation_from';
             $columnWhere = 'relation_to';
         }
-
         $sql = [];
-        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr ON ({$wpdb->posts}.ID = pr.{$columnOn}) ";
+        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
 
-        $sql['where'] = " AND pr.key = '" . $query->query_vars['relationships']['key'] . "' AND pr.{$columnWhere} = " . $query->query_vars['relationships']['id'];
+        $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} = " . $relationshipQuery['id'];
 
         return $sql;
+    }
+
+    private function checkOperator($operator) {
+        if ($operator !== 'AND' && $operator !== 'OR') {
+            throw new \Exception('Operator not valid for the relationships query builder');
+        };
     }
 }

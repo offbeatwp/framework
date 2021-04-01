@@ -3,6 +3,7 @@
 namespace OffbeatWP\Services\PageTypes;
 
 use OffbeatWP\Services\AbstractService;
+use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
 
 class PageTypesService extends AbstractService
 {
@@ -15,7 +16,7 @@ class PageTypesService extends AbstractService
     {
         offbeat('taxonomy')::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
             ->metaBox([$this, 'metaBox'])
-            ->model(Models\PageTypeModel::class)
+            ->model(PageTypeModel::class)
             ->showAdminColumn()
             ->set();
 
@@ -110,7 +111,7 @@ class PageTypesService extends AbstractService
 
     public function metaBox()
     {
-        $terms = Models\PageTypeModel::excludeEmpty(false)->order('term_id', 'ASC')->get();
+        $terms = PageTypeModel::excludeEmpty(false)->order('term_id', 'ASC')->get();
         
         if($terms->isEmpty()) return null;
 

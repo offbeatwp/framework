@@ -27,13 +27,13 @@ class Form extends Collection
 
         if ($this->getActiveItem() != $this && $item instanceof FieldsContainerInterface) {
             while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
-                $this->setActiveItem($this->getActiveItem()->getParent());
+                $this->closeField();
             }
         }
 
         // If item is of the same type as the active item move back to parent
         if (get_class($item) == get_class($this->getActiveItem()) && get_class($item) != self::class) {
-            $this->setActiveItem($this->getActiveItem()->getParent());
+            $this->closeField();
         }
 
         // If active item is the form, push item directly the the items
@@ -113,6 +113,17 @@ class Form extends Collection
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
         });
+
+        return $this;
+    }
+
+    public function closeField()
+    {
+        $parentField = $this->getActiveItem()->getParent();
+
+        if (!empty($parentField)) {
+            $this->setActiveItem($parentField);
+        }
 
         return $this;
     }
