@@ -12,7 +12,7 @@ namespace PHPSTORM_META {
         'page' => OffbeatWP\Support\Wordpress\Page::class,
         'taxonomy' => OffbeatWP\Support\Wordpress\Taxonomy::class,
         'design' => OffbeatWP\Support\Wordpress\Design::class,
-        'component' => OffbeatWP\Components\ComponentRepository::class,
+        'components' => OffbeatWP\Components\ComponentRepository::class,
         'routes' => OffbeatWP\Routes\RoutesManager::class,
         'assets' => OffbeatWP\Assets\AssetsManager::class
     ]));
