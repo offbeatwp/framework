@@ -1,7 +1,5 @@
 <?php
 
-use DI\DependencyException;
-use DI\NotFoundException;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
@@ -22,12 +20,6 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('container')) {
-    /**
-     * @param string|null $definition
-     * @return mixed
-     * @throws DependencyException
-     * @throws NotFoundException
-     */
     function container($definition = null) {
         if (!is_null($definition)) {
             return offbeat()->container->get($definition);

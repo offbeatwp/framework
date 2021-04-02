@@ -19,16 +19,10 @@ use function DI\create;
 class App
 {
     private static $instance;
-    /**
-     * @var Container
-     */
     public $container;
     private $services = [];
     protected $config = null;
 
-    /**
-     * @return App
-     */
     public static function singleton()
     {
         if (!isset(static::$instance)) {
