@@ -1,32 +1,19 @@
 <?php
 
 namespace PHPSTORM_META {
-
-    use OffbeatWP\Content\Taxonomy\TermModel;
-    use OffbeatWP\Form\Fields\PostType;
-    use OffbeatWP\Routes\RoutesManager;
-    use OffbeatWP\Support\Wordpress\AdminPage;
-    use OffbeatWP\Support\Wordpress\Ajax;
-    use OffbeatWP\Support\Wordpress\Console;
-    use OffbeatWP\Support\Wordpress\Design;
-    use OffbeatWP\Support\Wordpress\Hooks;
-    use OffbeatWP\Support\Wordpress\Page;
-    use OffbeatWP\Support\Wordpress\Post;
-    use OffbeatWP\Support\Wordpress\RestApi;
-    use OffbeatWP\Support\Wordpress\Taxonomy;
-    use OffbeatWP\Wordpress\WordpressService;
-
-    override(\offbeat(0), map([
-        'admin-page' => AdminPage::class,
-        'ajax' => Ajax::class,
-        'rest-api' => RestApi::class,
-        'console' => Console::class,
-        'hooks' => Hooks::class,
-        'post-type' => PostType::class,
-        'post' => Post::class,
-        'page' => Page::class,
-        'taxonomy' => Taxonomy::class,
-        'design' => Design::class,
-        'routes' => RoutesManager::class
+    override(\offbeat(), map([
+        'admin-page' => OffbeatWP\Support\Wordpress\AdminPage::class,
+        'ajax' => OffbeatWP\Support\Wordpress\Ajax::class,
+        'rest-api' => OffbeatWP\Support\Wordpress\RestApi::class,
+        'console' => OffbeatWP\Support\Wordpress\Console::class,
+        'hooks' => OffbeatWP\Support\Wordpress\Hooks::class,
+        'post-type' => OffbeatWP\Support\Wordpress\PostType::class,
+        'post' => OffbeatWP\Support\Wordpress\Post::class,
+        'page' => OffbeatWP\Support\Wordpress\Page::class,
+        'taxonomy' => OffbeatWP\Support\Wordpress\Taxonomy::class,
+        'design' => OffbeatWP\Support\Wordpress\Design::class,
+        'component' => OffbeatWP\Components\ComponentRepository::class,
+        'routes' => OffbeatWP\Routes\RoutesManager::class,
+        'assets' => OffbeatWP\Assets\AssetsManager::class
     ]));
 }
