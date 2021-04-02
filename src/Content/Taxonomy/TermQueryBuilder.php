@@ -94,14 +94,22 @@ class TermQueryBuilder
         return $term;
     }
 
-    public function where($parameters)
+
+    public function whereParent(int $parentId): TermQueryBuilder
+    {
+        $this->queryVars['parent'] = $parentId;
+
+        return $this;
+    }
+
+    public function where($parameters): TermQueryBuilder
     {
         $this->queryVars = array_merge($this->queryVars, $parameters);
 
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '=')
+    public function whereMeta($key, $value = '', $compare = '='): TermQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -122,19 +130,21 @@ class TermQueryBuilder
         return $this;
     }
 
-    public function whereRelatedToPost($postIds) {
+    public function whereRelatedToPost($postIds): TermQueryBuilder
+    {
         $this->queryVars['object_ids'] = $postIds;
 
         return $this;
     }
 
-    public function excludeEmpty($hideEmpty = true) {
+    public function excludeEmpty($hideEmpty = true): TermQueryBuilder
+    {
         $this->queryVars['hide_empty'] = $hideEmpty;
 
         return $this;
     }
 
-    public function order($orderBy = null, $direction = null)
+    public function order($orderBy = null, $direction = null): TermQueryBuilder
     {
         if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];

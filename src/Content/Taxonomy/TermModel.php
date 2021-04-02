@@ -34,10 +34,10 @@ class TermModel implements TermModelInterface
     public static function __callStatic($method, $parameters)
     {
         if (static::hasMacro($method)) {
-            return $this->macroCallStatic($method, $parameters);
+            return static::macroCallStatic($method, $parameters);
         }
 
-        return (new TermQueryBuilder(static::class))->$method(...$parameters);
+        return static::query()->$method(...$parameters);
     }
 
     public function __call($method, $parameters)
@@ -55,7 +55,7 @@ class TermModel implements TermModelInterface
         }
         
         if (method_exists(TermQueryBuilder::class, $method)) {
-            return (new TermQueryBuilder(static::class))->$method(...$parameters);
+            return static::query()->$method(...$parameters);
         }
 
         return false;
@@ -118,5 +118,10 @@ class TermModel implements TermModelInterface
     public function getPosts($postTypes = ['any'])
     {
         return (new WpQueryBuilder)->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+    }
+
+    public static function query(): TermQueryBuilder
+    {
+        return new TermQueryBuilder(static::class);
     }
 }
