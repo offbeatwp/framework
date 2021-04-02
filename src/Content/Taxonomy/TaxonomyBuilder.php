@@ -77,13 +77,6 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function withParent(int $parentId): TaxonomyBuilder
-    {
-        $this->args['parent'] = $parentId;
-
-        return $this;
-    }
-
     public function showUI($showUi = true): TaxonomyBuilder
     {
         $this->args['show_ui'] = $showUi;
