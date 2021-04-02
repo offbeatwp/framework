@@ -112,6 +112,20 @@ class TaxonomyBuilder
         return $this;
     }
 
+    public function useCheckboxes() {
+        $this->metaBox('post_categories_meta_box');
+
+        add_filter( 'post_edit_category_parent_dropdown_args', function ($args) {
+            if ($args['taxonomy'] == $this->taxonomy ) {
+                $args['echo'] = false;
+            }
+
+            return $args;
+        });
+
+        return $this;
+    }
+
     public function set()
     {
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);

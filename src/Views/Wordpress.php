@@ -81,6 +81,22 @@ class Wordpress
         return ob_get_clean();
     }
 
+    public function getAllPostMeta($postId = null)
+    {
+
+        if ($postId)
+            return get_post_meta($postId);
+
+        global $post;
+
+        if (!$post)
+            return false;
+
+        return get_post_meta($post->ID);
+
+    }
+
+
     public function attachmentUrl($attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
@@ -142,20 +158,4 @@ class Wordpress
     {
         return get_the_title();
     }
-    
-    public function getAllPostMeta($postId = null)
-    {
-
-        if ($postId)
-            return get_post_meta($postId);
-
-        global $post;
-
-        if (!$post)
-            return false;
-
-        return get_post_meta($post->ID);
-
-    }
-    
 }
