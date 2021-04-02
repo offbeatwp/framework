@@ -3,7 +3,6 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
-use OffbeatWP\Content\Post\WpQueryBuilderModel;
 use WP_Term;
 
 /**

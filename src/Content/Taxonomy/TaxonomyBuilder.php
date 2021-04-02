@@ -77,6 +77,13 @@ class TaxonomyBuilder
         return $this;
     }
 
+    public function withParent(int $parentId): TaxonomyBuilder
+    {
+        $this->args['parent'] = $parentId;
+
+        return $this;
+    }
+
     public function showUI($showUi = true): TaxonomyBuilder
     {
         $this->args['show_ui'] = $showUi;
@@ -112,7 +119,8 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function useCheckboxes() {
+    public function useCheckboxes(): TaxonomyBuilder
+    {
         $this->metaBox('post_categories_meta_box');
 
         add_filter( 'post_edit_category_parent_dropdown_args', function ($args) {
