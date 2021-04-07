@@ -51,21 +51,22 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $this->parent;
     }
 
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
         if (isset($this->getAttributes()[$key])) {
             return $this->getAttributes()[$key];
         }
+
         return false;
     }
 
@@ -76,7 +77,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $item;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $items = $this->map(function ($item) {
             return $item->toArray();

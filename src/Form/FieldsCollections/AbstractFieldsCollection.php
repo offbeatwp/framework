@@ -9,7 +9,7 @@ class AbstractFieldsCollection extends Collection implements FieldsCollectionInt
         $this->push($field);
     }
 
-    public function addFields(FieldsCollectionInterface $fieldsCollection) {
+    public function addFields(AbstractFieldsCollection $fieldsCollection) {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
         });
