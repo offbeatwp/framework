@@ -1,6 +1,8 @@
 <?php
 namespace OffbeatWP\Config;
 
+use OffbeatWP\Helpers\ArrayHelper;
+
 class Config {
     private $app;
     protected $config = null;
@@ -19,17 +21,14 @@ class Config {
         foreach ($configFiles as $configFile) {
             $configValues = require $configFile;
 
-            if (is_multisite() && isset($configValues['sites']) && isset($configValues['sites'][get_current_blog_id()])) {
-                $configValues = array_merge_recursive($configValues, $configValues['sites'][get_current_blog_id()]);
-            }
-
             $this->set(basename($configFile, '.php'), $configValues);
         }
 
+        $this->loadConfigEnvFile();
         $this->loadConfigEnv();
     }
 
-    protected function loadConfigEnv()
+    protected function loadConfigEnvFile()
     {
         $env = get_template_directory() . '/env.php';
         if (file_exists($env)) {
@@ -38,29 +37,34 @@ class Config {
                 if (!$this->get($key)) {
                     continue;
                 }
-                $this->config[$key] = array_replace_recursive($this->config[$key], $value);
+                $this->config[$key] = ArrayHelper::mergeRecursiveAssoc($this->config[$key], $value);
             }
+        }
+    }
+
+    protected function loadConfigEnv() {
+        if (is_array($this->all())) foreach($this->all() as $configKey => $configSet) {
+            if (!ArrayHelper::isAssoc($configSet)) {
+                continue;
+            }
+
+            $environment = defined('WP_ENV') ? WP_ENV : 'dev';
+            $envConfig = ArrayHelper::getValueFromDottedKey('env.' . $environment, $configSet);
+    
+            if (!empty($envConfig)) {
+                $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
+            }
+
+            $this->set($configKey, $configSet);
         }
     }
 
     public function get($key, $default = null) {
         $return = $default;
 
-        if (isset($this->config[$key])) {
-            $return = $this->config[$key];
-        } elseif (strpos($key, '.') !== false) {
-            $config = $this->config;
-            
-            foreach (explode('.', $key) as $var) {
-                if (isset($config[$var])) {
-                    $config = $config[$var];
-                } else {
-                    return null;
-                }
-            }
+        $config = $this->config;
 
-            $return = $config;
-        }
+        $return = ArrayHelper::getValueFromDottedKey($key, $config);
 
         if (is_array($return)) {
             $return = collect($return);
