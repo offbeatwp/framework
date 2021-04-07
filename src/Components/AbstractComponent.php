@@ -8,22 +8,27 @@ use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\ViewableTrait;
+use ReflectionClass;
 
 abstract class AbstractComponent
 {
     use ViewableTrait;
 
-    /**
-     * @var View
-     */
+    /** @var View */
     public $view;
 
-    /**
-     * @var null|ContextInterface
-     */
+    /** @var null|ContextInterface */
     protected $context;
 
     public $form = null;
+
+	/**
+	 * This method is public for retro-compatibility, please use getForm() instead.
+	 * @return null | Form
+	 */
+	static public function form(){
+		return null;
+	}
 
     public function __construct(View $view, ContextInterface $context = null)
     {
@@ -38,10 +43,8 @@ abstract class AbstractComponent
 
     /**
      * Can this component be rendered?
-     *
-     * @return bool
      */
-    public function isRenderable()
+    public function isRenderable(): bool
     {
         return true;
     }
@@ -91,14 +94,13 @@ abstract class AbstractComponent
         return container('componentCache')->fetch($id);
     }
 
-    protected function setCachedObject(string $id, $object)
+    protected function setCachedObject(string $id, $object): string
     {
-
         container('componentCache')->save($id, (string)$object, 60);
         return (string)$object;
     }
 
-    public static function supports($service)
+    public static function supports($service): bool
     {
         if (!method_exists(get_called_class(), 'settings')) return false;
 
@@ -145,24 +147,27 @@ abstract class AbstractComponent
 
     public function getDirectory()
     {
-        $classInfo = new \ReflectionClass($this);
+        $classInfo = new ReflectionClass($this);
 
         return dirname($classInfo->getFileName());
     }
 
     public static function getForm()
     {
-        if (!method_exists(get_called_class(), 'settings')) return [];
+	    $form = static::form();
+	    if(is_null($form)){
+		    if (!method_exists(get_called_class(), 'settings')) return [];
 
-        $form = null;
-        $settings = static::settings();
+		    $settings = static::settings();
 
-        if (isset($settings['form']))
-            $form = $settings['form'];
+		    if (isset($settings['form']))
+			    $form = $settings['form'];
 
-        if (!($form instanceof Form)) {
-            $form = new Form();
-        }
+		    if (!($form instanceof Form)) {
+			    $form = new Form();
+		    }
+	    }
+
 
         if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
             $form->addField(

@@ -7,7 +7,15 @@ use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
+use WP_Error;
+use WP_Post;
+use WP_User;
 
+/**
+ * @method mixed getField() getField(string $selector, bool $format_value = true)
+ * @method array getFieldObject() getFieldObject(string $selector, bool $format_value = true)
+ * @method bool updateField() updateField(string $selector, mixed $value = false)
+ */
 class PostModel implements PostModelInterface
 {
     public $wpPost;
@@ -20,16 +28,19 @@ class PostModel implements PostModelInterface
         __callStatic as macroCallStatic;
     }
 
+    /**
+     * PostModel constructor.
+     * @param null|mixed $post
+     */
     public function __construct($post = null)
     {
-
         if (is_null($post)) {
             $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = 'publish';
             $this->wpPost->comment_status = 'closed';
             $this->wpPost->ping_status = 'closed';
-        } elseif ($post instanceof \WP_Post) {
+        } elseif ($post instanceof WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
@@ -42,9 +53,14 @@ class PostModel implements PostModelInterface
             return static::macroCallStatic($method, $parameters);
         }
 
-        return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
+        return static::query()->$method(...$parameters);
     }
 
+    /**
+     * @param $method
+     * @param $parameters
+     * @return array|false|WpQueryBuilder|mixed
+     */
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
@@ -60,7 +76,7 @@ class PostModel implements PostModelInterface
         }
 
         if (method_exists(WpQueryBuilderModel::class, $method)) {
-            return (new WpQueryBuilderModel(static::class))->$method(...$parameters);
+            return static::query()->$method(...$parameters);
         }
 
         return false;
@@ -77,7 +93,11 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function __isset($name)
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name): bool
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
@@ -90,6 +110,9 @@ class PostModel implements PostModelInterface
 
     /* Attribute methods */
 
+    /**
+     * @return int|null
+     */
     public function getId()
     {
         return isset($this->wpPost->ID) ? $this->wpPost->ID : null;
@@ -131,24 +154,29 @@ class PostModel implements PostModelInterface
         return apply_filters('the_content', $content);
     }
 
-    public function getPostName()
+    public function getPostName(): string
     {
         return $this->wpPost->post_name;
     }
 
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->getPostName();
     }
 
+    /**
+     * @return false|string|WP_Error
+     */
     public function getPermalink()
     {
         return get_permalink($this->getId());
     }
 
+    /**
+     * @return false|string
+     */
     public function getPostTypeLabel()
     {
-
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
         if(empty($postType) || empty($postType->label)) return false;
@@ -156,21 +184,36 @@ class PostModel implements PostModelInterface
         return $postType->label;
     }
 
+    /**
+     * @return string
+     */
     public function getPostType()
     {
         return $this->wpPost->post_type;
     }
 
+    /**
+     * @param $postType
+     * @return bool
+     */
     public function isPostType($postType)
     {
         return $this->getPostType() == $postType;
     }
 
+    /**
+     * @param string $format
+     * @return false|string
+     */
     public function getPostDate($format = '')
     {
         return get_the_date($format, $this->wpPost);
     }
 
+    /**
+     * @param bool $formatted
+     * @return false|string
+     */
     public function getExcerpt($formatted = true)
     {
         if (!$formatted) {
@@ -191,6 +234,9 @@ class PostModel implements PostModelInterface
         return $excerpt;
     }
 
+    /**
+     * @return false|WP_User
+     */
     public function getAuthor()
     {
         $authorId = $this->getAuthorId();
@@ -200,6 +246,9 @@ class PostModel implements PostModelInterface
         return get_userdata($authorId);
     }
 
+    /**
+     * @return false|int|string
+     */
     public function getAuthorId()
     {
 
@@ -209,7 +258,6 @@ class PostModel implements PostModelInterface
 
         return $authorId;
     }
-
 
     public function getMetas()
     {
@@ -229,6 +277,11 @@ class PostModel implements PostModelInterface
         return null;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function setMeta($key, $value)
     {
         $this->metaInput[$key] = $value;
@@ -243,41 +296,70 @@ class PostModel implements PostModelInterface
         return $model::whereRelatedToPost($this->getId());
     }
 
+    /**
+     * @param $term
+     * @param $taxonomy
+     * @return bool
+     */
     public function hasTerm($term, $taxonomy)
     {
         return has_term($term, $taxonomy, $this->getId());
     }
 
+    /**
+     * @return bool
+     */
     public function hasFeaturedImage()
     {
         return has_post_thumbnail($this->wpPost);
     }
 
+    /**
+     * @param string $size
+     * @param array $attr
+     * @return string
+     */
     public function getFeaturedImage($size = 'thumbnail', $attr = [])
     {
         return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
 
+    /**
+     * @param string $size
+     * @return false|string
+     */
     public function getFeaturedImageUrl($size = 'thumbnail')
     {
         return get_the_post_thumbnail_url($this->wpPost, $size);
     }
 
+    /**
+     * @return false|int
+     */
     public function getFeaturedImageId()
     {
         return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
     }
 
+    /**
+     * @param string $title
+     */
     public function setTitle($title)
     {
         $this->wpPost->post_title = $title;
     }
 
+    /**
+     * @param string $postName
+     */
     public function setPostName($postName)
     {
         $this->wpPost->post_name = $postName;
     }
 
+    /**
+     * @return int|null
+     */
     public function getParentId()
     {
         if ($this->wpPost->post_parent) {
@@ -287,6 +369,9 @@ class PostModel implements PostModelInterface
         return null;
     }
 
+    /**
+     * @return bool
+     */
     public function hasParent()
     {
         if (!is_null($this->getParentId())) {
@@ -305,6 +390,9 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
+    /**
+     * @deprecated Use getChildren instead
+     */
     public function getChilds()
     {
         return static::where(['post_parent' => $this->getId()])->all();
@@ -315,6 +403,9 @@ class PostModel implements PostModelInterface
         return $this->getChilds();
     }
 
+    /**
+     * @return int[]
+     */
     public function getAncestorIds()
     {
         return get_post_ancestors($this->getId());
@@ -333,17 +424,35 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
+    /**
+     * @param false $inSameTerm
+     * @param string $excludedTerms
+     * @param string $taxonomy
+     * @return false|mixed
+     */
     public function getPreviousPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
+    /**
+     * @param false $inSameTerm
+     * @param string $excludedTerms
+     * @param string $taxonomy
+     * @return mixed
+     */
     public function getNextPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-
+    /**
+     * @param false $inSameTerm
+     * @param string $excludedTerms
+     * @param bool $previous
+     * @param string $taxonomy
+     * @return mixed
+     */
     public function getAdjacentPost($inSameTerm = false, $excludedTerms = '', $previous = true, $taxonomy = 'category')
     {
         $currentPost = $GLOBALS['post'];
@@ -361,6 +470,9 @@ class PostModel implements PostModelInterface
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function isPasswordRequired()
     {
         return post_password_required($this->wpPost);
@@ -385,21 +497,30 @@ class PostModel implements PostModelInterface
 
     /* Change methods */
 
+    /**
+     * @param bool $force
+     * @return array|false|WP_Post|null
+     */
     public function delete($force = true)
     {
         return wp_delete_post($this->getId(), $force);
     }
 
+    /**
+     * @return array|false|WP_Post|null
+     */
     public function trash()
     {
         return wp_trash_post($this->getId());
     }
 
+    /**
+     * @return array|false|WP_Post|null
+     */
     public function untrash()
     {
         return wp_untrash_post($this->getId());
     }
-
 
     public function save()
     {
@@ -435,23 +556,28 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function hasMany($key)
+    public function hasMany($key): HasMany
     {
         return new HasMany($this, $key);
     }
 
-    public function hasOne($key)
+    public function hasOne($key): HasOne
     {
         return new HasOne($this, $key);
     }
 
-    public function belongsTo($key)
+    public function belongsTo($key): BelongsTo
     {
         return new BelongsTo($this, $key);
     }
 
-    public function belongsToMany($key)
+    public function belongsToMany($key): BelongsToMany
     {
         return new BelongsToMany($this, $key);
+    }
+
+    public static function query(): WpQueryBuilderModel
+    {
+        return new WpQueryBuilderModel(static::class);
     }
 }

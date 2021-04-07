@@ -3,6 +3,7 @@
 namespace OffbeatWP\Views;
 
 use \OffbeatWP\Contracts\View;
+use ReflectionClass;
 
 trait ViewableTrait
 {
@@ -14,7 +15,7 @@ trait ViewableTrait
     {
         if (!isset($this->hasViewsDirectory) || $this->hasViewsDirectory !== true) return null;
 
-        $reflector = new \ReflectionClass($this);
+        $reflector = new ReflectionClass($this);
         $directory = dirname($reflector->getFileName());
         $this->view->addTemplatePath($directory . '/views');
     }
@@ -48,7 +49,7 @@ trait ViewableTrait
 
     public function setRecursiveParentViewsPath()
     {
-        $reflector = new \ReflectionClass($this);
+        $reflector = new ReflectionClass($this);
         $fn        = $reflector->getFileName();
 
         $path = dirname($fn);
@@ -58,7 +59,7 @@ trait ViewableTrait
 
     public function setModuleViewsPath()
     {
-        $reflector = new \ReflectionClass($this);
+        $reflector = new ReflectionClass($this);
 
         if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $reflector->getName(), $matches)) return null;
 

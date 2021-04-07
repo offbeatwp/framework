@@ -1,11 +1,15 @@
 <?php
+
+use OffbeatWP\Contracts\SiteSettings;
+use OffbeatWP\Foundation\App;
+
 if (!function_exists('offbeat')) {
     function offbeat($service = null) {
         if (!is_null($service)) {
             return container($service);
         }
 
-        return \OffbeatWP\Foundation\App::singleton();
+        return App::singleton();
     }
 }
 
@@ -17,8 +21,9 @@ if (!function_exists('config')) {
 
 if (!function_exists('container')) {
     function container($definition = null) {
-        if (!is_null($definition))
+        if (!is_null($definition)) {
             return offbeat()->container->get($definition);
+        }
 
         return offbeat()->container;
     }
@@ -32,6 +37,6 @@ if (!function_exists('assetUrl')) {
 
 if (!function_exists('setting')) {
     function setting($key) {
-        return offbeat(\OffbeatWP\Contracts\SiteSettings::class)->get($key);
+        return offbeat(SiteSettings::class)->get($key);
     }
 }

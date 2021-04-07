@@ -10,6 +10,12 @@ class PostType
 
     private $postTypeModels = [];
 
+    /**
+     * @param $name
+     * @param $pluralName
+     * @param $singleName
+     * @return PostTypeBuilder
+     */
     public static function make($name, $pluralName, $singleName)
     {
         return (new PostTypeBuilder)->make($name, $pluralName, $singleName);
@@ -22,8 +28,9 @@ class PostType
 
     public function getModelByPostType($postType)
     {
-        if (isset($this->postTypeModels[$postType]))
+        if (isset($this->postTypeModels[$postType])) {
             return $this->postTypeModels[$postType];
+        }
 
         return self::DEFAULT_POST_MODEL;
     }

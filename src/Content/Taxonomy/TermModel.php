@@ -3,10 +3,13 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
+use WP_Term;
 
+/**
+ * @method mixed getField() getField(string $selector, bool $format_value = true)
+ */
 class TermModel implements TermModelInterface
 {
-
     use Macroable {
         __call as macroCall;
         __callStatic as macroCallStatic;
@@ -17,7 +20,7 @@ class TermModel implements TermModelInterface
 
     public function __construct($term)
     {
-        if ($term instanceof \WP_Term) {
+        if ($term instanceof WP_Term) {
             $this->wpTerm = $term;
         } elseif (is_numeric($term)) {
             $this->wpTerm = get_term($term, static::TAXONOMY);
@@ -31,10 +34,10 @@ class TermModel implements TermModelInterface
     public static function __callStatic($method, $parameters)
     {
         if (static::hasMacro($method)) {
-            return $this->macroCallStatic($method, $parameters);
+            return static::macroCallStatic($method, $parameters);
         }
 
-        return (new TermQueryBuilder(static::class))->$method(...$parameters);
+        return static::query()->$method(...$parameters);
     }
 
     public function __call($method, $parameters)
@@ -52,7 +55,7 @@ class TermModel implements TermModelInterface
         }
         
         if (method_exists(TermQueryBuilder::class, $method)) {
-            return (new TermQueryBuilder(static::class))->$method(...$parameters);
+            return static::query()->$method(...$parameters);
         }
 
         return false;
@@ -115,5 +118,10 @@ class TermModel implements TermModelInterface
     public function getPosts($postTypes = ['any'])
     {
         return (new WpQueryBuilder)->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+    }
+
+    public static function query(): TermQueryBuilder
+    {
+        return new TermQueryBuilder(static::class);
     }
 }
