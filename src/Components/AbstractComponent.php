@@ -51,9 +51,22 @@ abstract class AbstractComponent
     }
 
     /**
+     * @param object|array $settings
+     * @return string
+     */
+    public function rawComponent($settings)
+    {
+        if ($this->context) {
+            $this->context->initContext();
+        }
+
+        return container()->call([$this, 'render'], ['settings' => $settings]);
+    }
+
+    /**
      * Render the component.
      *
-     * @param $settings
+     * @param object|array $settings
      * @return string
      */
     public function renderComponent($settings)
@@ -67,13 +80,9 @@ abstract class AbstractComponent
         if ($object !== false) {
             return $object;
         }
-        if ($this->context) {
-            $this->context->initContext();
-        }
 
-        /** @var Container $container */
-        $container = container();
-        $output = $container->call([$this, 'render'], ['settings' => $settings]);
+        $output = $this->rawComponent($settings);
+
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
     }

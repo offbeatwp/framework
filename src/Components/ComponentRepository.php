@@ -117,6 +117,12 @@ class ComponentRepository
         return false;
     }
 
+    public function raw($name, $args = [])
+    {
+        $component = $this->make($name);
+        return $component->rawComponent((object)$args);
+    }
+
     public function render($name, $args = [])
     {
         $component = $this->make($name);
