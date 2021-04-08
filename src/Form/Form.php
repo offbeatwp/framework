@@ -2,7 +2,7 @@
 namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
+use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
@@ -111,7 +111,7 @@ class Form extends Collection
         return $this;
     }
 
-    public function addFields(AbstractFieldsCollection $fieldsCollection): Form
+    public function addFields(FieldsCollectionInterface $fieldsCollection): Form
     {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
