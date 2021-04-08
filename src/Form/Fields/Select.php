@@ -4,7 +4,6 @@ namespace OffbeatWP\Form\Fields;
 class Select extends AbstractField {
     const FIELD_TYPE = 'select';
 
-    /** @var array|callable */
     public $options = [];
 
     public function addOptions($options = []) {
