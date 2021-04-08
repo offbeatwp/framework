@@ -72,11 +72,13 @@ class AbstractField implements FieldInterface
         return $this->required;
     }
 
+    /** @internal use attribute instead */
     public function setAttribute($key, $value = null)
     {
         $this->attributes[$key] = $value;
     }
 
+    /** @internal use attributes instead */
     public function setAttributes($attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
