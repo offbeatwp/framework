@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Components;
 
+use DI\Container;
 use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
@@ -69,7 +70,10 @@ abstract class AbstractComponent
         if ($this->context) {
             $this->context->initContext();
         }
-        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+
+        /** @var Container $container */
+        $container = container();
+        $output = $container->call([$this, 'render'], ['settings' => $settings]);
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
     }
