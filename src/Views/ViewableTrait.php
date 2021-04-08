@@ -85,9 +85,13 @@ trait ViewableTrait
         $this->setElementViewsPath();
     }
 
+    public function rawView() {
+        return container()->get(View::class);
+    }
+
     public function view($name, $data = [])
     {
-        $view       = container()->get(View::class);
+        $view = $this->rawView();
         $this->view = $view;
 
         $this->setTemplatePaths();
