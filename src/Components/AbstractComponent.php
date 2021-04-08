@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Components;
 
-use DI\Container;
 use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
@@ -87,7 +86,7 @@ abstract class AbstractComponent
         return $this->setCachedObject($cachedId, $render);
     }
 
-    protected function getCacheId($settings)
+    protected function getCacheId($settings): string
     {
         $prefix = $this->context ? $this->context->getCacheId() : '';
         return md5($prefix . get_class($this) . json_encode($settings));
