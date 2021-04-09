@@ -80,7 +80,6 @@ class PostTypeBuilder
         array_merge([
             'name'                     => _x($plural, "post type general name", $domain),
             'singular_name'            => _x($singular, "post type singular name", $domain),
-            'add_new'                  => __("Add New", $domain),
             'add_new_item'             => __("Add New {$ucf_singular}", $domain),
             'edit_item'                => __("Edit {$ucf_singular}", $domain),
             'new_item'                 => __("New {$ucf_singular}", $domain),
@@ -92,7 +91,7 @@ class PostTypeBuilder
             'all_items'                => __("All {$ucf_plural}", $domain),
             'archives'                 => __("{$ucf_singular} Archives", $domain),
             'attributes'               => __("{$ucf_singular} Attributes", $domain),
-            'insert_into_item'         => __( "Insert into {$singular}" ),
+            'insert_into_item'         => __( "Insert into {$singular}", $domain),
             'uploaded_to_this_item'    => __("Uploaded to this {$singular}", $domain),
             'filter_items_list'        => __("Filter {$plural} list", $domain),
             'items_list_navigation'    => __("{$ucf_plural} list navigation", $domain),

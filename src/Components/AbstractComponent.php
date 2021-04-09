@@ -23,7 +23,7 @@ abstract class AbstractComponent
     public $form = null;
 
 	/**
-	 * @deprecated This method is public for retro-compatibility, please use getForm() instead.
+	 * @internal This method is public for retro-compatibility, please use getForm() instead.
 	 * @return null | Form
 	 */
 	static public function form(){
