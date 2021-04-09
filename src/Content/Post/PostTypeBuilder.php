@@ -63,6 +63,48 @@ class PostTypeBuilder
         return $this;
     }
 
+    /**
+     * Attempt to automatically generate labels
+     * BEWARE: This will only work properly if the passed singular/plural words are UNLOCALISED and lowercase
+     */
+    public function generateLabels(string $domain) {
+        $singular = $this->postTypeArgs['labels']['singular_name'];
+        $plural = $this->postTypeArgs['labels']['name'];
+
+        $this->postTypeArgs['labels'] = [
+            'name'                     => _x( $plural, "post type general name", $domain),
+            'singular_name'            => _x( $singular, "post type singular name", $domain),
+            'add_new'                  => _x( "Add New", strtolower($singular), $domain),
+            'add_new_item'             => __( "Add New {$singular}" ),
+            'edit_item'                => __( 'Edit Post' ),
+            'new_item'                 => __( 'New Post'),
+            'view_item'                => __( 'View Post'),
+            'view_items'               => __( 'View Posts'),
+            'search_items'             => __( 'Search Posts'),
+            'not_found'                => __( 'No posts found.'),
+            'not_found_in_trash'       => __( 'No posts found in Trash.'),
+            'parent_item_colon'        => __( 'Parent Page:'),
+            'all_items'                => __( 'All Posts'),
+            'archives'                 => __( 'Post Archives'),
+            'attributes'               => __( 'Post Attributes'),
+            'insert_into_item'         => __( "Insert into post" ),
+            'uploaded_to_this_item'    => __( 'Uploaded to this post'),
+            'featured_image'           => _x( 'Featured image', 'post' ),
+            'set_featured_image'       => _x( 'Set featured image', 'post'),
+            'remove_featured_image'    => _x( 'Remove featured image', 'post'),
+            'use_featured_image'       => _x( 'Use as featured image', 'post'),
+            'filter_items_list'        => __( 'Filter posts list'),
+            'filter_by_date'           => __( 'Filter by date'),
+            'items_list_navigation'    => __( 'Posts list navigation'),
+            'items_list'               => __( 'Posts list'),
+            'item_published'           => __( 'Post published.'),
+            'item_published_privately' => __( 'Post published privately.'),
+            'item_reverted_to_draft'   => __( 'Post reverted to draft.'),
+            'item_scheduled'           => __( 'Post scheduled.'),
+            'item_updated'             => __( 'Post updated.'),
+        ];
+    }
+
     public function model($modelClass): PostTypeBuilder
     {
         $this->modelClass = $modelClass;
