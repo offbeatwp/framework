@@ -67,7 +67,7 @@ class PostTypeBuilder
      * Attempt to automatically generate labels
      * BEWARE: This will only work properly if the passed singular/plural words are UNLOCALISED and lowercase
      */
-    public function generateLabels(string $domain = 'offbeatwp') {
+    public function generateLabels(string $domain = 'offbeatwp'): void {
         if (!isset($this->postTypeArgs['labels'])) {
             $this->postTypeArgs['labels'] = [];
         }
