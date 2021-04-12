@@ -66,7 +66,6 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         if (isset($this->getAttributes()[$key])) {
             return $this->getAttributes()[$key];
         }
-
         return false;
     }
 
