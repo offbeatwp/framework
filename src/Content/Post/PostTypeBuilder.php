@@ -64,8 +64,8 @@ class PostTypeBuilder
     }
 
     /**
-     * Attempt to automatically generate labels
-     * BEWARE: This will only work properly if the passed singular/plural words are UNLOCALISED and lowercase
+     * Automatically generate labels
+     * This will only work properly if the passed singular/plural words in the constructor are unlocalised and lowercase
      */
     public function generateLabels(string $domain = 'offbeatwp'): PostTypeBuilder {
         $singular = $this->postTypeArgs['labels']['singular_name'];
