@@ -67,7 +67,7 @@ class PostTypeBuilder
      * Attempt to automatically generate labels
      * BEWARE: This will only work properly if the passed singular/plural words are UNLOCALISED and lowercase
      */
-    public function generateLabels(string $domain = 'offbeatwp'): void {
+    public function generateLabels(string $domain = 'offbeatwp'): PostTypeBuilder {
         if (!isset($this->postTypeArgs['labels'])) {
             $this->postTypeArgs['labels'] = [];
         }
@@ -102,6 +102,8 @@ class PostTypeBuilder
             'item_scheduled'           => __("{$ucf_singular} scheduled.", $domain),
             'item_updated'             => __("{$ucf_singular} updated.", $domain),
         ], $this->postTypeArgs['labels']);
+
+        return $this;
     }
 
     public function model($modelClass): PostTypeBuilder
