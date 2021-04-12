@@ -78,8 +78,6 @@ class PostTypeBuilder
         $ucf_plural = ucfirst($plural);
 
         array_merge([
-            'name'                     => _x($ucf_plural, "post type general name", $domain),
-            'singular_name'            => _x($ucf_singular, "post type singular name", $domain),
             'add_new_item'             => __("Add New {$ucf_singular}", $domain),
             'edit_item'                => __("Edit {$ucf_singular}", $domain),
             'new_item'                 => __("New {$ucf_singular}", $domain),
@@ -102,6 +100,13 @@ class PostTypeBuilder
             'item_scheduled'           => __("{$ucf_singular} scheduled.", $domain),
             'item_updated'             => __("{$ucf_singular} updated.", $domain),
         ], $this->postTypeArgs['labels']);
+
+        $this->postTypeArgs = [
+            'labels' => [
+                'name' => __($ucf_singular, $domain),
+                'singular_name' => __($ucf_plural, $domain)
+            ],
+        ];
 
         return $this;
     }
