@@ -7,7 +7,9 @@ use OffbeatWP\Layout\Frontend;
 
 class ComponentRepository
 {
-    /** @var ContextInterface */
+    /**
+     * @var ContextInterface
+     */
     protected $layoutContext;
 
     public function __construct()
@@ -96,11 +98,6 @@ class ComponentRepository
         throw new Exception("Component does not exist ({$name})");
     }
 
-    /**
-     * @param string $name
-     * @return AbstractComponent
-     * @throws Exception
-     */
     public function make($name)
     {
         $componentClass = $this->get($name);
