@@ -68,17 +68,16 @@ class PostTypeBuilder
      * BEWARE: This will only work properly if the passed singular/plural words are UNLOCALISED and lowercase
      */
     public function generateLabels(string $domain = 'offbeatwp'): PostTypeBuilder {
-        if (!isset($this->postTypeArgs['labels'])) {
-            $this->postTypeArgs['labels'] = [];
-        }
-
         $singular = $this->postTypeArgs['labels']['singular_name'];
         $plural = $this->postTypeArgs['labels']['name'];
         $ucf_singular = ucfirst($singular);
         $ucf_plural = ucfirst($plural);
 
-        array_merge([
+        $this->labels([
+            'name'                     => __($ucf_plural, $domain),
+            'singular_name'            => __($ucf_singular, $domain),
             'add_new_item'             => __("Add New {$ucf_singular}", $domain),
+            'add_new'                  => __("New {$ucf_singular}", $domain),
             'edit_item'                => __("Edit {$ucf_singular}", $domain),
             'new_item'                 => __("New {$ucf_singular}", $domain),
             'view_item'                => __("View {$ucf_singular}", $domain),
@@ -86,10 +85,9 @@ class PostTypeBuilder
             'search_items'             => __("Search {$ucf_plural}", $domain),
             'not_found'                => __("No {$plural} found.", $domain),
             'not_found_in_trash'       => __("No {$plural} found in Trash.", $domain),
-            'all_items'                => __("All {$ucf_plural}", $domain),
             'archives'                 => __("{$ucf_singular} Archives", $domain),
             'attributes'               => __("{$ucf_singular} Attributes", $domain),
-            'insert_into_item'         => __( "Insert into {$singular}", $domain),
+            'insert_into_item'         => __("Insert into {$singular}", $domain),
             'uploaded_to_this_item'    => __("Uploaded to this {$singular}", $domain),
             'filter_items_list'        => __("Filter {$plural} list", $domain),
             'items_list_navigation'    => __("{$ucf_plural} list navigation", $domain),
@@ -99,14 +97,7 @@ class PostTypeBuilder
             'item_reverted_to_draft'   => __("{$ucf_singular} reverted to draft.", $domain),
             'item_scheduled'           => __("{$ucf_singular} scheduled.", $domain),
             'item_updated'             => __("{$ucf_singular} updated.", $domain),
-        ], $this->postTypeArgs['labels']);
-
-        $this->postTypeArgs = [
-            'labels' => [
-                'name' => __($ucf_singular, $domain),
-                'singular_name' => __($ucf_plural, $domain)
-            ],
-        ];
+        ]);
 
         return $this;
     }
