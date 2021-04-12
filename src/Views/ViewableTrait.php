@@ -87,7 +87,7 @@ trait ViewableTrait
 
     public function view($name, $data = [])
     {
-        $view = $this->rawView();
+        $view       = container()->get(View::class);
         $this->view = $view;
 
         $this->setTemplatePaths();
