@@ -133,12 +133,12 @@ class Form extends Collection
         return 'form';
     }
 
-    public function getFieldPrefix()
+    public function getFieldPrefix() 
     {
         return $this->fieldPrefix;
     }
 
-    public function setFieldPrefix($fieldPrefix)
+    public function setFieldPrefix($fieldPrefix) 
     {
         $this->fieldPrefix = $fieldPrefix;
     }
