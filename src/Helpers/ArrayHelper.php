@@ -27,17 +27,17 @@ class ArrayHelper {
         return $array;
     }
 
-    public static function getValueFromDottedKey(string $key, array $array = [])
+    public static function getValueFromDottedKey(string $key, array $array = []): ?array
     {
         if (!is_array($array)) {
-            return false;
+            return null;
         }
 
         foreach (explode('.', $key) as $var) {
             if (isset($array[$var])) {
                 $array = $array[$var];
             } else {
-                return false;
+                return null;
             }
         }
 
