@@ -44,7 +44,7 @@ class Config {
 
     protected function loadConfigEnv() {
         if (is_array($this->all())) foreach($this->all() as $configKey => $configSet) {
-            if (!is_array($configSet) || !ArrayHelper::isAssoc($configSet)) {
+            if (!ArrayHelper::isAssoc($configSet)) {
                 continue;
             }
 
