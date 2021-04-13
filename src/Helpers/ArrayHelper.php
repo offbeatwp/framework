@@ -2,7 +2,7 @@
 namespace OffbeatWP\Helpers;
 
 class ArrayHelper {
-    public static function isAssoc(array $array): bool
+    public static function isAssoc($array): bool
     {
         return is_array($array) && array_keys($array) !== range(0, count($array) - 1);
     }
