@@ -21,13 +21,10 @@ class Form extends Collection
         $this->activeItem = $this;
     }
 
-    /**
-     * @param mixed|Form|FieldsContainerInterface|FieldInterface $item
-     * @param bool $prepend
-     */
-    public function add($item, $prepend = false): Form
+    public function add($item, $prepend = false)
     {
-        // If item is Tab and active item is Section move back to parent
+        // If item is Tab and active itme is Section move back to parent
+
         if ($this->getActiveItem() != $this && $item instanceof FieldsContainerInterface) {
             while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
                 $this->closeField();
@@ -82,28 +79,28 @@ class Form extends Collection
         return $this->activeItem;
     }
 
-    public function addTab($id, $label): Form
+    public function addTab($id, $label)
     {
         $this->add(new Tab($id, $label));
 
         return $this;
     }
 
-    public function addSection($id, $label): Form
+    public function addSection($id, $label)
     {
         $this->add(new Section($id, $label));
 
         return $this;
     }
 
-    public function addRepeater($id, $label): Form
+    public function addRepeater($id, $label)
     {
         $this->add(new Repeater($id, $label));
 
         return $this;
     }
 
-    public function addField(FieldInterface $field): Form
+    public function addField(FieldInterface $field)
     {
         $this->fieldKeys[] = $field->getId();
         $this->add($field);
@@ -111,7 +108,7 @@ class Form extends Collection
         return $this;
     }
 
-    public function addFields(FieldsCollectionInterface $fieldsCollection): Form
+    public function addFields(FieldsCollectionInterface $fieldsCollection)
     {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
@@ -120,7 +117,7 @@ class Form extends Collection
         return $this;
     }
 
-    public function closeField(): Form
+    public function closeField()
     {
         $parentField = $this->getActiveItem()->getParent();
 
@@ -131,7 +128,7 @@ class Form extends Collection
         return $this;
     }
 
-    public function getType(): string
+    public function getType()
     {
         return 'form';
     }
@@ -146,7 +143,7 @@ class Form extends Collection
         $this->fieldPrefix = $fieldPrefix;
     }
 
-    public function toArray(): array
+    public function toArray()
     {
         $items = $this->map(function ($item) {
             return $item->toArray();
@@ -155,7 +152,7 @@ class Form extends Collection
         return $items->toArray();
     }
 
-    public function getFieldKeys(): array
+    public function getFieldKeys()
     {
         return $this->fieldKeys;
     }
