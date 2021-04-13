@@ -23,7 +23,7 @@ abstract class AbstractComponent
     public $form = null;
 
 	/**
-	 * This method is public for retro-compatibility, please use getForm() instead.
+	 * @internal This method is public for retro-compatibility, please use getForm() instead.
 	 * @return null | Form
 	 */
 	static public function form(){
@@ -52,7 +52,7 @@ abstract class AbstractComponent
     /**
      * Render the component.
      *
-     * @param $settings
+     * @param object|array $settings
      * @return string
      */
     public function renderComponent($settings)
@@ -66,15 +66,18 @@ abstract class AbstractComponent
         if ($object !== false) {
             return $object;
         }
+
         if ($this->context) {
             $this->context->initContext();
         }
+
         $output = container()->call([$this, 'render'], ['settings' => $settings]);
+
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
     }
 
-    protected function getCacheId($settings)
+    protected function getCacheId($settings): string
     {
         $prefix = $this->context ? $this->context->getCacheId() : '';
         return md5($prefix . get_class($this) . json_encode($settings));

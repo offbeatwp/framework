@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Form\Fields;
 
 class AbstractField implements FieldInterface
@@ -8,7 +9,7 @@ class AbstractField implements FieldInterface
     public $required;
     public $attributes = [];
 
-    public static function make($id, $label)
+    public static function make($id, $label): AbstractField
     {
         $field = new static();
 
@@ -37,7 +38,7 @@ class AbstractField implements FieldInterface
         $this->required = $required;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return 'field';
     }
@@ -72,17 +73,19 @@ class AbstractField implements FieldInterface
         return $this->required;
     }
 
+    /** @internal Use attribute instead */
     public function setAttribute($key, $value = null)
     {
         $this->attributes[$key] = $value;
     }
 
-    public function setAttributes($attributes)
+    /** @internal Use attributes instead */
+    public function setAttributes(array $attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -92,32 +95,33 @@ class AbstractField implements FieldInterface
         if (isset($this->getAttributes()[$key])) {
             return $this->getAttributes()[$key];
         }
+
         return null;
     }
 
     /* Chain setters */
-
-    public function description($description)
+    public function description($description): AbstractField
     {
         $this->setAttribute('description', $description);
 
         return $this;
     }
 
-    function default($value) {
+    function default($value): AbstractField
+    {
         $this->setAttribute('default', $value);
 
         return $this;
     }
 
-    public function attributes($attributes)
+    public function attributes(array $attributes): AbstractField
     {
         $this->setAttributes($attributes);
 
         return $this;
     }
 
-    public function attribute($key, $value)
+    public function attribute($key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
 
@@ -126,15 +130,15 @@ class AbstractField implements FieldInterface
 
     /* Functional */
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
-            'type'       => 'field',
+            'type' => 'field',
             'field_type' => $this->getFieldType(),
-            'id'         => $this->getId(),
-            'label'      => $this->getLabel(),
+            'id' => $this->getId(),
+            'label' => $this->getLabel(),
             'attributes' => $this->getAttributes(),
-            'required'   => $this->getRequired(),
+            'required' => $this->getRequired(),
         ];
     }
 }
