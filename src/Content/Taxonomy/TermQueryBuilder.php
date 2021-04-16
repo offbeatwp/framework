@@ -1,7 +1,7 @@
 <?php
+
 namespace OffbeatWP\Content\Taxonomy;
 
-use OffbeatWP\Content\Taxonomy\TermsCollection;
 use WP_Term_Query;
 
 class TermQueryBuilder
@@ -12,7 +12,7 @@ class TermQueryBuilder
 
     public function __construct($model)
     {
-        $this->model    = $model;
+        $this->model = $model;
         $this->taxonomy = $model::TAXONOMY;
 
         $this->queryVars = [
@@ -36,10 +36,11 @@ class TermQueryBuilder
         $this->order($orderBy, $order);
     }
 
-    public function get()
+    // Retrieval methods
+    public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
-        $terms      = (new WP_Term_Query($this->queryVars))->get_terms();
+        $terms = (new WP_Term_Query($this->queryVars))->get_terms();
 
         if (!empty($terms)) {
             foreach ($terms as $term) {
@@ -50,21 +51,23 @@ class TermQueryBuilder
         return $termModels;
     }
 
-    public function all()
+    public function all(): TermsCollection
     {
         $this->queryVars['number'] = 0;
-        
+
         return $this->get();
     }
 
-    public function take($numberOfItems)
+    public function take($numberOfItems): TermsCollection
     {
         $this->queryVars['number'] = $numberOfItems;
-        
+
         return $this->get();
     }
 
-    public function first() {
+    /** @return TermModel|null */
+    public function first()
+    {
         return $this->take(1)->first();
     }
 
@@ -83,6 +86,7 @@ class TermQueryBuilder
         return $this->findBy('name', $name);
     }
 
+    /** @return TermModel|false */
     public function findBy($field, $value)
     {
         $term = get_term_by($field, $value, $this->taxonomy);
@@ -94,7 +98,7 @@ class TermQueryBuilder
         return $term;
     }
 
-
+    // Chainable methods
     public function whereParent(int $parentId): TermQueryBuilder
     {
         $this->queryVars['parent'] = $parentId;
@@ -119,8 +123,8 @@ class TermQueryBuilder
 
         if (!is_array($parameters)) {
             $parameters = [
-                'key'     => $key,
-                'value'   => $value,
+                'key' => $key,
+                'value' => $value,
                 'compare' => $compare,
             ];
         }
@@ -151,7 +155,7 @@ class TermQueryBuilder
             $this->queryVars['orderby'] = 'meta_value';
 
             if (isset($match[1]) && $match[1] == 'meta_num') {
-                $this->queryVars['orderby'] = 'meta_value_num';                
+                $this->queryVars['orderby'] = 'meta_value_num';
             }
 
         } elseif (!is_null($orderBy)) {

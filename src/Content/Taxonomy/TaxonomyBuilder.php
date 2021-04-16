@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 class TaxonomyBuilder
 {
+    /** @var string|null $taxonomy */
     private $taxonomy = null;
     private $postTypes = null;
     private $args = [];
@@ -52,6 +53,19 @@ class TaxonomyBuilder
     public function hierarchical($hierarchical = false): TaxonomyBuilder
     {
         $this->args['hierarchical'] = $hierarchical;
+
+        return $this;
+    }
+
+    public function hierarchyDepth(int $depth): TaxonomyBuilder
+    {
+        add_filter('taxonomy_parent_dropdown_args', function (array $dropdownArgs, string $taxonomy) use ($depth) {
+            if ($taxonomy === $this->taxonomy) {
+                $dropdownArgs['depth'] = $depth;
+            }
+
+            return $dropdownArgs;
+        }, 10, 2);
 
         return $this;
     }
@@ -116,8 +130,8 @@ class TaxonomyBuilder
     {
         $this->metaBox('post_categories_meta_box');
 
-        add_filter( 'post_edit_category_parent_dropdown_args', function ($args) {
-            if ($args['taxonomy'] == $this->taxonomy ) {
+        add_filter('post_edit_category_parent_dropdown_args', function ($args) {
+            if ($args['taxonomy'] === $this->taxonomy) {
                 $args['echo'] = false;
             }
 
@@ -127,13 +141,12 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function set()
+    public function set(): void
     {
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);
 
         if (!is_null($this->modelClass)) {
             offbeat('taxonomy')->registerTermModel($this->taxonomy, $this->modelClass);
         }
-
     }
 }
