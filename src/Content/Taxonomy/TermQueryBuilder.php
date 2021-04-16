@@ -36,6 +36,7 @@ class TermQueryBuilder
         $this->order($orderBy, $order);
     }
 
+    // Retrieval methods
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
@@ -97,7 +98,7 @@ class TermQueryBuilder
         return $term;
     }
 
-    // Chainable
+    // Chainable methods
     public function whereParent(int $parentId): TermQueryBuilder
     {
         $this->queryVars['parent'] = $parentId;
