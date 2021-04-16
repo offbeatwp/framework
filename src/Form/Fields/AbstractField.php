@@ -9,7 +9,8 @@ class AbstractField implements FieldInterface
     public $required;
     public $attributes = [];
 
-    public static function make($id, $label): AbstractField
+    /** @return static */
+    public static function make($id, $label)
     {
         $field = new static();
 
