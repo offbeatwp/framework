@@ -131,7 +131,7 @@ class TaxonomyBuilder
         $this->metaBox('post_categories_meta_box');
 
         add_filter('post_edit_category_parent_dropdown_args', function ($args) {
-            if ($args['taxonomy'] == $this->taxonomy) {
+            if ($args['taxonomy'] === $this->taxonomy) {
                 $args['echo'] = false;
             }
 
