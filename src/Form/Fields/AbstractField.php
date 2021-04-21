@@ -4,12 +4,19 @@ namespace OffbeatWP\Form\Fields;
 
 class AbstractField implements FieldInterface
 {
+    /** @var string */
     public $id;
+    /** @var string */
     public $label;
+    /** @var bool */
     public $required;
+    /** @var array */
     public $attributes = [];
 
-    /** @return static */
+    /**
+     * @param string $id
+     * @param string $label
+     */
     public static function make($id, $label)
     {
         $field = new static();
@@ -24,16 +31,25 @@ class AbstractField implements FieldInterface
         return $field;
     }
 
+    /**
+     * @param string $id
+     */
     public function setId($id)
     {
         $this->id = $id;
     }
 
+    /**
+     * @param string $label
+     */
     public function setLabel($label)
     {
         $this->label = $label;
     }
 
+    /**
+     * @param bool $required
+     */
     public function setRequired($required)
     {
         $this->required = $required;
