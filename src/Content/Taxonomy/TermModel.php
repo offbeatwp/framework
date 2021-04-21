@@ -3,6 +3,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
+use WP_Error;
 use WP_Term;
 
 /**
@@ -15,9 +16,15 @@ class TermModel implements TermModelInterface
         __callStatic as macroCallStatic;
     }
 
+    /** @var WP_Error|WP_Term|null */
     public $wpTerm;
+    /** @var int|null */
     public $id;
 
+    /**
+     * TermModel constructor.
+     * @param WP_Term
+     */
     public function __construct($term)
     {
         if ($term instanceof WP_Term) {
@@ -93,18 +100,22 @@ class TermModel implements TermModelInterface
 
     public function getParentId()
     {
-        return ($this->wpTerm->parent) ? $this->wpTerm->parent : false;
+        return ($this->wpTerm->parent) ?: false;
     }
 
     public function getParent()
     {
         if ($this->getParentId()) {
-            return (new static($this))->findById($this->getParentId());
+            return static::query()->findById($this->getParentId());
         }
 
         return false;
     }
 
+    /**
+     * @param string $key
+     * @param bool $single
+     */
     public function getMeta($key, $single = true)
     {
         return get_term_meta($this->getID(), $key, $single);
@@ -115,7 +126,7 @@ class TermModel implements TermModelInterface
         return update_term_meta($this->getID(), $key, $value);
     }
 
-    public function getPosts($postTypes = ['any'])
+    public function getPosts($postTypes = ['any']): WpQueryBuilder
     {
         return (new WpQueryBuilder)->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
     }

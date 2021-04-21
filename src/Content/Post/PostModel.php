@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
@@ -9,7 +10,6 @@ use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use WP_Error;
 use WP_Post;
-use WP_User;
 
 /**
  * @method mixed getField() getField(string $selector, bool $format_value = true)
@@ -18,9 +18,11 @@ use WP_User;
  */
 class PostModel implements PostModelInterface
 {
+    /** @var WP_Post|null  */
     public $wpPost;
+    /** @var array */
     public $metaInput = [];
-
+    /** @var array|false */
     protected $metas = false;
 
     use Macroable {
@@ -30,7 +32,7 @@ class PostModel implements PostModelInterface
 
     /**
      * PostModel constructor.
-     * @param null|mixed $post
+     * @param PostModel $post
      */
     public function __construct($post = null)
     {
@@ -56,11 +58,6 @@ class PostModel implements PostModelInterface
         return static::query()->$method(...$parameters);
     }
 
-    /**
-     * @param $method
-     * @param $parameters
-     * @return array|false|WpQueryBuilder|mixed
-     */
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
@@ -93,10 +90,6 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function __isset($name): bool
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
@@ -109,13 +102,9 @@ class PostModel implements PostModelInterface
     }
 
     /* Attribute methods */
-
-    /**
-     * @return int|null
-     */
     public function getId()
     {
-        return isset($this->wpPost->ID) ? $this->wpPost->ID : null;
+        return $this->wpPost->ID ?? null;
     }
 
     public function getTitle()
@@ -164,17 +153,11 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /**
-     * @return false|string|WP_Error
-     */
     public function getPermalink()
     {
         return get_permalink($this->getId());
     }
 
-    /**
-     * @return false|string
-     */
     public function getPostTypeLabel()
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
@@ -184,19 +167,16 @@ class PostModel implements PostModelInterface
         return $postType->label;
     }
 
-    /**
-     * @return string
-     */
     public function getPostType()
     {
         return $this->wpPost->post_type;
     }
 
     /**
-     * @param $postType
+     * @param string $postType
      * @return bool
      */
-    public function isPostType($postType)
+    public function isPostType($postType): bool
     {
         return $this->getPostType() == $postType;
     }
@@ -234,9 +214,6 @@ class PostModel implements PostModelInterface
         return $excerpt;
     }
 
-    /**
-     * @return false|WP_User
-     */
     public function getAuthor()
     {
         $authorId = $this->getAuthorId();
@@ -246,12 +223,8 @@ class PostModel implements PostModelInterface
         return get_userdata($authorId);
     }
 
-    /**
-     * @return false|int|string
-     */
     public function getAuthorId()
     {
-
         $authorId = $this->wpPost->post_author;
 
         if (!isset($authorId) || empty($authorId)) return false;
@@ -259,14 +232,23 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
+    /**
+     * @return false|array
+     */
     public function getMetas()
     {
         if ($this->metas === false) {
             $this->metas = get_post_meta($this->getId());
         }
+
         return $this->metas;
     }
 
+    /**
+     * @param mixed $key
+     * @param bool $single
+     * @return false|mixed|null
+     */
     public function getMeta($key, $single = true)
     {
         if (isset($this->getMetas()[$key])) {
@@ -277,11 +259,6 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @param $key
-     * @param $value
-     * @return $this
-     */
     public function setMeta($key, $value)
     {
         $this->metaInput[$key] = $value;
@@ -297,8 +274,8 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param $term
-     * @param $taxonomy
+     * @param array|int|string $term
+     * @param string $taxonomy
      * @return bool
      */
     public function hasTerm($term, $taxonomy)
@@ -306,17 +283,14 @@ class PostModel implements PostModelInterface
         return has_term($term, $taxonomy, $this->getId());
     }
 
-    /**
-     * @return bool
-     */
     public function hasFeaturedImage()
     {
         return has_post_thumbnail($this->wpPost);
     }
 
     /**
-     * @param string $size
-     * @param array $attr
+     * @param array|string $size
+     * @param array|string $attr
      * @return string
      */
     public function getFeaturedImage($size = 'thumbnail', $attr = [])
@@ -325,7 +299,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param string $size
+     * @param array|string $size
      * @return false|string
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
@@ -333,9 +307,6 @@ class PostModel implements PostModelInterface
         return get_the_post_thumbnail_url($this->wpPost, $size);
     }
 
-    /**
-     * @return false|int
-     */
     public function getFeaturedImageId()
     {
         return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
@@ -369,10 +340,7 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasParent()
+    public function hasParent(): bool
     {
         if (!is_null($this->getParentId())) {
             return true;
@@ -381,6 +349,9 @@ class PostModel implements PostModelInterface
         return false;
     }
 
+    /**
+     * @return $this|null
+     */
     public function getParent()
     {
         if (empty($this->getParentId())) {
@@ -395,23 +366,20 @@ class PostModel implements PostModelInterface
      */
     public function getChilds()
     {
-        return static::where(['post_parent' => $this->getId()])->all();
+        return $this->getChildren();
     }
 
     public function getChildren()
     {
-        return $this->getChilds();
+        return static::query()->where(['post_parent' => $this->getId()])->all();
     }
 
-    /**
-     * @return int[]
-     */
     public function getAncestorIds()
     {
         return get_post_ancestors($this->getId());
     }
 
-    public function getAncestors()
+    public function getAncestors(): Collection
     {
         $ancestors = collect();
 
@@ -439,7 +407,6 @@ class PostModel implements PostModelInterface
      * @param false $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return mixed
      */
     public function getNextPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
     {
@@ -451,7 +418,6 @@ class PostModel implements PostModelInterface
      * @param string $excludedTerms
      * @param bool $previous
      * @param string $taxonomy
-     * @return mixed
      */
     public function getAdjacentPost($inSameTerm = false, $excludedTerms = '', $previous = true, $taxonomy = 'category')
     {
@@ -479,8 +445,7 @@ class PostModel implements PostModelInterface
     }
 
     /* Display methods */
-
-    public function setup()
+    public function setup(): void
     {
         global $wp_query;
 
@@ -488,7 +453,7 @@ class PostModel implements PostModelInterface
         $wp_query->in_the_loop = true;
     }
 
-    public function end()
+    public function end(): void
     {
         global $wp_query;
 
@@ -499,7 +464,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param bool $force
-     * @return array|false|WP_Post|null
+     * @return false|WP_Post|null
      */
     public function delete($force = true)
     {
@@ -507,7 +472,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @return array|false|WP_Post|null
+     * @return false|WP_Post|null
      */
     public function trash()
     {
@@ -515,13 +480,16 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @return array|false|WP_Post|null
+     * @return false|WP_Post|null
      */
     public function untrash()
     {
         return wp_untrash_post($this->getId());
     }
 
+    /**
+     * @return int|WP_Error
+     */
     public function save()
     {
         if (!empty($this->metaInput)) {
@@ -540,7 +508,6 @@ class PostModel implements PostModelInterface
     }
 
     /* Relations */
-
     public function getMethodByRelationKey($key)
     {
         $method = $key;
