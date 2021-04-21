@@ -31,8 +31,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * PostModel constructor.
-     * @param PostModel $post
+     * @param PostModel|int $post
      */
     public function __construct($post = null)
     {

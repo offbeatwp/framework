@@ -22,8 +22,7 @@ class TermModel implements TermModelInterface
     public $id;
 
     /**
-     * TermModel constructor.
-     * @param WP_Term
+     * @param WP_Term|int
      */
     public function __construct($term)
     {
