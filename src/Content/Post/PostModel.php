@@ -193,6 +193,14 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * @return string
+     */
+    public function getPostStatus()
+    {
+        return $this->wpPost->post_status;
+    }
+
+    /**
      * @param $postType
      * @return bool
      */
