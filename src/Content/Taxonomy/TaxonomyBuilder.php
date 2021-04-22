@@ -143,7 +143,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    protected function hideTermDescriptionWrap() {
+    protected function hideTermDescriptionWrap(): void {
         echo '<style> .term-description-wrap { display:none; } </style>';
     }
 
