@@ -59,6 +59,8 @@ class TaxonomyBuilder
 
     public function hierarchyDepth(int $depth): TaxonomyBuilder
     {
+        $this->hierarchical($depth);
+
         add_filter('taxonomy_parent_dropdown_args', function (array $dropdownArgs, string $taxonomy) use ($depth) {
             if ($taxonomy === $this->taxonomy) {
                 $dropdownArgs['depth'] = $depth;
