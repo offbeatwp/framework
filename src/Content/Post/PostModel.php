@@ -31,7 +31,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param PostModel|int $post
+     * @param WP_Post|int|null $post
      */
     public function __construct($post = null)
     {
@@ -173,7 +173,6 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $postType
-     * @return bool
      */
     public function isPostType($postType): bool
     {
@@ -182,7 +181,6 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $format
-     * @return false|string
      */
     public function getPostDate($format = '')
     {
@@ -191,7 +189,6 @@ class PostModel implements PostModelInterface
 
     /**
      * @param bool $formatted
-     * @return false|string
      */
     public function getExcerpt($formatted = true)
     {
@@ -244,9 +241,8 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param mixed $key
+     * @param string|int $key
      * @param bool $single
-     * @return false|mixed|null
      */
     public function getMeta($key, $single = true)
     {
@@ -395,7 +391,6 @@ class PostModel implements PostModelInterface
      * @param false $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return false|mixed
      */
     public function getPreviousPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
     {
@@ -413,7 +408,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param false $inSameTerm
+     * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param bool $previous
      * @param string $taxonomy
