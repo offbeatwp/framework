@@ -59,6 +59,8 @@ class TaxonomyBuilder
 
     public function hierarchyDepth(int $depth): TaxonomyBuilder
     {
+        $this->hierarchical($depth);
+
         add_filter('taxonomy_parent_dropdown_args', function (array $dropdownArgs, string $taxonomy) use ($depth) {
             if ($taxonomy === $this->taxonomy) {
                 $dropdownArgs['depth'] = $depth;
@@ -137,6 +139,20 @@ class TaxonomyBuilder
 
             return $args;
         });
+
+        return $this;
+    }
+
+    protected function hideTermDescriptionWrap(): void
+    {
+        echo '<style> .term-description-wrap { display:none; } </style>';
+    }
+
+    /** Hides the "description" field in on the Taxonomy add/edit page */
+    public function hideDescriptionField(): TaxonomyBuilder
+    {
+        add_action($this->taxonomy . '_edit_form', function() { $this->hideTermDescriptionWrap(); });
+        add_action($this->taxonomy . '_add_form', function() { $this->hideTermDescriptionWrap(); });
 
         return $this;
     }
