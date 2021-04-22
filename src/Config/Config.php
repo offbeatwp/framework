@@ -48,13 +48,32 @@ class Config {
                 continue;
             }
 
-            $environment = defined('WP_ENV') ? WP_ENV : 'dev';
-            $envConfig = ArrayHelper::getValueFromDottedKey('env.' . $environment, $configSet);
-    
-            if (!empty($envConfig)) {
-                $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
+            // Get current environment
+            $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
+
+            // Get all settings in 'env' variable
+            $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
+                
+            if (!empty($envConfigs)) {
+                foreach ($envConfigs as $envKey => $envConfig) {
+                    if (
+                        preg_match('/^!(.*)/', $envKey, $matches) &&
+                        !in_array($currentEnvironment, explode('|', $matches[1]))
+                    ) {
+                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
+                    } elseif (!preg_match('/^!(.*)/', $envKey, $matches)) {
+                        if (in_array($currentEnvironment, explode('|', $envKey))) {
+                            $explicitEnvConfigs[] = $envConfig;
+                        }
+                    }
+                }
+
+                if (!empty($explicitEnvConfigs)) foreach ($explicitEnvConfigs as $explicitEnvConfig) {
+                    $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
+                }
             }
 
+            // Set config
             $this->set($configKey, $configSet);
         }
     }
