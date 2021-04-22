@@ -143,6 +143,19 @@ class TaxonomyBuilder
         return $this;
     }
 
+    protected function hideDescriptionRowStyle() {
+        echo '<style> .term-description-wrap { display:none; } </style>';
+    }
+
+    /** Hides the "description" field in on the Taxonomy add/edit page */
+    public function hideDescriptionRow(): TaxonomyBuilder
+    {
+        add_action($this->taxonomy . '_edit_form', function() { $this->hideDescriptionRowStyle(); });
+        add_action($this->taxonomy . '_add_form', function() { $this->hideDescriptionRowStyle(); });
+
+        return $this;
+    }
+
     public function set(): void
     {
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);
