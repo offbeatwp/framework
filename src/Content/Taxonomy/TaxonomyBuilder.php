@@ -143,15 +143,15 @@ class TaxonomyBuilder
         return $this;
     }
 
-    protected function hideDescriptionRowStyle() {
+    protected function hideTermDescriptionWrap() {
         echo '<style> .term-description-wrap { display:none; } </style>';
     }
 
     /** Hides the "description" field in on the Taxonomy add/edit page */
-    public function hideDescriptionRow(): TaxonomyBuilder
+    public function hideDescriptionField(): TaxonomyBuilder
     {
-        add_action($this->taxonomy . '_edit_form', function() { $this->hideDescriptionRowStyle(); });
-        add_action($this->taxonomy . '_add_form', function() { $this->hideDescriptionRowStyle(); });
+        add_action($this->taxonomy . '_edit_form', function() { $this->hideTermDescriptionWrap(); });
+        add_action($this->taxonomy . '_add_form', function() { $this->hideTermDescriptionWrap(); });
 
         return $this;
     }
