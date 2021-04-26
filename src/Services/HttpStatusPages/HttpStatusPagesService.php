@@ -27,7 +27,7 @@ class HttpStatusPagesService extends AbstractService
         query_posts(['page_id' => $pageId]);
         the_post();
 
-        $route = offbeat('routes')->findMatch();
+        $route = offbeat('routes')->findCallbackRoute();
 
         return offbeat()->runRoute($route);
     }

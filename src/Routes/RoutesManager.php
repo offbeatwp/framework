@@ -17,6 +17,7 @@ class RoutesManager
     protected $routeCollection;
     protected $routesContext;
     protected $routeIterator = 0;
+    protected $lastMatchRoute;
 
     public function __construct()
     {
@@ -97,17 +98,19 @@ class RoutesManager
         $this->getRouteCollection()->add($route->getName(), $route);
     }
 
-    public function findMatch() {
-        $route = $this->findPathMatch();
+    public function findRoute() {
+        $route = $this->findPathRoute();
 
         if (!$route) {
-            $route = $this->findCallbackMatch();
+            $route = $this->findCallbackRoute();
         }
+
+        $this->lastMatchRoute = $route;
 
         return $route;
     }
 
-    public function findPathMatch()
+    public function findPathRoute()
     {
         // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
@@ -132,7 +135,7 @@ class RoutesManager
         }
     }
 
-    public function findCallbackMatch()
+    public function findCallbackRoute()
     {
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);
 
@@ -160,6 +163,11 @@ class RoutesManager
         if (!empty($route)) {
             $this->getRouteCollection()->remove($route);
         }
+    }
+
+    public function getLastMatchRoute()
+    {
+        return $this->lastMatchRoute;
     }
 
     public function getNextRouteName()

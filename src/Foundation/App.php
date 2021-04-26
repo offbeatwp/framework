@@ -178,7 +178,7 @@ class App
 
         do_action('offbeatwp/route/match/before');
 
-        $route = offbeat('routes')->findMatch();
+        $route = offbeat('routes')->findRoute();
 
         do_action('offbeatwp/route/match/after', $route);
 
