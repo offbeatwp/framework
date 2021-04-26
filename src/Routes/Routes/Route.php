@@ -1,27 +1,22 @@
 <?php
-namespace OffbeatWP\Routes;
+namespace OffbeatWP\Routes\Routes;
 
 use Closure;
 use Symfony\Component\Routing\Route as RoutingRoute;
 
 class Route extends RoutingRoute
 {
-    private $type;
+    protected $name;
     private $actionCallback;
-    private $isCallbackRoute = false;
-    private $matchCallback;
 
     /**
      * @var string|Callable $target
      */
-    public function __construct($target, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '') {
+    public function __construct(string $name, string $path, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '') {
+        $this->setName($name);
         $this->setActionCallback($actionCallback);
 
-        if (!is_string($target)) {
-            $this->isCallbackRoute = true;
-        }
-
-        $this->setTarget($target);
+        $this->setPath($path);
         $this->addDefaults($defaults);
         $this->addRequirements($requirements);
         $this->setOptions($options);
@@ -31,40 +26,8 @@ class Route extends RoutingRoute
         $this->setCondition($condition);
     }
 
-    public function setTarget ($target) {
-        if (is_string($target)) {
-            $this->setPath($target);
-            $this->setType('path');
-        } else {
-            $this->isCallbackRoute = true;
-            $this->matchCallback = $target;
-            $this->setType('callback');
-        }
-    }
-
     public function setActionCallback($actionCallback) {
         $this->actionCallback = $actionCallback;
-    }
-
-    public function setType(string $type)
-    {
-        $this->type = $type;
-    }
-
-    public function getType():string
-    {
-        return $this->type;   
-    }
-
-    public function doMatchCallback():bool
-    {
-        if ($this->isCallbackRoute) {
-            $matchCallback = $this->matchCallback;
-
-            return $matchCallback();
-        }
-
-        return false;
     }
 
     public function getActionCallback()
@@ -97,5 +60,13 @@ class Route extends RoutingRoute
         }
 
         return $parameters;
+    }
+
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    public function getName() {
+        return $this->name;
     }
 }

@@ -19,7 +19,9 @@ class RouteCollection extends RoutingRouteCollection
         $routes = array_filter($this->all(), function ($route) use ($whereKey, $whereValue) {
             switch($whereKey) {
                 case 'type':
-                    if ($route->getType() == $whereValue) return true;
+                    if (get_class($route) == $whereValue) {
+                        return true;
+                    }
                     break;
             }
 

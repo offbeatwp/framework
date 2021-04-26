@@ -178,11 +178,7 @@ class App
 
         do_action('before_route_matching');
 
-        $route = offbeat('routes')->findUrlMatch();
-
-        if (!$route) {
-            $route = offbeat('routes')->findMatch();
-        }
+        $route = offbeat('routes')->findMatch();
 
         do_action('after_route_matching', $route);
 
@@ -191,8 +187,10 @@ class App
 
     public function run($config = [])
     {
+        $route = $this->route;
+
         try {
-            $output = $this->runRoute($this->route);
+            $output = $this->runRoute($route);
 
             if ($output === false) {
                 throw new Exception('Route return false, try to find next match');
@@ -200,7 +198,7 @@ class App
 
             echo apply_filters('route_render_output', $output);
         } catch (Exception $e) {
-            offbeat('routes')->removeLastMatchRoute();
+            offbeat('routes')->removeRoute($route);
 
             $this->run($config);
         }
