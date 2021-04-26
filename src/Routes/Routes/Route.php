@@ -35,7 +35,7 @@ class Route extends RoutingRoute
         return $this->actionCallback;
     }
 
-    public function doActionCallback():bool
+    public function doActionCallback()
     {
         $actionCallback = $this->getActionCallback();
 

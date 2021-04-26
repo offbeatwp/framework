@@ -192,14 +192,16 @@ class App
         try {
             $output = $this->runRoute($route);
 
+            // Remove route from collection so if there is a second run it skips this route
+            offbeat('routes')->removeRoute($route);
+
             if ($output === false) {
-                throw new Exception('Route return false, try to find next match');
+                throw new Exception('Route return false, try to find next match
+                ');
             }
 
             echo apply_filters('route_render_output', $output);
         } catch (Exception $e) {
-            offbeat('routes')->removeRoute($route);
-
             $this->run($config);
         }
     }
@@ -212,7 +214,7 @@ class App
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
-                $actionReturn = $route->doActionCallback();
+                $actionReturn = $route->doActionCallback(); 
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);
