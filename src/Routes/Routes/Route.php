@@ -39,7 +39,11 @@ class Route extends RoutingRoute
     {
         $actionCallback = $this->getActionCallback();
 
-        return $actionCallback();
+        if ($actionCallback instanceof Closure) {
+            $actionCallback = $actionCallback();
+        }
+
+        return container()->call($actionCallback, $this->getParameters());
     }
 
     public function hasValidActionCallback():bool

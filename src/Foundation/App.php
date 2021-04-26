@@ -209,18 +209,10 @@ class App
         $route = apply_filters('offbeatwp/route/run/init', $route);
 
         if ($route !== false && $route->hasValidActionCallback()) {
-            $parameters = $route->getParameters();
-
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
-                $controllerAction = $route->getActionCallback();
-                if ($controllerAction instanceof Closure) {
-                    $controllerAction = $controllerAction();
-                }
-
-                $actionReturn = container()->call($controllerAction, $parameters);
-
+                $actionReturn = $route->doActionCallback();
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);
