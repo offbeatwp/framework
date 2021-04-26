@@ -1,24 +1,29 @@
 <?php
 namespace OffbeatWP\Routes;
 
+use Closure;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
+use OffbeatWP\Routes\RouteCollection;
 
 class RoutesManager
 {
     protected $actions;
-    protected $routesCollection;
+    protected $routeCollection;
     protected $routesContext;
     protected $routeIterator = 0;
     protected $lastMatchRoute;
 
     public function __construct()
     {
-        $this->routesCollection = new RouteCollection();
+        $this->routeCollection = new RouteCollection();
         $this->actions = collect();
+    }
+
+    public function getRouteCollection():RouteCollection {
+        return $this->routeCollection;
     }
 
     /**
@@ -30,50 +35,46 @@ class RoutesManager
      */
     public function callback($checkCallback, $actionCallback, $parameters = [], $settings = [])
     {
-        $action = [
-            'actionCallback' => $actionCallback,
-            'checkCallback'  => $checkCallback,
-            'parameters'     => $parameters,
-            'isWpCallback'   => (isset($settings['isWpCallback']) && is_bool($settings['isWpCallback'])) ? $settings['isWpCallback'] : true
-        ];
-
-        $this->actions->push($action);
+        $this->addRoute($checkCallback, $actionCallback, $parameters);
     }
 
     public function get($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $parameters['_callback'] = $actionCallback;
-        $this->addRoute($route, $parameters, $requirements, [], '', [], ['GET']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['GET']);
     }
 
-    public function post($route, $actionCallback, $parameters = [], $requirements = [])
+    public function post($route, $parameters = [], $requirements = [])
     {
-        $parameters['_callback'] = $actionCallback;
-        $this->addRoute($route, $parameters, $requirements, [], '', [], ['POST']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['POST']);
     }
 
-    public function put($route, $actionCallback, $parameters = [], $requirements = [])
+    public function put($route, $parameters = [], $requirements = [])
     {
-        $parameters['_callback'] = $actionCallback;
-        $this->addRoute($route, $parameters, $requirements, [], '', [], ['PUT']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PUT']);
     }
 
     public function patch($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $parameters['_callback'] = $actionCallback;
-        $this->addRoute($route, $parameters, $requirements, [], '', [], ['PATCH']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PATCH']);
     }
 
     public function delete($route, $actionCallback, $parameters = [], $requirements = [])
     {
-        $parameters['_callback'] = $actionCallback;
-        $this->addRoute($route, $parameters, $requirements, [], '', [], ['DELETE']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['DELETE']);
     }
 
-    public function addRoute(string $path, array $defaults = [], array $requirements = [], array $options = [],  ? string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
+    /**
+     * @var string|Callable $target
+     */
+    public function addRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [],  ? string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
     {
+        if ($defaults instanceof Closure) {
+            $defaults = ['_parameterCallback' => $defaults];
+        }
+
         $route = new Route(
-            $path, // path
+            $target, // target
+            $actionCallback,
             $defaults, // default values
             $requirements, // requirements
             $options, // options
@@ -83,7 +84,7 @@ class RoutesManager
             $condition // condition
         );
 
-        $this->routesCollection->add($this->getNextRouteName(), $route);
+        $this->getRouteCollection()->add($this->getNextRouteName(), $route);
     }
 
     public function findUrlMatch()
@@ -93,7 +94,7 @@ class RoutesManager
 
         $context = new RequestContext();
         $context->fromRequest($request);
-        $matcher = new UrlMatcher($this->routesCollection, $context);
+        $matcher = new UrlMatcher($this->getRouteCollection()->findByType('path'), $context);
 
         try {
             $parameters = $matcher->match($request->getPathInfo());
@@ -104,10 +105,10 @@ class RoutesManager
 
             $this->lastMatchRoute = $parameters['_route'];
 
-            return [
-                'actionCallback' => $parameters['_callback'],
-                'parameters'     => $parameters,
-            ];
+            $route =  $this->getRouteCollection()->get($parameters['_route']);
+            $route->addDefaults($parameters);
+            
+            return $route;
         } catch (\Exception $e) {
             return false;
         }
@@ -115,34 +116,33 @@ class RoutesManager
 
     public function findMatch($dryCheck = false)
     {
-        $actions = $this->actions;
+        $callbackRoutes = $this->getRouteCollection()->findByType('callback');
 
-        if ($dryCheck) {
-            $actions = $actions->where('isWpCallback', false);
-        }
-
-        foreach ($actions as $actionKey => $action) {
+        /**
+         * @var Route $callbackRoute
+         */
+        foreach ($callbackRoutes->all() as $callbackRouteName => $callbackRoute) {
+            
             if (
-                apply_filters('offbeatwp/route/match/wp', true, $action) && 
-                $action['checkCallback']()
+                apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) && 
+                $callbackRoute->doMatchCallback()
             ) {
-                if (!$dryCheck && !$action['isWpCallback']) {
+                if (!$dryCheck) {
                     // Forget this "route". When a findMatch is performed again later in the process it prevents an endless loop.
-                    $actions->forget($actionKey);
+                    $this->getRouteCollection()->remove($callbackRouteName);
                 }
 
-                return $action;
+                return $callbackRoute;
             }
 
         }
-
         return false;
     }
 
     public function removeLastMatchRoute()
     {
         if (isset($this->lastMatchRoute) && !empty($this->lastMatchRoute)) {
-            $this->routesCollection->remove($this->lastMatchRoute);
+            $this->getRouteCollection()->remove($this->lastMatchRoute);
         }
     }
 

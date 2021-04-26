@@ -22,6 +22,7 @@ class App
     public $container;
     private $services = [];
     protected $config = null;
+    protected $route;
 
     public static function singleton()
     {
@@ -46,6 +47,8 @@ class App
         $this->registerServices();
 
         offbeat('hooks')->doAction('offbeat.ready');
+
+        add_filter('wp', [$this, 'findRoute'], 0);
     }
 
     private function baseBindings()
@@ -170,8 +173,9 @@ class App
         return $this->config;
     }
 
-    public function run($config = [])
-    {
+    public function findRoute() {
+        if (is_admin()) return;
+
         do_action('before_route_matching');
 
         $route = offbeat('routes')->findUrlMatch();
@@ -180,8 +184,15 @@ class App
             $route = offbeat('routes')->findMatch();
         }
 
+        do_action('after_route_matching', $route);
+
+        $this->route = $route;
+    }
+
+    public function run($config = [])
+    {
         try {
-            $output = $this->runRoute($route);
+            $output = $this->runRoute($this->route);
 
             if ($output === false) {
                 throw new Exception('Route return false, try to find next match');
@@ -191,7 +202,6 @@ class App
         } catch (Exception $e) {
             offbeat('routes')->removeLastMatchRoute();
 
-
             $this->run($config);
         }
     }
@@ -200,22 +210,19 @@ class App
     {
         $route = apply_filters('offbeatwp/route/run/init', $route);
 
-        if ($route !== false && is_callable($route['actionCallback'])) {
-            $parameters = $route['parameters'];
-
-            if ($parameters instanceof Closure) {
-                $parameters = $route['parameters']();
-            }
+        if ($route !== false && $route->hasValidActionCallback()) {
+            $parameters = $route->getParameters();
 
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
-                $controllerAction = $route['actionCallback'];
+                $controllerAction = $route->getActionCallback();
                 if ($controllerAction instanceof Closure) {
                     $controllerAction = $controllerAction();
                 }
 
                 $actionReturn = container()->call($controllerAction, $parameters);
+
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);

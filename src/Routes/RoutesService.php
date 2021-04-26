@@ -29,7 +29,7 @@ class RoutesService extends AbstractService
 
     public function urlRoutePreps()
     {
-        if (!offbeat('routes')->findUrlMatch() && !offbeat('routes')->findMatch(true, true)) {
+        if (!offbeat('routes')->findUrlMatch() && !offbeat('routes')->findMatch(true)) {
             return null;
         }
 
