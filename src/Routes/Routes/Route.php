@@ -32,7 +32,13 @@ class Route extends RoutingRoute
 
     public function getActionCallback()
     {
-        return $this->actionCallback;
+        $actionCallback = $this->actionCallback;
+
+        if ($actionCallback instanceof Closure) {
+            $actionCallback = $actionCallback();
+        }
+
+        return $actionCallback;
     }
 
     public function doActionCallback()

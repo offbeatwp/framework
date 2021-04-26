@@ -176,11 +176,11 @@ class App
     public function findRoute() {
         if (is_admin()) return;
 
-        do_action('before_route_matching');
+        do_action('offbeatwp/route/match/before');
 
         $route = offbeat('routes')->findMatch();
 
-        do_action('after_route_matching', $route);
+        do_action('offbeatwp/route/match/after', $route);
 
         $this->route = $route;
     }
@@ -200,8 +200,13 @@ class App
                 ');
             }
 
-            echo apply_filters('route_render_output', $output);
+            $output = apply_filters('route_render_output', $output); //Legacy
+            $output = apply_filters('offbeatwp/route/output', $output);
+
+            echo $output;
         } catch (Exception $e) {
+            // Find new route
+            $this->findRoute();
             $this->run($config);
         }
     }
