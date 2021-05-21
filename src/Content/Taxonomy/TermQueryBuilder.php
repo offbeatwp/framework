@@ -2,13 +2,13 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use OffbeatWP\Content\AbstractQueryBuilder;
 use WP_Term_Query;
 
-class TermQueryBuilder
+class TermQueryBuilder extends AbstractQueryBuilder
 {
     protected $model;
     protected $taxonomy;
-    protected $queryVars = [];
 
     public function __construct($model)
     {
@@ -24,12 +24,12 @@ class TermQueryBuilder
         }
 
         $order = null;
-        if (defined("{$model}::ORDER")) {
+        if (defined("$model::ORDER")) {
             $order = $model::ORDER;
         }
 
         $orderBy = null;
-        if (defined("{$model}::ORDER_BY")) {
+        if (defined("$model::ORDER_BY")) {
             $orderBy = $model::ORDER_BY;
         }
 
@@ -65,8 +65,7 @@ class TermQueryBuilder
         return $this->get();
     }
 
-    /** @return TermModel|null */
-    public function first()
+    public function first(): ?TermModel
     {
         return $this->take(1)->first();
     }
@@ -150,21 +149,7 @@ class TermQueryBuilder
 
     public function order($orderBy = null, $direction = null): TermQueryBuilder
     {
-        if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
-            $this->queryVars['meta_key'] = $match[3];
-            $this->queryVars['orderby'] = 'meta_value';
-
-            if (isset($match[1]) && $match[1] == 'meta_num') {
-                $this->queryVars['orderby'] = 'meta_value_num';
-            }
-
-        } elseif (!is_null($orderBy)) {
-            $this->queryVars['orderby'] = $orderBy;
-        }
-
-        if (!is_null($direction)) {
-            $this->queryVars['order'] = $direction;
-        }
+        $this->orderQueryVars($orderBy, $direction);
 
         return $this;
     }
