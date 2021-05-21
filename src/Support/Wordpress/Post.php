@@ -1,11 +1,13 @@
 <?php
 namespace OffbeatWP\Support\Wordpress;
 
+use OffbeatWP\Content\Post\PostModel;
 use Symfony\Component\HttpFoundation\Request;
 use WP_Post;
 
 class Post
 {
+    /** @return PostModel|null */
     public function convertWpPostToModel(WP_Post $post)
     {
         $model = offbeat('post-type')->getModelByPostType($post->post_type);
@@ -14,9 +16,15 @@ class Post
         return new $model($post);
     }
 
+    /**
+     * @param null|int|WP_Post $id
+     * @return PostModel|null
+     */
     public function get($id = null)
     {
-        if (is_null($id)) $id = get_the_ID();
+        if (is_null($id)) {
+            $id = get_the_ID();
+        }
 
         $post = get_post($id);
 

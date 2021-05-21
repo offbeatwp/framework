@@ -15,6 +15,11 @@ class Hooks
         }, $priority, $acceptArguments);
     }
 
+    /**
+     * @param string $filter
+     * @param ...$parameters
+     * @return string
+     */
     public function applyFilters($filter, ...$parameters)
     {
         return apply_filters_ref_array($filter, $parameters);

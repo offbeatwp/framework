@@ -1,11 +1,14 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-class WpQueryBuilder
+use OffbeatWP\Content\AbstractQueryBuilder;
+use WP_Query;
+
+class WpQueryBuilder extends AbstractQueryBuilder
 {
     protected $queryVars = [];
 
-    public function all()
+    public function all(): PostsCollection
     {
         $this->queryVars['posts_per_page'] = -1;
         
@@ -17,33 +20,33 @@ class WpQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
-    public function get()
+    public function get(): PostsCollection
     {
-        $posts = new \WP_Query($this->queryVars);
+        $posts = new WP_Query($this->queryVars);
 
         return new PostsCollection($posts);
     }
 
-    public function getQueryVars()
+    public function getQueryVars(): array
     {
         return $this->queryVars;
     }
 
-    public function take($numberOfItems)
+    public function take($numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
         return $this->get();
     }
 
-    public function first()
+    public function first(): ?PostModel
     {
         $this->queryVars['posts_per_page'] = 1;
 
         return $this->get()->first();
     }
 
-    public function findById($id)
+    public function findById($id): ?PostModel
     {
         $this->queryVars['p'] = $id;
         $this->queryVars['post_type'] = 'any';
@@ -51,21 +54,14 @@ class WpQueryBuilder
         return $this->first();
     }
     
-    public function findByName($name)
+    public function findByName($name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
     }
 
-    public function where($args)
-    {
-        $this->queryVars = array_merge($this->queryVars, $args);
-
-        return $this;
-    }
-
-    public function wherePostType($postTypes)
+    public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
             $this->queryVars['post_type'] = [];
@@ -78,7 +74,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true)
+    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -96,6 +92,7 @@ class WpQueryBuilder
             $this->queryVars['tax_query'] = [];
         }
 
+        $parameters = null;
         if (is_array($terms)) {
             $parameters = [
                 'taxonomy' => $taxonomy,
@@ -111,7 +108,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereDate($args)
+    public function whereDate($args): WpQueryBuilder
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
@@ -122,7 +119,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '=')
+    public function whereMeta($key, $value = '', $compare = '='): WpQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -143,7 +140,8 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereIdNotIn($ids) {
+    public function whereIdNotIn($ids): WpQueryBuilder
+    {
         if (!is_array($ids)) {
             $ids = [$ids];
         }
@@ -153,7 +151,8 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function whereIdIn($ids) {
+    public function whereIdIn($ids): WpQueryBuilder
+    {
         if (!is_array($ids)) {
             $ids = [$ids];
         }
@@ -162,28 +161,9 @@ class WpQueryBuilder
 
         return $this;
     }
-
-    public function order($orderBy = null, $direction = null) {
-        if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
-            $this->queryVars['meta_key'] = $match[3];
-            $this->queryVars['orderby'] = 'meta_value';
-
-            if (isset($match[1]) && $match[1] == 'meta_num') {
-                $this->queryVars['orderby'] = 'meta_value_num';                
-            }
-
-        } elseif (!is_null($orderBy)) {
-            $this->queryVars['orderby'] = $orderBy;
-        }
-
-        if (!is_null($direction)) {
-            $this->queryVars['order'] = $direction;
-        }
-
-        return $this;
-    }
     
-    public function paginated($paginated = true) {
+    public function paginated($paginated = true): WpQueryBuilder
+    {
         if ($paginated) {
             $paged = $paginated;
 
@@ -195,10 +175,12 @@ class WpQueryBuilder
         } else {
             unset($this->queryVars['paged']);
         }
+
         return $this;
     }
 
-    public function hasRelationshipWith($model, $key, $direction = null) {
+    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
+    {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),
             'key' => $key,
