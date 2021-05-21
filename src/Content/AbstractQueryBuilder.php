@@ -3,9 +3,6 @@
 namespace OffbeatWP\Content;
 
 abstract class AbstractQueryBuilder {
-    const ORDER_ASC = 'ASC';
-    const ORDER_DESC = 'DESC';
-
     protected $queryVars = [];
 
     /**
