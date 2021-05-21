@@ -3,17 +3,14 @@
 namespace OffbeatWP\Content;
 
 abstract class AbstractQueryBuilder {
-    const ORDER_ASC = 'ASC';
-    const ORDER_DESC = 'DESC';
-
     protected $queryVars = [];
 
     /**
      * @param string|string[]|null $orderBy
-     * @param string $order 'ASC'|'DESC'
+     * @param string|null $order 'ASC'|'DESC'
      * @return $this
      */
-    public function order($orderBy = null, $order = null): AbstractQueryBuilder {
+    public function order($orderBy = null, ?string $order = null): AbstractQueryBuilder {
         if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
             $this->queryVars['orderby'] = 'meta_value';
