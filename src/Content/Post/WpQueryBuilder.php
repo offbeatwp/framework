@@ -61,13 +61,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->first();
     }
 
-    public function where($args): WpQueryBuilder
-    {
-        $this->queryVars = array_merge($this->queryVars, $args);
-
-        return $this;
-    }
-
     public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
@@ -168,13 +161,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this;
     }
-
-    public function order($orderBy = null, $direction = null): WpQueryBuilder
-    {
-        $this->orderQueryVars($orderBy, $direction);
-
-        return $this;
-    }
     
     public function paginated($paginated = true): WpQueryBuilder
     {
@@ -189,6 +175,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         } else {
             unset($this->queryVars['paged']);
         }
+
         return $this;
     }
 

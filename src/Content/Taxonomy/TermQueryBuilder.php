@@ -105,13 +105,6 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function where($parameters): TermQueryBuilder
-    {
-        $this->queryVars = array_merge($this->queryVars, $parameters);
-
-        return $this;
-    }
-
     public function whereMeta($key, $value = '', $compare = '='): TermQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
@@ -143,13 +136,6 @@ class TermQueryBuilder extends AbstractQueryBuilder
     public function excludeEmpty($hideEmpty = true): TermQueryBuilder
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
-
-        return $this;
-    }
-
-    public function order($orderBy = null, $direction = null): TermQueryBuilder
-    {
-        $this->orderQueryVars($orderBy, $direction);
 
         return $this;
     }

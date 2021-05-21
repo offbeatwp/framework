@@ -3,9 +3,17 @@
 namespace OffbeatWP\Content;
 
 abstract class AbstractQueryBuilder {
+    const ORDER_ASC = 'ASC';
+    const ORDER_DESC = 'DESC';
+
     protected $queryVars = [];
 
-    protected function orderQueryVars($orderBy = null, $direction = null) {
+    /**
+     * @param string|string[] $orderBy
+     * @param string|null $order 'ASC'|'DESC'
+     * @return $this
+     */
+    protected function order($orderBy = null, $order = null): AbstractQueryBuilder {
         if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
             $this->queryVars['orderby'] = 'meta_value';
@@ -18,8 +26,17 @@ abstract class AbstractQueryBuilder {
             $this->queryVars['orderby'] = $orderBy;
         }
 
-        if (!is_null($direction)) {
-            $this->queryVars['order'] = $direction;
+        if (!is_null($order)) {
+            $this->queryVars['order'] = $order;
         }
+
+        return $this;
+    }
+
+    public function where(?array $parameters): AbstractQueryBuilder
+    {
+        $this->queryVars = array_merge($this->queryVars, $parameters);
+
+        return $this;
     }
 }
