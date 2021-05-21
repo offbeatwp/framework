@@ -13,7 +13,7 @@ abstract class AbstractQueryBuilder {
      * @param string|null $order 'ASC'|'DESC'
      * @return $this
      */
-    protected function order($orderBy = null, $order = null): AbstractQueryBuilder {
+    public function order($orderBy = null, $order = null): AbstractQueryBuilder {
         if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
             $this->queryVars['orderby'] = 'meta_value';
