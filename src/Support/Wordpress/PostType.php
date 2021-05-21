@@ -26,6 +26,10 @@ class PostType
         $this->postTypeModels[$postType] = $modelClass;
     }
 
+    /**
+     * @param string $postType
+     * @return null|string
+     */
     public function getModelByPostType($postType)
     {
         if (isset($this->postTypeModels[$postType])) {
