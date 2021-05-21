@@ -9,8 +9,8 @@ abstract class AbstractQueryBuilder {
     protected $queryVars = [];
 
     /**
-     * @param string|string[] $orderBy
-     * @param string|null $order 'ASC'|'DESC'
+     * @param string|string[]|null $orderBy
+     * @param string $order 'ASC'|'DESC'
      * @return $this
      */
     public function order($orderBy = null, $order = null): AbstractQueryBuilder {
