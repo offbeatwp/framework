@@ -70,10 +70,6 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    public function exists(): bool {
-        return $this->get()->isNotEmpty();
-    }
-
     public function findById($id)
     {
         return $this->findBy('id', $id);
