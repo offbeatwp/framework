@@ -46,6 +46,11 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
+    public function exists(): bool
+    {
+        return $this->get()->isNotEmpty();
+    }
+
     public function findById($id): ?PostModel
     {
         $this->queryVars['p'] = $id;
