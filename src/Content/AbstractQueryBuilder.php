@@ -30,6 +30,15 @@ abstract class AbstractQueryBuilder {
         return $this;
     }
 
+    /**
+     * This will execute a query!
+     * Under most circumstances, you should use get() and then to a isNotEmpty check on the resulting collection.
+     */
+    public function exists(): bool
+    {
+        return $this->get()->isNotEmpty();
+    }
+
     public function where(?array $parameters): AbstractQueryBuilder
     {
         $this->queryVars = array_merge($this->queryVars, $parameters);
