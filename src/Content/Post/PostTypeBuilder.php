@@ -158,6 +158,13 @@ class PostTypeBuilder
         return $this;
     }
 
+    public function mapMetaCap(): PostTypeBuilder
+    {
+        $this->postTypeArgs['map_meta_cap'] = true;
+
+        return $this;
+    }
+
     public function setArgument(string $key, $value): PostTypeBuilder
     {
         $this->postTypeArgs[$key] = $value;
