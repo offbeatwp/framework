@@ -25,18 +25,19 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function getPostType()
+    public function getPostType(): ?string
     {
         return $this->postType;
     }
 
-    public function isHierarchical($hierarchical = true): PostTypeBuilder
+    public function isHierarchical(bool $hierarchical = true): PostTypeBuilder
     {
         $this->postTypeArgs['hierarchical'] = $hierarchical;
 
         return $this;
     }
 
+    /** @param bool|array $rewrite Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. */
     public function rewrite($rewrite): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['rewrite'])) {
@@ -52,7 +53,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function labels($labels): PostTypeBuilder
+    public function labels(array $labels): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['labels'])) {
             $this->postTypeArgs['labels'] = [];
@@ -63,13 +64,14 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function model($modelClass): PostTypeBuilder
+    public function model(string $modelClass): PostTypeBuilder
     {
         $this->modelClass = $modelClass;
 
         return $this;
     }
 
+    /** @param string[]|false $support Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
     public function supports($support): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['supports'])) {
@@ -92,34 +94,35 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function public($public = true): PostTypeBuilder
+    public function public(bool $public = true): PostTypeBuilder
     {
         $this->postTypeArgs['public'] = $public;
 
         return $this;
     }
 
-    public function excludeFromSearch($exclude = true): PostTypeBuilder
+    public function excludeFromSearch(bool $exclude = true): PostTypeBuilder
     {
         $this->postTypeArgs['exclude_from_search'] = $exclude;
 
         return $this;
     }
 
-    public function showUI($showUi = true): PostTypeBuilder
+    public function showUI(bool $showUi = true): PostTypeBuilder
     {
         $this->postTypeArgs['show_ui'] = $showUi;
 
         return $this;
     }
 
-    public function icon($icon): PostTypeBuilder
+    public function icon(string $icon): PostTypeBuilder
     {
         $this->postTypeArgs['menu_icon'] = $icon;
 
         return $this;
     }
 
+    /** @param bool|string $menu If false, no menu is shown. If a string of an existing top level menu, the post type will be placed as a sub-menu of that. */
     public function inMenu($menu): PostTypeBuilder
     {
         $this->postTypeArgs['show_in_menu'] = $menu;
@@ -127,14 +130,14 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function taxonomies($taxonomies): PostTypeBuilder
+    public function taxonomies(array $taxonomies): PostTypeBuilder
     {
         $this->postTypeArgs['taxonomies'] = $taxonomies;
 
         return $this;
     }
 
-    public function inRest($showInRest = true): PostTypeBuilder
+    public function inRest(bool $showInRest = true): PostTypeBuilder
     {
         $this->postTypeArgs['show_in_rest'] = $showInRest;
 
@@ -148,16 +151,16 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function setArgument($key, $value): PostTypeBuilder
+    public function capabilities(array $capabilities = []): PostTypeBuilder
     {
-        $this->postTypeArgs[$key] = $value;
+        $this->postTypeArgs['capabilities'] = $capabilities;
 
         return $this;
     }
 
-    public function capabilities($capabilities = []): PostTypeBuilder
+    public function setArgument(string $key, $value): PostTypeBuilder
     {
-        $this->postTypeArgs['capabilities'] = $capabilities;
+        $this->postTypeArgs[$key] = $value;
 
         return $this;
     }
