@@ -3,11 +3,13 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Helpers\ArrayHelper;
 
 class PostTypeBuilder
 {
     use Macroable;
 
+    /** @var null|string */
     private $postType = null;
     private $postTypeArgs = [];
     private $modelClass = null;
@@ -25,9 +27,30 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function getPostType()
+    public function getPostType(): ?string
     {
         return $this->postType;
+    }
+
+    public function adminTableColumn(string $columnKey, string $newColumnName, callable $contentCallback, ?string $afterKey = null): PostTypeBuilder
+    {
+        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($afterKey, $newColumnName, $columnKey) {
+            if ($afterKey) {
+                $postColumns = ArrayHelper::insertAfter($afterKey, $postColumns, $columnKey, $newColumnName);
+            } else {
+                $postColumns[$columnKey] = $newColumnName;
+            }
+
+            return $postColumns;
+        });
+
+        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnName, int $postId) use ($newColumnName, $contentCallback) {
+            if ($columnName === $newColumnName) {
+                echo call_user_func($contentCallback, new $this->postType($postId));
+            }
+        }, 10, 2);
+
+        return $this;
     }
 
     public function isHierarchical($hierarchical = true): PostTypeBuilder
