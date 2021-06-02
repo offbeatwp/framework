@@ -140,6 +140,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /** @param int[]|int $ids */
     public function whereIdNotIn($ids): WpQueryBuilder
     {
         if (!is_array($ids)) {
@@ -151,6 +152,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /** @param int[]|int $ids */
     public function whereIdIn($ids): WpQueryBuilder
     {
         if (!is_array($ids)) {
