@@ -71,15 +71,15 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function addAdminTableColumn(string $columnName, string $columnLabel, string $modelFunc): PostTypeBuilder
+    public function addAdminTableColumn(string $name, string $label, string $modelFunc): PostTypeBuilder
     {
-        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($columnLabel, $columnName) {
-            $postColumns[$columnName] = $columnLabel;
+        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($label, $name) {
+            $postColumns[$name] = $label;
             return $postColumns;
         });
 
-        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnIndex, int $postId) use ($columnName, $modelFunc) {
-            if ($columnIndex === $columnName) {
+        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnName, int $postId) use ($name, $modelFunc) {
+            if ($columnName === $name) {
                 $model = new $this->modelClass($postId);
                 echo $model->$modelFunc();
             }
