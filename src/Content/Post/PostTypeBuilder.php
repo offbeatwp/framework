@@ -12,7 +12,7 @@ class PostTypeBuilder
     private $postTypeArgs = [];
     private $modelClass = null;
 
-    public function make($postType, $pluralName, $singularLabel): PostTypeBuilder
+    public function make(string $postType, string $pluralName, string $singularLabel): PostTypeBuilder
     {
         $this->postType = $postType;
         $this->postTypeArgs = [
@@ -161,6 +161,7 @@ class PostTypeBuilder
         return $this;
     }
 
+    /** @deprecated This function does not actually appear to do anything */
     public function position($position = null): PostTypeBuilder
     {
         $this->postTypeArgs['position'] = $position;
