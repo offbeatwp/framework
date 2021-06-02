@@ -3,13 +3,11 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
-use OffbeatWP\Helpers\ArrayHelper;
 
 class PostTypeBuilder
 {
     use Macroable;
 
-    /** @var null|string */
     private $postType = null;
     private $postTypeArgs = [];
     private $modelClass = null;
@@ -32,34 +30,14 @@ class PostTypeBuilder
         return $this->postType;
     }
 
-    public function adminTableColumn(string $columnKey, string $newColumnName, callable $contentCallback, ?string $afterKey = null): PostTypeBuilder
-    {
-        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($afterKey, $newColumnName, $columnKey) {
-            if ($afterKey) {
-                $postColumns = ArrayHelper::insertAfter($afterKey, $postColumns, $columnKey, $newColumnName);
-            } else {
-                $postColumns[$columnKey] = $newColumnName;
-            }
-
-            return $postColumns;
-        });
-
-        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnName, int $postId) use ($newColumnName, $contentCallback) {
-            if ($columnName === $newColumnName) {
-                echo call_user_func($contentCallback, new $this->postType($postId));
-            }
-        }, 10, 2);
-
-        return $this;
-    }
-
-    public function isHierarchical($hierarchical = true): PostTypeBuilder
+    public function isHierarchical(bool $hierarchical = true): PostTypeBuilder
     {
         $this->postTypeArgs['hierarchical'] = $hierarchical;
 
         return $this;
     }
 
+    /** @param bool|array $rewrite Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. */
     public function rewrite($rewrite): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['rewrite'])) {
@@ -75,7 +53,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function labels($labels): PostTypeBuilder
+    public function labels(array $labels): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['labels'])) {
             $this->postTypeArgs['labels'] = [];
@@ -86,13 +64,31 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function model($modelClass): PostTypeBuilder
+    public function model(string $modelClass): PostTypeBuilder
     {
         $this->modelClass = $modelClass;
 
         return $this;
     }
 
+    public function addAdminTableColumn(string $columnName, string $columnLabel, string $modelFunc): PostTypeBuilder
+    {
+        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($columnLabel, $columnName) {
+            $postColumns[$columnName] = $columnLabel;
+            return $postColumns;
+        });
+
+        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnIndex, int $postId) use ($columnName, $modelFunc) {
+            if ($columnIndex === $columnName) {
+                $model = new $this->modelClass($postId);
+                echo $model->$modelFunc();
+            }
+        }, 10, 2);
+
+        return $this;
+    }
+
+    /** @param string[]|false $support Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
     public function supports($support): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['supports'])) {
@@ -115,34 +111,35 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function public($public = true): PostTypeBuilder
+    public function public(bool $public = true): PostTypeBuilder
     {
         $this->postTypeArgs['public'] = $public;
 
         return $this;
     }
 
-    public function excludeFromSearch($exclude = true): PostTypeBuilder
+    public function excludeFromSearch(bool $exclude = true): PostTypeBuilder
     {
         $this->postTypeArgs['exclude_from_search'] = $exclude;
 
         return $this;
     }
 
-    public function showUI($showUi = true): PostTypeBuilder
+    public function showUI(bool $showUi = true): PostTypeBuilder
     {
         $this->postTypeArgs['show_ui'] = $showUi;
 
         return $this;
     }
 
-    public function icon($icon): PostTypeBuilder
+    public function icon(string $icon): PostTypeBuilder
     {
         $this->postTypeArgs['menu_icon'] = $icon;
 
         return $this;
     }
 
+    /** @param bool|string $menu If false, no menu is shown. If a string of an existing top level menu, the post type will be placed as a sub-menu of that. */
     public function inMenu($menu): PostTypeBuilder
     {
         $this->postTypeArgs['show_in_menu'] = $menu;
@@ -150,14 +147,14 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function taxonomies($taxonomies): PostTypeBuilder
+    public function taxonomies(array $taxonomies): PostTypeBuilder
     {
         $this->postTypeArgs['taxonomies'] = $taxonomies;
 
         return $this;
     }
 
-    public function inRest($showInRest = true): PostTypeBuilder
+    public function inRest(bool $showInRest = true): PostTypeBuilder
     {
         $this->postTypeArgs['show_in_rest'] = $showInRest;
 
@@ -171,16 +168,23 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function setArgument($key, $value): PostTypeBuilder
+    public function capabilities(array $capabilities = []): PostTypeBuilder
     {
-        $this->postTypeArgs[$key] = $value;
+        $this->postTypeArgs['capabilities'] = $capabilities;
 
         return $this;
     }
 
-    public function capabilities($capabilities = []): PostTypeBuilder
+    public function mapMetaCap(): PostTypeBuilder
     {
-        $this->postTypeArgs['capabilities'] = $capabilities;
+        $this->postTypeArgs['map_meta_cap'] = true;
+
+        return $this;
+    }
+
+    public function setArgument(string $key, $value): PostTypeBuilder
+    {
+        $this->postTypeArgs[$key] = $value;
 
         return $this;
     }
