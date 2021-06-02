@@ -12,7 +12,7 @@ class PostTypeBuilder
     private $postTypeArgs = [];
     private $modelClass = null;
 
-    public function make($postType, $pluralName, $singularLabel): PostTypeBuilder
+    public function make(string $postType, string $pluralName, string $singularLabel): PostTypeBuilder
     {
         $this->postType = $postType;
         $this->postTypeArgs = [
@@ -67,6 +67,23 @@ class PostTypeBuilder
     public function model(string $modelClass): PostTypeBuilder
     {
         $this->modelClass = $modelClass;
+
+        return $this;
+    }
+
+    public function addAdminTableColumn(string $name, string $label, string $modelFunc): PostTypeBuilder
+    {
+        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($label, $name) {
+            $postColumns[$name] = $label;
+            return $postColumns;
+        });
+
+        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnName, int $postId) use ($name, $modelFunc) {
+            if ($columnName === $name) {
+                $model = new $this->modelClass($postId);
+                echo $model->$modelFunc();
+            }
+        }, 10, 2);
 
         return $this;
     }
@@ -144,6 +161,7 @@ class PostTypeBuilder
         return $this;
     }
 
+    /** @deprecated This function does not actually appear to do anything */
     public function position($position = null): PostTypeBuilder
     {
         $this->postTypeArgs['position'] = $position;
