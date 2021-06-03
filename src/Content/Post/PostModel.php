@@ -239,8 +239,15 @@ class PostModel implements PostModelInterface
                 ? reset($this->getMetas()[$key])
                 : $this->getMetas()[$key];
         }
-        return null;
 
+        return null;
+    }
+
+    public function setMetas(array $metadata)
+    {
+        foreach ($metadata as $key => $value) {
+            $this->setMeta($key, $value);
+        }
     }
 
     public function setMeta(string $key, $value)
