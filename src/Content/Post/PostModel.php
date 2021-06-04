@@ -30,9 +30,7 @@ class PostModel implements PostModelInterface
         __callStatic as macroCallStatic;
     }
 
-    /**
-     * @param WP_Post|int|null $post
-     */
+    /** @param WP_Post|int|null $post */
     public function __construct($post = null)
     {
         if (is_null($post)) {
@@ -171,34 +169,22 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_type;
     }
 
-    /**
-     * @return string
-     */
-    public function getPostStatus()
+    public function getPostStatus(): string
     {
         return $this->wpPost->post_status;
     }
 
-    /**
-     * @param string $postType
-     */
-    public function isPostType($postType): bool
+    public function isPostType(string $postType): bool
     {
-        return $this->getPostType() == $postType;
+        return $this->getPostType() === $postType;
     }
 
-    /**
-     * @param string $format
-     */
-    public function getPostDate($format = '')
+    public function getPostDate(string $format = '')
     {
         return get_the_date($format, $this->wpPost);
     }
 
-    /**
-     * @param bool $formatted
-     */
-    public function getExcerpt($formatted = true)
+    public function getExcerpt(bool $formatted = true)
     {
         if (!$formatted) {
             return get_the_excerpt($this->wpPost);
@@ -236,9 +222,7 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /**
-     * @return false|array
-     */
+    /** @return false|array */
     public function getMetas()
     {
         if ($this->metas === false) {
@@ -248,21 +232,25 @@ class PostModel implements PostModelInterface
         return $this->metas;
     }
 
-    /**
-     * @param string|int $key
-     * @param bool $single
-     */
-    public function getMeta($key, $single = true)
+    public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
             return $single && is_array($this->getMetas()[$key])
                 ? reset($this->getMetas()[$key])
                 : $this->getMetas()[$key];
         }
+
         return null;
     }
 
-    public function setMeta($key, $value)
+    public function setMetas(array $metadata)
+    {
+        foreach ($metadata as $key => $value) {
+            $this->setMeta($key, $value);
+        }
+    }
+
+    public function setMeta(string $key, $value)
     {
         $this->metaInput[$key] = $value;
 
@@ -286,7 +274,7 @@ class PostModel implements PostModelInterface
         return has_term($term, $taxonomy, $this->getId());
     }
 
-    public function hasFeaturedImage()
+    public function hasFeaturedImage(): bool
     {
         return has_post_thumbnail($this->wpPost);
     }
@@ -315,26 +303,17 @@ class PostModel implements PostModelInterface
         return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->wpPost->post_title = $title;
     }
 
-    /**
-     * @param string $postName
-     */
-    public function setPostName($postName)
+    public function setPostName(string $postName)
     {
         $this->wpPost->post_name = $postName;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         if ($this->wpPost->post_parent) {
             return $this->wpPost->post_parent;
@@ -352,10 +331,7 @@ class PostModel implements PostModelInterface
         return false;
     }
 
-    /**
-     * @return $this|null
-     */
-    public function getParent()
+    public function getParent(): ?PostModel
     {
         if (empty($this->getParentId())) {
             return null;
@@ -364,20 +340,18 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
-    /**
-     * @deprecated Use getChildren instead
-     */
-    public function getChilds()
+    /** @deprecated Use getChildren instead */
+    public function getChilds(): PostsCollection
     {
         return $this->getChildren();
     }
 
-    public function getChildren()
+    public function getChildren(): PostsCollection
     {
         return static::query()->where(['post_parent' => $this->getId()])->all();
     }
 
-    public function getAncestorIds()
+    public function getAncestorIds(): array
     {
         return get_post_ancestors($this->getId());
     }
@@ -438,10 +412,7 @@ class PostModel implements PostModelInterface
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPasswordRequired()
+    public function isPasswordRequired(): bool
     {
         return post_password_required($this->wpPost);
     }
@@ -463,36 +434,25 @@ class PostModel implements PostModelInterface
     }
 
     /* Change methods */
-
-    /**
-     * @param bool $force
-     * @return false|WP_Post|null
-     */
-    public function delete($force = true)
+    /** @return false|WP_Post|null */
+    public function delete(bool $force = true)
     {
         return wp_delete_post($this->getId(), $force);
     }
 
-    /**
-     * @return false|WP_Post|null
-     */
+    /** @return false|WP_Post|null */
     public function trash()
     {
         return wp_trash_post($this->getId());
     }
 
-    /**
-     * @return false|WP_Post|null
-     */
+    /** @return false|WP_Post|null */
     public function untrash()
     {
         return wp_untrash_post($this->getId());
     }
 
-    /**
-     * @return int|WP_Error
-     */
-    public function save()
+    public function save(): int
     {
         if (!empty($this->metaInput)) {
             $this->wpPost->meta_input = $this->metaInput;
