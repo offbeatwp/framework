@@ -22,7 +22,6 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS    = 'closed';
 
-
     /** @var WP_Post|null  */
     public $wpPost;
     /** @var array */
