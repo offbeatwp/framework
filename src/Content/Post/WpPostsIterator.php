@@ -13,7 +13,7 @@ class WpPostsIterator implements Iterator
         $this->items = $items;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->items);
     }
@@ -33,7 +33,7 @@ class WpPostsIterator implements Iterator
         next($this->items);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         if (key($this->items) !== null)
         {

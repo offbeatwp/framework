@@ -190,7 +190,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function set()
+    public function set(): void
     {
         register_post_type($this->postType, $this->postTypeArgs);
 
