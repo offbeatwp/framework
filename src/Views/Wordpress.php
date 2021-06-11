@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Views;
 
-use OffbeatWP\Contracts\SiteSettings;
+use WP_Post;
 
 class Wordpress
 {
@@ -52,6 +52,11 @@ class Wordpress
         return site_url();
     }
 
+    public function blogId(): int
+    {
+        return get_current_blog_id();
+    }
+
     public function bloginfo($name)
     {
         return get_bloginfo($name, 'display');
@@ -59,7 +64,7 @@ class Wordpress
 
     public function bodyClass($class = '')
     {
-        return body_class($class);
+        body_class($class);
     }
 
     public function action($action, $args = [])
@@ -84,13 +89,16 @@ class Wordpress
     public function getAllPostMeta($postId = null)
     {
 
-        if ($postId)
+        if ($postId) {
             return get_post_meta($postId);
+        }
 
+        /** @global WP_Post $post */
         global $post;
 
-        if (!$post)
+        if (!$post) {
             return false;
+        }
 
         return get_post_meta($post->ID);
 
@@ -150,8 +158,7 @@ class Wordpress
 
     public function getSearchQuery()
     {
-        if ($this->isSearchPage())
-            return get_search_query();
+        return ($this->isSearchPage()) ? get_search_query() : null;
     }
 
     public function getPageTitle()
