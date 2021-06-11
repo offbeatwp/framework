@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Views;
 
-use OffbeatWP\Contracts\SiteSettings;
 use WP_Post;
 
 class Wordpress
