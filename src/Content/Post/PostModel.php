@@ -8,7 +8,6 @@ use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
-use WP_Error;
 use WP_Post;
 
 /**
@@ -18,11 +17,11 @@ use WP_Post;
  */
 class PostModel implements PostModelInterface
 {
-    private const DEFAULT_POST_STATUS    = 'publish';
+    private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
-    private const DEFAULT_PING_STATUS    = 'closed';
+    private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|null  */
+    /** @var WP_Post|null */
     public $wpPost;
     /** @var array */
     public $metaInput = [];
@@ -163,7 +162,7 @@ class PostModel implements PostModelInterface
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
-        if(empty($postType) || empty($postType->label)) return false;
+        if (empty($postType) || empty($postType->label)) return false;
 
         return $postType->label;
     }
@@ -261,7 +260,7 @@ class PostModel implements PostModelInterface
         return $this;
     }
 
-    public function getTerms($taxonomy, $args = [])
+    public function getTerms($taxonomy, $unused = [])
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
@@ -344,6 +343,13 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
+    public function getTopLevelParent(): ?PostModel
+    {
+        $ancestors = $this->getAncestors();
+        $this->getAncestors()->last();
+        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
+    }
+
     /** @deprecated Use getChildren instead */
     public function getChilds(): PostsCollection
     {
@@ -355,6 +361,7 @@ class PostModel implements PostModelInterface
         return static::query()->where(['post_parent' => $this->getId()])->all();
     }
 
+    /** @return int[] */
     public function getAncestorIds(): array
     {
         return get_post_ancestors($this->getId());
@@ -373,33 +380,17 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
-    /**
-     * @param false $inSameTerm
-     * @param string $excludedTerms
-     * @param string $taxonomy
-     */
-    public function getPreviousPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    /**
-     * @param false $inSameTerm
-     * @param string $excludedTerms
-     * @param string $taxonomy
-     */
-    public function getNextPost($inSameTerm = false, $excludedTerms = '', $taxonomy = 'category')
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-    /**
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param bool $previous
-     * @param string $taxonomy
-     */
-    public function getAdjacentPost($inSameTerm = false, $excludedTerms = '', $previous = true, $taxonomy = 'category')
+    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
     {
         $currentPost = $GLOBALS['post'];
 
