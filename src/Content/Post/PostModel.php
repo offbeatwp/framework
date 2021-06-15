@@ -343,11 +343,11 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
-    /** Returns the top-level parent of this post. If this post has no parent, then it will return itself. */
-    public function getTopLevelParent(): PostModel
+    public function getTopLevelParent(): ?PostModel
     {
         $ancestors = $this->getAncestors();
-        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : $this;
+        $this->getAncestors()->last();
+        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
     }
 
     /** @deprecated Use getChildren instead */
