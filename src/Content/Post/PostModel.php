@@ -18,6 +18,10 @@ use WP_Post;
  */
 class PostModel implements PostModelInterface
 {
+    private const DEFAULT_POST_STATUS    = 'publish';
+    private const DEFAULT_COMMENT_STATUS = 'closed';
+    private const DEFAULT_PING_STATUS    = 'closed';
+
     /** @var WP_Post|null  */
     public $wpPost;
     /** @var array */
@@ -36,9 +40,9 @@ class PostModel implements PostModelInterface
         if (is_null($post)) {
             $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
-            $this->wpPost->post_status = 'publish';
-            $this->wpPost->comment_status = 'closed';
-            $this->wpPost->ping_status = 'closed';
+            $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
+            $this->wpPost->comment_status = self::DEFAULT_COMMENT_STATUS;
+            $this->wpPost->ping_status = self::DEFAULT_PING_STATUS;
         } elseif ($post instanceof WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
@@ -164,7 +168,7 @@ class PostModel implements PostModelInterface
         return $postType->label;
     }
 
-    public function getPostType()
+    public function getPostType(): string
     {
         return $this->wpPost->post_type;
     }
@@ -243,14 +247,14 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function setMetas(array $metadata)
+    public function setMetas(array $metadata): void
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
         }
     }
 
-    public function setMeta(string $key, $value)
+    public function setMeta(string $key, $value): PostModel
     {
         $this->metaInput[$key] = $value;
 
@@ -269,7 +273,7 @@ class PostModel implements PostModelInterface
      * @param string $taxonomy
      * @return bool
      */
-    public function hasTerm($term, $taxonomy)
+    public function hasTerm($term, string $taxonomy): bool
     {
         return has_term($term, $taxonomy, $this->getId());
     }
@@ -284,7 +288,7 @@ class PostModel implements PostModelInterface
      * @param array|string $attr
      * @return string
      */
-    public function getFeaturedImage($size = 'thumbnail', $attr = [])
+    public function getFeaturedImage($size = 'thumbnail', $attr = []): string
     {
         return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
@@ -303,12 +307,12 @@ class PostModel implements PostModelInterface
         return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
     }
 
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->wpPost->post_title = $title;
     }
 
-    public function setPostName(string $postName)
+    public function setPostName(string $postName): void
     {
         $this->wpPost->post_name = $postName;
     }

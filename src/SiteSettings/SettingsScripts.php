@@ -11,7 +11,7 @@ class SettingsScripts
 
     public function title(): string
     {
-        return __('Scripts', 'raow');
+        return __('Scripts', 'offbeatwp');
     }
 
     public function form(): Form
