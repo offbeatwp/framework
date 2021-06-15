@@ -346,13 +346,8 @@ class PostModel implements PostModelInterface
     /** Returns the top-level parent of this post. If this post has no parent, then it will return itself. */
     public function getTopLevelParent(): PostModel
     {
-        $model = $this;
-
-        while ($model->hasParent()) {
-            $model = $model->getParent();
-        }
-
-        return $model;
+        $ancestors = $this->getAncestors();
+        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : $this;
     }
 
     /** @deprecated Use getChildren instead */
@@ -366,6 +361,7 @@ class PostModel implements PostModelInterface
         return static::query()->where(['post_parent' => $this->getId()])->all();
     }
 
+    /** @return int[] */
     public function getAncestorIds(): array
     {
         return get_post_ancestors($this->getId());
