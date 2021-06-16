@@ -105,7 +105,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): TermQueryBuilder
+    public function whereMeta(string $key, $value = '', string $compare = '='): TermQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
