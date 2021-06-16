@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
+use LengthException;
 
 class PostTypeBuilder
 {
@@ -14,6 +15,10 @@ class PostTypeBuilder
 
     public function make(string $postType, string $pluralName, string $singularLabel): PostTypeBuilder
     {
+        if (strlen($postType) <= 0 || strlen($postType) > 20) {
+            throw new LengthException( "Custom post type names must be at least 1 and at most 20 characters long.");
+        }
+
         $this->postType = $postType;
         $this->postTypeArgs = [
             'labels' => [
