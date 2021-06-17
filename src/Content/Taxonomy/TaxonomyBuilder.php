@@ -24,7 +24,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @param string[] $capabilities Valid keys include: manage_terms, edit_terms, delete_terms, assign_terms */
+    /** @param string[] $capabilities Valid keys include: 'manage_terms', 'edit_terms', 'delete_terms' and 'assign_terms' */
     public function capabilities(array $capabilities = []): TaxonomyBuilder
     {
         $this->args['capabilities'] = $capabilities;
