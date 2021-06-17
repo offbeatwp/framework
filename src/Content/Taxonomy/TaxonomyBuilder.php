@@ -110,19 +110,25 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function showInAdminColumn(bool $show = true): void
+    public function showInAdminColumn(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_admin_column'] = $show;
+
+        return $this;
     }
 
-    public function showInNavMenus(bool $show = true): void
+    public function showInNavMenus(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_in_nav_menus'] = $show;
+
+        return $this;
     }
 
-    public function showTagcloud(bool $show = true): void
+    public function showTagcloud(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_tagcloud'] = $show;
+
+        return $this;
     }
 
     public function inMenu(bool $menu): TaxonomyBuilder
