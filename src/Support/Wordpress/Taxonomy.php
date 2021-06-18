@@ -1,10 +1,12 @@
 <?php
+
 namespace OffbeatWP\Support\Wordpress;
 
 use GuzzleHttp\Psr7\Uri;
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
 use Symfony\Component\HttpFoundation\Request;
+use WP_Term;
 
 class Taxonomy
 {
@@ -30,19 +32,22 @@ class Taxonomy
         return self::DEFAULT_TERM_MODEL;
     }
 
-    public function convertWpPostToModel(\WP_Term $term) {
+    /** @param WP_Term|object $term */
+    public function convertWpPostToModel($term)
+    {
         $model = $this->getModelByTaxonomy($term->taxonomy);
         // $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
 
         return new $model($term);
     }
 
-    public function get($term = null) {
-        if ($term instanceof \WP_Term) {
+    public function get($term = null)
+    {
+        if ($term instanceof WP_Term) {
             return $this->convertWpPostToModel($term);
         }
 
-        if ($term == null && (is_tax() || is_tag() || is_category()) ) {
+        if ($term === null && (is_tax() || is_tag() || is_category())) {
             return $this->convertWpPostToModel(get_queried_object());
         }
 
@@ -56,14 +61,14 @@ class Taxonomy
         return null;
     }
 
-    public function maybeRedirect($term)
+    public function maybeRedirect(TermModel $term)
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
         $requestUri = $request->getPathInfo();
 
         $url = $term->getLink();
         $url = str_replace(home_url(), '', $url);
-        $postUri    = new Uri($url);
+        $postUri = new Uri($url);
 
         if (rtrim($requestUri, '/') !== rtrim($postUri->getPath(), '/')) {
             $url = $term->getLink();
