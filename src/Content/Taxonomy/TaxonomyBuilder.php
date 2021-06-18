@@ -152,6 +152,7 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /** Customize the taxonomy meta box that appears on the edit page of a post */
     public function metaBox(callable $metaBoxCallback): TaxonomyBuilder
     {
         $this->args['meta_box_cb'] = $metaBoxCallback;
