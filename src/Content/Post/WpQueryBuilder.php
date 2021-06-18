@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
@@ -11,7 +12,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     public function all(): PostsCollection
     {
         $this->queryVars['posts_per_page'] = -1;
-        
+
         return $this->get();
     }
 
@@ -32,7 +33,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->queryVars;
     }
 
-    public function take($numberOfItems): PostsCollection
+    public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
@@ -46,35 +47,46 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
-    public function findById($id): ?PostModel
+    public function findById(int $id): ?PostModel
     {
         $this->queryVars['p'] = $id;
         $this->queryVars['post_type'] = 'any';
 
         return $this->first();
     }
-    
-    public function findByName($name): ?PostModel
+
+    public function findByName(string $name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
     }
 
+    /** @param string|string[] $postTypes */
     public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
             $this->queryVars['post_type'] = [];
         }
 
-        if (is_string($postTypes)) $postTypes = [$postTypes];
+        if (is_string($postTypes)) {
+            $postTypes = [$postTypes];
+        }
 
         $this->queryVars['post_type'] = array_merge($this->queryVars['post_type'], $postTypes);
 
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true): WpQueryBuilder
+    /**
+     * @param string $taxonomy
+     * @param string|int|string[]|int[] $terms
+     * @param string|null $field
+     * @param string|null $operator
+     * @param bool $includeChildren
+     * @return WpQueryBuilder
+     */
+    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -92,34 +104,41 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $this->queryVars['tax_query'] = [];
         }
 
-        $parameters = null;
-        if (is_array($terms)) {
-            $parameters = [
-                'taxonomy' => $taxonomy,
-                'field'    => $field,
-                'terms'    => $terms,
-                'operator' => $operator,
-                'include_children' => $includeChildren,
-            ];
-        }
+        $parameters = [
+            'taxonomy' => $taxonomy,
+            'field' => $field,
+            'terms' => $terms,
+            'operator' => $operator,
+            'include_children' => $includeChildren,
+        ];
 
         array_push($this->queryVars['tax_query'], $parameters);
 
         return $this;
     }
 
-    public function whereDate($args): WpQueryBuilder
+    /**
+     * @param int[]|string[]|bool[]|string[][] $dateParams
+     * @return WpQueryBuilder
+     */
+    public function whereDate(array $dateParams): WpQueryBuilder
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
         }
 
-        array_push($this->queryVars['date_query'], $args);
+        array_push($this->queryVars['date_query'], $dateParams);
 
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): WpQueryBuilder
+    /**
+     * @param string|array $key
+     * @param string|array $value
+     * @param string $compare
+     * @return WpQueryBuilder
+     */
+    public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -129,8 +148,8 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $parameters = $key;
         } else {
             $parameters = [
-                'key'     => $key,
-                'value'   => $value,
+                'key' => $key,
+                'value' => $value,
                 'compare' => $compare,
             ];
         }
@@ -163,14 +182,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this;
     }
-    
-    public function paginated($paginated = true): WpQueryBuilder
+
+    public function paginated(bool $paginated = true): WpQueryBuilder
     {
         if ($paginated) {
             $paged = $paginated;
 
             if (is_bool($paginated)) {
-                $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+                $paged = get_query_var('paged') ? get_query_var('paged') : 1;
             }
 
             $this->queryVars['paged'] = $paged;

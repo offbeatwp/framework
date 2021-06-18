@@ -1,6 +1,9 @@
 <?php
+
 namespace OffbeatWP\Content\Taxonomy;
 
-interface TermModelInterface {
+use OffbeatWP\Content\BaseModelInterface;
+
+interface TermModelInterface extends BaseModelInterface {
 
 }

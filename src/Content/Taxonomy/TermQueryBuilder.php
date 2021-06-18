@@ -70,23 +70,27 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    public function findById($id)
+    public function findById(int $id)
     {
         return $this->findBy('id', $id);
     }
 
-    public function findBySlug($slug)
+    public function findBySlug(string $slug)
     {
         return $this->findBy('slug', $slug);
     }
 
-    public function findByName($name)
+    public function findByName(string $name)
     {
         return $this->findBy('name', $name);
     }
 
-    /** @return TermModel|false */
-    public function findBy($field, $value)
+    /**
+     * @param string $field
+     * @param string|int $value
+     * @return TermModel|false
+     */
+    public function findBy(string $field, $value)
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
@@ -105,7 +109,13 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): TermQueryBuilder
+    /**
+     * @param string|array $key
+     * @param string|array $value
+     * @param string $compare
+     * @return $this
+     */
+    public function whereMeta($key, $value = '', string $compare = '='): TermQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];

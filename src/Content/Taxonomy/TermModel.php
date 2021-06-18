@@ -21,9 +21,7 @@ class TermModel implements TermModelInterface
     /** @var int|null */
     public $id;
 
-    /**
-     * @param WP_Term|int
-     */
+    /** @param WP_Term|int */
     public function __construct($term)
     {
         if ($term instanceof WP_Term) {
@@ -67,7 +65,7 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->wpTerm->term_id;
     }
@@ -111,16 +109,12 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    /**
-     * @param string $key
-     * @param bool $single
-     */
-    public function getMeta($key, $single = true)
+    public function getMeta(string $key, bool $single = true)
     {
         return get_term_meta($this->getID(), $key, $single);
     }
 
-    public function setMeta($key, $value)
+    public function setMeta(string $key, $value)
     {
         return update_term_meta($this->getID(), $key, $value);
     }

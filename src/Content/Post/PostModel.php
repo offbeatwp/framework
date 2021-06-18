@@ -102,7 +102,7 @@ class PostModel implements PostModelInterface
     }
 
     /* Attribute methods */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->wpPost->ID ?? null;
     }

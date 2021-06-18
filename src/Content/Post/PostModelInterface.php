@@ -1,6 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-interface PostModelInterface {
+use OffbeatWP\Content\BaseModelInterface;
+
+interface PostModelInterface extends BaseModelInterface {
 
 }
