@@ -69,7 +69,7 @@ class Relation
         );
     }
 
-    public function makeRelationships(array $ids, string $direction = null): void
+    public function makeRelationships(array $ids, ?string $direction = null): void
     {
         if (!empty($ids)) foreach ($ids as $id) {
             $this->makeRelationship($id, $direction);
