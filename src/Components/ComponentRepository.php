@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Components;
 
 use Exception;
@@ -7,9 +8,7 @@ use OffbeatWP\Layout\Frontend;
 
 class ComponentRepository
 {
-    /**
-     * @var ContextInterface
-     */
+    /** @var ContextInterface|null */
     protected $layoutContext;
 
     public function __construct()
@@ -17,7 +16,7 @@ class ComponentRepository
 
     }
 
-    public function getLayoutContext()
+    public function getLayoutContext(): ?ContextInterface
     {
         return $this->layoutContext;
     }
@@ -28,16 +27,17 @@ class ComponentRepository
      * @param ContextInterface|null $context
      * @return $this
      */
-    public function setLayoutContext(ContextInterface $context = null)
+    public function setLayoutContext(ContextInterface $context = null): ComponentRepository
     {
         $this->layoutContext = $context;
+
         return $this;
     }
 
     public function register($name, $componentClass)
     {
         offbeat('hooks')->doAction('offbeat.component.register', [
-            'name'  => $name,
+            'name' => $name,
             'class' => $componentClass,
         ]);
 
@@ -57,9 +57,9 @@ class ComponentRepository
         $componentSettings = $componentClass::settings();
 
         $widgetSettings = [
-            'id_base'           => $componentSettings['slug'],
-            'name'              => $componentSettings['name'],
-            'component_name'    => $name,
+            'id_base' => $componentSettings['slug'],
+            'name' => $componentSettings['name'],
+            'component_name' => $name,
         ];
 
         $widget = new GenericWidget($widgetSettings, $componentClass);
@@ -85,6 +85,7 @@ class ComponentRepository
         });
     }
 
+    /** @throws Exception */
     public function get($name = null)
     {
         if (is_null($name)) {
@@ -105,7 +106,7 @@ class ComponentRepository
         return offbeat()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
-    public function exists($name)
+    public function exists($name): bool
     {
         if (isset($this->components[$name])) {
             return true;

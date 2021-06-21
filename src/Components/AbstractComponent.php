@@ -120,7 +120,7 @@ abstract class AbstractComponent
 
         $componentSettings = static::settings();
 
-        return isset($componentSettings[$key]) ? $componentSettings[$key] : null;
+        return $componentSettings[$key] ?? null;
     }
 
     public static function getName()
