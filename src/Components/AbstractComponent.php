@@ -21,11 +21,6 @@ abstract class AbstractComponent
     /** @var Form|null */
     public $form = null;
 
-	/**
-	 * @return null | Form
-	 * @noinspection PhpMissingReturnTypeInspection
-     * @deprecated This method is public for retro-compatibility, please use getForm() instead.
-     */
 	static public function form() {
 		return null;
 	}
