@@ -21,6 +21,7 @@ abstract class AbstractComponent
     /** @var Form|null */
     public $form = null;
 
+	/** @return Form|null */
 	static public function form() {
 		return null;
 	}
@@ -163,8 +164,10 @@ abstract class AbstractComponent
     public static function getForm()
     {
 	    $form = static::form();
-	    if(is_null($form)){
-		    if (!method_exists(get_called_class(), 'settings')) return [];
+	    if(is_null($form)) {
+		    if (!method_exists(get_called_class(), 'settings')) {
+                return [];
+            }
 
 		    $settings = static::settings();
 
