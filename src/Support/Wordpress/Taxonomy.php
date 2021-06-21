@@ -32,11 +32,9 @@ class Taxonomy
         return self::DEFAULT_TERM_MODEL;
     }
 
-    /** @param WP_Term|object $term */
-    public function convertWpPostToModel($term)
+    public function convertWpPostToModel(WP_Term $term)
     {
         $model = $this->getModelByTaxonomy($term->taxonomy);
-        // $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
 
         return new $model($term);
     }
@@ -48,7 +46,10 @@ class Taxonomy
         }
 
         if ($term === null && (is_tax() || is_tag() || is_category())) {
-            return $this->convertWpPostToModel(get_queried_object());
+            $obj = get_queried_object();
+            if ($obj instanceof WP_Term) {
+                return $this->convertWpPostToModel($obj);
+            }
         }
 
 
