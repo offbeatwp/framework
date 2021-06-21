@@ -16,19 +16,37 @@ abstract class AbstractComponent
 
     /** @var View */
     public $view;
-
-    /** @var null|ContextInterface */
+    /** @var ContextInterface|null */
     protected $context;
-
+    /** @var Form|null */
     public $form = null;
 
 	/**
-	 * @internal This method is public for retro-compatibility, please use getForm() instead.
 	 * @return null | Form
-	 */
-	static public function form(){
+	 * @noinspection PhpMissingReturnTypeInspection
+     * @deprecated This method is public for retro-compatibility, please use getForm() instead.
+     */
+	static public function form() {
 		return null;
 	}
+
+    /**
+     * Specify component settings. Available settings include:
+     *
+     * *string* **name** - The component's display name
+     *
+     * *string* **description** - The component's description
+     *
+     * *string* **slug** - The component's slug
+     *
+     * *string* **category** - The category to which this component belongs to
+     *
+     * *string* **icon** - The name of the dash-icon that this setting will use in the editor
+     *
+     * *string[]* **supports** - Supported functionality of this component
+     * @return string[]|string[][]
+     */
+	abstract static function settings();
 
     public function __construct(View $view, ContextInterface $context = null)
     {
@@ -41,9 +59,7 @@ abstract class AbstractComponent
         }
     }
 
-    /**
-     * Can this component be rendered?
-     */
+    /** Can this component be rendered? */
     public function isRenderable(): bool
     {
         return true;
@@ -89,6 +105,7 @@ abstract class AbstractComponent
         if ($object !== false) {
             return $object;
         }
+
         return false;
     }
 
@@ -105,22 +122,15 @@ abstract class AbstractComponent
 
     public static function supports($service): bool
     {
-        if (!method_exists(get_called_class(), 'settings')) return false;
-
-        $componentSettings = static::settings();
-
-        if (!array_key_exists('supports', $componentSettings) || !in_array($service, $componentSettings['supports'])) return false;
-
-        return true;
+        $settings = static::settings();
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
     }
 
     public static function getSetting($key)
     {
-        if (!method_exists(get_called_class(), 'settings')) return false;
+        $settings = static::settings();
 
-        $componentSettings = static::settings();
-
-        return $componentSettings[$key] ?? null;
+        return $settings[$key] ?? null;
     }
 
     public static function getName()
@@ -143,12 +153,12 @@ abstract class AbstractComponent
         return static::getSetting('category');
     }
 
-    public function getViewsDirectory()
+    public function getViewsDirectory(): string
     {
         return $this->getDirectory() . '/views';
     }
 
-    public function getDirectory()
+    public function getDirectory(): string
     {
         $classInfo = new ReflectionClass($this);
 
@@ -163,26 +173,21 @@ abstract class AbstractComponent
 
 		    $settings = static::settings();
 
-		    if (isset($settings['form']))
-			    $form = $settings['form'];
+		    if (isset($settings['form'])) {
+                $form = $settings['form'];
+            }
 
 		    if (!($form instanceof Form)) {
 			    $form = new Form();
 		    }
 	    }
 
-
         if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
             $form->addField(
-                Select::make(
-                    'variation',
-                    __('Variation', 'offbeatwp')
-                )->addOptions($settings['variations'])
+                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
             );
         }
 
-        $form = apply_filters('offbeatwp/component/form', $form, static::class);
-
-        return $form;
+        return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 }
