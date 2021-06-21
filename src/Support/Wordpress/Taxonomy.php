@@ -52,7 +52,6 @@ class Taxonomy
             }
         }
 
-
         $term = get_term($term);
 
         if (!empty($term)) {
@@ -62,7 +61,7 @@ class Taxonomy
         return null;
     }
 
-    public function maybeRedirect(TermModel $term)
+    public function maybeRedirect(TermModel $term): void
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
         $requestUri = $request->getPathInfo();
@@ -74,8 +73,9 @@ class Taxonomy
         if (rtrim($requestUri, '/') !== rtrim($postUri->getPath(), '/')) {
             $url = $term->getLink();
 
-            if (!empty($_GET))
+            if (!empty($_GET)) {
                 $url .= '?' . http_build_query($_GET);
+            }
 
             offbeat('http')->redirect($url);
             exit;
