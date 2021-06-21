@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post\Relations;
 
 class Relation
@@ -9,33 +10,31 @@ class Relation
     public function __construct($model, $key)
     {
         $this->model = $model;
-        $this->key   = $key;
+        $this->key = $key;
     }
 
-    public function removeRelationship($id, $direction = null) {
+    /** @return int|false */
+    public function removeRelationship(int $id, ?string $direction = null)
+    {
         global $wpdb;
 
         $column1 = 'relation_from';
         $column2 = 'relation_to';
 
-        if ($direction == 'reverse') {
+        if ($direction === 'reverse') {
             $column1 = 'relation_to';
             $column2 = 'relation_from';
         }
 
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column1} = %d AND {$column2} = %d";
-        $params = [
-            $this->key,
-            $this->model->getId(),
-            $id
-        ];
+        $params = [$this->key, $this->model->getId(), $id];
 
-        $results = $wpdb->query($wpdb->prepare($query, $params));
-
-        return $results;
+        return $wpdb->query($wpdb->prepare($query, $params));
     }
 
-    public function removeAllRelationships($direction = null) {
+    /** @return int|false */
+    public function removeAllRelationships(?string $direction = null)
+    {
         global $wpdb;
 
         $column = 'relation_from';
@@ -45,43 +44,33 @@ class Relation
         }
 
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column} = %d";
-        $params = [
-            $this->key,
-            $this->model->getId(),
-        ];
+        $params = [$this->key, $this->model->getId()];
 
-        $results = $wpdb->query($wpdb->prepare($query, $params));
-
-        return $results;
+        return $wpdb->query($wpdb->prepare($query, $params));
     }
 
-    public function makeRelationship($id, $direction = null) {
+    /** @return int|false */
+    public function makeRelationship(int $id, ?string $direction = null)
+    {
         global $wpdb;
 
         $column1 = 'relation_from';
         $column2 = 'relation_to';
 
-        if ($direction == 'reverse') {
+        if ($direction === 'reverse') {
             $column1 = 'relation_to';
             $column2 = 'relation_from';
         }
 
-        return $wpdb->insert( 
-            $wpdb->prefix . 'post_relationships', 
-            [
-                'key' => $this->key, 
-                $column1 => $this->model->getId(),
-                $column2 => $id
-            ], 
-            [ 
-                '%s', 
-                '%d',
-                '%d'
-            ] 
+        return $wpdb->insert(
+            $wpdb->prefix . 'post_relationships',
+            ['key' => $this->key, $column1 => $this->model->getId(), $column2 => $id],
+            ['%s', '%d', '%d']
         );
     }
 
-    public function makeRelationships($ids, $direction = null) {
+    public function makeRelationships(array $ids, ?string $direction = null): void
+    {
         if (!empty($ids)) foreach ($ids as $id) {
             $this->makeRelationship($id, $direction);
         }
