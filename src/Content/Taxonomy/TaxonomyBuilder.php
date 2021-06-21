@@ -24,7 +24,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @param string[] $capabilities Valid keys include: manage_terms, edit_terms, delete_terms, assign_terms */
+    /** @param string[] $capabilities Valid keys include: 'manage_terms', 'edit_terms', 'delete_terms' and 'assign_terms' */
     public function capabilities(array $capabilities = []): TaxonomyBuilder
     {
         $this->args['capabilities'] = $capabilities;
@@ -96,6 +96,7 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /** Whether a taxonomy is intended for use publicly either via the admin interface or by front-end users */
     public function public(bool $public = true): TaxonomyBuilder
     {
         $this->args['public'] = $public;
@@ -103,6 +104,7 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /** Whether to generate and allow a UI for managing terms in this taxonomy in the admin */
     public function showUI(bool $showUi = true): TaxonomyBuilder
     {
         $this->args['show_ui'] = $showUi;
@@ -110,21 +112,23 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function showInAdminColumn(bool $show = true): void
-    {
-        $this->args['show_admin_column'] = $show;
-    }
-
-    public function showInNavMenus(bool $show = true): void
+    /** Makes this taxonomy available for selection in navigation menus */
+    public function showNavMenus(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_in_nav_menus'] = $show;
+
+        return $this;
     }
 
-    public function showTagcloud(bool $show = true): void
+    /** Whether to list the taxonomy in the Tag Cloud Widget controls */
+    public function showTagCloud(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_tagcloud'] = $show;
+
+        return $this;
     }
 
+    /** Whether this taxonomy should be shown in the admin menu */
     public function inMenu(bool $menu): TaxonomyBuilder
     {
         $this->args['show_in_menu'] = $menu;
@@ -132,6 +136,7 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /** Whether to include the taxonomy in the REST API */
     public function inRest(bool $rest = true): TaxonomyBuilder
     {
         $this->args['show_in_rest'] = $rest;
@@ -139,6 +144,7 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /** Whether to display a column for the taxonomy on its post type listing screens */
     public function showAdminColumn(bool $showAdminColumn = true): TaxonomyBuilder
     {
         $this->args['show_admin_column'] = $showAdminColumn;
