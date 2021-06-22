@@ -152,9 +152,17 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function metaBox(callable $metaBoxCallback): TaxonomyBuilder
+    /** @param callable|false $metaBoxCallback */
+    public function metaBox($metaBoxCallback): TaxonomyBuilder
     {
         $this->args['meta_box_cb'] = $metaBoxCallback;
+
+        return $this;
+    }
+
+    public function hideMetaBox(): TaxonomyBuilder
+    {
+        $this->args['meta_box_cb'] = false;
 
         return $this;
     }

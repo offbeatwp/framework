@@ -16,19 +16,37 @@ abstract class AbstractComponent
 
     /** @var View */
     public $view;
-
-    /** @var null|ContextInterface */
+    /** @var ContextInterface|null */
     protected $context;
-
+    /** @var Form|null */
     public $form = null;
 
 	/**
-	 * @internal This method is public for retro-compatibility, please use getForm() instead.
-	 * @return null | Form
-	 */
-	static public function form(){
+     * @internal Use getForm instead
+     * @return Form|null
+     */
+	static public function form()
+    {
 		return null;
 	}
+
+    /**
+     * Specify component settings. Available settings include:
+     *
+     * *string* **name** - The component's display name
+     *
+     * *string* **description** - The component's description
+     *
+     * *string* **slug** - The component's slug
+     *
+     * *string* **category** - The category to which this component belongs to
+     *
+     * *string* **icon** - The name of the dash-icon that this setting will use in the editor
+     *
+     * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
+     * @return string[]|string[][]
+     */
+	abstract static function settings();
 
     public function __construct(View $view, ContextInterface $context = null)
     {
@@ -41,9 +59,7 @@ abstract class AbstractComponent
         }
     }
 
-    /**
-     * Can this component be rendered?
-     */
+    /** Can this component be rendered? */
     public function isRenderable(): bool
     {
         return true;
@@ -89,6 +105,7 @@ abstract class AbstractComponent
         if ($object !== false) {
             return $object;
         }
+
         return false;
     }
 
@@ -105,84 +122,75 @@ abstract class AbstractComponent
 
     public static function supports($service): bool
     {
-        if (!method_exists(get_called_class(), 'settings')) return false;
-
-        $componentSettings = static::settings();
-
-        if (!array_key_exists('supports', $componentSettings) || !in_array($service, $componentSettings['supports'])) return false;
-
-        return true;
+        $settings = static::settings();
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
     }
 
-    public static function getSetting($key)
+    /** @return string|string[]|null */
+    public static function getSetting(string $key)
     {
-        if (!method_exists(get_called_class(), 'settings')) return false;
+        $settings = static::settings();
 
-        $componentSettings = static::settings();
-
-        return isset($componentSettings[$key]) ? $componentSettings[$key] : null;
+        return $settings[$key] ?? null;
     }
 
-    public static function getName()
+    public static function getName(): ?string
     {
         return static::getSetting('name');
     }
 
-    public static function getSlug()
+    public static function getSlug(): ?string
     {
         return static::getSetting('slug');
     }
 
-    public static function getDescription()
+    public static function getDescription(): ?string
     {
         return static::getSetting('description');
     }
 
-    public static function getCategory()
+    public static function getCategory(): ?string
     {
         return static::getSetting('category');
     }
 
-    public function getViewsDirectory()
+    public static function getIcon(): ?string {
+        return static::getSetting('icon');
+    }
+
+    public function getViewsDirectory(): string
     {
         return $this->getDirectory() . '/views';
     }
 
-    public function getDirectory()
+    public function getDirectory(): string
     {
         $classInfo = new ReflectionClass($this);
 
         return dirname($classInfo->getFileName());
     }
 
-    public static function getForm()
+    public static function getForm(): Form
     {
 	    $form = static::form();
-	    if(is_null($form)){
-		    if (!method_exists(get_called_class(), 'settings')) return [];
-
+	    if(is_null($form)) {
 		    $settings = static::settings();
 
-		    if (isset($settings['form']))
-			    $form = $settings['form'];
+		    if (isset($settings['form'])) {
+                $form = $settings['form'];
+            }
 
 		    if (!($form instanceof Form)) {
 			    $form = new Form();
 		    }
 	    }
 
-
         if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
             $form->addField(
-                Select::make(
-                    'variation',
-                    __('Variation', 'offbeatwp')
-                )->addOptions($settings['variations'])
+                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
             );
         }
 
-        $form = apply_filters('offbeatwp/component/form', $form, static::class);
-
-        return $form;
+        return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 }
