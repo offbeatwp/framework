@@ -274,7 +274,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param array|int|string $term
+     * @param int[]|string[]|int|string $term
      * @param string $taxonomy
      * @return bool
      */
@@ -289,8 +289,8 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param array|string $size
-     * @param array|string $attr
+     * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
+     * @param int[]|string[]|string $attr
      * @return string
      */
     public function getFeaturedImage($size = 'thumbnail', $attr = []): string
@@ -299,7 +299,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param int[]|string $size
+     * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @return false|string
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
