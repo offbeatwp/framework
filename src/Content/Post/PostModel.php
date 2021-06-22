@@ -8,6 +8,7 @@ use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
+use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use WP_Post;
 
 /**
@@ -128,7 +129,14 @@ class PostModel implements PostModelInterface
             $content = wpautop($content);
             $content = shortcode_unautop($content);
             $content = prepend_attachment($content);
-            $content = function_exists('wp_filter_content_tags') ? wp_filter_content_tags($content) : wp_make_content_images_responsive($content);
+
+            // wp_make_content_images_responsive is deprecated, but we want to maintain some pre-5.5 compat
+            if (function_exists('wp_filter_content_tags')) {
+                $content = wp_filter_content_tags($content);
+            } else if (function_exists('wp_make_content_images_responsive')) {
+                $content = wp_make_content_images_responsive($content);
+            }
+
             $content = do_shortcode($content);
 
             return $content;
@@ -258,7 +266,7 @@ class PostModel implements PostModelInterface
         return $this;
     }
 
-    public function getTerms($taxonomy, $unused = [])
+    public function getTerms($taxonomy, $unused = []): TermQueryBuilder
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
@@ -291,7 +299,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param array|string $size
+     * @param int[]|string $size
      * @return false|string
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
