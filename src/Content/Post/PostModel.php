@@ -112,7 +112,7 @@ class PostModel implements PostModelInterface
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
 
-    public function getContent()
+    public function getContent(): string
     {
         if ($this->isPasswordRequired()) {
             return get_the_password_form($this->wpPost);
@@ -124,18 +124,12 @@ class PostModel implements PostModelInterface
         // it adds another filter that prevents wpautop to be executed.
         // In this case we manually run a series of filters
         if (has_filter('the_content', '_restore_wpautop_hook')) {
-            collect([
-                'wptexturize',
-                'wpautop',
-                'shortcode_unautop',
-                'prepend_attachment',
-                'wp_make_content_images_responsive',
-                'do_shortcode',
-            ])->each(function ($filter) use (&$content) {
-                if (function_exists($filter)) {
-                    $content = $filter($content);
-                }
-            });
+            $content = wptexturize($content);
+            $content = wpautop($content);
+            $content = shortcode_unautop($content);
+            $content = prepend_attachment($content);
+            $content = function_exists('wp_filter_content_tags') ? wp_filter_content_tags($content) : wp_make_content_images_responsive($content);
+            $content = do_shortcode($content);
 
             return $content;
         }
@@ -211,7 +205,9 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->getAuthorId();
 
-        if (!isset($authorId) || empty($authorId)) return false;
+        if (empty($authorId)) {
+            return false;
+        }
 
         return get_userdata($authorId);
     }
@@ -220,7 +216,9 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->wpPost->post_author;
 
-        if (!isset($authorId) || empty($authorId)) return false;
+        if (empty($authorId)) {
+            return false;
+        }
 
         return $authorId;
     }
