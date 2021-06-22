@@ -21,8 +21,12 @@ abstract class AbstractComponent
     /** @var Form|null */
     public $form = null;
 
-	/** @return Form|null */
-	static public function form() {
+	/**
+     * @internal Use getForm instead
+     * @return Form|null
+     */
+	static public function form()
+    {
 		return null;
 	}
 
@@ -39,7 +43,7 @@ abstract class AbstractComponent
      *
      * *string* **icon** - The name of the dash-icon that this setting will use in the editor
      *
-     * *string[]* **supports** - Supported functionality of this component
+     * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
      * @return string[]|string[][]
      */
 	abstract static function settings();
