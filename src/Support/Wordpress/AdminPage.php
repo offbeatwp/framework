@@ -6,16 +6,18 @@ class AdminPage
     public function make($title, $slug, $icon = '', $position = 30, $capabilities = null, $callback = null)
     {
         if (is_admin()) {
-            if (is_null($callback)) {
-                $callback = function () {echo __('No items linked', 'raow');};
-            }
-
             if (is_null($capabilities)) {
                 $capabilities = 'edit_posts';
             }
 
             if ($callback == 'controller') {
                 $callback = [static::class, 'callbackController'];
+            }
+
+            if (!empty($callback)) {
+                $callback = function () use ($callback) {
+                    offbeat()->container->call($callback);
+                };
             }
 
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capabilities, $callback) {
@@ -26,19 +28,21 @@ class AdminPage
         }
     }
 
-    public function makeSub($parent, $title, $slug, $capabilities = null, $callback = null)
+    public function makeSub($parent, $title, $slug, $capabilities = null, $callback = null, $position = null)
     {
         if (is_admin()) {
-            if (is_null($callback)) {
-                $callback = function () {echo __('No items linked', 'raow');};
-            }
-
             if (is_null($capabilities)) {
                 $capabilities = 'edit_posts';
             }
 
             if ($callback == 'controller') {
                 $callback = [static::class, 'callbackController'];
+            }
+
+            if (!empty($callback)) {
+                $callback = function () use ($callback) {
+                    offbeat()->container->call($callback);
+                };
             }
 
             $positions = [
@@ -61,10 +65,8 @@ class AdminPage
                 $parent = 'edit.php?post_type=' . $matches[1];
             }
 
-            add_action('admin_menu', function () use ($parent, $title, $slug, $capabilities, $callback) {
-                add_submenu_page($parent, $title, $title, $capabilities, $slug, function () use ($callback) {
-                    offbeat()->container->call($callback);
-                });
+            add_action('admin_menu', function () use ($parent, $title, $slug, $capabilities, $callback, $position) {
+                add_submenu_page($parent, $title, $title, $capabilities, $slug, $callback, $position);
             });
         }
     }
