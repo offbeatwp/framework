@@ -126,31 +126,36 @@ abstract class AbstractComponent
         return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
     }
 
-    public static function getSetting($key)
+    /** @return string|string[]|null */
+    public static function getSetting(string $key)
     {
         $settings = static::settings();
 
         return $settings[$key] ?? null;
     }
 
-    public static function getName()
+    public static function getName(): ?string
     {
         return static::getSetting('name');
     }
 
-    public static function getSlug()
+    public static function getSlug(): ?string
     {
         return static::getSetting('slug');
     }
 
-    public static function getDescription()
+    public static function getDescription(): ?string
     {
         return static::getSetting('description');
     }
 
-    public static function getCategory()
+    public static function getCategory(): ?string
     {
         return static::getSetting('category');
+    }
+
+    public static function getIcon(): ?string {
+        return static::getSetting('icon');
     }
 
     public function getViewsDirectory(): string
@@ -165,14 +170,10 @@ abstract class AbstractComponent
         return dirname($classInfo->getFileName());
     }
 
-    public static function getForm()
+    public static function getForm(): Form
     {
 	    $form = static::form();
 	    if(is_null($form)) {
-		    if (!method_exists(get_called_class(), 'settings')) {
-                return [];
-            }
-
 		    $settings = static::settings();
 
 		    if (isset($settings['form'])) {
