@@ -13,11 +13,7 @@ class AbstractField implements FieldInterface
     /** @var array */
     public $attributes = [];
 
-    /**
-     * @param string $id
-     * @param string $label
-     */
-    public static function make($id, $label)
+    public static function make(string $id, string $label): AbstractField
     {
         $field = new static();
 
@@ -31,26 +27,17 @@ class AbstractField implements FieldInterface
         return $field;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
 
-    /**
-     * @param bool $required
-     */
-    public function setRequired($required)
+    public function setRequired(bool $required)
     {
         $this->required = $required;
     }
@@ -65,9 +52,9 @@ class AbstractField implements FieldInterface
         return static::FIELD_TYPE;
     }
 
-    public function getId()
+    public function getId(): string
     {
-        if (!isset($this->id) || empty($this->id)) {
+        if (empty($this->id)) {
             $label = $this->getLabel();
             $label = iconv('utf-8', 'ascii//TRANSLIT', $label);
             $label = preg_replace('/[^A-Za-z0-9_-]/', '', $label);
@@ -80,18 +67,18 @@ class AbstractField implements FieldInterface
         return $this->id;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function getRequired()
+    public function getRequired(): bool
     {
         return $this->required;
     }
 
     /** @internal Use attribute instead */
-    public function setAttribute($key, $value = null)
+    public function setAttribute(string $key, $value = null)
     {
         $this->attributes[$key] = $value;
     }
@@ -107,7 +94,7 @@ class AbstractField implements FieldInterface
         return $this->attributes;
     }
 
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
         if (isset($this->getAttributes()[$key])) {
             return $this->getAttributes()[$key];
@@ -117,7 +104,7 @@ class AbstractField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description($description): AbstractField
+    public function description(string $description): AbstractField
     {
         $this->setAttribute('description', $description);
 
@@ -131,6 +118,10 @@ class AbstractField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param string[]|int[]|float[] $attributes
+     * @return $this
+     */
     public function attributes(array $attributes): AbstractField
     {
         $this->setAttributes($attributes);
@@ -138,7 +129,12 @@ class AbstractField implements FieldInterface
         return $this;
     }
 
-    public function attribute($key, $value): AbstractField
+    /**
+     * @param string $key
+     * @param string|int|float $value
+     * @return $this
+     */
+    public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
 
@@ -146,7 +142,6 @@ class AbstractField implements FieldInterface
     }
 
     /* Functional */
-
     public function toArray(): array
     {
         return [

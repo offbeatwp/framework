@@ -1,16 +1,16 @@
 <?php
+
 namespace OffbeatWP\Form\Fields;
 
-class NavMenu extends Select {
-
+class NavMenu extends Select
+{
     public function __construct()
-    {        
+    {
         $this->addOptions([$this, 'getNavMenus']);
-
-        parent::__construct();
     }
 
-    public function getNavMenus () {
+    public function getNavMenus(): array
+    {
         $options = [
             '' => __('None', 'offbeatwp'),
         ];
