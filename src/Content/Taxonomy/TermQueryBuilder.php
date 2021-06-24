@@ -60,7 +60,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->get();
     }
 
-    public function take($numberOfItems): TermsCollection
+    public function take(int $numberOfItems): TermsCollection
     {
         $this->queryVars['number'] = $numberOfItems;
 

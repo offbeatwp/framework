@@ -77,7 +77,15 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true): WpQueryBuilder
+    /**
+     * @param string $taxonomy
+     * @param string|string[]|int|int[] $terms
+     * @param string|null $field
+     * @param string|null $operator
+     * @param bool $includeChildren
+     * @return $this
+     */
+    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -111,13 +119,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereDate($args): WpQueryBuilder
+    /** @param int[]|string[]|string[][] $dateArgs */
+    public function whereDate(array $dateArgs): WpQueryBuilder
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
         }
 
-        array_push($this->queryVars['date_query'], $args);
+        array_push($this->queryVars['date_query'], $dateArgs);
 
         return $this;
     }
