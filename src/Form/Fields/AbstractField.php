@@ -41,7 +41,7 @@ class AbstractField implements FieldInterface
         $this->label = $label;
     }
 
-    public function setRequired(bool $required)
+    public function setRequired(bool $required = true)
     {
         $this->required = $required;
     }

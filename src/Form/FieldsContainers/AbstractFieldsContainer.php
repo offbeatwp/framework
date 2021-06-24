@@ -1,10 +1,13 @@
 <?php
+
 namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
 
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
+    const LEVEL = -1;
+
     public $id;
     public $label;
     public $parent;
@@ -83,11 +86,16 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         });
 
         return [
-            'type'       => $this->getType(),
-            'id'         => $this->getId(),
-            'label'      => $this->getLabel(),
+            'type' => $this->getType(),
+            'id' => $this->getId(),
+            'label' => $this->getLabel(),
             'attributes' => $this->getAttributes(),
-            'items'      => $items->toArray()
+            'items' => $items->toArray()
         ];
+    }
+
+    public static function getLevel(): int
+    {
+        return self::LEVEL;
     }
 }
