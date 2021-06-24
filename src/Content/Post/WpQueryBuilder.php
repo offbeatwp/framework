@@ -49,7 +49,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
     public function findById($id): ?PostModel
     {
         $this->queryVars['p'] = $id;
-        $this->queryVars['post_type'] = 'any';
 
         return $this->first();
     }
