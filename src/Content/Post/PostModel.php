@@ -22,6 +22,8 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
+    /** @var string[]|null Each key should represent a field identifier and each value should be the function name within this model that returns a Relation */
+    public $relationKeyMethods = null;
     /** @var WP_Post|null */
     public $wpPost;
     /** @var array */
@@ -475,7 +477,7 @@ class PostModel implements PostModelInterface
     {
         $method = $key;
 
-        if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
+        if (is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
             $method = $this->relationKeyMethods[$key];
         }
 

@@ -45,4 +45,27 @@ abstract class AbstractQueryBuilder {
 
         return $this;
     }
+
+    /**
+     * @param string|array $key
+     * @param string|string[] $value
+     * @param string $compare Possible values are ‘=’, ‘!=’, ‘>’, ‘>=’, ‘<‘, ‘<=’, ‘LIKE’, ‘NOT LIKE’, ‘IN’, ‘NOT IN’, ‘BETWEEN’, ‘NOT BETWEEN’, ‘EXISTS’, ‘NOT EXISTS’, ‘REGEXP’, ‘NOT REGEXP’ and ‘RLIKE’
+     * @return $this
+     */
+    public function whereMeta($key, $value = '', string $compare = '='): AbstractQueryBuilder
+    {
+        if (!isset($this->queryVars['meta_query'])) {
+            $this->queryVars['meta_query'] = [];
+        }
+
+        if (is_array($key)) {
+            $parameters = $key;
+        } else {
+            $parameters = ['key' => $key, 'value' => $value, 'compare' => $compare];
+        }
+
+        array_push($this->queryVars['meta_query'], $parameters);
+
+        return $this;
+    }
 }

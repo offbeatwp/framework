@@ -7,7 +7,9 @@ use WP_Term_Query;
 
 class TermQueryBuilder extends AbstractQueryBuilder
 {
+    /** @var TermModel|class-string */
     protected $model;
+    /** @var string */
     protected $taxonomy;
 
     public function __construct($model)
@@ -70,17 +72,17 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    public function findById($id)
+    public function findById(int $id)
     {
         return $this->findBy('id', $id);
     }
 
-    public function findBySlug($slug)
+    public function findBySlug(string $slug)
     {
         return $this->findBy('slug', $slug);
     }
 
-    public function findByName($name)
+    public function findByName(string $name)
     {
         return $this->findBy('name', $name);
     }
@@ -105,27 +107,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): TermQueryBuilder
-    {
-        if (!isset($this->queryVars['meta_query'])) {
-            $this->queryVars['meta_query'] = [];
-        }
-
-        $parameters = $key;
-
-        if (!is_array($parameters)) {
-            $parameters = [
-                'key' => $key,
-                'value' => $value,
-                'compare' => $compare,
-            ];
-        }
-
-        array_push($this->queryVars['meta_query'], $parameters);
-
-        return $this;
-    }
-
+    /** @param int|int[] $postIds */
     public function whereRelatedToPost($postIds): TermQueryBuilder
     {
         $this->queryVars['object_ids'] = $postIds;
@@ -133,7 +115,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function excludeEmpty($hideEmpty = true): TermQueryBuilder
+    public function excludeEmpty(bool $hideEmpty = true): TermQueryBuilder
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
 

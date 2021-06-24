@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Modules;
 
+use Illuminate\Support\Collection;
 use OffbeatWP\Commands\Commands;
 use OffbeatWP\Services\AbstractService;
 use ReflectionClass;
@@ -32,31 +33,31 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
-    public function getName()
+    public function getName(): string
     {
         return (new ReflectionClass($this))->getShortName();
     }
 
-    public function registerComponents()
+    public function registerComponents(): void
     {
         $directory = $this->getDirectory() . '/Components';
 
         $registerableComponents = $this->getRegisterableObjects($directory, true);
 
         if (!empty($registerableComponents)) {
-            foreach ($registerableComponents as $name => $class) {
+            foreach ($registerableComponents as $class) {
                 offbeat('components')->register($class::getSlug(), $class);
             }
         }
     }
 
-    public function getNamespace()
+    public function getNamespace(): ?string
     {
         $classInfo = new ReflectionClass($this);
-        return substr($classInfo->name, 0, strrpos($classInfo->name, "\\"));
+        return substr($classInfo->name, 0, strrpos($classInfo->name, "\\")) ?: null;
     }
 
-    public function getDirectory()
+    public function getDirectory(): string
     {
         $classInfo = new ReflectionClass($this);
         $classPath = $classInfo->getFileName();
@@ -64,27 +65,26 @@ abstract class AbstractModule extends AbstractService
         return dirname($classPath);
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         $path = str_replace(get_stylesheet_directory(), '', $this->getDirectory());
 
         return get_stylesheet_directory_uri() . $path;
     }
 
-    public function getRegisterableObjects($path, $findDirs = false)
+    public function getRegisterableObjects(string $path, bool $findDirs = false): ?Collection
     {
-        $objects = [];
-
         if (!is_dir($path)) {
             return null;
         }
 
         $paths = glob($path . '/*', GLOB_ONLYDIR);
+
         $objects = collect($paths)->filter(function($path) {
             return !preg_match('/^_/', basename($path));
         })->mapWithKeys(function ($path) {
             $baseName = basename($path);
-            
+
             return [$baseName => $this->getNamespace() . "\Components\\" . $baseName . "\\" . $baseName];
         });
 

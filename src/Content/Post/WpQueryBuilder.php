@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
@@ -11,7 +12,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     public function all(): PostsCollection
     {
         $this->queryVars['posts_per_page'] = -1;
-        
+
         return $this->get();
     }
 
@@ -32,7 +33,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->queryVars;
     }
 
-    public function take($numberOfItems): PostsCollection
+    public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
@@ -46,28 +47,31 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
-    public function findById($id): ?PostModel
+    public function findById(int $id): ?PostModel
     {
         $this->queryVars['p'] = $id;
         $this->queryVars['post_type'] = 'any';
 
         return $this->first();
     }
-    
-    public function findByName($name): ?PostModel
+
+    public function findByName(string $name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
     }
 
+    /** @param string|string[] $postTypes */
     public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
             $this->queryVars['post_type'] = [];
         }
 
-        if (is_string($postTypes)) $postTypes = [$postTypes];
+        if (is_string($postTypes)) {
+            $postTypes = [$postTypes];
+        }
 
         $this->queryVars['post_type'] = array_merge($this->queryVars['post_type'], $postTypes);
 
@@ -96,8 +100,8 @@ class WpQueryBuilder extends AbstractQueryBuilder
         if (is_array($terms)) {
             $parameters = [
                 'taxonomy' => $taxonomy,
-                'field'    => $field,
-                'terms'    => $terms,
+                'field' => $field,
+                'terms' => $terms,
                 'operator' => $operator,
                 'include_children' => $includeChildren,
             ];
@@ -115,27 +119,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
         }
 
         array_push($this->queryVars['date_query'], $args);
-
-        return $this;
-    }
-
-    public function whereMeta($key, $value = '', $compare = '='): WpQueryBuilder
-    {
-        if (!isset($this->queryVars['meta_query'])) {
-            $this->queryVars['meta_query'] = [];
-        }
-
-        if (is_array($key)) {
-            $parameters = $key;
-        } else {
-            $parameters = [
-                'key'     => $key,
-                'value'   => $value,
-                'compare' => $compare,
-            ];
-        }
-
-        array_push($this->queryVars['meta_query'], $parameters);
 
         return $this;
     }
@@ -163,14 +146,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this;
     }
-    
+
     public function paginated($paginated = true): WpQueryBuilder
     {
         if ($paginated) {
             $paged = $paginated;
 
             if (is_bool($paginated)) {
-                $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+                $paged = get_query_var('paged') ? get_query_var('paged') : 1;
             }
 
             $this->queryVars['paged'] = $paged;
