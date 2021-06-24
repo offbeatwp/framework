@@ -162,9 +162,4 @@ class Wordpress
     {
         return get_the_title();
     }
-
-    public function getPermalink(): ?string
-    {
-        return get_permalink() ?: null;
-    }
 }
