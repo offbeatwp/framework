@@ -102,11 +102,6 @@ class Wordpress
         return get_post_meta($post->ID);
     }
 
-    /**
-     * @param int $attachmentID
-     * @param string|int[] $size
-     * @return false|mixed
-     */
     public function attachmentUrl(int $attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
@@ -118,23 +113,11 @@ class Wordpress
         return $attachment[0];
     }
 
-    /**
-     * @param int $attachmentID
-     * @param string|int[] $size
-     * @param string|string[]|int[]|float[] $classes
-     * @return string|array
-     */
     public function getAttachmentImage(int $attachmentID, $size = 'thumbnail', $classes = ['img-fluid']): string
     {
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }
 
-    /**
-     * @param string $format
-     * @param int|false $date
-     * @param bool $strtotime
-     * @return string
-     */
     public function formatDate(string $format, $date, bool $strtotime = false): string
     {
         if ($strtotime) {
