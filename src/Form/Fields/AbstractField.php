@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Form\Fields;
 
-class AbstractField implements FieldInterface
+abstract class AbstractField implements FieldInterface
 {
     /** @var string */
     public $id;
@@ -43,6 +43,7 @@ class AbstractField implements FieldInterface
 
     public function setRequired(bool $required = true)
     {
+        $this->attribute('required', $required);
         $this->required = $required;
     }
 
