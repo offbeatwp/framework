@@ -10,18 +10,18 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
     public $parent;
     public $attributes = [];
 
-    public function __construct($id, $label)
+    public function __construct(string $id, string $label)
     {
         $this->setLabel($label);
         $this->setId($id);
     }
 
-    public function setId($id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }
 
-    public function setLabel($label)
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
@@ -51,12 +51,12 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $this->parent;
     }
 
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -76,7 +76,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $item;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $items = $this->map(function ($item) {
             return $item->toArray();
@@ -87,7 +87,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
             'id'         => $this->getId(),
             'label'      => $this->getLabel(),
             'attributes' => $this->getAttributes(),
-            'items'      => $items->toArray(),
+            'items'      => $items->toArray()
         ];
     }
 }

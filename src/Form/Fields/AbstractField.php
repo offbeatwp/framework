@@ -13,7 +13,11 @@ class AbstractField implements FieldInterface
     /** @var array */
     public $attributes = [];
 
-    public static function make(string $id, string $label): AbstractField
+    /**
+     * @noinspection PhpMissingReturnTypeInspection
+     * @return $this
+     */
+    public static function make(string $id, string $label)
     {
         $field = new static();
 
