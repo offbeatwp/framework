@@ -137,7 +137,7 @@ class Wordpress
         return is_front_page();
     }
 
-    public function templateUrl(string $path = null): string
+    public function templateUrl(?string $path = null): string
     {
         $url = untrailingslashit(get_template_directory_uri());
 
