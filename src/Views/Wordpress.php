@@ -30,12 +30,12 @@ class Wordpress
         return get_language_attributes();
     }
 
-    public function archiveUrl($arg = 'post')
+    public function archiveUrl(string $postType = 'post')
     {
-        return get_post_type_archive_link($arg);
+        return get_post_type_archive_link($postType);
     }
 
-    public function navMenu($args = [])
+    public function navMenu(array $args = [])
     {
         $args['echo'] = false;
 
@@ -47,7 +47,7 @@ class Wordpress
         return get_home_url();
     }
 
-    public function siteUrl()
+    public function siteUrl(): string
     {
         return site_url();
     }
@@ -57,7 +57,7 @@ class Wordpress
         return get_current_blog_id();
     }
 
-    public function bloginfo($name)
+    public function bloginfo($name): string
     {
         return get_bloginfo($name, 'display');
     }
@@ -86,7 +86,7 @@ class Wordpress
         return ob_get_clean();
     }
 
-    public function getAllPostMeta($postId = null)
+    public function getAllPostMeta(int $postId = null)
     {
         if ($postId) {
             return get_post_meta($postId);
@@ -102,8 +102,12 @@ class Wordpress
         return get_post_meta($post->ID);
     }
 
-
-    public function attachmentUrl($attachmentID, $size = 'full')
+    /**
+     * @param int $attachmentID
+     * @param string|int[] $size
+     * @return false|mixed
+     */
+    public function attachmentUrl(int $attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
 
@@ -114,12 +118,24 @@ class Wordpress
         return $attachment[0];
     }
 
-    public function getAttachmentImage($attachmentID, $size = 'thumbnail', $classes = ['img-fluid']): string
+    /**
+     * @param int $attachmentID
+     * @param string|int[] $size
+     * @param string|string[]|int[]|float[] $classes
+     * @return string|array
+     */
+    public function getAttachmentImage(int $attachmentID, $size = 'thumbnail', $classes = ['img-fluid']): string
     {
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }
 
-    public function formatDate($format, $date, $strtotime = false): string
+    /**
+     * @param string $format
+     * @param int|false $date
+     * @param bool $strtotime
+     * @return string
+     */
+    public function formatDate(string $format, $date, bool $strtotime = false): string
     {
         if ($strtotime) {
             $date = strtotime($date);
@@ -138,7 +154,7 @@ class Wordpress
         return is_front_page();
     }
 
-    public function templateUrl($path = null): string
+    public function templateUrl(string $path = null): string
     {
         $url = untrailingslashit(get_template_directory_uri());
 
