@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Form\Fields;
 
-class AbstractField implements FieldInterface
+abstract class AbstractField implements FieldInterface
 {
     /** @var string */
     public $id;
