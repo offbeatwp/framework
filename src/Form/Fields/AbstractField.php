@@ -10,7 +10,7 @@ abstract class AbstractField implements FieldInterface
     public $label;
     /** @var bool */
     public $required;
-    /** @var array */
+    /** @var string[]|bool[] */
     public $attributes = [];
 
     /**
@@ -31,28 +31,43 @@ abstract class AbstractField implements FieldInterface
         return $field;
     }
 
-    public function setId(string $id)
+    /* Basic Setters */
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    public function setLabel(string $label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
     }
 
-    public function setRequired(bool $required = true)
+    /** @internal Use required instead */
+    public function setRequired(bool $required = true): void
     {
-        $this->attribute('required', $required);
         $this->required = $required;
+        $this->setAttribute('required', $required);
     }
 
+    /** @internal Use attribute instead */
+    public function setAttribute($key, $value = null): void
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    /** @internal Use attributes instead */
+    public function setAttributes(array $attributes): void
+    {
+        $this->attributes = array_merge($this->attributes, $attributes);
+    }
+
+    /* Basic Getters */
     public function getType(): string
     {
         return 'field';
     }
 
-    public function getFieldType()
+    public function getFieldType(): string
     {
         return static::FIELD_TYPE;
     }
@@ -82,24 +97,14 @@ abstract class AbstractField implements FieldInterface
         return $this->required;
     }
 
-    /** @internal Use attribute instead */
-    public function setAttribute(string $key, $value = null)
-    {
-        $this->attributes[$key] = $value;
-    }
-
-    /** @internal Use attributes instead */
-    public function setAttributes(array $attributes)
-    {
-        $this->attributes = array_merge($this->attributes, $attributes);
-    }
-
+    /** @return string[]|bool[] */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function getAttribute(string $key)
+    /** @return string|bool|null */
+    public function getAttribute($key)
     {
         if (isset($this->getAttributes()[$key])) {
             return $this->getAttributes()[$key];
@@ -134,11 +139,13 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string|int|float $value
-     * @return $this
-     */
+    public function required(bool $required = true): AbstractField
+    {
+        $this->setRequired($required);
+
+        return $this;
+    }
+
     public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
@@ -146,11 +153,11 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
-    /* Functional */
+    /* Functions */
     public function toArray(): array
     {
         return [
-            'type' => 'field',
+            'type' => $this->getType(),
             'field_type' => $this->getFieldType(),
             'id' => $this->getId(),
             'label' => $this->getLabel(),
