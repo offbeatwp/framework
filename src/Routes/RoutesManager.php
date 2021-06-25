@@ -1,15 +1,15 @@
 <?php
+
 namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use OffbeatWP\Routes\RouteCollection;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
 use OffbeatWP\Routes\Routes\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 
 class RoutesManager
 {
@@ -25,51 +25,44 @@ class RoutesManager
         $this->actions = collect();
     }
 
-    public function getRouteCollection():RouteCollection {
+    public function getRouteCollection(): RouteCollection
+    {
         return $this->routeCollection;
     }
 
-    /**
-     * Callbacks are executed in LiFo order.
-     *
-     * @param $checkCallback
-     * @param $actionCallback
-     * @param array $parameters
-     */
-    public function callback($checkCallback, $actionCallback, $parameters = [], $settings = [])
+    /** Callbacks are executed in LiFo order. */
+    public function callback($checkCallback, $actionCallback, $parameters = [], array $settings = [])
     {
         $this->addRoute($checkCallback, $actionCallback, $parameters);
     }
 
-    public function get($route, $actionCallback, $parameters = [], $requirements = [])
+    public function get($route, $actionCallback, $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['GET']);
     }
 
-    public function post($route, $parameters = [], $requirements = [])
+    public function post(string $route, callable $actionCallback, array $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['POST']);
     }
 
-    public function put($route, $parameters = [], $requirements = [])
+    public function put(string $route, callable $actionCallback, array $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PUT']);
     }
 
-    public function patch($route, $actionCallback, $parameters = [], $requirements = [])
+    public function patch($route, $actionCallback, $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PATCH']);
     }
 
-    public function delete($route, $actionCallback, $parameters = [], $requirements = [])
+    public function delete($route, $actionCallback, $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['DELETE']);
     }
 
-    /**
-     * @var string|Closure $target
-     */
-    public function addRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [],  ? string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
+    /** @param string|Closure $target */
+    public function addRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '')
     {
         $name = $this->getNextRouteName();
 
@@ -98,7 +91,8 @@ class RoutesManager
         $this->getRouteCollection()->add($route->getName(), $route);
     }
 
-    public function findRoute() {
+    public function findRoute()
+    {
         $route = $this->findPathRoute();
 
         if (!$route) {
@@ -126,11 +120,11 @@ class RoutesManager
                 throw new Exception('Route not match (override)');
             }
 
-            $route =  $this->getRouteCollection()->get($parameters['_route']);
+            $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
-            
+
             return $route;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -139,12 +133,10 @@ class RoutesManager
     {
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);
 
-        /**
-         * @var CallbackRoute $callbackRoute
-         */
-        foreach ($callbackRoutes->all() as $callbackRouteName => $callbackRoute) {
+        /** @var CallbackRoute $callbackRoute */
+        foreach ($callbackRoutes->all() as $callbackRoute) {
             if (
-                apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) && 
+                apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) &&
                 $callbackRoute->doMatchCallback()
             ) {
                 return $callbackRoute;
@@ -170,7 +162,7 @@ class RoutesManager
         return $this->lastMatchRoute;
     }
 
-    public function getNextRouteName()
+    public function getNextRouteName(): string
     {
         $routeName = 'route' . $this->routeIterator;
         $this->routeIterator++;
