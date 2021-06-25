@@ -41,12 +41,12 @@ class RoutesManager
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['GET']);
     }
 
-    public function post(string $route, callable $actionCallback, array $parameters = [], array $requirements = [])
+    public function post(string $route, $actionCallback, array $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['POST']);
     }
 
-    public function put(string $route, callable $actionCallback, array $parameters = [], array $requirements = [])
+    public function put(string $route, $actionCallback, array $parameters = [], array $requirements = [])
     {
         $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PUT']);
     }
