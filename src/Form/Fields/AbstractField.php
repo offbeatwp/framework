@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Form\Fields;
 
-class AbstractField implements FieldInterface
+abstract class AbstractField implements FieldInterface
 {
     /** @var string */
     public $id;
@@ -10,14 +10,10 @@ class AbstractField implements FieldInterface
     public $label;
     /** @var bool */
     public $required;
-    /** @var array */
+    /** @var string[]|bool[] */
     public $attributes = [];
 
-    /**
-     * @param string $id
-     * @param string $label
-     */
-    public static function make($id, $label)
+    public static function make(string $id, string $label)
     {
         $field = new static();
 
@@ -31,43 +27,50 @@ class AbstractField implements FieldInterface
         return $field;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    /* Basic Setters */
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
     }
 
-    /**
-     * @param bool $required
-     */
-    public function setRequired($required)
+    /** @internal Use required instead */
+    public function setRequired(bool $required = true): void
     {
         $this->required = $required;
+        $this->setAttribute('required', $required);
     }
 
+    /** @internal Use attribute instead */
+    public function setAttribute($key, $value = null): void
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    /** @internal Use attributes instead */
+    public function setAttributes(array $attributes): void
+    {
+        $this->attributes = array_merge($this->attributes, $attributes);
+    }
+
+    /* Basic Getters */
     public function getType(): string
     {
         return 'field';
     }
 
-    public function getFieldType()
+    public function getFieldType(): string
     {
         return static::FIELD_TYPE;
     }
 
-    public function getId()
+    public function getId(): string
     {
-        if (!isset($this->id) || empty($this->id)) {
+        if (empty($this->id)) {
             $label = $this->getLabel();
             $label = iconv('utf-8', 'ascii//TRANSLIT', $label);
             $label = preg_replace('/[^A-Za-z0-9_-]/', '', $label);
@@ -80,33 +83,23 @@ class AbstractField implements FieldInterface
         return $this->id;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function getRequired()
+    public function getRequired(): bool
     {
         return $this->required;
     }
 
-    /** @internal Use attribute instead */
-    public function setAttribute($key, $value = null)
-    {
-        $this->attributes[$key] = $value;
-    }
-
-    /** @internal Use attributes instead */
-    public function setAttributes(array $attributes)
-    {
-        $this->attributes = array_merge($this->attributes, $attributes);
-    }
-
+    /** @return string[]|bool[] */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
+    /** @return string|bool|null */
     public function getAttribute($key)
     {
         if (isset($this->getAttributes()[$key])) {
@@ -117,7 +110,7 @@ class AbstractField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description($description): AbstractField
+    public function description(string $description): AbstractField
     {
         $this->setAttribute('description', $description);
 
@@ -138,19 +131,25 @@ class AbstractField implements FieldInterface
         return $this;
     }
 
-    public function attribute($key, $value): AbstractField
+    public function required(bool $required = true): AbstractField
+    {
+        $this->setRequired($required);
+
+        return $this;
+    }
+
+    public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
 
         return $this;
     }
 
-    /* Functional */
-
+    /* Functions */
     public function toArray(): array
     {
         return [
-            'type' => 'field',
+            'type' => $this->getType(),
             'field_type' => $this->getFieldType(),
             'id' => $this->getId(),
             'label' => $this->getLabel(),
