@@ -1,14 +1,15 @@
 <?php
+
 namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
 use OffbeatWP\Routes\Routes\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 
 class RoutesManager
 {
@@ -24,7 +25,8 @@ class RoutesManager
         $this->actions = collect();
     }
 
-    public function getRouteCollection():RouteCollection {
+    public function getRouteCollection(): RouteCollection
+    {
         return $this->routeCollection;
     }
 
@@ -60,7 +62,7 @@ class RoutesManager
     }
 
     /** @param string|Closure $target */
-    public function addRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [],  ? string $condition = '')
+    public function addRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '')
     {
         $name = $this->getNextRouteName();
 
@@ -89,7 +91,8 @@ class RoutesManager
         $this->getRouteCollection()->add($route->getName(), $route);
     }
 
-    public function findRoute() {
+    public function findRoute()
+    {
         $route = $this->findPathRoute();
 
         if (!$route) {
@@ -117,9 +120,9 @@ class RoutesManager
                 throw new Exception('Route not match (override)');
             }
 
-            $route =  $this->getRouteCollection()->get($parameters['_route']);
+            $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
-            
+
             return $route;
         } catch (Exception $e) {
             return false;
@@ -133,7 +136,7 @@ class RoutesManager
         /** @var CallbackRoute $callbackRoute */
         foreach ($callbackRoutes->all() as $callbackRoute) {
             if (
-                apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) && 
+                apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) &&
                 $callbackRoute->doMatchCallback()
             ) {
                 return $callbackRoute;
