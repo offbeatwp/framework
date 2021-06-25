@@ -36,29 +36,29 @@ class RoutesManager
         $this->addRoute($checkCallback, $actionCallback, $parameters);
     }
 
-    public function get($target, $actionCallback, $parameters = [], array $requirements = [])
+    public function get($route, $actionCallback, $parameters = [], array $requirements = [])
     {
-        $this->addRoute($target, $actionCallback, $parameters, $requirements, [], '', [], ['GET']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['GET']);
     }
 
-    public function post(string $target, callable $actionCallback, array $parameters = [], array $requirements = [])
+    public function post(string $route, callable $actionCallback, array $parameters = [], array $requirements = [])
     {
-        $this->addRoute($target, $actionCallback, $parameters, $requirements, [], '', [], ['POST']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['POST']);
     }
 
-    public function put(string $target, callable $actionCallback, array $parameters = [], array $requirements = [])
+    public function put(string $route, callable $actionCallback, array $parameters = [], array $requirements = [])
     {
-        $this->addRoute($target, $actionCallback, $parameters, $requirements, [], '', [], ['PUT']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PUT']);
     }
 
-    public function patch($target, $actionCallback, $parameters = [], array $requirements = [])
+    public function patch($route, $actionCallback, $parameters = [], array $requirements = [])
     {
-        $this->addRoute($target, $actionCallback, $parameters, $requirements, [], '', [], ['PATCH']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['PATCH']);
     }
 
-    public function delete($target, $actionCallback, $parameters = [], array $requirements = [])
+    public function delete($route, $actionCallback, $parameters = [], array $requirements = [])
     {
-        $this->addRoute($target, $actionCallback, $parameters, $requirements, [], '', [], ['DELETE']);
+        $this->addRoute($route, $actionCallback, $parameters, $requirements, [], '', [], ['DELETE']);
     }
 
     /** @param string|Closure $target */
