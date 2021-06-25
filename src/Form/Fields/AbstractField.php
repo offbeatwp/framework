@@ -10,7 +10,7 @@ class AbstractField implements FieldInterface
     public $label;
     /** @var bool */
     public $required;
-    /** @var array */
+    /** @var string[]|bool[] */
     public $attributes = [];
 
     public static function make(string $id, string $label)
@@ -93,12 +93,13 @@ class AbstractField implements FieldInterface
         return $this->required;
     }
 
+    /** @return string[]|bool[] */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    /** @return int|string|bool|null */
+    /** @return string|bool|null */
     public function getAttribute($key)
     {
         if (isset($this->getAttributes()[$key])) {
@@ -109,7 +110,7 @@ class AbstractField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description($description): AbstractField
+    public function description(string $description): AbstractField
     {
         $this->setAttribute('description', $description);
 
@@ -137,7 +138,7 @@ class AbstractField implements FieldInterface
         return $this;
     }
 
-    public function attribute($key, $value): AbstractField
+    public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
 
