@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use WP_Error;
@@ -109,6 +110,18 @@ class TermModel implements TermModelInterface
         }
 
         return false;
+    }
+
+    public function getAncestorIds (): Collection
+    {
+        return collect(get_ancestors( $this->getId(), $this->getTaxonomy(), 'taxonomy'));
+    }
+
+    public function getAncestors(): Collection
+    {
+        return $this->getAncestorIds()->map(function ($ancestorId) {
+            return static::findById($ancestorId);
+        });
     }
 
     /**

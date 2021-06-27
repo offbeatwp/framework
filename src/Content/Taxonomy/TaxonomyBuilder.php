@@ -105,7 +105,7 @@ class TaxonomyBuilder
     }
 
     /** Whether to generate and allow a UI for managing terms in this taxonomy in the admin */
-    public function showUI(bool $showUi = true): TaxonomyBuilder
+    public function showUi(bool $showUi = true): TaxonomyBuilder
     {
         $this->args['show_ui'] = $showUi;
 
