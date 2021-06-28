@@ -195,7 +195,7 @@ class PostModel implements PostModelInterface
             return get_the_excerpt($this->wpPost);
         }
 
-        $currentPost = $GLOBALS['post'];
+        $currentPost = $GLOBALS['post'] ?? null;
 
         $GLOBALS['post'] = $this->wpPost;
 
