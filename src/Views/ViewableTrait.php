@@ -28,20 +28,24 @@ trait ViewableTrait
 
         $itemI = 0;
         while (true) {
-            $folderName = basename($path);
 
-            if ($folderName == 'app' || $itemI > $depth) {
-                break;
-            }
+            $folderName = basename($path);
 
             $viewsPath = "{$path}/views/";
             if (is_dir($viewsPath)) {
                 $this->view->addTemplatePath($viewsPath);
             }
 
-            $path = dirname($path);
-
             $itemI++;
+
+            if (
+                get_stylesheet_directory() == $path ||
+                $itemI > $depth
+            ) {
+                break;
+            }
+
+            $path = dirname($path);
         }
 
         static::$loaded[] = $path;
