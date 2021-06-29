@@ -47,7 +47,13 @@ class Taxonomy
         return new $model($term);
     }
 
-    public function get(?WP_Term $term = null)
+    /**
+     * Get a taxonomy by either the WP_TERM or the taxonomy's ID
+     * Attempts to get the currently queried object if no parameter/null is passed
+     * @param WP_Term|int|null $term
+     * @return TermModel|null
+     */
+    public function get($term = null)
     {
         if ($term instanceof WP_Term) {
             return $this->convertWpPostToModel($term);
