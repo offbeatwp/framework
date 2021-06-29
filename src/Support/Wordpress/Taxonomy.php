@@ -49,7 +49,7 @@ class Taxonomy
 
     /**
      * Get a taxonomy by either the WP_TERM or the taxonomy's ID
-     * Attempts to get the currently queried object if no parameter/null is passed
+     * Attempts to get the currently queried object if no parameter is passed
      * @param WP_Term|int|null $term
      * @return TermModel|null
      */
