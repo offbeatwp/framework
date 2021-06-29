@@ -14,20 +14,28 @@ class Taxonomy
 
     private $taxonomyModels = [];
 
-    public static function make($name, $postTypes, $pluralName, $singleName)
+    /**
+     * @param string $name
+     * @param string|string[] $postTypes
+     * @param string $pluralName
+     * @param string $singleName
+     * @return TaxonomyBuilder
+     */
+    public static function make(string $name, $postTypes, string $pluralName, string $singleName): TaxonomyBuilder
     {
         return (new TaxonomyBuilder)->make($name, $postTypes, $pluralName, $singleName);
     }
 
-    public function registerTermModel($taxonomy, $modelClass)
+    public function registerTermModel(string $taxonomy, string $modelClass)
     {
         $this->taxonomyModels[$taxonomy] = $modelClass;
     }
 
-    public function getModelByTaxonomy($taxonomy)
+    public function getModelByTaxonomy(string $taxonomy)
     {
-        if (isset($this->taxonomyModels[$taxonomy]))
+        if (isset($this->taxonomyModels[$taxonomy])) {
             return $this->taxonomyModels[$taxonomy];
+        }
 
         return self::DEFAULT_TERM_MODEL;
     }
@@ -39,6 +47,12 @@ class Taxonomy
         return new $model($term);
     }
 
+    /**
+     * Get a taxonomy by either the WP_TERM or the taxonomy's ID
+     * Attempts to get the currently queried object if no parameter is passed
+     * @param WP_Term|int|null $term
+     * @return TermModel|null
+     */
     public function get($term = null)
     {
         if ($term instanceof WP_Term) {

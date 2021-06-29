@@ -10,27 +10,17 @@ class PostType
 
     private $postTypeModels = [];
 
-    /**
-     * @param $name
-     * @param $pluralName
-     * @param $singleName
-     * @return PostTypeBuilder
-     */
-    public static function make($name, $pluralName, $singleName)
+    public static function make(string $name, string $pluralName, string $singleName): PostTypeBuilder
     {
         return (new PostTypeBuilder)->make($name, $pluralName, $singleName);
     }
 
-    public function registerPostModel($postType, $modelClass)
+    public function registerPostModel(string $postType, string $modelClass): void
     {
         $this->postTypeModels[$postType] = $modelClass;
     }
 
-    /**
-     * @param string $postType
-     * @return null|string
-     */
-    public function getModelByPostType($postType)
+    public function getModelByPostType(string $postType): ?string
     {
         if (isset($this->postTypeModels[$postType])) {
             return $this->postTypeModels[$postType];
@@ -39,7 +29,7 @@ class PostType
         return self::DEFAULT_POST_MODEL;
     }
 
-    public function getPostTypeByModel($model)
+    public function getPostTypeByModel(string $model): string
     {
         return array_search($model, $this->postTypeModels);
     }

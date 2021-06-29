@@ -152,7 +152,12 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @param callable|false $metaBoxCallback */
+    /**
+     * Used to render a custom metabox
+     *
+     * __Gutenberg currently does not respect this setting__
+     * @param callable $metaBoxCallback
+     */
     public function metaBox($metaBoxCallback): TaxonomyBuilder
     {
         $this->args['meta_box_cb'] = $metaBoxCallback;
@@ -160,6 +165,11 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /**
+     * Used to disable the metabox
+     *
+     * __Gutenberg currently does not respect this setting__
+     */
     public function hideMetaBox(): TaxonomyBuilder
     {
         $this->args['meta_box_cb'] = false;
