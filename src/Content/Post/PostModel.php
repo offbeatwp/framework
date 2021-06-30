@@ -103,12 +103,12 @@ class PostModel implements PostModelInterface
     }
 
     /* Attribute methods */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->wpPost->ID ?? null;
     }
 
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
@@ -164,7 +164,9 @@ class PostModel implements PostModelInterface
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
-        if (empty($postType) || empty($postType->label)) return false;
+        if (empty($postType) || empty($postType->label)) {
+            return false;
+        }
 
         return $postType->label;
     }
@@ -340,7 +342,8 @@ class PostModel implements PostModelInterface
         return false;
     }
 
-    public function getParent(): ?PostModel
+    /** @return static|null */
+    public function getParent()
     {
         if (empty($this->getParentId())) {
             return null;
@@ -349,7 +352,8 @@ class PostModel implements PostModelInterface
         return new static($this->getParentId());
     }
 
-    public function getTopLevelParent(): ?PostModel
+    /** @return static|null */
+    public function getTopLevelParent()
     {
         $ancestors = $this->getAncestors();
         $this->getAncestors()->last();

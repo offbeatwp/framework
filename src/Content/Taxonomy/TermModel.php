@@ -22,9 +22,7 @@ class TermModel implements TermModelInterface
     /** @var int|null */
     public $id;
 
-    /**
-     * @param WP_Term|int
-     */
+    /** @param WP_Term|int */
     public function __construct($term)
     {
         if ($term instanceof WP_Term) {
@@ -120,24 +118,21 @@ class TermModel implements TermModelInterface
     public function getAncestors(): Collection
     {
         return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::findById($ancestorId);
+            return static::query()->findById($ancestorId);
         });
     }
 
-    /**
-     * @param string $key
-     * @param bool $single
-     */
-    public function getMeta($key, $single = true)
+    public function getMeta(string $key, bool $single = true)
     {
         return get_term_meta($this->getID(), $key, $single);
     }
 
-    public function setMeta($key, $value)
+    public function setMeta(string $key, $value)
     {
         return update_term_meta($this->getID(), $key, $value);
     }
 
+    /** @param string|string[] $postTypes */
     public function getPosts($postTypes = ['any']): WpQueryBuilder
     {
         return (new WpQueryBuilder)->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
