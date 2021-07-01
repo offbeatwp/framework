@@ -100,16 +100,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $this->queryVars['tax_query'] = [];
         }
 
-        $parameters = null;
-        if (is_array($terms)) {
-            $parameters = [
-                'taxonomy' => $taxonomy,
-                'field' => $field,
-                'terms' => $terms,
-                'operator' => $operator,
-                'include_children' => $includeChildren,
-            ];
-        }
+        $parameters = [
+            'taxonomy' => $taxonomy,
+            'field' => $field,
+            'terms' => $terms,
+            'operator' => $operator,
+            'include_children' => $includeChildren,
+        ];
 
         array_push($this->queryVars['tax_query'], $parameters);
 
