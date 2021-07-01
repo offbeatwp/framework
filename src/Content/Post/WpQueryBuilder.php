@@ -32,14 +32,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->queryVars;
     }
 
-    /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
-    public function offset(int $numberOfItems): PostsCollection
-    {
-        $this->queryVars['offset'] = $numberOfItems;
-
-        return $this->get();
-    }
-
     public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
@@ -66,6 +58,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $this->queryVars['name'] = $name;
 
         return $this->first();
+    }
+
+    /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
+    public function offset(int $numberOfItems): WpQueryBuilder
+    {
+        $this->queryVars['offset'] = $numberOfItems;
+
+        return $this;
     }
 
     /** @param string|string[] $postTypes */
