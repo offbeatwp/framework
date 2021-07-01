@@ -32,7 +32,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->queryVars;
     }
 
-    public function take($numberOfItems): PostsCollection
+    public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
@@ -46,20 +46,29 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
-    public function findById($id): ?PostModel
+    public function findById(int $id): ?PostModel
     {
         $this->queryVars['p'] = $id;
 
         return $this->first();
     }
     
-    public function findByName($name): ?PostModel
+    public function findByName(string $name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
     }
 
+    /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
+    public function offset(int $numberOfItems): WpQueryBuilder
+    {
+        $this->queryVars['offset'] = $numberOfItems;
+
+        return $this;
+    }
+
+    /** @param string|string[] $postTypes */
     public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
@@ -73,7 +82,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true): WpQueryBuilder
+    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -91,16 +100,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $this->queryVars['tax_query'] = [];
         }
 
-        $parameters = null;
-        if (is_array($terms)) {
-            $parameters = [
-                'taxonomy' => $taxonomy,
-                'field'    => $field,
-                'terms'    => $terms,
-                'operator' => $operator,
-                'include_children' => $includeChildren,
-            ];
-        }
+        $parameters = [
+            'taxonomy' => $taxonomy,
+            'field' => $field,
+            'terms' => $terms,
+            'operator' => $operator,
+            'include_children' => $includeChildren,
+        ];
 
         array_push($this->queryVars['tax_query'], $parameters);
 
@@ -118,7 +124,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): WpQueryBuilder
+    public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -163,7 +169,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
     
-    public function paginated($paginated = true): WpQueryBuilder
+    public function paginated(bool $paginated = true): WpQueryBuilder
     {
         if ($paginated) {
             $paged = $paginated;
