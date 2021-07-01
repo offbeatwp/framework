@@ -32,7 +32,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->queryVars;
     }
 
-    public function take($numberOfItems): PostsCollection
+    public function offset(int $numberOfItems): PostsCollection
+    {
+        $this->queryVars['offset'] = $numberOfItems;
+
+        return $this->get();
+    }
+
+    public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
@@ -46,20 +53,21 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
-    public function findById($id): ?PostModel
+    public function findById(int $id): ?PostModel
     {
         $this->queryVars['p'] = $id;
 
         return $this->first();
     }
     
-    public function findByName($name): ?PostModel
+    public function findByName(string $name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
     }
 
+    /** @param string|string[] $postTypes */
     public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
@@ -73,7 +81,15 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true): WpQueryBuilder
+    /**
+     * @param string $taxonomy
+     * @param int|string|int[]|string[] $terms
+     * @param string|null $field
+     * @param string|null $operator
+     * @param bool $includeChildren
+     * @return WpQueryBuilder
+     */
+    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -95,8 +111,8 @@ class WpQueryBuilder extends AbstractQueryBuilder
         if (is_array($terms)) {
             $parameters = [
                 'taxonomy' => $taxonomy,
-                'field'    => $field,
-                'terms'    => $terms,
+                'field' => $field,
+                'terms' => $terms,
                 'operator' => $operator,
                 'include_children' => $includeChildren,
             ];
