@@ -81,14 +81,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    /**
-     * @param string $taxonomy
-     * @param int|string|int[]|string[] $terms
-     * @param string|null $field
-     * @param string|null $operator
-     * @param bool $includeChildren
-     * @return WpQueryBuilder
-     */
     public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
@@ -134,7 +126,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): WpQueryBuilder
+    public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -179,7 +171,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
     
-    public function paginated($paginated = true): WpQueryBuilder
+    public function paginated(bool $paginated = true): WpQueryBuilder
     {
         if ($paginated) {
             $paged = $paginated;
