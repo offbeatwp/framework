@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Components;
 
-use Exception;
+use OffbeatWP\Exceptions\NonexistentComponentException;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Layout\Frontend;
 
@@ -85,7 +85,7 @@ class ComponentRepository
         });
     }
 
-    /** @throws Exception */
+    /** @throws NonexistentComponentException */
     public function get($name = null)
     {
         if (is_null($name)) {
@@ -96,7 +96,7 @@ class ComponentRepository
             return $this->components[$name];
         }
 
-        throw new Exception("Component does not exist ({$name})");
+        throw new NonexistentComponentException("Component does not exist ({$name})");
     }
 
     public function make($name)
