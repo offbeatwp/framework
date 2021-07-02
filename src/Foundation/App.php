@@ -1,8 +1,6 @@
 <?php
 namespace OffbeatWP\Foundation;
 
-use Closure;
-use DI\Container;
 use DI\ContainerBuilder;
 use Exception;
 use OffbeatWP\Assets\AssetsManager;
@@ -10,10 +8,12 @@ use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
+use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Wordpress\WordpressService;
 use WP_Error;
+use function DI\autowire;
 use function DI\create;
 
 class App
@@ -29,13 +29,13 @@ class App
         if (!isset(static::$instance)) {
             static::$instance = new static;
         }
+
         return static::$instance;
     }
 
-    public function bootstrap()
+    /** @throws Exception */
+    public function bootstrap(): void
     {
-        // add_filter('deprecated_file_trigger_error', '__return_false');
-
         $containerBuilder = new ContainerBuilder();
 
         $containerBuilder->addDefinitions($this->baseBindings());
@@ -51,7 +51,7 @@ class App
         add_filter('wp', [$this, 'findRoute'], 0);
     }
 
-    private function baseBindings()
+    private function baseBindings(): array
     {
         return [
             'assets' => create(AssetsManager::class),
@@ -59,20 +59,14 @@ class App
         ];
     }
 
-    private function initiateBaseServices($containerBuilder)
+    private function initiateBaseServices($containerBuilder): void
     {
-        foreach ([
-            WordpressService::class,
-            RoutesService::class,
-            ComponentsService::class,
-            ServiceEnqueueScripts::class,
-            Service::class,
-        ] as $service) {
+        foreach ([WordpressService::class, RoutesService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
             $this->initiateService($service, $containerBuilder);
         }
     }
 
-    private function initiateServices($containerBuilder)
+    private function initiateServices($containerBuilder): void
     {
         $services = config('services');
 
@@ -83,10 +77,11 @@ class App
         }
     }
 
-    private function initiateService($serviceClass, $containerBuilder)
+    private function initiateService($serviceClass, $containerBuilder): void
     {
         if ($this->isServiceInitiated($serviceClass)) {
-            return $this->getService($serviceClass);
+            $this->getService($serviceClass);
+            return;
         }
 
         if (class_exists($serviceClass)) {
@@ -95,7 +90,7 @@ class App
             if (property_exists($service, 'bindings') && !empty($service->bindings)) {
                 foreach ($service->bindings as &$binding) {
                     if (is_string($binding)) {
-                        $binding = \DI\autowire($binding);
+                        $binding = autowire($binding);
                     }
                 }
                 $containerBuilder->addDefinitions($service->bindings);
@@ -103,10 +98,9 @@ class App
 
             $this->markServiceAsInitiated($service);
         }
-
     }
 
-    private function registerServices()
+    private function registerServices(): void
     {
         if (!empty($this->services)) {
             foreach ($this->services as $service) {
@@ -127,16 +121,12 @@ class App
         return false;
     }
 
-    public function isServiceInitiated($serviceClass)
+    public function isServiceInitiated($serviceClass): bool
     {
-        if (isset($this->services[$serviceClass])) {
-            return true;
-        }
-
-        return false;
+        return (isset($this->services[$serviceClass]));
     }
 
-    public function markServiceAsInitiated($service)
+    public function markServiceAsInitiated($service): void
     {
         $this->services[get_class($service)] = $service;
     }
@@ -146,17 +136,17 @@ class App
         $this->container->set($abstract, $concrete);
     }
 
-    public function configPath()
+    public function configPath(): string
     {
         return get_template_directory() . '/config';
     }
 
-    public function routesPath()
+    public function routesPath(): string
     {
         return get_template_directory() . '/routes';
     }
 
-    public function componentsPath()
+    public function componentsPath(): string
     {
         return get_template_directory() . '/components';
     }
@@ -173,8 +163,11 @@ class App
         return $this->config;
     }
 
-    public function findRoute() {
-        if (is_admin()) return;
+    public function findRoute(): void
+    {
+        if (is_admin()) {
+            return;
+        }
 
         do_action('offbeatwp/route/match/before');
 
@@ -185,7 +178,7 @@ class App
         $this->route = $route;
     }
 
-    public function run($config = [])
+    public function run($config = []): void
     {
         $route = $this->route;
 
@@ -196,21 +189,21 @@ class App
             offbeat('routes')->removeRoute($route);
 
             if ($output === false) {
-                throw new Exception('Route return false, try to find next match
-                ');
+                throw new InvalidRouteException('Route returned false, trying to find next match');
             }
 
             $output = apply_filters('route_render_output', $output); //Legacy
             $output = apply_filters('offbeatwp/route/output', $output);
 
             echo $output;
-        } catch (Exception $e) {
+        } catch (InvalidRouteException $e) {
             // Find new route
             $this->findRoute();
             $this->run($config);
         }
     }
 
+    /** @return string|WP_Error|false */
     public function runRoute($route)
     {
         $route = apply_filters('offbeatwp/route/run/init', $route);
@@ -232,7 +225,6 @@ class App
             }
         }
 
-        return new WP_Error('broke', __("No route matched", 'raow'));
+        return new WP_Error('broke', __('No route matched', 'offbeatwp'));
     }
-
 }
