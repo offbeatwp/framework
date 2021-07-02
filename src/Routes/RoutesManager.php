@@ -3,7 +3,7 @@
 namespace OffbeatWP\Routes;
 
 use Closure;
-use Exception;
+use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
 use OffbeatWP\Routes\Routes\Route;
@@ -117,14 +117,14 @@ class RoutesManager
             $parameters = $matcher->match($request->getPathInfo());
 
             if (!apply_filters('offbeatwp/route/match/url', true, $matcher)) {
-                throw new Exception('Route not match (override)');
+                throw new InvalidRouteException('Route does not match (override)');
             }
 
             $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
 
             return $route;
-        } catch (Exception $e) {
+        } catch (InvalidRouteException $e) {
             return false;
         }
     }
