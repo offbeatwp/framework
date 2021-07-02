@@ -32,11 +32,11 @@ abstract class AbstractQueryBuilder {
 
     /**
      * This will execute a query!
-     * Under most circumstances, you should use get() and then to a isNotEmpty check on the resulting collection.
+     * Under most circumstances, you should use *all()* or *first()* and then do a isNotEmpty check on the resulting collection.
      */
     public function exists(): bool
     {
-        return $this->get()->isNotEmpty();
+        return $this->all()->isNotEmpty();
     }
 
     public function where(?array $parameters): AbstractQueryBuilder
