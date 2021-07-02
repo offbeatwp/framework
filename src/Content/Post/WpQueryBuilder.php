@@ -11,8 +11,8 @@ class WpQueryBuilder extends AbstractQueryBuilder
     public function all(): PostsCollection
     {
         $this->queryVars['posts_per_page'] = -1;
-        
-        return $this->get();
+
+        return $this->execute();
     }
 
     public function postToModel($post)
@@ -20,11 +20,17 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
-    public function get(): PostsCollection
+    private function execute(): PostsCollection
     {
         $posts = new WP_Query($this->queryVars);
 
         return new PostsCollection($posts);
+    }
+
+    /** @deprecated You probably meant to use all() or take(10) */
+    public function get(): PostsCollection
+    {
+        return $this->execute();
     }
 
     public function getQueryVars(): array
@@ -32,43 +38,35 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->queryVars;
     }
 
-    public function take(int $numberOfItems): PostsCollection
+    public function take($numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
-        return $this->get();
+        return $this->execute();
     }
 
     public function first(): ?PostModel
     {
         $this->queryVars['posts_per_page'] = 1;
 
-        return $this->get()->first();
+        return $this->execute()->first();
     }
 
-    public function findById(int $id): ?PostModel
+    public function findById($id): ?PostModel
     {
         $this->queryVars['p'] = $id;
+        $this->queryVars['post_type'] = 'any';
 
         return $this->first();
     }
-    
-    public function findByName(string $name): ?PostModel
+
+    public function findByName($name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
     }
 
-    /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
-    public function offset(int $numberOfItems): WpQueryBuilder
-    {
-        $this->queryVars['offset'] = $numberOfItems;
-
-        return $this;
-    }
-
-    /** @param string|string[] $postTypes */
     public function wherePostType($postTypes): WpQueryBuilder
     {
         if (!isset($this->queryVars['post_type'])) {
@@ -82,7 +80,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
+    public function whereTerm($taxonomy, $terms = [], $field = 'slug', $operator = 'IN', $includeChildren = true): WpQueryBuilder
     {
         if (is_null($field)) {
             $field = 'slug';
@@ -100,31 +98,35 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $this->queryVars['tax_query'] = [];
         }
 
-        $parameters = [
-            'taxonomy' => $taxonomy,
-            'field' => $field,
-            'terms' => $terms,
-            'operator' => $operator,
-            'include_children' => $includeChildren,
-        ];
+        $parameters = null;
+        if (is_array($terms)) {
+            $parameters = [
+                'taxonomy' => $taxonomy,
+                'field'    => $field,
+                'terms'    => $terms,
+                'operator' => $operator,
+                'include_children' => $includeChildren,
+            ];
+        }
 
         array_push($this->queryVars['tax_query'], $parameters);
 
         return $this;
     }
 
-    public function whereDate($args): WpQueryBuilder
+    /** @var bool[]|int[]|string[]|string[][] $dateArgs */
+    public function whereDate(array $dateArgs): WpQueryBuilder
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
         }
 
-        array_push($this->queryVars['date_query'], $args);
+        array_push($this->queryVars['date_query'], $dateArgs);
 
         return $this;
     }
 
-    public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
+    public function whereMeta($key, $value = '', $compare = '='): WpQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -168,8 +170,8 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this;
     }
-    
-    public function paginated(bool $paginated = true): WpQueryBuilder
+
+    public function paginated($paginated = true): WpQueryBuilder
     {
         if ($paginated) {
             $paged = $paginated;
