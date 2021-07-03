@@ -9,7 +9,6 @@ use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
 use OffbeatWP\Routes\Routes\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 
