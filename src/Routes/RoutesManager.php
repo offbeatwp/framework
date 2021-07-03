@@ -3,11 +3,13 @@
 namespace OffbeatWP\Routes;
 
 use Closure;
+use Exception;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
 use OffbeatWP\Routes\Routes\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 
@@ -124,7 +126,7 @@ class RoutesManager
             $route->addDefaults($parameters);
 
             return $route;
-        } catch (InvalidRouteException $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
