@@ -47,6 +47,11 @@ class Wordpress
         return get_home_url();
     }
 
+    public function blogUrl(?int $id = null): string
+    {
+        return get_site_url($id);
+    }
+
     public function siteUrl(): string
     {
         return site_url();
