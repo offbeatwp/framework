@@ -138,8 +138,16 @@ class TermModel implements TermModelInterface
         return update_term_meta($this->getID(), $key, $value);
     }
 
-    public function getPosts($postTypes = ['any']): WpQueryBuilder
+    public function getPosts($postTypes = null): WpQueryBuilder
     {
+
+        global $wp_taxonomies;
+
+        // If no posttypes defined, get posttypes where the taxonomy is assigned to
+        if (empty($postTypes)) {
+            $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
+        }
+
         return (new WpQueryBuilder)->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
     }
 
