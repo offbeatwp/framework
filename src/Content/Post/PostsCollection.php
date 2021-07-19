@@ -8,8 +8,7 @@ class PostsCollection extends Collection
 {
     protected $query = null;
 
-    public function __construct($items)
-    {
+    public function __construct($items) {
         if (is_object($items)) {
             $this->query = $items;
 
@@ -32,8 +31,7 @@ class PostsCollection extends Collection
         parent::__construct($items);
     }
 
-    public function getIterator(): WpPostsIterator
-    {
+    public function getIterator(): WpPostsIterator {
         return new WpPostsIterator($this->items);
     }
 
@@ -41,39 +39,46 @@ class PostsCollection extends Collection
         return $this->query;
     }
 
+    /** Returns this PostsCollection as a generic Collection */
+    public function toCollection(): Collection {
+        return collect($this->toArray());
+    }
+
+    public function map(callable $callback): Collection {
+        $keys = array_keys($this->items);
+
+        $items = array_map($callback, $this->items, $keys);
+
+        return new Collection(array_combine($keys, $items));
+    }
+
     /** @return PostModel|null */
-    public function first(callable $callback = null, $default = null)
-    {
+    public function first(callable $callback = null, $default = null) {
         return parent::first($callback, $default);
     }
 
     /** @return PostModel|null */
-    public function last(callable $callback = null, $default = null)
-    {
+    public function last(callable $callback = null, $default = null) {
         return parent::last($callback, $default);
     }
 
     /** @return PostModel|null */
-    public function pop()
-    {
+    public function pop() {
         return parent::pop();
     }
 
     /** @return PostModel|null */
-    public function pull($key, $default = null)
-    {
+    public function pull($key, $default = null) {
         return parent::pull($key, $default);
     }
 
     /** @return PostModel|null */
-    public function reduce(callable $callback, $initial = null)
-    {
+    public function reduce(callable $callback, $initial = null) {
         return parent::reduce($callback, $initial);
     }
 
     /** @return PostModel|null */
-    public function shift()
-    {
+    public function shift() {
         return parent::shift();
     }
 }
