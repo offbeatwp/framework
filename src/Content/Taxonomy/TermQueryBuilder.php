@@ -37,7 +37,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     }
 
     // Retrieval methods
-    protected function execute(): TermsCollection
+    public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
         $terms = (new WP_Term_Query($this->queryVars))->get_terms();
@@ -51,24 +51,18 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $termModels;
     }
 
-    /** @deprecated You probably meant to use 'all' */
-    public function get(): TermsCollection
-    {
-        return $this->execute();
-    }
-
     public function all(): TermsCollection
     {
         $this->queryVars['number'] = 0;
 
-        return $this->execute();
+        return $this->get();
     }
 
     public function take($numberOfItems): TermsCollection
     {
         $this->queryVars['number'] = $numberOfItems;
 
-        return $this->execute();
+        return $this->get();
     }
 
     public function first(): ?TermModel

@@ -11,7 +11,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     public function all(): PostsCollection
     {
         $this->queryVars['posts_per_page'] = -1;
-
+        
         return $this->get();
     }
 
@@ -52,7 +52,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this->first();
     }
-
+    
     public function findByName(string $name): ?PostModel
     {
         $this->queryVars['name'] = $name;
@@ -168,7 +168,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this;
     }
-
+    
     public function paginated(bool $paginated = true): WpQueryBuilder
     {
         if ($paginated) {
