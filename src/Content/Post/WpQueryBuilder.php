@@ -60,6 +60,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->first();
     }
 
+    public function orderByMeta(string $metaKey): AbstractQueryBuilder
+    {
+        $this->queryVars['meta_key'] = $metaKey;
+        $this->queryVars['orderby'] = 'meta_value';
+
+        return $this;
+    }
+
     /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
     public function offset(int $numberOfItems): WpQueryBuilder
     {
