@@ -7,31 +7,29 @@ class RouteCollection extends RoutingRouteCollection
 {
     public function __construct (array $routes = []) {
         if (!empty($routes)) {
-            $this->routes = $routes;
+            foreach ($routes as $key => $route) {
+                $this->add($key, $route);
+            }
         }
     }
 
-    public function findByType(string $type) {
+    public function findByType(string $type): RouteCollection
+    {
         return $this->where('type', $type);
     }
 
-    public function where($whereKey, $whereValue) {
-        $routes = array_filter($this->all(), function ($route) use ($whereKey, $whereValue) {
-            switch($whereKey) {
-                case 'type':
-                    if (get_class($route) == $whereValue) {
-                        return true;
-                    }
-                    break;
-            }
-
-            return false;
+    public function where(string $whereKey, string $whereValue): RouteCollection
+    {
+        $routes = array_filter($this->all(), static function ($route) use ($whereKey, $whereValue) {
+            return $whereKey === 'type' && $whereValue === get_class($route);
         });
 
         $filteredRouteCollection = new self($routes);
 
-        if(!empty($routes)) foreach ($routes as $routeName => $route) {
-            $filteredRouteCollection->add($routeName, $route);
+        if(!empty($routes)) {
+            foreach ($routes as $routeName => $route) {
+                $filteredRouteCollection->add($routeName, $route);
+            }
         }
 
         return $filteredRouteCollection;
