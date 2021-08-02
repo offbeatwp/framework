@@ -67,7 +67,7 @@ class Wordpress
         return get_bloginfo($name, 'display');
     }
 
-    public function bodyClass($class = '')
+    public function bodyClass($class = ''): void
     {
         body_class($class);
     }
@@ -132,7 +132,7 @@ class Wordpress
         return date_i18n($format, $date);
     }
 
-    public function resetPostdata()
+    public function resetPostdata(): void
     {
         wp_reset_postdata();
     }

@@ -28,15 +28,14 @@ class WpPostsIterator implements Iterator
         return key($this->items);
     }
 
-    public function next()
+    public function next(): void
     {
         next($this->items);
     }
 
     public function valid(): bool
     {
-        if (key($this->items) !== null)
-        {
+        if (key($this->items) !== null) {
             $item = current($this->items);
 
             $GLOBALS['post'] = $item = $item->wpPost;
@@ -44,12 +43,10 @@ class WpPostsIterator implements Iterator
 
             return true;
         }
-        else
-        {
-            wp_reset_query();
-            wp_reset_postdata();
 
-            return false;
-        }
+        wp_reset_query();
+        wp_reset_postdata();
+
+        return false;
     }
 }

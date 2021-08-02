@@ -81,7 +81,7 @@ abstract class AbstractModule extends AbstractService
 
         $paths = glob($path . '/*', GLOB_ONLYDIR);
         $objects = collect($paths)->filter(function($path) {
-            return !preg_match('/^_/', basename($path));
+            return strpos(basename($path), "_") !== 0;
         })->mapWithKeys(function ($path) {
             $baseName = basename($path);
             

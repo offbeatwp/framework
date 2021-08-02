@@ -68,22 +68,22 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->wpTerm->term_id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->wpTerm->name;
     }
 
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->wpTerm->slug;
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->wpTerm->description;
     }
@@ -93,7 +93,7 @@ class TermModel implements TermModelInterface
         return get_term_link($this->wpTerm);
     }
 
-    public function getTaxonomy()
+    public function getTaxonomy(): string
     {
         return $this->wpTerm->taxonomy;
     }
@@ -120,15 +120,11 @@ class TermModel implements TermModelInterface
     public function getAncestors(): Collection
     {
         return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::findById($ancestorId);
+            return static::query()->findById($ancestorId);
         });
     }
 
-    /**
-     * @param string $key
-     * @param bool $single
-     */
-    public function getMeta($key, $single = true)
+    public function getMeta(string $key, bool $single = true)
     {
         return get_term_meta($this->getID(), $key, $single);
     }
@@ -148,7 +144,7 @@ class TermModel implements TermModelInterface
             $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
         }
 
-        return (new WpQueryBuilder)->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+        return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
     }
 
     public static function query(): TermQueryBuilder

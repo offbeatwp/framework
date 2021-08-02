@@ -33,11 +33,7 @@ class AssetsManager
 
     public function getEntryFromAssetsManifest($filename)
     {
-        if(isset($this->getAssetsManifest()->$filename)) {
-            return $this->getAssetsManifest()->$filename;
-        }
-
-        return false;
+        return $this->getAssetsManifest()->$filename ?? false;
     }
 
     public function getAssetsManifest() {
@@ -60,20 +56,17 @@ class AssetsManager
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
-        if (
-            empty($entrypoints) || 
-            empty($entrypoints->entrypoints) ||
-            empty($entrypoints->entrypoints->$entry) ||
-            empty($entrypoints->entrypoints->$entry->$key)
-        ) return false;
+        if (empty($entrypoints) || empty($entrypoints->entrypoints) || empty($entrypoints->entrypoints->$entry) || empty($entrypoints->entrypoints->$entry->$key)) {
+            return false;
+        }
 
         return $entrypoints->entrypoints->$entry->$key;
     }
 
-    public function getAssetsPath($path = '')
+    public function getAssetsPath($path = ''): string
     {
         $path = ltrim($path, '/');
-        $path = ( !empty($path) ? "/{$path}" : '' );
+        $path = (!empty($path) ? "/{$path}" : '' );
 
         if ($basepath = config('app.assets.path'))  {
             return $basepath . $path;
@@ -98,7 +91,8 @@ class AssetsManager
         return get_template_directory_uri() . '/assets' . $path; 
     }
 
-    public function enqueueStyles($entry) {
+    public function enqueueStyles($entry): void
+    {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
         if (!empty($assets)) {
@@ -108,13 +102,14 @@ class AssetsManager
                 wp_enqueue_style($assetKey, $this->getAssetsUrl($asset), [], false, false);
             }
 
-            return ;
+            return;
         }
 
         wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false, 'all');
     }
 
-    public function enqueueScripts($entry) {
+    public function enqueueScripts($entry): void
+    {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
 
         if (!empty($assets)) {
@@ -124,7 +119,7 @@ class AssetsManager
                 wp_enqueue_script($assetKey, $this->getAssetsUrl($asset), ['jquery'], false, true);
             }
 
-            return ;
+            return;
         }
 
         wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), ['jquery'], false, true);

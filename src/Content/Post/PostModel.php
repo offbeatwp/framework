@@ -164,7 +164,9 @@ class PostModel implements PostModelInterface
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
-        if (empty($postType) || empty($postType->label)) return false;
+        if (empty($postType) || empty($postType->label)) {
+            return false;
+        }
 
         return $postType->label;
     }
@@ -201,8 +203,7 @@ class PostModel implements PostModelInterface
 
         ob_start();
         the_excerpt();
-        $excerpt = ob_get_contents();
-        ob_end_clean();
+        $excerpt = ob_get_clean();
 
         $GLOBALS['post'] = $currentPost;
 
@@ -465,9 +466,9 @@ class PostModel implements PostModelInterface
             $this->wpPost = get_post($postId);
 
             return $postId;
-        } else {
-            return wp_update_post($this->wpPost);
         }
+
+        return wp_update_post($this->wpPost);
     }
 
     /* Relations */
@@ -475,7 +476,7 @@ class PostModel implements PostModelInterface
     {
         $method = $key;
 
-        if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
+        if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods)) {
             $method = $this->relationKeyMethods[$key];
         }
 

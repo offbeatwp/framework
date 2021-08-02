@@ -5,7 +5,7 @@ use OffbeatWP\Services\AbstractService;
 
 class ServiceEnqueueScripts extends AbstractService
 {
-    public function register()
+    public function register(): void
     {
         if (is_admin()) {
             return;
@@ -15,7 +15,7 @@ class ServiceEnqueueScripts extends AbstractService
         add_action('wp_footer',    [$this, 'footerVars'], 5);
     }
 
-    public function enqueueScripts()
+    public function enqueueScripts(): void
     {
         wp_enqueue_script('jquery');
 
@@ -37,11 +37,13 @@ class ServiceEnqueueScripts extends AbstractService
         }
     }
 
-    public function footerVars()
+    public function footerVars(): void
     {
         $vars = apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')]);
 
-        if (empty($vars)) return;
+        if (empty($vars)) {
+            return;
+        }
 
         echo "<script type='text/javascript'>
             /* <![CDATA[ */

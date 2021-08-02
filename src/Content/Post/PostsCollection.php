@@ -15,7 +15,7 @@ class PostsCollection extends Collection
             $postItems = [];
 
             foreach ($items->posts as $post) {
-                array_push($postItems, offbeat('post')->convertWpPostToModel($post));
+                $postItems[] = offbeat('post')->convertWpPostToModel($post);
             }
 
             $items = $postItems;

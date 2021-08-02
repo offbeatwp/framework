@@ -27,7 +27,7 @@ class App
     public static function singleton()
     {
         if (!isset(static::$instance)) {
-            static::$instance = new static;
+            static::$instance = new static();
         }
 
         return static::$instance;
@@ -131,7 +131,7 @@ class App
         $this->services[get_class($service)] = $service;
     }
 
-    public function bind($abstract, $concrete)
+    public function bind($abstract, $concrete): void
     {
         $this->container->set($abstract, $concrete);
     }
@@ -220,9 +220,9 @@ class App
             if (is_array($actionReturn)) {
                 header('Content-type: application/json');
                 return json_encode($actionReturn);
-            } else {
-                return $actionReturn;
             }
+
+            return $actionReturn;
         }
 
         return new WP_Error('broke', __('No route matched', 'offbeatwp'));

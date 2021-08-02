@@ -48,7 +48,7 @@ class PageTypesService extends AbstractService
                 'show_count'      => true,
                 'hide_empty'      => false,
             ));
-        };
+        }
     }
 
     public function tsm_convert_id_to_term_in_query($query)
