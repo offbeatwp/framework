@@ -121,7 +121,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
             ];
         }
 
-        array_push($this->queryVars['meta_query'], $parameters);
+        $this->queryVars['meta_query'][] = $parameters;
 
         return $this;
     }
