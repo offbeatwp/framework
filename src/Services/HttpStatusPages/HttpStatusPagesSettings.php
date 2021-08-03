@@ -11,7 +11,7 @@ class HttpStatusPagesSettings
 
     public function title(): string
     {
-        return __('Http status pages', 'raow');
+        return __('Http status pages', 'offbeatwp');
     }
 
     public function form(): Form
