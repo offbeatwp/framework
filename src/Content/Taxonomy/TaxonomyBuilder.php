@@ -8,7 +8,7 @@ class TaxonomyBuilder
     private $taxonomy = null;
     /** @var array|string|null */
     private $postTypes = null;
-    /** @var array|string|null */
+    /** @var array|null */
     private $args = [];
     /** @var class-string|null */
     private $modelClass = null;
@@ -42,7 +42,7 @@ class TaxonomyBuilder
         if ($rewrite === false) {
             $this->args['rewrite'] = false;
         } elseif (is_array($rewrite)) {
-            array_push($this->args['rewrite'], $rewrite);
+            $this->args['rewrite'][] = $rewrite;
         }
 
         return $this;

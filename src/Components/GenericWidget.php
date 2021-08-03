@@ -1,12 +1,11 @@
 <?php
+
 namespace OffbeatWP\Components;
 
-use OffbeatWP\AcfCore\FieldsMapper as AcfFieldsMapper;
-use OffbeatWP\Components\ComponentInterfaceTrait;
-use OffbeatWP\Form\Fields\Helper as FieldsHelper;
 use OffbeatWP\AcfCore\ComponentFields;
+use WP_Widget;
 
-class GenericWidget extends \WP_Widget
+class GenericWidget extends WP_Widget
 {
     use ComponentInterfaceTrait;
 
@@ -16,10 +15,10 @@ class GenericWidget extends \WP_Widget
 
     public function __construct($settings, $componentClass)
     {
-        $this->settings =       $settings;
+        $this->settings = $settings;
         $this->componentClass = $componentClass;
 
-        $options = (isset($settings['options'])) ? : [];
+        $options = (isset($settings['options'])) ?: [];
 
         parent::__construct(
             $settings['id_base'],
@@ -53,9 +52,33 @@ class GenericWidget extends \WP_Widget
         echo $args['after_widget'];
     }
 
+    public function getFieldValues()
+    {
+        $settings = (object)[];
+
+        $fields = get_fields($this->widgetId);
+
+        if (empty($fields)) {
+            return $settings;
+        }
+
+        $keys = array_keys($fields);
+
+        foreach ($keys as $key) {
+            $settings->{$key} = $this->get_field($key);
+        }
+
+        return $settings;
+    }
+
+    public function get_field($key)
+    {
+        return get_field($key, $this->widgetId);
+    }
+
     public function update($new_instance, $old_instance)
     {
-        $instance = array();
+        $instance = [];
         $instance['widget_exists'] = 1;
 
         return $instance;
@@ -71,46 +94,27 @@ class GenericWidget extends \WP_Widget
         echo $this->get_field($key);
     }
 
-    public function get_field($key)
+    public function registerForm()
     {
-        return get_field($key, $this->widgetId);
-    }
-
-    public function getFieldValues()
-    {
-        $settings = (object)[];
-
-        $fields = get_fields($this->widgetId);
-
-        if (empty($fields)) return $settings;
-
-        $keys = array_keys($fields);
-
-        foreach ($keys as $key) {
-            $settings->{$key} = $this->get_field($key);
+        if (!function_exists('acf_add_local_field_group')) {
+            return;
         }
-
-        return $settings;
-    }
-
-    public function registerForm () {
-        if( ! function_exists('acf_add_local_field_group') ) return null;
 
         $fields = ComponentFields::get($this->settings['component_name'], 'acfeditor');
 
-        acf_add_local_field_group(array (
+        acf_add_local_field_group([
             'key' => 'group_widget_' . $this->settings['id_base'],
             'title' => 'Widget settings - ' . $this->settings['name'],
             'fields' => $fields,
-            'location' => array (
-                array (
-                    array (
+            'location' => [
+                [
+                    [
                         'param' => 'widget',
                         'operator' => '==',
                         'value' => $this->settings['id_base'],
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             'menu_order' => 0,
             'position' => 'normal',
             'style' => 'default',
@@ -119,6 +123,6 @@ class GenericWidget extends \WP_Widget
             'hide_on_screen' => '',
             'active' => 1,
             'description' => '',
-        ));
+        ]);
     }
 }

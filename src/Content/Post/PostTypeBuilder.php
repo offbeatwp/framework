@@ -73,7 +73,7 @@ class PostTypeBuilder
 
     public function addAdminTableColumn(string $name, string $label, string $modelFunc): PostTypeBuilder
     {
-        add_action("manage_{$this->postType}_posts_columns", function(array $postColumns) use ($label, $name) {
+        add_action("manage_{$this->postType}_posts_columns", static function(array $postColumns) use ($label, $name) {
             $postColumns[$name] = $label;
             return $postColumns;
         });
@@ -96,9 +96,9 @@ class PostTypeBuilder
         }
 
         if (is_array($support)) {
-            $this->postTypeArgs['supports'] = $this->postTypeArgs['supports'] + $support;
+            $this->postTypeArgs['supports'] += $support;
         } else {
-            array_push($this->postTypeArgs['supports'], $support);
+            $this->postTypeArgs['supports'][] = $support;
         }
 
         return $this;

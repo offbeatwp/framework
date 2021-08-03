@@ -83,7 +83,9 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $this->queryVars['post_type'] = [];
         }
 
-        if (is_string($postTypes)) $postTypes = [$postTypes];
+        if (is_string($postTypes)) {
+            $postTypes = [$postTypes];
+        }
 
         $this->queryVars['post_type'] = array_merge($this->queryVars['post_type'], $postTypes);
 
@@ -116,7 +118,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             'include_children' => $includeChildren,
         ];
 
-        array_push($this->queryVars['tax_query'], $parameters);
+        $this->queryVars['tax_query'][] = $parameters;
 
         return $this;
     }
@@ -127,7 +129,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $this->queryVars['date_query'] = [];
         }
 
-        array_push($this->queryVars['date_query'], $args);
+        $this->queryVars['date_query'][] = $args;
 
         return $this;
     }
@@ -148,7 +150,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             ];
         }
 
-        array_push($this->queryVars['meta_query'], $parameters);
+        $this->queryVars['meta_query'][] = $parameters;
 
         return $this;
     }
@@ -183,7 +185,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $paged = $paginated;
 
             if (is_bool($paginated)) {
-                $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+                $paged = get_query_var('paged') ?: 1;
             }
 
             $this->queryVars['paged'] = $paged;
