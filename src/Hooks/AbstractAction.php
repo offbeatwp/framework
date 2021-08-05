@@ -1,7 +1,6 @@
 <?php
 namespace OffbeatWP\Hooks;
 
-use OffbeatWP\Contracts\View;
 use OffbeatWP\Views\ViewableTrait;
 
 abstract class AbstractAction

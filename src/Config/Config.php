@@ -43,44 +43,43 @@ class Config {
     }
 
     protected function loadConfigEnv() {
-        if (is_array($this->all())) foreach($this->all() as $configKey => $configSet) {
-            if (!ArrayHelper::isAssoc($configSet)) {
-                continue;
-            }
+        if (is_array($this->all())) {
+            foreach ($this->all() as $configKey => $configSet) {
+                if (!ArrayHelper::isAssoc($configSet)) {
+                    continue;
+                }
 
-            // Get current environment
-            $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
+                // Get current environment
+                $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
 
-            // Get all settings in 'env' variable
-            $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
-                
-            if (!empty($envConfigs)) {
-                foreach ($envConfigs as $envKey => $envConfig) {
-                    if (
-                        preg_match('/^!(.*)/', $envKey, $matches) &&
-                        !in_array($currentEnvironment, explode('|', $matches[1]))
-                    ) {
-                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
-                    } elseif (!preg_match('/^!(.*)/', $envKey, $matches)) {
-                        if (in_array($currentEnvironment, explode('|', $envKey))) {
-                            $explicitEnvConfigs[] = $envConfig;
+                // Get all settings in 'env' variable
+                $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
+
+                if (!empty($envConfigs)) {
+                    foreach ($envConfigs as $envKey => $envConfig) {
+                        if (preg_match('/^!(.*)/', $envKey, $matches) && !in_array($currentEnvironment, explode('|', $matches[1]))) {
+                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
+                        } elseif (!preg_match('/^!(.*)/', $envKey, $matches)) {
+                            if (in_array($currentEnvironment, explode('|', $envKey))) {
+                                $explicitEnvConfigs[] = $envConfig;
+                            }
+                        }
+                    }
+
+                    if (!empty($explicitEnvConfigs)) {
+                        foreach ($explicitEnvConfigs as $explicitEnvConfig) {
+                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
                         }
                     }
                 }
 
-                if (!empty($explicitEnvConfigs)) foreach ($explicitEnvConfigs as $explicitEnvConfig) {
-                    $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
-                }
+                // Set config
+                $this->set($configKey, $configSet);
             }
-
-            // Set config
-            $this->set($configKey, $configSet);
         }
     }
 
     public function get($key, $default = null) {
-        $return = $default;
-
         $config = $this->config;
 
         $return = ArrayHelper::getValueFromDottedKey($key, $config);

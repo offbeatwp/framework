@@ -26,8 +26,6 @@ class GenericWidget extends WP_Widget
             $options
         );
 
-        $componentSettings = $componentClass::settings();
-
         add_action('init', [$this, 'registerForm']);
     }
 

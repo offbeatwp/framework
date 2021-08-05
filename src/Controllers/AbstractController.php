@@ -1,7 +1,6 @@
 <?php
 namespace OffbeatWP\Controllers;
 
-use OffbeatWP\Contracts\View;
 use OffbeatWP\Views\ViewableTrait;
 
 abstract class AbstractController

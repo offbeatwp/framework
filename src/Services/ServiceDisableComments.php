@@ -2,24 +2,24 @@
 
 namespace OffbeatWP\Services;
 
-use OffbeatWP\Contracts\SiteSettings;
-
 class ServiceDisableComments extends AbstractService
 {
     public function register()
     {
-        if (!is_admin()) return null;
+        if (!is_admin()) {
+            return;
+        }
 
-        add_action('admin_menu', function () {
+        add_action('admin_menu', static function () {
             remove_menu_page( 'edit-comments.php' );
         });
 
-        add_action('wp_before_admin_bar_render', function () {
+        add_action('wp_before_admin_bar_render', static function () {
             global $wp_admin_bar;
             $wp_admin_bar->remove_menu('comments');
         } );
 
-        add_action('admin_init', function () {
+        add_action('admin_init', static function () {
             $post_types = get_post_types();
 
             foreach ($post_types as $post_type) {

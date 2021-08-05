@@ -11,7 +11,7 @@ class ComponentsService extends AbstractService
 
     public function register()
     {
-        offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents'], 10);
+        offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents']);
     }
 
     public function registerComponents()
@@ -19,7 +19,7 @@ class ComponentsService extends AbstractService
         $components = $this->registrableComponents();
 
         if (!empty($components)) {
-            foreach ($components as $component => $class) {
+            foreach ($components as $class) {
                 container('components')->register($class::getSlug(), $class);
             }
         }
@@ -30,11 +30,15 @@ class ComponentsService extends AbstractService
         $activeComponents = [];
         $componentsDirectory = $this->getComponentsDirectory();
 
-        if (!is_dir($componentsDirectory)) return null;
+        if (!is_dir($componentsDirectory)) {
+            return null;
+        }
 
         if ($handle = opendir($componentsDirectory)) {
             while (false !== ($entry = readdir($handle))) {
-                if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) continue;
+                if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) {
+                    continue;
+                }
 
                 $activeComponents[] = $entry;
             }
@@ -53,8 +57,6 @@ class ComponentsService extends AbstractService
 
     public function getComponentsDirectory()
     {
-        $componentsDirectory = $this->app->componentsPath();
-
-        return $componentsDirectory;
+        return $this->app->componentsPath();
     }
 }
