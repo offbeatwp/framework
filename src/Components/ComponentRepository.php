@@ -71,15 +71,13 @@ class ComponentRepository
     {
         $app = offbeat();
 
-        $componentSettings = $componentClass::settings();
-
         $tag = $componentClass::getSetting('shortcode');
 
         if (empty($tag)) {
             $tag = $componentClass::getSlug();
         }
 
-        add_shortcode($tag, function ($atts, $content = '') use ($app, $componentClass) {
+        add_shortcode($tag, static function ($atts, $content = '') use ($app, $componentClass) {
             $shortcode = $app->container->make(GenericShortcode::class, ['componentClass' => $componentClass]);
             return $shortcode->renderShortcode($atts, $content);
         });
@@ -99,6 +97,7 @@ class ComponentRepository
         throw new NonexistentComponentException("Component does not exist ({$name})");
     }
 
+    /** @throws NonexistentComponentException */
     public function make($name)
     {
         $componentClass = $this->get($name);
