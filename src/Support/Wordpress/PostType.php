@@ -6,13 +6,13 @@ use OffbeatWP\Content\Post\PostModel;
 
 class PostType
 {
-    const DEFAULT_POST_MODEL = PostModel::class;
+    public const DEFAULT_POST_MODEL = PostModel::class;
 
     private $postTypeModels = [];
 
     public static function make(string $name, string $pluralName, string $singleName): PostTypeBuilder
     {
-        return (new PostTypeBuilder)->make($name, $pluralName, $singleName);
+        return (new PostTypeBuilder())->make($name, $pluralName, $singleName);
     }
 
     public function registerPostModel(string $postType, string $modelClass): void
@@ -22,11 +22,7 @@ class PostType
 
     public function getModelByPostType(string $postType): ?string
     {
-        if (isset($this->postTypeModels[$postType])) {
-            return $this->postTypeModels[$postType];
-        }
-
-        return self::DEFAULT_POST_MODEL;
+        return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
 
     public function getPostTypeByModel(string $model): string

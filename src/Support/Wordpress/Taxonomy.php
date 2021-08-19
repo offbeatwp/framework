@@ -23,7 +23,7 @@ class Taxonomy
      */
     public static function make(string $name, $postTypes, string $pluralName, string $singleName): TaxonomyBuilder
     {
-        return (new TaxonomyBuilder)->make($name, $postTypes, $pluralName, $singleName);
+        return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName, $singleName);
     }
 
     public function registerTermModel(string $taxonomy, string $modelClass)

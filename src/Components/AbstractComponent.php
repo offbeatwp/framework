@@ -25,7 +25,7 @@ abstract class AbstractComponent
      * @internal Use getForm instead
      * @return Form|null
      */
-	static public function form()
+	public static function form()
     {
 		return null;
 	}
@@ -44,7 +44,7 @@ abstract class AbstractComponent
      * *string* **icon** - The name of the dash-icon that this setting will use in the editor
      *
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
-     * @return string[]|string[][]
+     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
      */
 	abstract static function settings();
 
@@ -54,7 +54,7 @@ abstract class AbstractComponent
         $this->context = $context;
 
         if (!offbeat()->container->has('componentCache')) {
-            // just a simple light weight cache if none is set
+            // just a simple lightweight cache if none is set
             offbeat()->container->set('componentCache', new ArrayCache());
         }
     }

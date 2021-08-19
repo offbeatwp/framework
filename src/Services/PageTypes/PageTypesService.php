@@ -58,7 +58,7 @@ class PageTypesService extends AbstractService
         $taxonomy = self::TAXONOMY;
 
         $q_vars = &$query->query_vars;
-        if ($pagenow == 'edit.php' && isset($q_vars['post_type']) && $q_vars['post_type'] == $post_type && isset($q_vars[$taxonomy]) && is_numeric($q_vars[$taxonomy]) && $q_vars[$taxonomy] != 0) {
+        if (isset($q_vars['post_type'], $q_vars[$taxonomy]) && $pagenow === 'edit.php' && $q_vars['post_type'] == $post_type && is_numeric($q_vars[$taxonomy]) && $q_vars[$taxonomy] != 0) {
             $term = get_term_by('id', $q_vars[$taxonomy], $taxonomy);
             $q_vars[$taxonomy] = $term->slug;
         }
@@ -116,7 +116,7 @@ class PageTypesService extends AbstractService
         $terms = PageTypeModel::query()->excludeEmpty(false)->order('term_id', 'ASC')->all();
 
         if ($terms->isEmpty()) {
-            return null;
+            return;
         }
 
         $pagePageType = offbeat('post')->get()->getTerms(self::TAXONOMY)->all();

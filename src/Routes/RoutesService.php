@@ -2,6 +2,7 @@
 namespace OffbeatWP\Routes;
 
 use OffbeatWP\Services\AbstractService;
+use WP_Query;
 
 class RoutesService extends AbstractService
 {
@@ -30,10 +31,10 @@ class RoutesService extends AbstractService
     public function urlRoutePreps()
     {
         if (!offbeat('routes')->findRoute()) {
-            return null;
+            return;
         }
 
-        add_filter('user_trailingslashit', function ($url) {
+        add_filter('user_trailingslashit', static function ($url) {
             $urlUnTrailingSlashed = untrailingslashit($url);
             
             if (preg_match('/\.json$/', $urlUnTrailingSlashed)) {
@@ -43,18 +44,18 @@ class RoutesService extends AbstractService
             return $url;
         }, 20, 1);
 
-        add_action('parse_query', function ($query) {
+        add_action('parse_query', static function ($query) {
             if ($query->is_main_query()) {
                 $query->is_page = false;
             }
         });
 
-        add_filter('do_parse_request', function ($doParseQuery, $wp) {
+        add_filter('do_parse_request', static function ($doParseQuery, $wp) {
             $wp->query_vars = [];
             return false;
         }, 10, 2);
 
-        add_filter('posts_pre_query', function ($posts, \WP_Query $q) {
+        add_filter('posts_pre_query', static function ($posts, WP_Query $q) {
             if ($q->is_home() && $q->is_main_query()) {
                 $posts          = [];
                 $q->found_posts = 0;
@@ -62,7 +63,7 @@ class RoutesService extends AbstractService
             return $posts;
         }, 10, 2);
 
-        add_action('pre_handle_404', function ($preHandle404, $query) {
+        add_action('pre_handle_404', static function ($preHandle404, $query) {
             global $wp_the_query;
 
             $wp_the_query->is_singular = false;
