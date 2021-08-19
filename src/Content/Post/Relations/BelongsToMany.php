@@ -17,9 +17,4 @@ class BelongsToMany extends BelongsToOneOrMany
     {
         return $this->query()->all();
     }
-
-    public function dissociateAll()
-    {
-        $this->removeAllRelationships('reverse');
-    }
 }

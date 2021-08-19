@@ -5,7 +5,7 @@ use OffbeatWP\Console\AbstractCommand;
 
 class Install extends AbstractCommand
 {
-    const COMMAND = 'post-relations:install';
+    public const COMMAND = 'post-relations:install';
 
     public function execute($args, $argsNamed)
     {

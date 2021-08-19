@@ -39,7 +39,7 @@ class Relation
 
         $column = 'relation_from';
 
-        if ($direction == 'reverse') {
+        if ($direction === 'reverse') {
             $column = 'relation_to';
         }
 
@@ -71,8 +71,10 @@ class Relation
 
     public function makeRelationships(array $ids, ?string $direction = null): void
     {
-        if (!empty($ids)) foreach ($ids as $id) {
-            $this->makeRelationship($id, $direction);
+        if (!empty($ids)) {
+            foreach ($ids as $id) {
+                $this->makeRelationship($id, $direction);
+            }
         }
     }
 }

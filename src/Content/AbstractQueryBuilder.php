@@ -15,7 +15,7 @@ abstract class AbstractQueryBuilder {
             $this->queryVars['meta_key'] = $match[3];
             $this->queryVars['orderby'] = 'meta_value';
 
-            if (isset($match[1]) && $match[1] == 'meta_num') {
+            if (isset($match[1]) && $match[1] === 'meta_num') {
                 $this->queryVars['orderby'] = 'meta_value_num';
             }
 
