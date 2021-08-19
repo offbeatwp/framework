@@ -63,8 +63,8 @@ class PostsCollection extends Collection
     }
 
     /** @return PostModel|null */
-    public function pop() {
-        return parent::pop();
+    public function pop($count = 1) {
+        return parent::pop($count);
     }
 
     /** @return PostModel|null */
