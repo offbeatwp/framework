@@ -78,7 +78,7 @@ class PostsCollection extends Collection
     }
 
     /** @return PostModel|null */
-    public function shift() {
-        return parent::shift();
+    public function shift($count = 1) {
+        return parent::shift($count);
     }
 }
