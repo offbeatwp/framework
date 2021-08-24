@@ -53,7 +53,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->first();
 
         if (empty($result)) {
-            throw new PostModelNotFoundException("No PostModels were found for this type");
+            throw new PostModelNotFoundException("No PostModels were found.");
         }
 
         return $result;
