@@ -9,6 +9,7 @@ use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
+use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
 
 /**
@@ -251,6 +252,18 @@ class PostModel implements PostModelInterface
         }
 
         return null;
+    }
+
+    /** @throws PostMetaNotFoundException */
+    public function getMetaOrFail(string $key): string
+    {
+        $result = $this->getMeta($key);
+
+        if ($result === null) {
+            throw new PostMetaNotFoundException('PostMeta with key ' . $key . ' could not be found on post with ID ' . $this->wpPost->ID);
+        }
+
+        return $result;
     }
 
     public function setMetas(array $metadata): void
