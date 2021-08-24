@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Exceptions\PostModelNotFoundException;
 use WP_Query;
 
 class WpQueryBuilder extends AbstractQueryBuilder
@@ -11,7 +12,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     public function all(): PostsCollection
     {
         $this->queryVars['posts_per_page'] = -1;
-        
+
         return $this->get();
     }
 
@@ -46,18 +47,54 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
+    /** @throws PostModelNotFoundException */
+    public function firstOrFail(): PostModel
+    {
+        $result = $this->first();
+
+        if (empty($result)) {
+            throw new PostModelNotFoundException("No PostModels were found for this type");
+        }
+
+        return $result;
+    }
+
     public function findById(int $id): ?PostModel
     {
         $this->queryVars['p'] = $id;
 
         return $this->first();
     }
-    
+
+    /** @throws PostModelNotFoundException */
+    public function findByIdOrFail(int $id): PostModel
+    {
+        $result = $this->findById($id);
+
+        if (empty($result)) {
+            throw new PostModelNotFoundException("PostModel with id " . $id . " could not be found!");
+        }
+
+        return $result;
+    }
+
     public function findByName(string $name): ?PostModel
     {
         $this->queryVars['name'] = $name;
 
         return $this->first();
+    }
+
+    /** @throws PostModelNotFoundException */
+    public function findByNameOrFail(string $name): PostModel
+    {
+        $result = $this->findByName($name);
+
+        if (empty($result)) {
+            throw new PostModelNotFoundException("PostModel with name " . $name . " could not be found!");
+        }
+
+        return $result;
     }
 
     public function orderByMeta(string $metaKey): AbstractQueryBuilder
@@ -178,7 +215,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         return $this;
     }
-    
+
     public function paginated(bool $paginated = true): WpQueryBuilder
     {
         if ($paginated) {
