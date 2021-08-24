@@ -53,7 +53,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->first();
 
         if (empty($result)) {
-            throw new PostModelNotFoundException("No PostModels were found.");
+            throw new PostModelNotFoundException("No PostModels were found");
         }
 
         return $result;
@@ -72,7 +72,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->findById($id);
 
         if (empty($result)) {
-            throw new PostModelNotFoundException("PostModel with id " . $id . " could not be found!");
+            throw new PostModelNotFoundException("PostModel with id " . $id . " could not be found");
         }
 
         return $result;
@@ -91,7 +91,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->findByName($name);
 
         if (empty($result)) {
-            throw new PostModelNotFoundException("PostModel with name " . $name . " could not be found!");
+            throw new PostModelNotFoundException("PostModel with name " . $name . " could not be found");
         }
 
         return $result;
