@@ -255,10 +255,11 @@ class PostModel implements PostModelInterface
     }
 
     /** @throws PostMetaNotFoundException */
-    public function getMetaOrFail(string $key) {
+    public function getMetaOrFail(string $key): string
+    {
         $result = $this->getMeta($key);
 
-        if (empty($result)) {
+        if ($result === null) {
             throw new PostMetaNotFoundException('PostMeta with key ' . $key . ' could not be found on post with ID ' . $this->wpPost->ID . '.');
         }
 
