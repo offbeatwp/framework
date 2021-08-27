@@ -3,6 +3,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
 
+/** @template T */
 class TermsCollection extends Collection
 {
     /** Returns this PostsCollection as a generic Collection */
@@ -18,39 +19,39 @@ class TermsCollection extends Collection
         return new Collection(array_combine($keys, $items));
     }
 
-    /** @return TermModel|null */
-    public function first(callable $callback = null, $default = null)
+    /** @return T|null */
+    public function first(callable $callback = null, $default = null): ?TermModel
     {
         return parent::first($callback, $default);
     }
 
-    /** @return TermModel|null */
-    public function last(callable $callback = null, $default = null)
+    /** @return T|null */
+    public function last(callable $callback = null, $default = null): ?TermModel
     {
         return parent::last($callback, $default);
     }
 
-    /** @return TermModel|null */
-    public function pop()
+    /** @return T|null */
+    public function pop($count = 1): ?TermModel
     {
-        return parent::pop();
+        return parent::pop($count);
     }
 
-    /** @return TermModel|null */
-    public function pull($key, $default = null)
+    /** @return T|null */
+    public function pull($key, $default = null): ?TermModel
     {
         return parent::pull($key, $default);
     }
 
-    /** @return TermModel|null */
-    public function reduce(callable $callback, $initial = null)
+    /** @return T|null */
+    public function reduce(callable $callback, $initial = null): ?TermModel
     {
         return parent::reduce($callback, $initial);
     }
 
-    /** @return TermModel|null */
-    public function shift()
+    /** @return T|null */
+    public function shift($count = 1): ?TermModel
     {
-        return parent::shift();
+        return parent::shift($count);
     }
 }

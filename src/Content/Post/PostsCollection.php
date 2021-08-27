@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Post;
 use Illuminate\Support\Collection;
 use WP_Post;
 
+/** @template T */
 class PostsCollection extends Collection
 {
     protected $query = null;
@@ -52,33 +53,39 @@ class PostsCollection extends Collection
         return new Collection(array_combine($keys, $items));
     }
 
-    /** @return PostModel|null */
-    public function first(callable $callback = null, $default = null) {
+    /** @return T|null */
+    public function first(callable $callback = null, $default = null): ?PostModel
+    {
         return parent::first($callback, $default);
     }
 
-    /** @return PostModel|null */
-    public function last(callable $callback = null, $default = null) {
+    /** @return T|null */
+    public function last(callable $callback = null, $default = null): ?PostModel
+    {
         return parent::last($callback, $default);
     }
 
-    /** @return PostModel|null */
-    public function pop($count = 1) {
+    /** @return T|null */
+    public function pop($count = 1): ?PostModel
+    {
         return parent::pop($count);
     }
 
-    /** @return PostModel|null */
-    public function pull($key, $default = null) {
+    /** @return T|null */
+    public function pull($key, $default = null): ?PostModel
+    {
         return parent::pull($key, $default);
     }
 
-    /** @return PostModel|null */
-    public function reduce(callable $callback, $initial = null) {
+    /** @return T|null */
+    public function reduce(callable $callback, $initial = null): ?PostModel
+    {
         return parent::reduce($callback, $initial);
     }
 
-    /** @return PostModel|null */
-    public function shift($count = 1) {
+    /** @return T|null */
+    public function shift($count = 1): ?PostModel
+    {
         return parent::shift($count);
     }
 }
