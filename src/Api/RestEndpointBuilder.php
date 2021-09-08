@@ -1,33 +1,35 @@
 <?php
+
 namespace OffbeatWP\Api;
 
 use Closure;
-use WP_REST_Request;
+use WP_REST_Server;
 
 class RestEndpointBuilder
 {
-    public $namespace = null;
-    public $route = null;
-    public $callback = null;
-    public $method = 'GET';
+    public $namespace;
+    public $route;
+    public $callback;
+    public $method = WP_REST_Server::READABLE;
     public $args = [];
-    public $permission_callback = '__return_true';
+    public $permissionCallback = '__return_true';
 
-    public function __construct(string $namespace, string $route, string $callback)
+    public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
         $this->route = $route;
         $this->callback = $callback;
-
     }
 
-    public function method(string $method):RestEndpoint {
+    public function method(string $method): RestEndpointBuilder
+    {
         $this->method = $method;
 
         return $this;
     }
 
-    public function validate(string $key, Closure $callback):RestEndpoint {
+    public function validate(string $key, Closure $callback): RestEndpointBuilder
+    {
         if (!isset($this->args[$key])) {
             $this->args[$key] = [];
         }
@@ -37,7 +39,8 @@ class RestEndpointBuilder
         return $this;
     }
 
-    public function capability(string $capability):RestEndpoint {
+    public function capability(string $capability): RestEndpointBuilder
+    {
         $this->permission(function () use ($capability) {
             return current_user_can($capability);
         });
@@ -45,25 +48,24 @@ class RestEndpointBuilder
         return $this;
     }
 
-    public function permission(Closure $callback):RestEndpoint {
-        $this->permission_callback = $callback;
+    public function permission(Closure $callback): RestEndpointBuilder
+    {
+        $this->permissionCallback = $callback;
 
         return $this;
     }
 
-    public function set()
+    public function set(): void
     {
-        $restEndpoint = $this;
+        $thisEndpoint = $this;
 
-        add_action( 'rest_api_init', function () use ($restEndpoint) {
-            register_rest_route($restEndpoint->namespace , $restEndpoint->route, [
-                'methods' => $restEndpoint->method,
-                'callback' => function (WP_REST_Request $request) use ($restEndpoint) {
-                    return (new $restEndpoint->callback($request))->response();
-                },
-                'args' => $restEndpoint->args,
-                'permission_callback' => $restEndpoint->permission_callback,
+        add_action('rest_api_init', static function () use ($thisEndpoint) {
+            register_rest_route($thisEndpoint->namespace, $thisEndpoint->route, [
+                'methods' => $thisEndpoint->method,
+                'callback' => $thisEndpoint->callback,
+                'args' => $thisEndpoint->args,
+                'permission_callback' => $thisEndpoint->permissionCallback,
             ]);
-          } );
+        });
     }
 }
