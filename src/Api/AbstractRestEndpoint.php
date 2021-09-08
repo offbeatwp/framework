@@ -7,11 +7,13 @@ abstract class AbstractRestEndpoint
 {
     protected $request;
 
-    public function __construct(WP_REST_Request $request) {
+    public function __construct(WP_REST_Request $request)
+    {
         $this->request = $request;
     }
 
-    public function getRequest() {
+    public function getRequest(): WP_REST_Request
+    {
         return $this->request;
     }
 
