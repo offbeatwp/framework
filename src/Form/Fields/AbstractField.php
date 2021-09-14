@@ -2,7 +2,9 @@
 
 namespace OffbeatWP\Form\Fields;
 
-abstract class AbstractField implements FieldInterface
+use OffbeatWP\Form\IFormSection;
+
+abstract class AbstractField implements FieldInterface, IFormSection
 {
     /** @var string */
     public $id;
@@ -19,10 +21,6 @@ abstract class AbstractField implements FieldInterface
 
         $field->setId($id);
         $field->setLabel($label);
-
-        if (!empty($attr)) {
-            $field->setAttributes($attr);
-        }
 
         return $field;
     }
@@ -99,14 +97,9 @@ abstract class AbstractField implements FieldInterface
         return $this->attributes;
     }
 
-    /** @return string|bool|null */
     public function getAttribute($key)
     {
-        if (isset($this->getAttributes()[$key])) {
-            return $this->getAttributes()[$key];
-        }
-
-        return null;
+        return $this->getAttributes()[$key] ?? null;
     }
 
     /* Chain setters */

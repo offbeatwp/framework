@@ -2,8 +2,9 @@
 namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Form\IFormSection;
 
-class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
+class AbstractFieldsContainer extends Collection implements FieldsContainerInterface, IFormSection
 {
     public $id;
     public $label;
@@ -12,6 +13,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
 
     public function __construct($id, $label)
     {
+        parent::__construct();
         $this->setLabel($label);
         $this->setId($id);
     }
@@ -31,12 +33,12 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return static::TYPE;
     }
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
