@@ -11,7 +11,8 @@ class PostsCollection extends Collection
     /** @var WP_Query|object|null */
     protected $query = null;
 
-    public function __construct($items) {
+    public function __construct($items)
+    {
         if (is_object($items)) {
             $this->query = $items;
 
@@ -34,20 +35,24 @@ class PostsCollection extends Collection
         parent::__construct($items);
     }
 
-    public function getIterator(): WpPostsIterator {
+    public function getIterator(): WpPostsIterator
+    {
         return new WpPostsIterator($this->items);
     }
 
-    public function getQuery() {
+    public function getQuery(): ?object
+    {
         return $this->query;
     }
 
     /** Returns this PostsCollection as a generic Collection */
-    public function toCollection(): Collection {
+    public function toCollection(): Collection
+    {
         return collect($this->toArray());
     }
 
-    public function map(callable $callback): Collection {
+    public function map(callable $callback): Collection
+    {
         $keys = array_keys($this->items);
 
         $items = array_map($callback, $this->items, $keys);
