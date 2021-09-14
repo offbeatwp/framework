@@ -3,6 +3,7 @@
 namespace OffbeatWP\Views;
 
 use WP_Post;
+use WP_Site;
 
 class Wordpress
 {
@@ -65,6 +66,11 @@ class Wordpress
     public function bloginfo(?string $name): string
     {
         return get_bloginfo($name, 'display');
+    }
+
+    public function blogDetails(int $id): ?WP_Site
+    {
+        return get_blog_details($id, false) ?: null;
     }
 
     public function bodyClass($class = '')
