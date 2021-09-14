@@ -70,7 +70,7 @@ class Wordpress
 
     public function blogDetails(int $id): ?WP_Site
     {
-        return get_blog_details($id, false) ?: null;
+        return get_blog_details($id) ?: null;
     }
 
     public function bodyClass($class = '')
