@@ -3,10 +3,12 @@ namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Collection;
 use WP_Post;
+use WP_Query;
 
 /** @template T */
 class PostsCollection extends Collection
 {
+    /** @var WP_Query|object|null */
     protected $query = null;
 
     public function __construct($items) {
