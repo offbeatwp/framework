@@ -9,7 +9,8 @@
     "symfony/routing": "^4.2",
     "symfony/http-foundation": "^4.2",
     "symfony/cache": "^5.0",
-    "doctrine/cache": "~1.6"
+    "doctrine/cache": "~1.6",
+    "ext-iconv": "*"
   },
   "autoload": {
     "files": [
