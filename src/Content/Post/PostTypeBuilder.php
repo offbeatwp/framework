@@ -8,17 +8,11 @@ class PostTypeBuilder
 {
     use Macroable;
 
-    /** @var null|class-string<PostModel>  */
     private $postType = null;
     private $postTypeArgs = [];
+    /** @var null|class-string<PostModel>  */
     private $modelClass = null;
 
-    /**
-     * @param class-string<PostModel> $postType
-     * @param string $pluralLabel
-     * @param string $singularLabel
-     * @return $this
-     */
     public function make(string $postType, string $pluralLabel, string $singularLabel): PostTypeBuilder
     {
         $this->postType = $postType;
