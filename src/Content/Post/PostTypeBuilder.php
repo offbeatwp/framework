@@ -103,18 +103,10 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @param string[]|string $support Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
-    public function supports($support): PostTypeBuilder
+    /** @param string[] $supports Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
+    public function supports(array $supports): PostTypeBuilder
     {
-        if (!isset($this->postTypeArgs['supports'])) {
-            $this->postTypeArgs['supports'] = [];
-        }
-
-        if (is_array($support)) {
-            $this->postTypeArgs['supports'] += $support;
-        } else {
-            $this->postTypeArgs['supports'][] = $support;
-        }
+        $this->postTypeArgs['supports'] = $supports;
 
         return $this;
     }
