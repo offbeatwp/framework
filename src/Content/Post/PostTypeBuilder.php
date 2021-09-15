@@ -8,16 +8,23 @@ class PostTypeBuilder
 {
     use Macroable;
 
+    /** @var null|class-string<PostModel>  */
     private $postType = null;
     private $postTypeArgs = [];
     private $modelClass = null;
 
-    public function make(string $postType, string $pluralName, string $singularLabel): PostTypeBuilder
+    /**
+     * @param class-string<PostModel> $postType
+     * @param string $pluralLabel
+     * @param string $singularLabel
+     * @return $this
+     */
+    public function make(string $postType, string $pluralLabel, string $singularLabel): PostTypeBuilder
     {
         $this->postType = $postType;
         $this->postTypeArgs = [
             'labels' => [
-                'name' => $pluralName,
+                'name' => $pluralLabel,
                 'singular_name' => $singularLabel,
             ],
         ];
@@ -37,7 +44,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @param bool|array $rewrite Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. */
+    /** @param false|array $rewrite Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. */
     public function rewrite($rewrite): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['rewrite'])) {
@@ -53,6 +60,10 @@ class PostTypeBuilder
         return $this;
     }
 
+    /**
+     * @param string[] $labels
+     * @return $this
+     */
     public function labels(array $labels): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['labels'])) {
@@ -64,6 +75,10 @@ class PostTypeBuilder
         return $this;
     }
 
+    /**
+     * @param class-string<PostModel> $modelClass
+     * @return PostTypeBuilder
+     */
     public function model(string $modelClass): PostTypeBuilder
     {
         $this->modelClass = $modelClass;
@@ -88,7 +103,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @param string[]|false $support Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
+    /** @param string[]|string $support Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
     public function supports($support): PostTypeBuilder
     {
         if (!isset($this->postTypeArgs['supports'])) {
@@ -139,7 +154,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @param bool|string $menu If false, no menu is shown. If a string of an existing top level menu, the post type will be placed as a sub-menu of that. */
+    /** @param bool|string $menu When true, display as top-level menu. When false, no menu is shown. If a string of an existing top level menu, the post type will be placed as a sub-menu of that. */
     public function inMenu($menu): PostTypeBuilder
     {
         $this->postTypeArgs['show_in_menu'] = $menu;
@@ -169,6 +184,14 @@ class PostTypeBuilder
         return $this;
     }
 
+    public function capabilityType(string $single, string $plural = ''): PostTypeBuilder
+    {
+        $this->postTypeArgs['capability_type'] = ($plural) ? [$single, $plural] : $single;
+
+        return $this;
+    }
+
+    /** @param string[] $capabilities */
     public function capabilities(array $capabilities = []): PostTypeBuilder
     {
         $this->postTypeArgs['capabilities'] = $capabilities;
