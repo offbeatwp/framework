@@ -1,18 +1,20 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class ButtonGroup extends AbstractField {
-    const FIELD_TYPE = 'button_group';
+class ButtonGroup extends AbstractInputField {
+    public const FIELD_TYPE = 'button_group';
 
     public $options = [];
 
-    public function addOptions($options = []) {
+    public function addOptions($options = []): ButtonGroup
+    {
         $this->options = $options;
 
         return $this;
     }
 
-    public function addOption($key, $value) {
+    public function addOption($key, $value): ButtonGroup
+    {
         $this->options[$key] = $value;
 
         return $this;
@@ -22,6 +24,7 @@ class ButtonGroup extends AbstractField {
         if (is_callable($this->options)) {
             return call_user_func($this->options);
         }
+
         return $this->options;
     }
 }

@@ -1,18 +1,20 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Select extends AbstractField {
-    const FIELD_TYPE = 'select';
+class Select extends AbstractInputField {
+    public const FIELD_TYPE = 'select';
 
     public $options = [];
 
-    public function addOptions($options = []) {
+    public function addOptions($options = []): Select
+    {
         $this->options = array_replace($this->options, $options);
 
         return $this;
     }
 
-    public function addOption($key, $value) {
+    public function addOption($key, $value): Select
+    {
         $this->options[$key] = $value;
 
         return $this;

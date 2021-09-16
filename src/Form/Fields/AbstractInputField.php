@@ -4,7 +4,7 @@ namespace OffbeatWP\Form\Fields;
 
 use OffbeatWP\Form\Shared\ConditionalLogicTrait;
 
-abstract class AbstractField implements FieldInterface
+abstract class AbstractInputField implements FieldInterface
 {
     use ConditionalLogicTrait;
 
@@ -17,7 +17,7 @@ abstract class AbstractField implements FieldInterface
     /** @var string[]|bool[] */
     public $attributes = [];
 
-    public static function make(?string $id, string $label)
+    public static function make(?string $id, string $label): AbstractInputField
     {
         $field = new static();
 
@@ -105,35 +105,35 @@ abstract class AbstractField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description(string $description): AbstractField
+    public function description(string $description): AbstractInputField
     {
         $this->setAttribute('description', $description);
 
         return $this;
     }
 
-    function default($value): AbstractField
+    public function default($value): AbstractInputField
     {
         $this->setAttribute('default', $value);
 
         return $this;
     }
 
-    public function attributes(array $attributes): AbstractField
+    public function attributes(array $attributes): AbstractInputField
     {
         $this->setAttributes($attributes);
 
         return $this;
     }
 
-    public function required(bool $required = true): AbstractField
+    public function required(bool $required = true): AbstractInputField
     {
         $this->setRequired($required);
 
         return $this;
     }
 
-    public function attribute(string $key, $value): AbstractField
+    public function attribute(string $key, $value): AbstractInputField
     {
         $this->setAttribute($key, $value);
 
