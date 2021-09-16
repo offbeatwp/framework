@@ -8,23 +8,19 @@ abstract class AbstractInputField implements FieldInterface
 {
     use ConditionalLogicTrait;
 
-    /** @var string */
     public $id;
-    /** @var string */
     public $label;
-    /** @var bool */
-    public $required;
-    /** @var string[]|bool[] */
     public $attributes = [];
 
-    public static function make(?string $id, string $label): AbstractInputField
+    protected function __construct(?string $name, string $label)
     {
-        $field = new static();
+        $this->id = $name;
+        $this->label = $label;
+    }
 
-        $field->setId($id);
-        $field->setLabel($label);
-
-        return $field;
+    public static function make(?string $name, string $label): AbstractInputField
+    {
+        return new static($name, $label);
     }
 
     /* Basic Setters */
@@ -41,7 +37,6 @@ abstract class AbstractInputField implements FieldInterface
     /** @internal Use required instead */
     public function setRequired(bool $required = true): void
     {
-        $this->required = $required;
         $this->setAttribute('required', $required);
     }
 
@@ -90,7 +85,7 @@ abstract class AbstractInputField implements FieldInterface
 
     public function getRequired(): bool
     {
-        return $this->required;
+        return (bool)$this->getAttribute('required');
     }
 
     /** @return string[]|bool[] */
