@@ -9,7 +9,7 @@ abstract class AbstractField implements FieldInterface
     use ConditionalLogicTrait;
 
     /** @var null|string */
-    public $id;
+    protected $name;
     /** @var string */
     public $label;
     public $attributes = [];
@@ -27,7 +27,7 @@ abstract class AbstractField implements FieldInterface
     /* Basic Setters */
     public function setId(string $id): void
     {
-        $this->id = $id;
+        $this->name = $id;
     }
 
     public function setLabel(string $label): void
@@ -66,7 +66,7 @@ abstract class AbstractField implements FieldInterface
 
     public function getId(): string
     {
-        if (empty($this->id)) {
+        if (empty($this->name)) {
             $label = $this->getLabel();
             $label = iconv('utf-8', 'ascii//TRANSLIT', $label);
             $label = preg_replace('/[^A-Za-z0-9_-]/', '', $label);
@@ -76,7 +76,7 @@ abstract class AbstractField implements FieldInterface
             return $label;
         }
 
-        return $this->id;
+        return $this->name;
     }
 
     public function getLabel(): string
@@ -95,7 +95,7 @@ abstract class AbstractField implements FieldInterface
         return $this->attributes;
     }
 
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
         return $this->getAttributes()[$key] ?? null;
     }
