@@ -3,6 +3,6 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 class Section extends AbstractFieldsContainer
 {
-    const TYPE = 'section';
-    const LEVEL = 20;
+    public const TYPE = 'section';
+    public const LEVEL = 20;
 }

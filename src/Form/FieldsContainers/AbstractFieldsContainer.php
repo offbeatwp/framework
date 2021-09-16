@@ -2,33 +2,37 @@
 namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Form\Fields\FieldInterface;
+use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\IFormSection;
 
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface, IFormSection
 {
+    public const LEVEL = 0;
+
     public $id;
     public $label;
     public $parent;
     public $attributes = [];
 
-    public function __construct($id, $label)
+    public function __construct(string $id, string $label)
     {
         parent::__construct();
         $this->setLabel($label);
         $this->setId($id);
     }
 
-    public function setId($id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }
 
-    public function setLabel($label)
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return static::TYPE;
     }
@@ -43,7 +47,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $this->label;
     }
 
-    public function setParent($item)
+    public function setParent($item): void
     {
         $this->parent = $item;
     }
@@ -53,24 +57,30 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $this->parent;
     }
 
-    public function setAttributes($attributes)
+    public function getLevel(): int
+    {
+        return self::LEVEL;
+    }
+
+    public function setAttributes(array $attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
-        if (isset($this->getAttributes()[$key])) {
-            return $this->getAttributes()[$key];
-        }
-        return false;
+        return $this->getAttributes()[$key] ?? false;
     }
 
+    /**
+     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface $item
+     * @return FieldInterface|FieldsContainerInterface|FieldsCollectionInterface
+     */
     public function add($item)
     {
         $this->push($item);
@@ -78,7 +88,8 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $item;
     }
 
-    public function toArray()
+    /** @return array{type: mixed, id: string, label: string, attributes: array, items: array} */
+    public function toArray(): array
     {
         $items = $this->map(function ($item) {
             return $item->toArray();
