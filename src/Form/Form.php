@@ -3,12 +3,12 @@ namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
 use OffbeatWP\Components\AbstractComponent;
+use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
-use OffbeatWP\Form\Fields\FieldInterface;
 
 class Form extends Collection
 {
@@ -103,7 +103,7 @@ class Form extends Collection
         return $this;
     }
 
-    public function addField(FieldInterface $field): Form
+    public function addField(AbstractField $field): Form
     {
         $this->fieldKeys[] = $field->getId();
         $this->add($field);

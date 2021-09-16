@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Radio extends AbstractInputField {
+class Radio extends AbstractField {
     public const FIELD_TYPE = 'radio';
 
     public $options = [];

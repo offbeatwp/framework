@@ -2,7 +2,7 @@
 namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Form\Fields\FieldInterface;
+use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
@@ -77,8 +77,8 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
     }
 
     /**
-     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface $item
-     * @return FieldInterface|FieldsContainerInterface|FieldsCollectionInterface
+     * @param AbstractField|FieldsContainerInterface|FieldsCollectionInterface $item
+     * @return AbstractField|FieldsContainerInterface|FieldsCollectionInterface
      */
     public function add($item)
     {

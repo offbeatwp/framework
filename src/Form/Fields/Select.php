@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Select extends AbstractInputField {
+class Select extends AbstractField {
     public const FIELD_TYPE = 'select';
 
     public $options = [];

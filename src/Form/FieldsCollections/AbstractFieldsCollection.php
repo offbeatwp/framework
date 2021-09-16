@@ -1,11 +1,11 @@
 <?php
 namespace OffbeatWP\Form\FieldsCollections;
 
-use OffbeatWp\Form\Fields\FieldInterface;
+use OffbeatWP\Form\Fields\AbstractField;
 use Illuminate\Support\Collection;
 
 class AbstractFieldsCollection extends Collection implements FieldsCollectionInterface {
-    public function addField(FieldInterface $field) {
+    public function addField(AbstractField $field) {
         $this->push($field);
     }
 

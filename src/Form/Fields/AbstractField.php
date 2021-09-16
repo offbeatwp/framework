@@ -4,23 +4,23 @@ namespace OffbeatWP\Form\Fields;
 
 use OffbeatWP\Form\Shared\ConditionalLogicTrait;
 
-abstract class AbstractInputField implements FieldInterface
+abstract class AbstractField implements FieldInterface
 {
     use ConditionalLogicTrait;
 
+    /** @var null|string */
     public $id;
+    /** @var string */
     public $label;
     public $attributes = [];
 
-    protected function __construct(?string $name, string $label)
+    public static function make(?string $name, string $label): AbstractField
     {
-        $this->id = $name;
-        $this->label = $label;
-    }
+        $instance = new static();
+        $instance->setId($name);
+        $instance->setLabel($label);
 
-    public static function make(?string $name, string $label): AbstractInputField
-    {
-        return new static($name, $label);
+        return $instance;
     }
 
     /* Basic Setters */
@@ -100,35 +100,35 @@ abstract class AbstractInputField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description(string $description): AbstractInputField
+    public function description(string $description): AbstractField
     {
         $this->setAttribute('description', $description);
 
         return $this;
     }
 
-    public function default($value): AbstractInputField
+    public function default($value): AbstractField
     {
         $this->setAttribute('default', $value);
 
         return $this;
     }
 
-    public function attributes(array $attributes): AbstractInputField
+    public function attributes(array $attributes): AbstractField
     {
         $this->setAttributes($attributes);
 
         return $this;
     }
 
-    public function required(bool $required = true): AbstractInputField
+    public function required(bool $required = true): AbstractField
     {
         $this->setRequired($required);
 
         return $this;
     }
 
-    public function attribute(string $key, $value): AbstractInputField
+    public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
 
