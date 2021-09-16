@@ -12,10 +12,4 @@ trait ConditionalLogicTrait
     public function conditionalLogic(array $conditions) {
         $this->attribute('conditional_logic', $conditions);
     }
-
-    private function test() {
-        $this->conditionalLogic([
-            [Condition::valueIs('fieldname', 'vale')]]
-        );
-    }
 }

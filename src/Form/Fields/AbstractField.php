@@ -2,9 +2,7 @@
 
 namespace OffbeatWP\Form\Fields;
 
-use OffbeatWP\Form\IFormSection;
-
-abstract class AbstractField implements FieldInterface, IFormSection
+abstract class AbstractField implements FieldInterface
 {
     /** @var string */
     public $id;

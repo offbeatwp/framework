@@ -4,9 +4,8 @@ namespace OffbeatWP\Form\FieldsContainers;
 use Illuminate\Support\Collection;
 use OffbeatWP\Form\Fields\FieldInterface;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
-use OffbeatWP\Form\IFormSection;
 
-class AbstractFieldsContainer extends Collection implements FieldsContainerInterface, IFormSection
+class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
     public const LEVEL = 0;
 
