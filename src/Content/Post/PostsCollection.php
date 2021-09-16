@@ -40,7 +40,7 @@ class PostsCollection extends Collection
         return new WpPostsIterator($this->items);
     }
 
-    public function getQuery(): ?object
+    public function getQuery()
     {
         return $this->query;
     }
