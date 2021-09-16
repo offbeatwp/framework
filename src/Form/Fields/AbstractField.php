@@ -16,11 +16,12 @@ abstract class AbstractField implements FieldInterface
 
     public static function make(?string $name, string $label): AbstractField
     {
-        $instance = new static();
-        $instance->setId($name);
-        $instance->setLabel($label);
+        $field = new static();
 
-        return $instance;
+        $field->setId($name);
+        $field->setLabel($label);
+
+        return $field;
     }
 
     /* Basic Setters */
