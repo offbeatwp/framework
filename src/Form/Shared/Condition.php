@@ -4,33 +4,33 @@ namespace OffbeatWP\Form\Shared;
 
 class Condition
 {
-    public static function valueIs(string $field, string $value): array
+    public static function valueIs(string $name, string $value): array
     {
-        return ['field' => $field, 'operator' => '==', 'value' => $value];
+        return ['name' => $name, 'operator' => '==', 'value' => $value];
     }
 
-    public static function valueIsNot(string $field, string $value): array
+    public static function valueIsNot(string $name, string $value): array
     {
-        return ['field' => $field, 'operator' => '!=', 'value' => $value];
+        return ['name' => $name, 'operator' => '!=', 'value' => $value];
     }
 
-    public static function valueMatchesPattern(string $field, string $value): array
+    public static function valueMatchesPattern(string $name, string $value): array
     {
-        return ['field' => $field, 'operator' => '==pattern', 'value' => $value];
+        return ['name' => $name, 'operator' => '==pattern', 'value' => $value];
     }
 
-    public static function valueMatchesContains(string $field, string $value): array
+    public static function valueMatchesContains(string $name, string $value): array
     {
-        return ['field' => $field, 'operator' => '==contains', 'value' => $value];
+        return ['name' => $name, 'operator' => '==contains', 'value' => $value];
     }
 
-    public static function hasAnyValue(string $field): array
+    public static function hasAnyValue(string $name): array
     {
-        return ['field' => $field, 'operator' => '!=empty'];
+        return ['name' => $name, 'operator' => '!=empty'];
     }
 
-    public static function hasNoValue(string $field): array
+    public static function hasNoValue(string $name): array
     {
-        return ['field' => $field, 'operator' => '==empty'];
+        return ['name' => $name, 'operator' => '==empty'];
     }
 }

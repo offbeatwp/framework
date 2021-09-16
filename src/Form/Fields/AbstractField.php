@@ -2,8 +2,12 @@
 
 namespace OffbeatWP\Form\Fields;
 
+use OffbeatWP\Form\Shared\ConditionalLogicTrait;
+
 abstract class AbstractField implements FieldInterface
 {
+    use ConditionalLogicTrait;
+
     /** @var string */
     public $id;
     /** @var string */
@@ -13,7 +17,7 @@ abstract class AbstractField implements FieldInterface
     /** @var string[]|bool[] */
     public $attributes = [];
 
-    public static function make(string $id, string $label)
+    public static function make(?string $id, string $label)
     {
         $field = new static();
 
