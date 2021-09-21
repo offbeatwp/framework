@@ -500,22 +500,22 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function hasMany(string $key): HasMany
+    public function hasMany($key): HasMany
     {
         return new HasMany($this, $key);
     }
 
-    public function hasOne(string $key): HasOne
+    public function hasOne($key): HasOne
     {
         return new HasOne($this, $key);
     }
 
-    public function belongsTo(string $key): BelongsTo
+    public function belongsTo($key): BelongsTo
     {
         return new BelongsTo($this, $key);
     }
 
-    public function belongsToMany(string $key): BelongsToMany
+    public function belongsToMany($key): BelongsToMany
     {
         return new BelongsToMany($this, $key);
     }
