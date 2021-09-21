@@ -233,6 +233,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    public function suppressFilters(bool $suppress = true): WpQueryBuilder
+    {
+        $this->queryVars['suppress_filters'] = $suppress;
+
+        return $this;
+    }
+
     public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
