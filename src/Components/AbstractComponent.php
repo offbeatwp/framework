@@ -16,37 +16,10 @@ abstract class AbstractComponent
 
     /** @var View */
     public $view;
-    /** @var ContextInterface|null */
-    protected $context;
     /** @var Form|null */
     public $form = null;
-
-	/**
-     * @internal Use getForm instead
-     * @return Form|null
-     */
-	public static function form()
-    {
-		return null;
-	}
-
-    /**
-     * Specify component settings. Available settings include:
-     *
-     * *string* **name** - The component's display name
-     *
-     * *string* **description** - The component's description
-     *
-     * *string* **slug** - The component's slug
-     *
-     * *string* **category** - The category to which this component belongs to
-     *
-     * *string* **icon** - The name of the dash-icon that this setting will use in the editor
-     *
-     * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
-     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
-     */
-	abstract static function settings();
+    /** @var ContextInterface|null */
+    protected $context;
 
     public function __construct(View $view, ContextInterface $context = null)
     {
@@ -59,10 +32,63 @@ abstract class AbstractComponent
         }
     }
 
-    /** Can this component be rendered? */
-    public function isRenderable(): bool
+    public static function supports($service): bool
     {
-        return true;
+        $settings = static::settings();
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
+    }
+
+    public static function getName(): ?string
+    {
+        return static::getSetting('name');
+    }
+
+    public static function getDescription(): ?string
+    {
+        return static::getSetting('description');
+    }
+
+    public static function getCategory(): ?string
+    {
+        return static::getSetting('category');
+    }
+
+    public static function getIcon(): ?string
+    {
+        return static::getSetting('icon');
+    }
+
+    public static function getForm(): Form
+    {
+        $form = static::form();
+        if (is_null($form)) {
+            $settings = static::settings();
+
+            if (isset($settings['form'])) {
+                $form = $settings['form'];
+            }
+
+            if (!($form instanceof Form)) {
+                $form = new Form();
+            }
+        }
+
+        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
+            $form->addField(
+                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
+            );
+        }
+
+        return apply_filters('offbeatwp/component/form', $form, static::class);
+    }
+
+    /**
+     * @return Form|null
+     * @internal Use getForm instead
+     */
+    public static function form()
+    {
+        return null;
     }
 
     /**
@@ -93,31 +119,10 @@ abstract class AbstractComponent
         return $this->setCachedObject($cachedId, $render);
     }
 
-    public function getCssClasses(): string
+    /** Can this component be rendered? */
+    public function isRenderable(): bool
     {
-        $settings = static::settings();
-
-        $classes = [];
-
-        // Add extra classes from the Gutenberg editor
-        if (isset($settings->block->className)) {
-            $additions = explode(' ', $settings->block->className);
-            foreach ($additions as $addition) {
-                $classes[] = $addition;
-            }
-        }
-
-        // Add extra classes passed through the extraClasses setting
-        if (isset($settings->classes)) {
-            $additions = is_array($settings->classes) ? $settings->classes : explode(' ', $settings->classes);
-            foreach ($additions as $addition) {
-                $classes[] = $addition;
-            }
-        }
-
-        $classes = apply_filters('offbeatwp/component/classes', $classes, static::getSlug());
-
-        return implode(' ', array_filter(array_unique($classes, SORT_STRING)));
+        return true;
     }
 
     protected function getCacheId($settings): string
@@ -147,10 +152,34 @@ abstract class AbstractComponent
         return (string)$object;
     }
 
-    public static function supports($service): bool
+    public function getCssClasses(object $settings): string
     {
-        $settings = static::settings();
-        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
+        $classes = [];
+
+        // Add extra classes from the Gutenberg editor
+        if (isset($settings->block->className)) {
+            $additions = explode(' ', $settings->block->className);
+            foreach ($additions as $addition) {
+                $classes[] = $addition;
+            }
+        }
+
+        // Add extra classes passed through the extraClasses setting
+        if (isset($settings->classes)) {
+            $additions = is_array($settings->classes) ? $settings->classes : explode(' ', $settings->classes);
+            foreach ($additions as $addition) {
+                $classes[] = $addition;
+            }
+        }
+
+        $classes = apply_filters('offbeatwp/component/classes', $classes, static::getSlug());
+
+        return implode(' ', array_filter(array_unique($classes, SORT_STRING)));
+    }
+
+    public static function getSlug(): ?string
+    {
+        return static::getSetting('slug');
     }
 
     /** @return string|string[]|null */
@@ -161,29 +190,23 @@ abstract class AbstractComponent
         return $settings[$key] ?? null;
     }
 
-    public static function getName(): ?string
-    {
-        return static::getSetting('name');
-    }
-
-    public static function getSlug(): ?string
-    {
-        return static::getSetting('slug');
-    }
-
-    public static function getDescription(): ?string
-    {
-        return static::getSetting('description');
-    }
-
-    public static function getCategory(): ?string
-    {
-        return static::getSetting('category');
-    }
-
-    public static function getIcon(): ?string {
-        return static::getSetting('icon');
-    }
+    /**
+     * Specify component settings. Available settings include:
+     *
+     * *string* **name** - The component's display name
+     *
+     * *string* **description** - The component's description
+     *
+     * *string* **slug** - The component's slug
+     *
+     * *string* **category** - The category to which this component belongs to
+     *
+     * *string* **icon** - The name of the dash-icon that this setting will use in the editor
+     *
+     * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
+     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
+     */
+    abstract static function settings();
 
     public function getViewsDirectory(): string
     {
@@ -195,29 +218,5 @@ abstract class AbstractComponent
         $classInfo = new ReflectionClass($this);
 
         return dirname($classInfo->getFileName());
-    }
-
-    public static function getForm(): Form
-    {
-	    $form = static::form();
-	    if(is_null($form)) {
-		    $settings = static::settings();
-
-		    if (isset($settings['form'])) {
-                $form = $settings['form'];
-            }
-
-		    if (!($form instanceof Form)) {
-			    $form = new Form();
-		    }
-	    }
-
-        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
-            $form->addField(
-                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
-            );
-        }
-
-        return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 }
