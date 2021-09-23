@@ -54,7 +54,7 @@ abstract class AbstractComponent
         $this->context = $context;
 
         if (!offbeat()->container->has('componentCache')) {
-            // just a simple lightweight cache if none is set
+            // Just a simple lightweight cache if none is set
             offbeat()->container->set('componentCache', new ArrayCache());
         }
     }
@@ -87,10 +87,37 @@ abstract class AbstractComponent
             $this->context->initContext();
         }
 
-        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+        $output = container()->call([$this, 'render'], ['settings' => $settings, 'component' => $this]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
+    }
+
+    public function getCssClasses(): string
+    {
+        $settings = static::settings();
+
+        $classes = [];
+
+        // Add extra classes from the Gutenberg editor
+        if (isset($settings->block->className)) {
+            $additions = explode(' ', $settings->block->className);
+            foreach ($additions as $addition) {
+                $classes[] = $addition;
+            }
+        }
+
+        // Add extra classes passed through the extraClasses setting
+        if (isset($settings->extraClasses)) {
+            $additions = explode(' ', $settings->extraClasses);
+            foreach ($additions as $addition) {
+                $classes[] = $addition;
+            }
+        }
+
+        $classes = apply_filters('offbeatwp/component/classes', $classes, static::getSlug());
+
+        return implode(' ', array_filter(array_unique($classes, SORT_STRING)));
     }
 
     protected function getCacheId($settings): string
