@@ -38,9 +38,35 @@ abstract class AbstractComponent
         return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
     }
 
+    /**
+     * Specify component settings. Available settings include:
+     *
+     * *string* **name** - The component's display name
+     *
+     * *string* **description** - The component's description
+     *
+     * *string* **slug** - The component's slug
+     *
+     * *string* **category** - The category to which this component belongs to
+     *
+     * *string* **icon** - The name of the dash-icon that this setting will use in the editor
+     *
+     * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
+     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
+     */
+    abstract static function settings();
+
     public static function getName(): ?string
     {
         return static::getSetting('name');
+    }
+
+    /** @return string|string[]|null */
+    public static function getSetting(string $key)
+    {
+        $settings = static::settings();
+
+        return $settings[$key] ?? null;
     }
 
     public static function getDescription(): ?string
@@ -181,32 +207,6 @@ abstract class AbstractComponent
     {
         return static::getSetting('slug');
     }
-
-    /** @return string|string[]|null */
-    public static function getSetting(string $key)
-    {
-        $settings = static::settings();
-
-        return $settings[$key] ?? null;
-    }
-
-    /**
-     * Specify component settings. Available settings include:
-     *
-     * *string* **name** - The component's display name
-     *
-     * *string* **description** - The component's description
-     *
-     * *string* **slug** - The component's slug
-     *
-     * *string* **category** - The category to which this component belongs to
-     *
-     * *string* **icon** - The name of the dash-icon that this setting will use in the editor
-     *
-     * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
-     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
-     */
-    abstract static function settings();
 
     public function getViewsDirectory(): string
     {
