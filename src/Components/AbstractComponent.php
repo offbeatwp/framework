@@ -182,9 +182,9 @@ abstract class AbstractComponent
     {
         $classes = [];
 
-        // Add extra classes from the Gutenberg editor
-        if (isset($settings->block->className)) {
-            $additions = explode(' ', $settings->block->className);
+        // Add extra classes from the Gutenberg block extra-classes option
+        if (isset($settings->block['className'])) {
+            $additions = explode(' ', $settings->block['className']);
             foreach ($additions as $addition) {
                 $classes[] = $addition;
             }
