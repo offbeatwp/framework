@@ -53,6 +53,12 @@ abstract class AbstractComponent
         }
     }
 
+    /** Can this component be rendered? */
+    public function isRenderable(): bool
+    {
+        return true;
+    }
+
     public static function supports(string $service): bool
     {
         $settings = static::settings();
@@ -136,12 +142,6 @@ abstract class AbstractComponent
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
-    }
-
-    /** Can this component be rendered? */
-    public function isRenderable(): bool
-    {
-        return true;
     }
 
     protected function getCacheId($settings): string
