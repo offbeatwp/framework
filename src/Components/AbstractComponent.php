@@ -104,6 +104,12 @@ abstract class AbstractComponent
         return container('componentCache')->fetch($id);
     }
 
+    protected function setCachedObject(string $id, string $object): string
+    {
+        container('componentCache')->save($id, $object, 60);
+        return $object;
+    }
+
     public static function supports(string $service): bool
     {
         $settings = static::settings();
@@ -121,12 +127,6 @@ abstract class AbstractComponent
         $settings = static::settings();
 
         return $settings[$key] ?? null;
-    }
-
-    protected function setCachedObject(string $id, string $object): string
-    {
-        container('componentCache')->save($id, $object, 60);
-        return $object;
     }
 
     private function getCssClasses(object $settings): string

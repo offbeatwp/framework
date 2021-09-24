@@ -7,12 +7,10 @@ use ReflectionClass;
 
 trait ViewableTrait
 {
-    /** @var string[] */
     public static $loaded = [];
-    /** @var mixed|View */
     public $view;
 
-    public function view(string $name, array $data = [])
+    public function view($name, $data = [])
     {
         $view = container()->get(View::class);
         $this->view = $view;
@@ -22,14 +20,14 @@ trait ViewableTrait
         return $view->render($name, $data);
     }
 
-    public function setTemplatePaths(): void
+    public function setTemplatePaths()
     {
         $this->setModuleViewsPath();
         $this->setRecursiveParentViewsPath();
         $this->setElementViewsPath();
     }
 
-    public function setModuleViewsPath(): void
+    public function setModuleViewsPath()
     {
         $reflector = new ReflectionClass($this);
 
@@ -37,7 +35,7 @@ trait ViewableTrait
             return;
         }
 
-        if (in_array($reflector->getName(), static::$loaded, true)) {
+        if (in_array($reflector->getName(), static::$loaded)) {
             return;
         }
 
@@ -52,7 +50,7 @@ trait ViewableTrait
         static::$loaded[] = $reflector->getName();
     }
 
-    public function setRecursiveParentViewsPath(): void
+    public function setRecursiveParentViewsPath()
     {
         $reflector = new ReflectionClass($this);
         $fn = $reflector->getFileName();
@@ -62,9 +60,9 @@ trait ViewableTrait
         $this->setRecursiveViewsPath($path, 10);
     }
 
-    public function setRecursiveViewsPath(string $path, int $depth = 5): void
+    public function setRecursiveViewsPath($path, $depth = 5)
     {
-        if (in_array($path, static::$loaded, true)) {
+        if (in_array($path, static::$loaded)) {
             return;
         }
 
@@ -87,7 +85,7 @@ trait ViewableTrait
         static::$loaded[] = $path;
     }
 
-    public function setElementViewsPath(): void
+    public function setElementViewsPath()
     {
         if (!isset($this->hasViewsDirectory) || $this->hasViewsDirectory !== true) {
             return;
