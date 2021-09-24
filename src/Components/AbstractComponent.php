@@ -32,10 +32,10 @@ abstract class AbstractComponent
         }
     }
 
-    public static function supports($service): bool
+    public static function supports(string $service): bool
     {
         $settings = static::settings();
-        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
     }
 
     /**
@@ -108,10 +108,7 @@ abstract class AbstractComponent
         return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 
-    /**
-     * @return Form|null
-     * @internal Use getForm instead
-     */
+    /** @return Form|null */
     public static function form()
     {
         return null;
@@ -119,7 +116,6 @@ abstract class AbstractComponent
 
     /**
      * Render the component.
-     *
      * @param object|array $settings
      * @return string
      */
@@ -157,6 +153,7 @@ abstract class AbstractComponent
         return md5($prefix . get_class($this) . json_encode($settings));
     }
 
+    /** @return false|string */
     protected function getCachedComponent($id)
     {
         $object = $this->getCachedObject($id);
@@ -167,15 +164,16 @@ abstract class AbstractComponent
         return false;
     }
 
-    protected function getCachedObject($id)
+    /** @return false|string */
+    protected function getCachedObject(string $id)
     {
         return container('componentCache')->fetch($id);
     }
 
-    protected function setCachedObject(string $id, $object): string
+    protected function setCachedObject(string $id, string $object): string
     {
-        container('componentCache')->save($id, (string)$object, 60);
-        return (string)$object;
+        container('componentCache')->save($id, $object, 60);
+        return $object;
     }
 
     public function getCssClasses(object $settings): string
