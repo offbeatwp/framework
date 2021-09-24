@@ -59,49 +59,6 @@ abstract class AbstractComponent
         return true;
     }
 
-    public static function supports(string $service): bool
-    {
-        $settings = static::settings();
-        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
-    }
-
-    public static function getName(): ?string
-    {
-        return static::getSetting('name');
-    }
-
-    /** @return string|string[]|null */
-    public static function getSetting(string $key)
-    {
-        $settings = static::settings();
-
-        return $settings[$key] ?? null;
-    }
-
-    public static function getForm(): Form
-    {
-        $form = static::form();
-        if (is_null($form)) {
-            $settings = static::settings();
-
-            if (isset($settings['form'])) {
-                $form = $settings['form'];
-            }
-
-            if (!($form instanceof Form)) {
-                $form = new Form();
-            }
-        }
-
-        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
-            $form->addField(
-                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
-            );
-        }
-
-        return apply_filters('offbeatwp/component/form', $form, static::class);
-    }
-
     /**
      * Render the component.
      * @param object|array $settings
@@ -145,6 +102,25 @@ abstract class AbstractComponent
     protected function getCachedObject(string $id)
     {
         return container('componentCache')->fetch($id);
+    }
+
+    public static function supports(string $service): bool
+    {
+        $settings = static::settings();
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
+    }
+
+    public static function getName(): ?string
+    {
+        return static::getSetting('name');
+    }
+
+    /** @return string|string[]|null */
+    public static function getSetting(string $key)
+    {
+        $settings = static::settings();
+
+        return $settings[$key] ?? null;
     }
 
     protected function setCachedObject(string $id, string $object): string
@@ -208,5 +184,29 @@ abstract class AbstractComponent
         $classInfo = new ReflectionClass($this);
 
         return dirname($classInfo->getFileName());
+    }
+
+    public static function getForm(): Form
+    {
+        $form = static::form();
+        if (is_null($form)) {
+            $settings = static::settings();
+
+            if (isset($settings['form'])) {
+                $form = $settings['form'];
+            }
+
+            if (!($form instanceof Form)) {
+                $form = new Form();
+            }
+        }
+
+        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
+            $form->addField(
+                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
+            );
+        }
+
+        return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 }
