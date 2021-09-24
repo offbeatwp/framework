@@ -155,8 +155,8 @@ abstract class AbstractComponent
             }
 
             // Add extra classes passed through the extraClasses setting
-            if (isset($settings->classes)) {
-                $additions = is_array($settings->classes) ? $settings->classes : explode(' ', $settings->classes);
+            if (isset($settings->cssClasses)) {
+                $additions = is_array($settings->cssClasses) ? $settings->cssClasses : explode(' ', $settings->cssClasses);
                 foreach ($additions as $addition) {
                     $classes[] = $addition;
                 }
