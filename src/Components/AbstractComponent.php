@@ -153,12 +153,7 @@ abstract class AbstractComponent
     /** @return false|string */
     protected function getCachedComponent($id)
     {
-        $object = $this->getCachedObject($id);
-        if ($object !== false) {
-            return $object;
-        }
-
-        return false;
+        return $this->getCachedObject($id);
     }
 
     /** @return false|string */
