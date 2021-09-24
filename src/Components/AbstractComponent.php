@@ -14,11 +14,8 @@ abstract class AbstractComponent
 {
     use ViewableTrait;
 
-    /** @var View */
     public $view;
-    /** @var Form|null */
     public $form = null;
-    /** @var ContextInterface|null */
     protected $context;
 
     public function __construct(View $view, ContextInterface $context = null)
@@ -135,7 +132,7 @@ abstract class AbstractComponent
             $this->context->initContext();
         }
 
-        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+        $output = container()->call([$this, 'render'], ['settings' => $settings, 'classes' => $this->getCssClasses($settings)]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
@@ -176,7 +173,7 @@ abstract class AbstractComponent
         return $object;
     }
 
-    public function getCssClasses(object $settings): string
+    private function getCssClasses(object $settings): string
     {
         $classes = [];
 
