@@ -12,7 +12,9 @@ use ReflectionClass;
 
 abstract class AbstractComponent
 {
-    use ViewableTrait;
+    use ViewableTrait {
+        view as protected traitView;
+    }
 
     public $view;
     public $form = null;
@@ -53,6 +55,15 @@ abstract class AbstractComponent
         }
     }
 
+    public function view(string $name, array $data = [])
+    {
+        if (!isset($data['cssClasses'])) {
+            $data['cssClasses'] = $this->getCssClasses($data['settings'] ?? null);
+        }
+
+        return $this->traitView($name, $data);
+    }
+
     /** Can this component be rendered? */
     public function isRenderable(): bool
     {
@@ -72,6 +83,7 @@ abstract class AbstractComponent
 
         $cachedId = $this->getCacheId($settings);
         $object = $this->getCachedComponent($cachedId);
+
         if ($object !== false) {
             return $object;
         }
@@ -80,7 +92,7 @@ abstract class AbstractComponent
             $this->context->initContext();
         }
 
-        $output = container()->call([$this, 'render'], ['settings' => $settings, 'classes' => $this->getCssClasses($settings)]);
+        $output = container()->call([$this, 'render'], ['settings' => $settings]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
@@ -129,23 +141,25 @@ abstract class AbstractComponent
         return $settings[$key] ?? null;
     }
 
-    private function getCssClasses(object $settings): string
+    private function getCssClasses(?object $settings): string
     {
         $classes = [];
 
-        // Add extra classes from the Gutenberg block extra-classes option
-        if (isset($settings->block['className'])) {
-            $additions = explode(' ', $settings->block['className']);
-            foreach ($additions as $addition) {
-                $classes[] = $addition;
+        if ($settings) {
+            // Add extra classes from the Gutenberg block extra-classes option
+            if (isset($settings->block['className'])) {
+                $additions = explode(' ', $settings->block['className']);
+                foreach ($additions as $addition) {
+                    $classes[] = $addition;
+                }
             }
-        }
 
-        // Add extra classes passed through the extraClasses setting
-        if (isset($settings->classes)) {
-            $additions = is_array($settings->classes) ? $settings->classes : explode(' ', $settings->classes);
-            foreach ($additions as $addition) {
-                $classes[] = $addition;
+            // Add extra classes passed through the extraClasses setting
+            if (isset($settings->classes)) {
+                $additions = is_array($settings->classes) ? $settings->classes : explode(' ', $settings->classes);
+                foreach ($additions as $addition) {
+                    $classes[] = $addition;
+                }
             }
         }
 
