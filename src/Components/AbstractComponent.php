@@ -78,21 +78,6 @@ abstract class AbstractComponent
         return $settings[$key] ?? null;
     }
 
-    public static function getDescription(): ?string
-    {
-        return static::getSetting('description');
-    }
-
-    public static function getCategory(): ?string
-    {
-        return static::getSetting('category');
-    }
-
-    public static function getIcon(): ?string
-    {
-        return static::getSetting('icon');
-    }
-
     public static function getForm(): Form
     {
         $form = static::form();
@@ -196,6 +181,21 @@ abstract class AbstractComponent
     public static function getSlug(): ?string
     {
         return static::getSetting('slug');
+    }
+
+    public static function getDescription(): ?string
+    {
+        return static::getSetting('description');
+    }
+
+    public static function getCategory(): ?string
+    {
+        return static::getSetting('category');
+    }
+
+    public static function getIcon(): ?string
+    {
+        return static::getSetting('icon');
     }
 
     public function getViewsDirectory(): string
