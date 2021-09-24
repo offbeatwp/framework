@@ -18,21 +18,10 @@ abstract class AbstractComponent
     public $form = null;
     protected $context;
 
-    public function __construct(View $view, ContextInterface $context = null)
+    /** @return Form|null */
+    public static function form()
     {
-        $this->view = $view;
-        $this->context = $context;
-
-        if (!offbeat()->container->has('componentCache')) {
-            // Just a simple lightweight cache if none is set
-            offbeat()->container->set('componentCache', new ArrayCache());
-        }
-    }
-
-    public static function supports(string $service): bool
-    {
-        $settings = static::settings();
-        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
+        return null;
     }
 
     /**
@@ -52,6 +41,23 @@ abstract class AbstractComponent
      * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
      */
     abstract static function settings();
+
+    public function __construct(View $view, ContextInterface $context = null)
+    {
+        $this->view = $view;
+        $this->context = $context;
+
+        if (!offbeat()->container->has('componentCache')) {
+            // Just a simple lightweight cache if none is set
+            offbeat()->container->set('componentCache', new ArrayCache());
+        }
+    }
+
+    public static function supports(string $service): bool
+    {
+        $settings = static::settings();
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
+    }
 
     public static function getName(): ?string
     {
@@ -103,12 +109,6 @@ abstract class AbstractComponent
         }
 
         return apply_filters('offbeatwp/component/form', $form, static::class);
-    }
-
-    /** @return Form|null */
-    public static function form()
-    {
-        return null;
     }
 
     /**
