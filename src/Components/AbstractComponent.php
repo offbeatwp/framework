@@ -7,11 +7,13 @@ use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Layout\ContextInterface;
+use OffbeatWP\Views\CssClassTrait;
 use OffbeatWP\Views\ViewableTrait;
 use ReflectionClass;
 
 abstract class AbstractComponent
 {
+    use CssClassTrait;
     use ViewableTrait {
         view as protected traitView;
     }
@@ -58,7 +60,7 @@ abstract class AbstractComponent
     public function view(string $name, array $data = [])
     {
         if (!isset($data['cssClasses'])) {
-            $data['cssClasses'] = $this->getCssClasses($data['settings'] ?? null);
+            $data['cssClasses'] = $this->getCssClassesAsString();
         }
 
         return $this->traitView($name, $data);
@@ -92,6 +94,7 @@ abstract class AbstractComponent
             $this->context->initContext();
         }
 
+        $this->attachExtraCssClasesFromSettings($settings, self::getSlug());
         $output = container()->call([$this, 'render'], ['settings' => $settings]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
@@ -139,33 +142,6 @@ abstract class AbstractComponent
         $settings = static::settings();
 
         return $settings[$key] ?? null;
-    }
-
-    private function getCssClasses(?object $settings): string
-    {
-        $classes = [];
-
-        if ($settings) {
-            // Add extra classes from the Gutenberg block extra-classes option
-            if (isset($settings->block['className'])) {
-                $additions = explode(' ', $settings->block['className']);
-                foreach ($additions as $addition) {
-                    $classes[] = $addition;
-                }
-            }
-
-            // Add extra classes passed through the extraClasses setting
-            if (isset($settings->cssClasses)) {
-                $additions = is_array($settings->cssClasses) ? $settings->cssClasses : explode(' ', $settings->cssClasses);
-                foreach ($additions as $addition) {
-                    $classes[] = $addition;
-                }
-            }
-        }
-
-        $classes = apply_filters('offbeatwp/component/classes', $classes, static::getSlug());
-
-        return implode(' ', array_filter(array_unique($classes, SORT_STRING)));
     }
 
     public static function getSlug(): ?string
