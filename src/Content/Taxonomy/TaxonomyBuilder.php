@@ -32,7 +32,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @param string[]|bool[]|int[]|bool $rewrite Valid keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask' */
+    /** @param string[]|bool[]|int[]|bool $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask' */
     public function rewrite($rewrite): TaxonomyBuilder
     {
         $this->args['rewrite'] = $rewrite;

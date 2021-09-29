@@ -38,18 +38,10 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @param false|array $rewrite Triggers the handling of rewrites for this post type. To prevent rewrites, set to false. */
+    /** @param string[]|bool[]|int[]|bool $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask' */
     public function rewrite($rewrite): PostTypeBuilder
     {
-        if (!isset($this->postTypeArgs['rewrite'])) {
-            $this->postTypeArgs['rewrite'] = [];
-        }
-
-        if ($rewrite === false) {
-            $this->postTypeArgs['rewrite'] = false;
-        } elseif (is_array($rewrite)) {
-            $this->postTypeArgs['rewrite'] = array_merge($this->postTypeArgs['rewrite'], $rewrite);
-        }
+        $this->postTypeArgs['rewrite'] = $rewrite;
 
         return $this;
     }
