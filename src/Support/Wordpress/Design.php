@@ -5,14 +5,14 @@ use Closure;
 
 class Design
 {
-    public function getRowThemeClasses($id)
+    public function getRowThemeClasses($id): ?string
     {
         $rowThemes  = config('design.row_themes');
         if (!$rowThemes) {
             return null;
         }
 
-        $subId      = null;
+        $subId = null;
 
         if (strpos($id, '**') !== false) {
             $ids   = explode('**', $id);
@@ -33,7 +33,7 @@ class Design
         return $classes;
     }
 
-    public function getMarginClasses($id, $context, $prefix)
+    public function getMarginClasses($id, $context, string $prefix)
     {
         $margins = config('design.margins');
         if (!$margins) {
@@ -49,7 +49,7 @@ class Design
         return str_replace('{{prefix}}', $prefix, $margins[$id]['classes']);
     }
 
-    public function getPaddingClasses($id, $context, $prefix)
+    public function getPaddingClasses($id, $context, string $prefix)
     {
         $paddings = config('design.paddings');
         if (!$paddings) {
@@ -65,7 +65,7 @@ class Design
         return str_replace('{{prefix}}', $prefix, $paddings[$id]['classes']);
     }
 
-    public function getRowThemesList()
+    public function getRowThemesList(): array
     {
         $rowThemes = config('design.row_themes');
         if(!$rowThemes) {
@@ -75,8 +75,8 @@ class Design
         $rowThemesList = [];
 
         $rowThemes->each(function ($item, $key) use (&$rowThemesList) {
-            if (isset($item['sub_themes']) && !empty($item['sub_themes'])) {
-                $subThemes       = collect($item['sub_themes']);
+            if (!empty($item['sub_themes'])) {
+                $subThemes  = collect($item['sub_themes']);
                 $rowSubThemeList = [];
 
                 $subThemes->each(function ($subItem, $subKey) use ($item, $key, &$rowSubThemeList) {
@@ -97,7 +97,7 @@ class Design
         return $rowThemesList;
     }
 
-    public function getMarginsList($context = null)
+    public function getMarginsList($context = null): array
     {
         $margins = config('design.margins');
         if(!$margins) {
@@ -113,7 +113,7 @@ class Design
         })->toArray();
     }
 
-    public function getPaddingsList($context = null)
+    public function getPaddingsList($context = null): array
     {
         $paddings = config('design.paddings');
         if(!$paddings) {

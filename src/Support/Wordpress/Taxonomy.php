@@ -10,7 +10,7 @@ use WP_Term;
 
 class Taxonomy
 {
-    const DEFAULT_TERM_MODEL = TermModel::class;
+    public const DEFAULT_TERM_MODEL = TermModel::class;
 
     private $taxonomyModels = [];
 
@@ -33,11 +33,7 @@ class Taxonomy
 
     public function getModelByTaxonomy(string $taxonomy)
     {
-        if (isset($this->taxonomyModels[$taxonomy])) {
-            return $this->taxonomyModels[$taxonomy];
-        }
-
-        return self::DEFAULT_TERM_MODEL;
+        return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
     public function convertWpPostToModel(WP_Term $term)
@@ -51,9 +47,8 @@ class Taxonomy
      * Get a taxonomy by either the WP_TERM or the taxonomy's ID
      * Attempts to get the currently queried object if no parameter is passed
      * @param WP_Term|int|null $term
-     * @return TermModel|null
      */
-    public function get($term = null)
+    public function get($term = null): ?TermModel
     {
         if ($term instanceof WP_Term) {
             return $this->convertWpPostToModel($term);
@@ -66,10 +61,10 @@ class Taxonomy
             }
         }
 
-        $term = get_term($term);
+        $newTerm = get_term($term);
 
-        if (!empty($term)) {
-            return $this->convertWpPostToModel($term);
+        if (!empty($newTerm)) {
+            return $this->convertWpPostToModel($newTerm);
         }
 
         return null;

@@ -18,7 +18,7 @@ class Console
         });
     }
 
-    public static function isConsole()
+    public static function isConsole(): bool
     {
         return (defined('WP_CLI') && WP_CLI);
     }

@@ -10,7 +10,8 @@ class Page
         $this->pageTemplates[$template] = $label;
     }
 
-    public function getPageTemplates () {
+    public function getPageTemplates (): array
+    {
         return $this->pageTemplates;
     }
 

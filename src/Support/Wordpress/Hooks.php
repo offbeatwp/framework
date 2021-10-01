@@ -3,10 +3,9 @@ namespace OffbeatWP\Support\Wordpress;
 
 class Hooks
 {
-    public function addFilter($filter, $callback, $priority = 10, $acceptArguments = 1)
+    public function addFilter(string $filter, callable $callback, int $priority = 10, int $acceptArguments = 1): void
     {
-        add_filter($filter, function (...$parameters) use ($callback) {
-
+        add_filter($filter, static function (...$parameters) use ($callback) {
             if (is_string($callback)) {
                 $callback = [$callback, 'filter'];
             }
@@ -15,19 +14,14 @@ class Hooks
         }, $priority, $acceptArguments);
     }
 
-    /**
-     * @param string $filter
-     * @param ...$parameters
-     * @return string
-     */
-    public function applyFilters($filter, ...$parameters)
+    public function applyFilters(string $filter, ...$parameters)
     {
         return apply_filters_ref_array($filter, $parameters);
     }
 
-    public function addAction($action, $callback, $priority = 10, $acceptArguments = 1)
+    public function addAction(string $action, callable $callback, int $priority = 10, int $acceptArguments = 1): void
     {
-        add_action($action, function (...$parameters) use ($callback) {
+        add_action($action, static function (...$parameters) use ($callback) {
             if (is_string($callback)) {
                 $callback = [$callback, 'action'];
             }
@@ -36,7 +30,7 @@ class Hooks
         }, $priority, $acceptArguments);
     }
 
-    public function doAction($action, ...$args)
+    public function doAction(string $action, ...$args): void
     {
         do_action_ref_array($action, $args);
     }

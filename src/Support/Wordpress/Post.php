@@ -16,11 +16,11 @@ class Post
         return new $model($post);
     }
 
-    /** @param null|int|WP_Post $id */
+    /** @param null|int|WP_Post|false $id */
     public function get($id = null): ?PostModel
     {
         if (is_null($id)) {
-            $id = get_the_ID();
+            $id = get_the_ID() ?: null;
         }
 
         $post = get_post($id);
@@ -32,7 +32,7 @@ class Post
         return null;
     }
 
-    public function maybeRedirect(PostModel $post)
+    public function maybeRedirect(PostModel $post): void
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
         $requestUri = strtok($request->getUri(), '?');
