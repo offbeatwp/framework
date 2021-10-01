@@ -89,7 +89,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     }
 
     /** @throws TermModelNotFoundException */
-    public function findByIdorFail(int $id): ?TermModel
+    public function findByIdOrFail(int $id): ?TermModel
     {
         return $this->findOrFail('id', $id);
     }
