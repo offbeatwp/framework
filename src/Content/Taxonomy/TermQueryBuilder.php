@@ -83,29 +83,32 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    public function findById(int $id): ?TermModel
+    /** @return TermModel|false */
+    public function findById(int $id)
     {
         return $this->findBy('id', $id);
     }
 
     /** @throws TermModelNotFoundException */
-    public function findByIdOrFail(int $id): ?TermModel
+    public function findByIdOrFail(int $id): TermModel
     {
         return $this->findOrFail('id', $id);
     }
 
-    public function findBySlug(string $slug): ?TermModel
+    /** @return TermModel|false */
+    public function findBySlug(string $slug)
     {
         return $this->findBy('slug', $slug);
     }
 
     /** @throws TermModelNotFoundException */
-    public function findBySlugOrFail(string $slug): ?TermModel
+    public function findBySlugOrFail(string $slug): TermModel
     {
         return $this->findOrFail('slug', $slug);
     }
 
-    public function findByName(string $name): ?TermModel
+    /** @return TermModel|false */
+    public function findByName(string $name)
     {
         return $this->findBy('name', $name);
     }
@@ -116,11 +119,12 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findOrFail('name', $name);
     }
 
-    public function findBy(string $field, $value): ?TermModel
+    /** @return TermModel|false */
+    public function findBy(string $field, $value)
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        return empty($term) ? null : new $this->model($term);
+        return empty($term) ? $term : new $this->model($term);
     }
 
     /** @throws TermModelNotFoundException */
