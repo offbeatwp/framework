@@ -3,6 +3,7 @@ namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
 use OffbeatWP\Exceptions\PostModelNotFoundException;
+use WP_Post;
 use WP_Query;
 
 class WpQueryBuilder extends AbstractQueryBuilder
@@ -16,7 +17,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get();
     }
 
-    public function postToModel($post)
+    public function postToModel(WP_Post $post): ?PostModel
     {
         return offbeat('post')->convertWpPostToModel($post);
     }
@@ -160,7 +161,11 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereDate($args): WpQueryBuilder
+    /**
+     * @param int[]|string[] $args
+     * @return $this
+     */
+    public function whereDate(array $args): WpQueryBuilder
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
@@ -171,6 +176,12 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /**
+     * @param string|string[]|int[] $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|int|string[]|int[] $value
+     * @param string $compare
+     * @return $this
+     */
     public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
@@ -240,7 +251,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
+    /**
+     * @param PostModel $model
+     * @param string $key
+     * @param string|null $direction
+     * @return $this
+     */
+    public function hasRelationshipWith(PostModel $model, $key, $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),

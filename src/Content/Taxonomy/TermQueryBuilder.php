@@ -11,6 +11,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     protected $model;
     protected $taxonomy;
 
+    /** @param class-string<TermModel> $model */
     public function __construct($model)
     {
         $this->model = $model;
@@ -119,7 +120,11 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findOrFail('name', $name);
     }
 
-    /** @return TermModel|false */
+    /**
+     * @param string $field
+     * @param string|int $value
+     * @return TermModel|false|null
+     */
     public function findBy(string $field, $value)
     {
         $term = get_term_by($field, $value, $this->taxonomy);
@@ -127,7 +132,12 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return empty($term) ? $term : new $this->model($term);
     }
 
-    /** @throws TermModelNotFoundException */
+    /**
+     * @param string $field
+     * @param string|int $value
+     * @return TermModel
+     * @throws TermModelNotFoundException
+     */
     public function findOrFail(string $field, $value): TermModel
     {
         $result = $this->findBy($field, $value);
@@ -147,6 +157,12 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /**
+     * @param string|string[]|int[] $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|int|string[]|int[] $value
+     * @param string $compare
+     * @return $this
+     */
     public function whereMeta($key, $value = '', string $compare = '='): TermQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
