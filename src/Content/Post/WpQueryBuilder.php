@@ -163,30 +163,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
-     * @param int[]|string[] $args
+     * @param int[]|string[]|bool[]|string[][] $args
      * @return $this
      */
     public function whereDate(array $args): WpQueryBuilder
     {
-        if (!isset($this->queryVars['date_query'])) {
-            $this->queryVars['date_query'] = [];
-        }
-
-        $this->queryVars['date_query'][] = $args;
+        $this->queryVars['date_query'] = $args;
 
         return $this;
-    }
-
-    public function beforeDate(Carbon $date, bool $inclusive) {
-
-    }
-
-    public function afterDate(Carbon $date, bool $inclusive) {
-
-    }
-
-    public function onDate(Carbon $date) {
-
     }
 
     /**
