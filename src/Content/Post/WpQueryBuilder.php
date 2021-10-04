@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use Carbon\Carbon;
 use OffbeatWP\Content\AbstractQueryBuilder;
 use OffbeatWP\Exceptions\PostModelNotFoundException;
 use WP_Post;
@@ -174,6 +175,18 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $this->queryVars['date_query'][] = $args;
 
         return $this;
+    }
+
+    public function beforeDate(Carbon $date, bool $inclusive) {
+
+    }
+
+    public function afterDate(Carbon $date, bool $inclusive) {
+
+    }
+
+    public function onDate(Carbon $date) {
+
     }
 
     /**
