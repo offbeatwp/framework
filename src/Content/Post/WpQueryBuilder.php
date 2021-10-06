@@ -17,7 +17,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get();
     }
 
-    public function postToModel(WP_Post $post): ?PostModel
+    public function postToModel($post)
     {
         return offbeat('post')->convertWpPostToModel($post);
     }
