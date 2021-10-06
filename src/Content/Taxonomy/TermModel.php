@@ -151,6 +151,11 @@ class TermModel implements TermModelInterface
         return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
     }
 
+    public function getPermalink(): ?string
+    {
+        return get_permalink($this->getId()) ?: null;
+    }
+
     public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);
