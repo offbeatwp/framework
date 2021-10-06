@@ -120,7 +120,7 @@ class TermModel implements TermModelInterface
     public function getAncestors(): Collection
     {
         return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::findById($ancestorId);
+            return static::query()->findById($ancestorId);
         });
     }
 
@@ -130,12 +130,12 @@ class TermModel implements TermModelInterface
      */
     public function getMeta($key, $single = true)
     {
-        return get_term_meta($this->getID(), $key, $single);
+        return get_term_meta($this->getId(), $key, $single);
     }
 
     public function setMeta($key, $value)
     {
-        return update_term_meta($this->getID(), $key, $value);
+        return update_term_meta($this->getId(), $key, $value);
     }
 
     public function getPosts($postTypes = null): WpQueryBuilder
