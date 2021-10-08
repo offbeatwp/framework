@@ -4,7 +4,6 @@ namespace OffbeatWP\Content\Taxonomy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
-use WP_Error;
 use WP_Term;
 
 /**
@@ -17,20 +16,19 @@ class TermModel implements TermModelInterface
         __callStatic as macroCallStatic;
     }
 
-    /** @var WP_Error|WP_Term|null */
     public $wpTerm;
-    /** @var int|null */
     public $id;
 
-    /**
-     * @param WP_Term|int
-     */
+    /** @param WP_Term|int */
     public function __construct($term)
     {
         if ($term instanceof WP_Term) {
             $this->wpTerm = $term;
         } elseif (is_numeric($term)) {
-            $this->wpTerm = get_term($term, static::TAXONOMY);
+            $retrievedTerm = get_term($term, static::TAXONOMY);
+            if ($retrievedTerm instanceof WP_Term) {
+                $this->wpTerm = $retrievedTerm;
+            }
         }
 
         if (isset($this->wpTerm)) {
@@ -68,22 +66,22 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    public function getId()
+    public function getId(): int
     {
         return $this->wpTerm->term_id;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->wpTerm->name;
     }
 
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->wpTerm->slug;
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->wpTerm->description;
     }
@@ -93,16 +91,18 @@ class TermModel implements TermModelInterface
         return get_term_link($this->wpTerm);
     }
 
-    public function getTaxonomy()
+    public function getTaxonomy(): string
     {
         return $this->wpTerm->taxonomy;
     }
 
+    // TODO: This should return null when no parent exists, to be consistent with PostModel
     public function getParentId()
     {
         return ($this->wpTerm->parent) ?: false;
     }
 
+    // TODO: This should return null when no parent exists, to be consistent with PostModel
     public function getParent()
     {
         if ($this->getParentId()) {
@@ -112,7 +112,7 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    public function getAncestorIds (): Collection
+    public function getAncestorIds(): Collection
     {
         return collect(get_ancestors( $this->getId(), $this->getTaxonomy(), 'taxonomy'));
     }
@@ -124,23 +124,19 @@ class TermModel implements TermModelInterface
         });
     }
 
-    /**
-     * @param string $key
-     * @param bool $single
-     */
-    public function getMeta($key, $single = true)
+    public function getMeta(string $key, bool $single = true)
     {
         return get_term_meta($this->getId(), $key, $single);
     }
 
-    public function setMeta($key, $value)
+    public function setMeta(string $key, $value)
     {
         return update_term_meta($this->getId(), $key, $value);
     }
 
+    /** @param string|string[]|null $postTypes */
     public function getPosts($postTypes = null): WpQueryBuilder
     {
-
         global $wp_taxonomies;
 
         // If no posttypes defined, get posttypes where the taxonomy is assigned to
