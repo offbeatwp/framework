@@ -12,21 +12,11 @@ class TermsCollection extends Collection
      * @param int[]|WP_Term[]|TermModel[] $items
      * @throws TermsCollectionException
      */
-    public function __construct($items = []) {
+    public function __construct(array $items = []) {
         $terms = [];
 
         foreach ($items as $item) {
-            $term = null;
-
-            if (is_int($item) || $item instanceof WP_Term) {
-                $term = new TermModel($item);
-            }
-
-            if (!$term || !$term->wpTerm || !$term->getId()) {
-                throw new TermsCollectionException('Valid TermCollection could not be created passed items.');
-            }
-
-            $terms[] = $term;
+            $terms[] = $this->createValidTermModel($item);
         }
 
         parent::__construct($terms);
@@ -65,5 +55,26 @@ class TermsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
+    }
+
+    /**
+     * @param int|WP_Term|TermModel $item
+     * @throws TermsCollectionException
+     */
+    private function createValidTermModel($item): TermModel
+    {
+        $model = null;
+
+        if (is_int($item) || $item instanceof WP_Term) {
+            $model = new TermModel($item);
+        } else if ($item instanceof TermModel) {
+            $model = $item;
+        }
+
+        if (!$model || !$model->wpTerm) {
+            throw new TermsCollectionException('Valid TermCollection could not be created with passed items.');
+        }
+
+        return $model;
     }
 }
