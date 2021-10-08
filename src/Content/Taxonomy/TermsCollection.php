@@ -2,7 +2,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Exceptions\TermCollectionException;
+use OffbeatWP\Exceptions\TermsCollectionException;
 use WP_Term;
 
 /** @template T */
@@ -10,7 +10,7 @@ class TermsCollection extends Collection
 {
     /**
      * @param int[]|WP_Term[]|TermModel[] $items
-     * @throws TermCollectionException
+     * @throws TermsCollectionException
      */
     public function __construct($items = []) {
         $terms = [];
@@ -23,7 +23,7 @@ class TermsCollection extends Collection
             }
 
             if (!$term || !$term->wpTerm || !$term->getId()) {
-                throw new TermCollectionException('Valid TermCollection could not be created passed items.');
+                throw new TermsCollectionException('Valid TermCollection could not be created passed items.');
             }
 
             $terms[] = $term;
@@ -49,25 +49,19 @@ class TermsCollection extends Collection
         return parent::last($callback, $default);
     }
 
-    /** @return T|Collection<T>|null */
+    /** @return T|TermModel|Collection<T|TermModel> */
     public function pop($count = 1)
     {
         return parent::pop($count);
     }
 
-    /** @return T|Collection<T>|null */
+    /** @return T|TermModel|Collection<T|TermModel>|null */
     public function pull($key, $default = null)
     {
         return parent::pull($key, $default);
     }
 
-    /** @return T|Collection<T>|null */
-    public function reduce(callable $callback, $initial = null)
-    {
-        return parent::reduce($callback, $initial);
-    }
-
-    /** @return T|Collection<T>|null */
+    /** @return T|TermModel|Collection<T|TermModel> */
     public function shift($count = 1)
     {
         return parent::shift($count);
