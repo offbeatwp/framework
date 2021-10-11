@@ -17,7 +17,7 @@ class TermModel implements TermModelInterface
     }
 
     public $wpTerm;
-    public $id;
+    public $id; //TODO: This property does not make much sense as wpTerm already has the ID as property
 
     /** @param WP_Term|int */
     public function __construct($term)
