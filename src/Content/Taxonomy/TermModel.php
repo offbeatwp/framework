@@ -17,7 +17,7 @@ class TermModel implements TermModelInterface
     }
 
     public $wpTerm;
-    public $id; //TODO: This property does not make much sense as wpTerm already has the ID as property and getId should be used anyway
+    public $id;
 
     /** @param WP_Term|int */
     public function __construct($term)
@@ -96,20 +96,18 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->taxonomy;
     }
 
-    // TODO: This should return null when no parent exists, to be consistent with PostModel
-    public function getParentId()
+    public function getParentId(): ?int
     {
-        return ($this->wpTerm->parent) ?: false;
+        return ($this->wpTerm->parent) ?: null;
     }
 
-    // TODO: This should return null when no parent exists, to be consistent with PostModel
-    public function getParent()
+    public function getParent(): ?TermModel
     {
         if ($this->getParentId()) {
-            return static::query()->findById($this->getParentId());
+            return static::query()->findById($this->getParentId()) ?: null;
         }
 
-        return false;
+        return null;
     }
 
     public function getAncestorIds(): Collection
