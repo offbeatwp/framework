@@ -9,7 +9,6 @@ class PostsCollection extends Collection
 {
     protected $query = null;
 
-    /** @param object|WP_Post[] $items */
     public function __construct($items) {
         if (is_object($items)) {
             $this->query = $items;

@@ -35,6 +35,7 @@ class PostModel implements PostModelInterface
         __callStatic as macroCallStatic;
     }
 
+    /** @param WP_Post|int|null $post */
     public function __construct($post = null)
     {
         if (is_null($post)) {
