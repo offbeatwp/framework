@@ -40,7 +40,7 @@ class PostType
     public function registerDefaultPostModel(string $modelClass): void
     {
         if ($this->defaultPostType) {
-            throw new PostTypeException('Default post type has already been set to ' . $this->defaultPostType);
+            throw new PostTypeException('Could not set ' . $modelClass . ' as default post type because default post type has already been set to ' . $this->defaultPostType);
         } else if (in_array($modelClass, $this->postTypeModels, true)) {
             throw new PostTypeException($this->defaultPostType . ' was already registered as a regular PostModel.');
         }
