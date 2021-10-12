@@ -3,6 +3,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Post\PostTypeBuilder;
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Exceptions\PostTypeException;
 
 class PostType
 {
@@ -32,10 +33,20 @@ class PostType
         $this->postTypeModels[$postType] = $modelClass;
     }
 
-    /** @param class-string<PostModel> $modelClass */
+    /**
+     * @param class-string<PostModel> $modelClass
+     * @throws PostTypeException
+     */
     public function registerDefaultPostModel(string $modelClass): void
     {
+        if ($this->defaultPostType) {
+            throw new PostTypeException('Default post type has already been set to ' . $this->defaultPostType);
+        } else if (in_array($modelClass, $this->postTypeModels, true)) {
+            throw new PostTypeException($this->defaultPostType . ' was already registered as a regular PostModel.');
+        }
+
         $this->defaultPostType = $modelClass;
+        $this->registerPostModel($modelClass);
     }
 
     public function getModelByPostType(string $postType): string
