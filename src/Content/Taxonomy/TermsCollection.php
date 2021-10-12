@@ -22,6 +22,14 @@ class TermsCollection extends Collection
         parent::__construct($terms);
     }
 
+    public function map(callable $callback): Collection {
+        $keys = array_keys($this->items);
+
+        $items = array_map($callback, $this->items, $keys);
+
+        return new Collection(array_combine($keys, $items));
+    }
+
     /** Returns this TermsCollection as a generic Collection */
     public function toCollection(): Collection {
         return collect($this->toArray());
