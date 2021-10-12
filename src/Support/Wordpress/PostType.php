@@ -32,6 +32,6 @@ class PostType
 
     public function getPostTypeByModel(string $model): string
     {
-        return array_search($model, $this->postTypeModels, true);
+        return array_search($model, $this->postTypeModels, true) ?: '';
     }
 }
