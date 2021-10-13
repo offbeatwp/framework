@@ -5,14 +5,18 @@ namespace OffbeatWP\Support\Wordpress;
 use GuzzleHttp\Psr7\Uri;
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
+use OffbeatWP\Exceptions\TaxonomyException;
 use Symfony\Component\HttpFoundation\Request;
 use WP_Term;
 
 class Taxonomy
 {
-    const DEFAULT_TERM_MODEL = TermModel::class;
+    public const DEFAULT_TERM_MODEL = TermModel::class;
 
+    /** @var class-string<TermModel>[] */
     private $taxonomyModels = [];
+    /** @var class-string<TermModel>|null */
+    private $defaultTaxonomy;
 
     /**
      * @param string $name
@@ -26,18 +30,39 @@ class Taxonomy
         return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName, $singleName);
     }
 
-    public function registerTermModel(string $taxonomy, string $modelClass)
+    /**
+     * @param string|class-string<TermModel> $taxonomy  Either the class-string of a TermModel with a defined POST_TYPE or the slug of the taxonomy to register
+     * @param class-string<TermModel> $modelClass       The className of the TermModel. Only required if the first passed parameter was a slug
+     */
+    public function registerTermModel(string $taxonomy, string $modelClass = ""): void
     {
+        if (!$modelClass) {
+            $modelClass = $taxonomy;
+            $taxonomy = $modelClass::TAXONOMY;
+        }
+
         $this->taxonomyModels[$taxonomy] = $modelClass;
     }
 
-    public function getModelByTaxonomy(string $taxonomy)
+    /**
+     * @param class-string<TermModel> $modelClass
+     * @throws TaxonomyException
+     */
+    public function registerDefaultTermModel(string $modelClass): void
     {
-        if (isset($this->taxonomyModels[$taxonomy])) {
-            return $this->taxonomyModels[$taxonomy];
+        if ($this->defaultTaxonomy) {
+            throw new TaxonomyException('Could not set ' . $modelClass . ' as default taxonomy because default taxonomy has already been set to ' . $this->defaultTaxonomy);
+        } else if (in_array($modelClass, $this->taxonomyModels, true)) {
+            throw new TaxonomyException($this->defaultTaxonomy . ' was already registered as a regular TermModel.');
         }
 
-        return self::DEFAULT_TERM_MODEL;
+        $this->defaultTaxonomy = $modelClass;
+        $this->registerTermModel($modelClass);
+    }
+
+    public function getModelByTaxonomy(string $taxonomy): string
+    {
+        return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
     public function convertWpPostToModel(WP_Term $term)
@@ -53,7 +78,7 @@ class Taxonomy
      * @param WP_Term|int|null $term
      * @return TermModel|null
      */
-    public function get($term = null)
+    public function get($term = null): ?TermModel
     {
         if ($term instanceof WP_Term) {
             return $this->convertWpPostToModel($term);
@@ -66,10 +91,9 @@ class Taxonomy
             }
         }
 
-        $term = get_term($term);
-
-        if (!empty($term)) {
-            return $this->convertWpPostToModel($term);
+        $retrievedTerm = get_term($term);
+        if (!empty($retrievedTerm)) {
+            return $this->convertWpPostToModel($retrievedTerm);
         }
 
         return null;
@@ -82,6 +106,11 @@ class Taxonomy
 
         $url = $term->getLink();
         $url = str_replace(home_url(), '', $url);
+
+        if (!class_exists('\GuzzleHttp\Psr7\Uri')) {
+            exit;
+        }
+
         $postUri = new Uri($url);
 
         if (rtrim($requestUri, '/') !== rtrim($postUri->getPath(), '/')) {
