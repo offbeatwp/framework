@@ -183,10 +183,10 @@ class App
         $route = $this->route;
 
         try {
-            $output = $this->runRoute($route);
-
             // Remove route from collection so if there is a second run it skips this route
             offbeat('routes')->removeRoute($route);
+
+            $output = $this->runRoute($route);
 
             if ($output === false) {
                 throw new InvalidRouteException('Route returned false, trying to find next match');
