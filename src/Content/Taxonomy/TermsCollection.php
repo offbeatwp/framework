@@ -12,7 +12,7 @@ class TermsCollection extends Collection
      * @param int[]|WP_Term[]|TermModel[] $items
      * @throws TermsCollectionException
      */
-    public function __construct(array $items = []) {
+    public function __construct(iterable $items = []) {
         $terms = [];
 
         foreach ($items as $item) {
@@ -24,7 +24,6 @@ class TermsCollection extends Collection
 
     public function map(callable $callback): Collection {
         $keys = array_keys($this->items);
-
         $items = array_map($callback, $this->items, $keys);
 
         return new Collection(array_combine($keys, $items));
