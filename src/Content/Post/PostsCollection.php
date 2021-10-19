@@ -3,12 +3,14 @@ namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Collection;
 use WP_Post;
+use WP_Query;
 
 /** @template T */
 class PostsCollection extends Collection
 {
     protected $query = null;
 
+    /** @var int[]|WP_Post[]|WP_Query $items */
     public function __construct($items) {
         if (is_object($items)) {
             $this->query = $items;
@@ -47,7 +49,6 @@ class PostsCollection extends Collection
 
     public function map(callable $callback): Collection {
         $keys = array_keys($this->items);
-
         $items = array_map($callback, $this->items, $keys);
 
         return new Collection(array_combine($keys, $items));
