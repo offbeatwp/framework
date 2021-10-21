@@ -123,7 +123,7 @@ abstract class AbstractComponent
             }
         }
 
-        $this->cssClasses = apply_filters('offbeatwp/component/classes',  $this->cssClasses, $componentSlug);
+        $this->setCssClasses(apply_filters('offbeatwp/component/classes', $this->cssClasses, $componentSlug));
     }
 
     protected function getCacheId($settings): string
