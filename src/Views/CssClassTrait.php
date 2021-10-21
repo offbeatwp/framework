@@ -9,7 +9,7 @@ trait CssClassTrait
         $this->cssClasses[] = $className;
     }
 
-    protected function addCssClasses(array $classes): void
+    protected function addCssClasses(iterable $classes): void
     {
         foreach ($classes as $class) {
             $this->addCssClass($class);
@@ -29,13 +29,14 @@ trait CssClassTrait
         }
     }
 
-    protected function removeCssClasses(array $classes): void
+    protected function removeCssClasses(iterable $classes): void
     {
         foreach ($classes as $class) {
             $this->removeCssClass($class);
         }
     }
 
+    /** @param string[] $classes */
     protected function setCssClasses(array $classes): void
     {
         $this->cssClasses = $classes;
