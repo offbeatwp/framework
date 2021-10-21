@@ -15,12 +15,13 @@ abstract class AbstractComponent
 {
     use CssClassTrait;
     use ViewableTrait {
-        view as protected traitView;
+        ViewableTrait::view as protected traitView;
     }
 
     public $view;
     public $form = null;
     protected $context;
+    private $cssClasses = [];
 
     /** @return Form|null */
     public static function form()
@@ -94,11 +95,35 @@ abstract class AbstractComponent
             $this->context->initContext();
         }
 
-        $this->attachExtraCssClasesFromSettings($settings, self::getSlug());
+        $this->attachExtraCssClassesFromSettings($settings, self::getSlug());
         $output = container()->call([$this, 'render'], ['settings' => $settings]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
+    }
+
+    /** @param object|null $settings */
+    private function attachExtraCssClassesFromSettings($settings, ?string $componentSlug): void
+    {
+        if ($settings) {
+            // Add extra classes from the Gutenberg block extra-classes option
+            if (isset($settings->block['className'])) {
+                $additions = explode(' ', $settings->block['className']);
+                if ($additions) {
+                    $this->addCssClasses($additions);
+                }
+            }
+
+            // Add extra classes passed through the extraClasses setting
+            if (isset($settings->cssClasses)) {
+                $additions = is_array($settings->cssClasses) ? $settings->cssClasses : explode(' ', $settings->cssClasses);
+                if ($additions) {
+                    $this->addCssClasses($additions);
+                }
+            }
+        }
+
+        $this->cssClasses = apply_filters('offbeatwp/component/classes',  $this->cssClasses, $componentSlug);
     }
 
     protected function getCacheId($settings): string

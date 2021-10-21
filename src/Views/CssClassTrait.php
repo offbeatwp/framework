@@ -4,8 +4,6 @@ namespace OffbeatWP\Views;
 
 trait CssClassTrait
 {
-    private $cssClasses = [];
-
     protected function addCssClass(string $className): void
     {
         $this->cssClasses[] = $className;
@@ -46,29 +44,6 @@ trait CssClassTrait
     protected function getCssClasses(): array
     {
         return $this->cssClasses;
-    }
-
-    protected function attachExtraCssClasesFromSettings(?object $settings, ?string $componentSlug): void
-    {
-        if ($settings) {
-            // Add extra classes from the Gutenberg block extra-classes option
-            if (isset($settings->block['className'])) {
-                $additions = explode(' ', $settings->block['className']);
-                if ($additions) {
-                    $this->addCssClasses($additions);
-                }
-            }
-
-            // Add extra classes passed through the extraClasses setting
-            if (isset($settings->cssClasses)) {
-                $additions = is_array($settings->cssClasses) ? $settings->cssClasses : explode(' ', $settings->cssClasses);
-                if ($additions) {
-                    $this->addCssClasses($additions);
-                }
-            }
-        }
-
-        $this->cssClasses = apply_filters('offbeatwp/component/classes',  $this->cssClasses, $componentSlug);
     }
 
     protected function getCssClassesAsString(): string
