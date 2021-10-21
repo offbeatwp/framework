@@ -34,6 +34,10 @@ class Post
 
     public function maybeRedirect(PostModel $post)
     {
+        if (is_preview()) {
+            return;
+        }
+        
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
         $requestUri = strtok($request->getUri(), '?');
         $postUri = $post->getPermalink();

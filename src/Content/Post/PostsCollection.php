@@ -3,12 +3,14 @@ namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Collection;
 use WP_Post;
+use WP_Query;
 
 /** @template T */
 class PostsCollection extends Collection
 {
     protected $query = null;
 
+    /** @var int[]|WP_Post[]|WP_Query $items */
     public function __construct($items) {
         if (is_object($items)) {
             $this->query = $items;
@@ -47,44 +49,43 @@ class PostsCollection extends Collection
 
     public function map(callable $callback): Collection {
         $keys = array_keys($this->items);
-
         $items = array_map($callback, $this->items, $keys);
 
         return new Collection(array_combine($keys, $items));
     }
 
-    /** @return T|null */
-    public function first(callable $callback = null, $default = null): ?PostModel
+    /** @return PostModel|null */
+    public function first(callable $callback = null, $default = null)
     {
         return parent::first($callback, $default);
     }
 
-    /** @return T|null */
-    public function last(callable $callback = null, $default = null): ?PostModel
+    /** @return PostModel|null */
+    public function last(callable $callback = null, $default = null)
     {
         return parent::last($callback, $default);
     }
 
-    /** @return T|null */
-    public function pop($count = 1): ?PostModel
+    /** @return PostModel|null */
+    public function pop($count = 1)
     {
         return parent::pop($count);
     }
 
-    /** @return T|null */
-    public function pull($key, $default = null): ?PostModel
+    /** @return PostModel|null */
+    public function pull($key, $default = null)
     {
         return parent::pull($key, $default);
     }
 
-    /** @return T|null */
-    public function reduce(callable $callback, $initial = null): ?PostModel
+    /** @return PostModel|null */
+    public function reduce(callable $callback, $initial = null)
     {
         return parent::reduce($callback, $initial);
     }
 
-    /** @return T|null */
-    public function shift($count = 1): ?PostModel
+    /** @return PostModel|null */
+    public function shift($count = 1)
     {
         return parent::shift($count);
     }
