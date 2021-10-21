@@ -7,28 +7,27 @@ use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Layout\ContextInterface;
+use OffbeatWP\Views\CssClassTrait;
 use OffbeatWP\Views\ViewableTrait;
 use ReflectionClass;
 
 abstract class AbstractComponent
 {
-    use ViewableTrait;
+    use CssClassTrait;
+    use ViewableTrait {
+        ViewableTrait::view as protected traitView;
+    }
 
-    /** @var View */
     public $view;
-    /** @var ContextInterface|null */
-    protected $context;
-    /** @var Form|null */
     public $form = null;
+    protected $context;
+    private $cssClasses = [];
 
-	/**
-     * @internal Use getForm instead
-     * @return Form|null
-     */
-	public static function form()
+    /** @return Form|null */
+    public static function form()
     {
-		return null;
-	}
+        return null;
+    }
 
     /**
      * Specify component settings. Available settings include:
@@ -46,7 +45,7 @@ abstract class AbstractComponent
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
      * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: Array<string>}
      */
-	abstract static function settings();
+    abstract static function settings();
 
     public function __construct(View $view, ContextInterface $context = null)
     {
@@ -54,9 +53,18 @@ abstract class AbstractComponent
         $this->context = $context;
 
         if (!offbeat()->container->has('componentCache')) {
-            // just a simple lightweight cache if none is set
+            // Just a simple lightweight cache if none is set
             offbeat()->container->set('componentCache', new ArrayCache());
         }
+    }
+
+    public function view(string $name, array $data = [])
+    {
+        if (!isset($data['cssClasses'])) {
+            $data['cssClasses'] = $this->getCssClassesAsString();
+        }
+
+        return $this->traitView($name, $data);
     }
 
     /** Can this component be rendered? */
@@ -67,7 +75,6 @@ abstract class AbstractComponent
 
     /**
      * Render the component.
-     *
      * @param object|array $settings
      * @return string
      */
@@ -79,6 +86,7 @@ abstract class AbstractComponent
 
         $cachedId = $this->getCacheId($settings);
         $object = $this->getCachedComponent($cachedId);
+
         if ($object !== false) {
             return $object;
         }
@@ -87,10 +95,35 @@ abstract class AbstractComponent
             $this->context->initContext();
         }
 
+        $this->attachExtraCssClassesFromSettings($settings, self::getSlug());
         $output = container()->call([$this, 'render'], ['settings' => $settings]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
+    }
+
+    /** @param object|null $settings */
+    private function attachExtraCssClassesFromSettings($settings, ?string $componentSlug): void
+    {
+        if ($settings) {
+            // Add extra classes from the Gutenberg block extra-classes option
+            if (isset($settings->block['className'])) {
+                $additions = explode(' ', $settings->block['className']);
+                if ($additions) {
+                    $this->addCssClasses($additions);
+                }
+            }
+
+            // Add extra classes passed through the extraClasses setting
+            if (isset($settings->cssClasses)) {
+                $additions = is_array($settings->cssClasses) ? $settings->cssClasses : explode(' ', $settings->cssClasses);
+                if ($additions) {
+                    $this->addCssClasses($additions);
+                }
+            }
+        }
+
+        $this->setCssClasses(apply_filters('offbeatwp/component/classes', $this->cssClasses, $componentSlug));
     }
 
     protected function getCacheId($settings): string
@@ -99,31 +132,33 @@ abstract class AbstractComponent
         return md5($prefix . get_class($this) . json_encode($settings));
     }
 
+    /** @return false|string */
     protected function getCachedComponent($id)
     {
-        $object = $this->getCachedObject($id);
-        if ($object !== false) {
-            return $object;
-        }
-
-        return false;
+        return $this->getCachedObject($id);
     }
 
-    protected function getCachedObject($id)
+    /** @return false|string */
+    protected function getCachedObject(string $id)
     {
         return container('componentCache')->fetch($id);
     }
 
-    protected function setCachedObject(string $id, $object): string
+    protected function setCachedObject(string $id, string $object): string
     {
-        container('componentCache')->save($id, (string)$object, 60);
-        return (string)$object;
+        container('componentCache')->save($id, $object, 60);
+        return $object;
     }
 
-    public static function supports($service): bool
+    public static function supports(string $service): bool
     {
         $settings = static::settings();
-        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports']));
+        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
+    }
+
+    public static function getName(): ?string
+    {
+        return static::getSetting('name');
     }
 
     /** @return string|string[]|null */
@@ -132,11 +167,6 @@ abstract class AbstractComponent
         $settings = static::settings();
 
         return $settings[$key] ?? null;
-    }
-
-    public static function getName(): ?string
-    {
-        return static::getSetting('name');
     }
 
     public static function getSlug(): ?string
@@ -154,7 +184,8 @@ abstract class AbstractComponent
         return static::getSetting('category');
     }
 
-    public static function getIcon(): ?string {
+    public static function getIcon(): ?string
+    {
         return static::getSetting('icon');
     }
 
@@ -172,18 +203,18 @@ abstract class AbstractComponent
 
     public static function getForm(): Form
     {
-	    $form = static::form();
-	    if(is_null($form)) {
-		    $settings = static::settings();
+        $form = static::form();
+        if (is_null($form)) {
+            $settings = static::settings();
 
-		    if (isset($settings['form'])) {
+            if (isset($settings['form'])) {
                 $form = $settings['form'];
             }
 
-		    if (!($form instanceof Form)) {
-			    $form = new Form();
-		    }
-	    }
+            if (!($form instanceof Form)) {
+                $form = new Form();
+            }
+        }
 
         if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
             $form->addField(
