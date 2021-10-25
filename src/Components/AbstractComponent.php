@@ -144,9 +144,12 @@ abstract class AbstractComponent
         return container('componentCache')->fetch($id);
     }
 
-    protected function setCachedObject(string $id, string $object): string
+    protected function setCachedObject(string $id, ?string $object): ?string
     {
-        container('componentCache')->save($id, $object, 60);
+        if (!empty($object)) {
+            container('componentCache')->save($id, $object, 60);
+        }
+
         return $object;
     }
 
