@@ -1,14 +1,28 @@
 <?php
 namespace OffbeatWP\Routes;
 
-use Symfony\Component\Routing\RouteCollection as RoutingRouteCollection;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Route as SymfonyRoute;
+use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
-class RouteCollection extends RoutingRouteCollection
+class RouteCollection extends SymfonyRouteCollection
 {
-    public function __construct (array $routes = []) {
-        foreach ($routes as $name => $route) {
-            $this->add($name, $route);
+    /** @param SymfonyRoute[] $routes */
+    public function __construct(iterable $routes = []) {
+        foreach ($routes as $routeName => $route) {
+            $this->add($routeName, $route);
         }
+    }
+
+    public function getOrFail(string $name): SymfonyRoute
+    {
+        $route = $this->get($name);
+
+        if (!$route) {
+            throw new RouteNotFoundException('Could not find route: ' . $name);
+        }
+
+        return $route;
     }
 
     public function findByType(string $type): RouteCollection
@@ -16,9 +30,10 @@ class RouteCollection extends RoutingRouteCollection
         return $this->where('type', $type);
     }
 
-    public function where($whereKey, $whereValue): RouteCollection
+    // TODO: Does this method do anything if whereKey isn't type, and won't this dupe all routes?
+    public function where(string $whereKey, string $whereValue): RouteCollection
     {
-        $routes = array_filter($this->all(), static function ($route) use ($whereKey, $whereValue) {
+        $routes = array_filter($this->all(), static function (SymfonyRoute $route) use ($whereKey, $whereValue) {
             return $whereKey === 'type' && get_class($route) === $whereValue;
         });
 
