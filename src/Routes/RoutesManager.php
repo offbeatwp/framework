@@ -143,9 +143,9 @@ class RoutesManager
         return null;
     }
 
-    public function removeRoute(Route $route): void
+    public function removeRoute(?Route $route): void
     {
-        if ($route->getOption('persistent') === true) {
+        if (!$route || $route->getOption('persistent') === true) {
             return;
         }
 

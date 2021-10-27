@@ -8,8 +8,10 @@ use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
+use OffbeatWP\Exceptions\ErroringRouteException;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Http\Http;
+use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Wordpress\WordpressService;
 use WP_Error;
@@ -22,6 +24,7 @@ class App
     public $container;
     private $services = [];
     protected $config = null;
+    /** @var Route|null */
     protected $route;
 
     public static function singleton()
@@ -93,6 +96,7 @@ class App
                         $binding = autowire($binding);
                     }
                 }
+
                 $containerBuilder->addDefinitions($service->bindings);
             }
 
@@ -109,7 +113,6 @@ class App
                 }
             }
         }
-
     }
 
     public function getService($serviceClass)
@@ -178,6 +181,7 @@ class App
         $this->route = $route;
     }
 
+    /** @throws ErroringRouteException */
     public function run($config = []): void
     {
         $route = $this->route;
@@ -187,6 +191,10 @@ class App
             offbeat('routes')->removeRoute($route);
 
             $output = $this->runRoute($route);
+
+            if (is_wp_error($output)) {
+                throw new ErroringRouteException('Route returned WP_Error: ' . $output->get_error_message());
+            }
 
             if ($output === false) {
                 throw new InvalidRouteException('Route returned false, trying to find next match');
@@ -204,11 +212,12 @@ class App
     }
 
     /** @return string|WP_Error|false */
-    public function runRoute($route)
+    public function runRoute($routeToRun)
     {
-        $route = apply_filters('offbeatwp/route/run/init', $route);
+        /** @var Route|null|false $route */
+        $route = apply_filters('offbeatwp/route/run/init', $routeToRun);
 
-        if ($route !== false && $route->hasValidActionCallback()) {
+        if ($route && $route->hasValidActionCallback()) {
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
