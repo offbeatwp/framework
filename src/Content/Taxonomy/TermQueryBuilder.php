@@ -158,7 +158,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
-     * @param string|string[]|int[] $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
      * @param string|int|string[]|int[] $value
      * @param string $compare
      * @return $this
