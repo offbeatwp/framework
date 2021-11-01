@@ -89,7 +89,8 @@ class RoutesManager
         $this->getRouteCollection()->add($route->getName(), $route);
     }
 
-    public function findRoute(): ?SymfonyRoute
+    /** @return SymfonyRoute|false|null */
+    public function findRoute()
     {
         $route = $this->findPathRoute();
 
@@ -102,7 +103,8 @@ class RoutesManager
         return $route;
     }
 
-    public function findPathRoute(): ?SymfonyRoute
+    /** @return SymfonyRoute|false|null */
+    public function findPathRoute()
     {
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
 
@@ -123,11 +125,12 @@ class RoutesManager
 
             return $route;
         } catch (InvalidRouteException $e) {
-            return null;
+            return false;
         }
     }
 
-    public function findCallbackRoute(): ?SymfonyRoute
+    /** @return SymfonyRoute|false|null */
+    public function findCallbackRoute()
     {
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);
 
@@ -140,12 +143,12 @@ class RoutesManager
             }
         }
 
-        return null;
+        return false;
     }
 
-    public function removeRoute(?Route $route): void
+    public function removeRoute(Route $route): void
     {
-        if (!$route || $route->getOption('persistent') === true) {
+        if ($route->getOption('persistent') === true) {
             return;
         }
 

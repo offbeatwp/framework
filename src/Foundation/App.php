@@ -8,7 +8,7 @@ use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
-use OffbeatWP\Exceptions\ErroringRouteException;
+use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\Routes\Route;
@@ -181,19 +181,21 @@ class App
         $this->route = $route;
     }
 
-    /** @throws ErroringRouteException */
+    /** @throws WpErrorException */
     public function run($config = []): void
     {
         $route = $this->route;
 
         try {
             // Remove route from collection so if there is a second run it skips this route
-            offbeat('routes')->removeRoute($route);
+            if ($route) {
+                offbeat('routes')->removeRoute($route);
+            }
 
             $output = $this->runRoute($route);
 
             if (is_wp_error($output)) {
-                throw new ErroringRouteException('Route returned WP_Error: ' . $output->get_error_message());
+                throw new WpErrorException('Route returned WP_Error: ' . $output->get_error_message());
             }
 
             if ($output === false) {
@@ -211,7 +213,10 @@ class App
         }
     }
 
-    /** @return string|WP_Error|false */
+    /**
+     * @param Route|null|false $routeToRun
+     * @return string|WP_Error|false
+     */
     public function runRoute($routeToRun)
     {
         /** @var Route|null|false $route */
