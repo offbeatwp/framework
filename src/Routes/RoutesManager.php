@@ -98,7 +98,9 @@ class RoutesManager
             $route = $this->findCallbackRoute();
         }
 
-        $this->lastMatchRoute = $route;
+        if ($route) {
+            $this->lastMatchRoute = $route;
+        }
 
         return $route;
     }
