@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Exceptions\TermModelNotFoundException;
 use WP_Term_Query;
 
 class TermQueryBuilder extends AbstractQueryBuilder
@@ -10,6 +11,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     protected $model;
     protected $taxonomy;
 
+    /** @param class-string<TermModel> $model */
     public function __construct($model)
     {
         $this->model = $model;
@@ -58,7 +60,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->get();
     }
 
-    public function take($numberOfItems): TermsCollection
+    public function take(int $numberOfItems): TermsCollection
     {
         $this->queryVars['number'] = $numberOfItems;
 
@@ -70,31 +72,81 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    public function findById($id)
+    /** @throws TermModelNotFoundException */
+    public function firstOrFail(): TermModel
+    {
+        $result = $this->first();
+
+        if (!$result) {
+            throw new TermModelNotFoundException('The query did not return any TermModels');
+        }
+
+        return $result;
+    }
+
+    /** @return TermModel|false */
+    public function findById(int $id)
     {
         return $this->findBy('id', $id);
     }
 
-    public function findBySlug($slug)
+    /** @throws TermModelNotFoundException */
+    public function findByIdOrFail(int $id): TermModel
+    {
+        return $this->findOrFail('id', $id);
+    }
+
+    /** @return TermModel|false */
+    public function findBySlug(string $slug)
     {
         return $this->findBy('slug', $slug);
     }
 
-    public function findByName($name)
+    /** @throws TermModelNotFoundException */
+    public function findBySlugOrFail(string $slug): TermModel
+    {
+        return $this->findOrFail('slug', $slug);
+    }
+
+    /** @return TermModel|false */
+    public function findByName(string $name)
     {
         return $this->findBy('name', $name);
     }
 
-    /** @return TermModel|false */
-    public function findBy($field, $value)
+    /** @throws TermModelNotFoundException */
+    public function findByNameOrFail(string $name): TermModel
+    {
+        return $this->findOrFail('name', $name);
+    }
+
+    /**
+     * @param string $field
+     * @param string|int $value
+     * @return TermModel|false|null
+     */
+    public function findBy(string $field, $value)
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        if (!empty($term)) {
-            $term = new $this->model($term);
+        return empty($term) ? $term : new $this->model($term);
+    }
+
+    /**
+     * @param string $field
+     * @param string|int $value
+     * @return TermModel
+     * @throws TermModelNotFoundException
+     */
+    public function findOrFail(string $field, $value): TermModel
+    {
+        $result = $this->findBy($field, $value);
+
+        if (!$result) {
+            throw new TermModelNotFoundException('Could not find term model where ' . $field . ' has a value of ' . $value);
         }
 
-        return $term;
+        return $result;
     }
 
     // Chainable methods
@@ -105,7 +157,13 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function whereMeta($key, $value = '', $compare = '='): TermQueryBuilder
+    /**
+     * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|int|string[]|int[] $value
+     * @param string $compare
+     * @return $this
+     */
+    public function whereMeta($key, $value = '', string $compare = '='): TermQueryBuilder
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -117,7 +175,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
             $parameters = [
                 'key' => $key,
                 'value' => $value,
-                'compare' => $compare,
+                'compare' => $compare
             ];
         }
 
@@ -126,6 +184,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /** @param int|int[] $postIds */
     public function whereRelatedToPost($postIds): TermQueryBuilder
     {
         $this->queryVars['object_ids'] = $postIds;
@@ -133,7 +192,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function excludeEmpty($hideEmpty = true): TermQueryBuilder
+    public function excludeEmpty(bool $hideEmpty = true): TermQueryBuilder
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
 
