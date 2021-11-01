@@ -4,13 +4,17 @@ namespace OffbeatWP\Form\FieldsContainers;
 use Illuminate\Support\Collection;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
+use OffbeatWP\Form\Form;
 
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
     public const LEVEL = 0;
 
+    /** @var string */
     public $id;
+    /** @var string */
     public $label;
+    /** @var Form|FieldsCollectionInterface|FieldsContainerInterface */
     public $parent;
     public $attributes = [];
 
