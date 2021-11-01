@@ -8,11 +8,10 @@ use WP_Query;
 /** @template T */
 class PostsCollection extends Collection
 {
-    /** @var WP_Query|object|null */
     protected $query = null;
 
-    public function __construct($items)
-    {
+    /** @var int[]|WP_Post[]|WP_Query $items */
+    public function __construct($items) {
         if (is_object($items)) {
             $this->query = $items;
 
@@ -35,63 +34,58 @@ class PostsCollection extends Collection
         parent::__construct($items);
     }
 
-    public function getIterator(): WpPostsIterator
-    {
+    public function getIterator(): WpPostsIterator {
         return new WpPostsIterator($this->items);
     }
 
-    public function getQuery()
-    {
+    public function getQuery() {
         return $this->query;
     }
 
     /** Returns this PostsCollection as a generic Collection */
-    public function toCollection(): Collection
-    {
+    public function toCollection(): Collection {
         return collect($this->toArray());
     }
 
-    public function map(callable $callback): Collection
-    {
+    public function map(callable $callback): Collection {
         $keys = array_keys($this->items);
-
         $items = array_map($callback, $this->items, $keys);
 
         return new Collection(array_combine($keys, $items));
     }
 
-    /** @return T|null */
-    public function first(callable $callback = null, $default = null): ?PostModel
+    /** @return PostModel|null */
+    public function first(callable $callback = null, $default = null)
     {
         return parent::first($callback, $default);
     }
 
-    /** @return T|null */
-    public function last(callable $callback = null, $default = null): ?PostModel
+    /** @return PostModel|null */
+    public function last(callable $callback = null, $default = null)
     {
         return parent::last($callback, $default);
     }
 
-    /** @return T|null */
-    public function pop($count = 1): ?PostModel
+    /** @return PostModel|null */
+    public function pop($count = 1)
     {
         return parent::pop($count);
     }
 
-    /** @return T|null */
-    public function pull($key, $default = null): ?PostModel
+    /** @return PostModel|null */
+    public function pull($key, $default = null)
     {
         return parent::pull($key, $default);
     }
 
-    /** @return T|null */
-    public function reduce(callable $callback, $initial = null): ?PostModel
+    /** @return PostModel|null */
+    public function reduce(callable $callback, $initial = null)
     {
         return parent::reduce($callback, $initial);
     }
 
-    /** @return T|null */
-    public function shift($count = 1): ?PostModel
+    /** @return PostModel|null */
+    public function shift($count = 1)
     {
         return parent::shift($count);
     }
