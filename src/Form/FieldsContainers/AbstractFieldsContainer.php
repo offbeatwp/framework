@@ -3,6 +3,7 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
 use OffbeatWP\Form\Fields\AbstractField;
+use OffbeatWP\Form\Fields\FieldInterface;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\Form;
 
@@ -14,7 +15,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
     public $id;
     /** @var string */
     public $label;
-    /** @var Form|FieldsCollectionInterface|FieldsContainerInterface */
+    /** @var Form|FieldsCollectionInterface|FieldsContainerInterface|FieldInterface */
     public $parent;
     public $attributes = [];
 
@@ -50,6 +51,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $this->label;
     }
 
+    /** @var Form|FieldsCollectionInterface|FieldsContainerInterface|FieldInterface */
     public function setParent($item): void
     {
         $this->parent = $item;
