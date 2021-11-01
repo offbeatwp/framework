@@ -28,8 +28,8 @@ class Form extends Collection
     public function add($item, bool $prepend = false): Form
     {
         // If item is Tab and active item is Section move back to parent
-        if (($this->getActiveItem() !== $this) && $item instanceof FieldsContainerInterface) {
-            while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
+        if ($this->getActiveItem() !== $this && $item instanceof FieldsContainerInterface) {
+            while ($item->getLevel() < $this->getActiveItem()->getLevel()) {
                 $this->closeField();
             }
         }

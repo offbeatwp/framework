@@ -9,8 +9,6 @@ use OffbeatWP\Form\Form;
 
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
-    public const LEVEL = 0;
-
     /** @var string */
     public $id;
     /** @var string */
@@ -64,7 +62,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
 
     public function getLevel(): int
     {
-        return self::LEVEL;
+        return static::LEVEL;
     }
 
     public function setAttributes(array $attributes)
