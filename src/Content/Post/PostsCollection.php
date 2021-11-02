@@ -5,7 +5,7 @@ use Illuminate\Support\Collection;
 use WP_Post;
 use WP_Query;
 
-/** @template T */
+/** @template T of PostModel */
 class PostsCollection extends Collection
 {
     protected $query = null;
@@ -54,37 +54,37 @@ class PostsCollection extends Collection
         return new Collection(array_combine($keys, $items));
     }
 
-    /** @return PostModel|null */
+    /** @return T|PostModel|mixed */
     public function first(callable $callback = null, $default = null)
     {
         return parent::first($callback, $default);
     }
 
-    /** @return PostModel|null */
+    /** @return T|PostModel|mixed */
     public function last(callable $callback = null, $default = null)
     {
         return parent::last($callback, $default);
     }
 
-    /** @return PostModel|null */
+    /** @return T|PostModel|static|null */
     public function pop($count = 1)
     {
         return parent::pop($count);
     }
 
-    /** @return PostModel|null */
+    /** @return T|PostModel|mixed */
     public function pull($key, $default = null)
     {
         return parent::pull($key, $default);
     }
 
-    /** @return PostModel|null */
+    /** @return T|PostModel|null */
     public function reduce(callable $callback, $initial = null)
     {
         return parent::reduce($callback, $initial);
     }
 
-    /** @return PostModel|null */
+    /** @return T|PostModel|static|null */
     public function shift($count = 1)
     {
         return parent::shift($count);

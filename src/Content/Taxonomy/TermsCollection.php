@@ -5,7 +5,7 @@ use Illuminate\Support\Collection;
 use OffbeatWP\Exceptions\TermsCollectionException;
 use WP_Term;
 
-/** @template T */
+/** @template T of TermModel */
 class TermsCollection extends Collection
 {
     /**
@@ -34,31 +34,31 @@ class TermsCollection extends Collection
         return collect($this->toArray());
     }
 
-    /** @return T|mixed */
+    /** @return T|TermModel|mixed */
     public function first(callable $callback = null, $default = null)
     {
         return parent::first($callback, $default);
     }
 
-    /** @return T|mixed */
+    /** @return T|TermModel|mixed */
     public function last(callable $callback = null, $default = null)
     {
         return parent::last($callback, $default);
     }
 
-    /** @return T|TermModel|Collection<T|TermModel> */
+    /** @return T|TermModel|static|null */
     public function pop($count = 1)
     {
         return parent::pop($count);
     }
 
-    /** @return T|TermModel|Collection<T|TermModel>|null */
+    /** @return T|TermModel|mixed */
     public function pull($key, $default = null)
     {
         return parent::pull($key, $default);
     }
 
-    /** @return T|TermModel|Collection<T|TermModel> */
+    /** @return T|TermModel|static|null */
     public function shift($count = 1)
     {
         return parent::shift($count);
