@@ -73,7 +73,7 @@ class TermsCollection extends Collection
         $model = null;
 
         if (is_int($item) || $item instanceof WP_Term) {
-            $model = new TermModel($item);
+            $model = offbeat('taxonomy')->get($item);
         } else if ($item instanceof TermModel) {
             $model = $item;
         }
