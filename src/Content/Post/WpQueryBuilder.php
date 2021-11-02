@@ -3,7 +3,6 @@ namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
 use OffbeatWP\Exceptions\PostModelNotFoundException;
-use WP_Post;
 use WP_Query;
 
 class WpQueryBuilder extends AbstractQueryBuilder
@@ -22,6 +21,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
+    /** @return PostsCollection<PostModel> */
     public function get(): PostsCollection
     {
         $posts = new WP_Query($this->queryVars);

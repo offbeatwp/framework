@@ -4,8 +4,12 @@ namespace OffbeatWP\Content\Post;
 use Illuminate\Support\Collection;
 use WP_Post;
 use WP_Query;
+use ArrayAccess;
 
-/** @template T of PostModel */
+/**
+ * @template T of PostModel
+ * @template-extends ArrayAccess<array-key|null, T>
+ */
 class PostsCollection extends Collection
 {
     protected $query = null;

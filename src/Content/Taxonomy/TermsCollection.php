@@ -4,8 +4,12 @@ namespace OffbeatWP\Content\Taxonomy;
 use Illuminate\Support\Collection;
 use OffbeatWP\Exceptions\TermsCollectionException;
 use WP_Term;
+use ArrayAccess;
 
-/** @template T of TermModel */
+/**
+ * @template T of TermModel
+ * @template-extends ArrayAccess<array-key|null, T>
+ */
 class TermsCollection extends Collection
 {
     /**

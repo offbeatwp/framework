@@ -38,7 +38,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         $this->order($orderBy, $order);
     }
 
-    // Retrieval methods
+    /** @return TermsCollection<TermModel> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
