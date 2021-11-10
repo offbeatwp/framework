@@ -110,7 +110,7 @@ abstract class AbstractComponent
             if (isset($settings->block['className'])) {
                 $additions = explode(' ', $settings->block['className']);
                 if ($additions) {
-                    $this->addCssClasses($additions);
+                    $this->addCssClass(...$additions);
                 }
             }
 
@@ -118,7 +118,7 @@ abstract class AbstractComponent
             if (isset($settings->cssClasses)) {
                 $additions = is_array($settings->cssClasses) ? $settings->cssClasses : explode(' ', $settings->cssClasses);
                 if ($additions) {
-                    $this->addCssClasses($additions);
+                    $this->addCssClass(...$additions);
                 }
             }
         }

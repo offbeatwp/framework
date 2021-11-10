@@ -4,32 +4,19 @@ namespace OffbeatWP\Views;
 
 trait CssClassTrait
 {
-    protected function addCssClass(string $className): void
-    {
-        $this->cssClasses[] = $className;
-    }
-
-    protected function addCssClasses(iterable $classes): void
+    protected function addCssClass(string ...$classes): void
     {
         foreach ($classes as $class) {
             $this->addCssClass($class);
         }
     }
 
-    protected function hasClass(string $class): bool
+    protected function hasCssClass(string $class): bool
     {
         return in_array($class, $this->cssClasses, true);
     }
 
-    protected function removeCssClass(string $className): void
-    {
-        $key = array_search($className, $this->cssClasses, true);
-        if ($key !== false) {
-            unset($this->cssClasses[$key]);
-        }
-    }
-
-    protected function removeCssClasses(iterable $classes): void
+    protected function removeCssClass(string ...$classes): void
     {
         foreach ($classes as $class) {
             $this->removeCssClass($class);
