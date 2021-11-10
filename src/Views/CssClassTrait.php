@@ -7,7 +7,7 @@ trait CssClassTrait
     protected function addCssClass(string ...$classes): void
     {
         foreach ($classes as $class) {
-            $this->addCssClass($class);
+            $this->cssClasses[] = $class;
         }
     }
 
@@ -19,7 +19,10 @@ trait CssClassTrait
     protected function removeCssClass(string ...$classes): void
     {
         foreach ($classes as $class) {
-            $this->removeCssClass($class);
+            $key = array_search($class, $this->cssClasses, true);
+            if ($key !== false) {
+                unset($this->cssClasses[$key]);
+            }
         }
     }
 
@@ -29,6 +32,7 @@ trait CssClassTrait
         $this->cssClasses = $classes;
     }
 
+    /** @return string[] */
     protected function getCssClasses(): array
     {
         return $this->cssClasses;
