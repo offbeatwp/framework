@@ -18,6 +18,8 @@ class HttpStatusPagesService extends AbstractService
     }
 
     public function renderHttpStatusPage($return, int $code) {
+        global $wp_query, $wp_the_query;
+
         $pageId = setting("http-status-page-{$code}");
 
         if (!$pageId || !is_numeric($pageId)) {
@@ -26,6 +28,8 @@ class HttpStatusPagesService extends AbstractService
 
         query_posts(['page_id' => $pageId]);
         the_post();
+
+        $wp_the_query = $wp_query;
 
         $route = offbeat('routes')->findCallbackRoute();
 
