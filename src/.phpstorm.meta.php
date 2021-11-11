@@ -14,7 +14,8 @@ namespace PHPSTORM_META {
         'design' => \OffbeatWP\Support\Wordpress\Design::class,
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
-        'assets' => \OffbeatWP\Assets\AssetsManager::class
+        'assets' => \OffbeatWP\Assets\AssetsManager::class,
+        'http' => \OffbeatWP\Http\Http::class
     ]));
 
     override(\container(), map([
@@ -30,6 +31,7 @@ namespace PHPSTORM_META {
         'design' => \OffbeatWP\Support\Wordpress\Design::class,
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
-        'assets' => \OffbeatWP\Assets\AssetsManager::class
+        'assets' => \OffbeatWP\Assets\AssetsManager::class,
+        'http' => \OffbeatWP\Http\Http::class
     ]));
 }
