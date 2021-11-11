@@ -17,7 +17,7 @@ class HttpStatusPagesService extends AbstractService
         add_filter('offbeatwp/http_status', [$this, 'renderHttpStatusPage'], 20, 2);
     }
 
-    public function renderHttpStatusPage($return, $code) {
+    public function renderHttpStatusPage($return, int $code) {
         $pageId = setting("http-status-page-{$code}");
 
         if (!$pageId || !is_numeric($pageId)) {
