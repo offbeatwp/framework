@@ -9,8 +9,9 @@ use WP_Term;
 
 class Taxonomy
 {
-    const DEFAULT_TERM_MODEL = TermModel::class;
+    public const DEFAULT_TERM_MODEL = TermModel::class;
 
+    /** @var class-string<TermModel> */
     private $taxonomyModels = [];
 
     /**
@@ -25,21 +26,29 @@ class Taxonomy
         return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName, $singleName);
     }
 
+    /**
+     * @param string $taxonomy
+     * @param class-string<TermModel> $modelClass
+     */
     public function registerTermModel(string $taxonomy, string $modelClass)
     {
         $this->taxonomyModels[$taxonomy] = $modelClass;
     }
 
-    public function getModelByTaxonomy(string $taxonomy)
+    /** @return class-string<TermModel> */
+    public function getModelByTaxonomy(string $taxonomy): string
     {
-        if (isset($this->taxonomyModels[$taxonomy])) {
-            return $this->taxonomyModels[$taxonomy];
-        }
-
-        return self::DEFAULT_TERM_MODEL;
+        return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
+    /** @deprecated Use convertWpTermToModel instead */
     public function convertWpPostToModel(WP_Term $term)
+    {
+        return $this->convertWpTermToModel($term);
+    }
+
+    /** @return TermModel */
+    public function convertWpTermToModel(WP_Term $term)
     {
         $model = $this->getModelByTaxonomy($term->taxonomy);
 
@@ -55,20 +64,20 @@ class Taxonomy
     public function get($term = null)
     {
         if ($term instanceof WP_Term) {
-            return $this->convertWpPostToModel($term);
+            return $this->convertWpTermToModel($term);
         }
 
         if ($term === null && (is_tax() || is_tag() || is_category())) {
             $obj = get_queried_object();
             if ($obj instanceof WP_Term) {
-                return $this->convertWpPostToModel($obj);
+                return $this->convertWpTermToModel($obj);
             }
         }
 
-        $term = get_term($term);
+        $retrievedTerm = get_term($term);
 
-        if (!empty($term)) {
-            return $this->convertWpPostToModel($term);
+        if (!empty($retrievedTerm)) {
+            return $this->convertWpTermToModel($retrievedTerm);
         }
 
         return null;
