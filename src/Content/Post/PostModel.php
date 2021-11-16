@@ -20,6 +20,7 @@ use WP_Post;
  */
 class PostModel implements PostModelInterface
 {
+    public const POST_TYPE = null;
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
@@ -517,6 +518,11 @@ class PostModel implements PostModelInterface
     public function belongsToMany($key): BelongsToMany
     {
         return new BelongsToMany($this, $key);
+    }
+
+    protected static function getDefinedType(): ?string
+    {
+        return static::POST_TYPE;
     }
 
     public static function query(): WpQueryBuilderModel

@@ -12,14 +12,16 @@ use WP_Term;
  */
 class TermModel implements TermModelInterface
 {
+    public const TAXONOMY = null;
+
+    public $wpTerm;
+    public $id;
+
     use FindModelTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
     }
-
-    public $wpTerm;
-    public $id;
 
     /** @param WP_Term|int|null */
     public function __construct($term)
@@ -139,12 +141,19 @@ class TermModel implements TermModelInterface
     {
         global $wp_taxonomies;
 
-        // If no posttypes defined, get posttypes where the taxonomy is assigned to
+        $type = self::getDefinedType();
+
+        // If no post types defined, get postt ypes where the taxonomy is assigned to
         if (empty($postTypes)) {
-            $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
+            $postTypes = isset($wp_taxonomies[$type]) ? $wp_taxonomies[$type]->object_type : ['any'];
         }
 
-        return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+        return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm($type, $this->getId(), 'term_id');
+    }
+
+    protected static function getDefinedType(): ?string
+    {
+        return static::TAXONOMY;
     }
 
     public static function query(): TermQueryBuilder
