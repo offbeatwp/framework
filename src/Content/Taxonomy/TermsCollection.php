@@ -2,7 +2,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Exceptions\TermsCollectionException;
+use OffbeatWP\Exceptions\OffbeatCollectionException;
 use WP_Term;
 use ArrayAccess;
 
@@ -14,7 +14,7 @@ class TermsCollection extends Collection
 {
     /**
      * @param int[]|WP_Term[]|TermModel[] $items
-     * @throws TermsCollectionException
+     * @throws OffbeatCollectionException
      */
     public function __construct(iterable $items = []) {
         $terms = [];
@@ -70,7 +70,7 @@ class TermsCollection extends Collection
 
     /**
      * @param int|WP_Term|TermModel $item
-     * @throws TermsCollectionException
+     * @throws OffbeatCollectionException
      */
     private function createValidTermModel($item): TermModel
     {
@@ -78,12 +78,12 @@ class TermsCollection extends Collection
 
         if (is_int($item) || $item instanceof WP_Term) {
             $model = offbeat('taxonomy')->get($item);
-        } else if ($item instanceof TermModel) {
+        } elseif ($item instanceof TermModel) {
             $model = $item;
         }
 
         if (!$model || !$model->wpTerm) {
-            throw new TermsCollectionException('Valid TermCollection could not be created with passed items.');
+            throw new OffbeatCollectionException('Valid TermCollection could not be created with passed items.');
         }
 
         return $model;

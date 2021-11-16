@@ -3,7 +3,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
-use OffbeatWP\Exceptions\ModelNotFoundException;
+use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
 class TermQueryBuilder extends AbstractQueryBuilder
@@ -72,13 +72,13 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    /** @throws ModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
 
         if (!$result) {
-            throw new ModelNotFoundException('The query did not return any TermModels');
+            throw new OffbeatModelNotFoundException('The query did not return any TermModels');
         }
 
         return $result;
@@ -90,7 +90,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findBy('id', $id);
     }
 
-    /** @throws ModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByIdOrFail(int $id): TermModel
     {
         return $this->findByOrFail('id', $id);
@@ -102,7 +102,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findBy('slug', $slug);
     }
 
-    /** @throws ModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findBySlugOrFail(string $slug): TermModel
     {
         return $this->findByOrFail('slug', $slug);
@@ -114,7 +114,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findBy('name', $name);
     }
 
-    /** @throws ModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByNameOrFail(string $name): TermModel
     {
         return $this->findByOrFail('name', $name);
@@ -133,17 +133,17 @@ class TermQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
-     * @throws ModelNotFoundException
      * @param string $field
      * @param string|int $value
      * @return TermModel
+     *@throws OffbeatModelNotFoundException
      */
     public function findByOrFail(string $field, $value): TermModel
     {
         $result = $this->findBy($field, $value);
 
         if (!$result) {
-            throw new ModelNotFoundException('Could not find ' . static::class . ' where ' . $field . ' has a value of ' . $value);
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' where ' . $field . ' has a value of ' . $value);
         }
 
         return $result;
