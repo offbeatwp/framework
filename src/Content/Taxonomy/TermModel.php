@@ -12,8 +12,8 @@ use WP_Term;
 class TermModel implements TermModelInterface
 {
     use Macroable {
-        __call as macroCall;
-        __callStatic as macroCallStatic;
+        Macroable::__call as macroCall;
+        Macroable::__callStatic as macroCallStatic;
     }
 
     public $wpTerm;

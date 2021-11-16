@@ -31,8 +31,8 @@ class PostModel implements PostModelInterface
     protected $metas = false;
 
     use Macroable {
-        __call as macroCall;
-        __callStatic as macroCallStatic;
+        Macroable::__call as macroCall;
+        Macroable::__callStatic as macroCallStatic;
     }
 
     /** @param WP_Post|int|null $post */
@@ -134,7 +134,7 @@ class PostModel implements PostModelInterface
             // wp_make_content_images_responsive is deprecated, but we want to maintain some pre-5.5 compat
             if (function_exists('wp_filter_content_tags')) {
                 $content = wp_filter_content_tags($content);
-            } else if (function_exists('wp_make_content_images_responsive')) {
+            } elseif (function_exists('wp_make_content_images_responsive')) {
                 $content = wp_make_content_images_responsive($content);
             }
 
@@ -347,11 +347,7 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        if (!is_null($this->getParentId())) {
-            return true;
-        }
-
-        return false;
+        return !is_null($this->getParentId());
     }
 
     public function getParent(): ?PostModel
@@ -373,6 +369,7 @@ class PostModel implements PostModelInterface
     /** @deprecated Use getChildren instead */
     public function getChilds(): PostsCollection
     {
+        trigger_error('Deprecated getChilds called. Use getChildren instead.', E_USER_DEPRECATED);
         return $this->getChildren();
     }
 
