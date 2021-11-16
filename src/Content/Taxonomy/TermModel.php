@@ -21,7 +21,7 @@ class TermModel implements TermModelInterface
     public $wpTerm;
     public $id;
 
-    /** @param WP_Term|int */
+    /** @param WP_Term|int|null */
     public function __construct($term)
     {
         if ($term instanceof WP_Term) {
