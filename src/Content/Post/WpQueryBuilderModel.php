@@ -10,7 +10,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
     {
         $this->model = $model;
 
-        $this->wherePostType($model::POST_TYPE ?? 'any');
+        $this->wherePostType($model::POST_TYPE ?: 'any');
 
         $order = null;
         $orderDirection = null;
