@@ -26,8 +26,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
-    /** @return PostModel */
-    public function postToModel($post)
+    public function postToModel($post): ?PostModel
     {
         return new $this->model($post);
     }
