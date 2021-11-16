@@ -5,6 +5,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
 {
     protected $model;
 
+    /** @param class-string<PostModel> $model */
     public function __construct($model)
     {
         $this->model = $model;
@@ -25,6 +26,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
+    /** @return PostModel */
     public function postToModel($post)
     {
         return new $this->model($post);
