@@ -93,7 +93,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     /** @throws ModelNotFoundException */
     public function findByIdOrFail(int $id): TermModel
     {
-        return $this->findOrFail('id', $id);
+        return $this->findByOrFail('id', $id);
     }
 
     /** @return TermModel|false */
@@ -105,7 +105,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     /** @throws ModelNotFoundException */
     public function findBySlugOrFail(string $slug): TermModel
     {
-        return $this->findOrFail('slug', $slug);
+        return $this->findByOrFail('slug', $slug);
     }
 
     /** @return TermModel|false */
@@ -117,7 +117,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     /** @throws ModelNotFoundException */
     public function findByNameOrFail(string $name): TermModel
     {
-        return $this->findOrFail('name', $name);
+        return $this->findByOrFail('name', $name);
     }
 
     /**
@@ -138,12 +138,12 @@ class TermQueryBuilder extends AbstractQueryBuilder
      * @param string|int $value
      * @return TermModel
      */
-    public function findOrFail(string $field, $value): TermModel
+    public function findByOrFail(string $field, $value): TermModel
     {
         $result = $this->findBy($field, $value);
 
         if (!$result) {
-            throw new ModelNotFoundException('Could not find term model where ' . $field . ' has a value of ' . $value);
+            throw new ModelNotFoundException('Could not find ' . static::class . ' where ' . $field . ' has a value of ' . $value);
         }
 
         return $result;
