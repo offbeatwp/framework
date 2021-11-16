@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Taxonomy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
+use OffbeatWP\Content\Traits\FindModelTrait;
 use WP_Term;
 
 /**
@@ -11,6 +12,7 @@ use WP_Term;
  */
 class TermModel implements TermModelInterface
 {
+    use FindModelTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
