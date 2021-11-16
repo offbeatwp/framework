@@ -28,7 +28,7 @@ trait FindModelTrait
      * @param int $id
      * @return static
      */
-    public static function findOrCreate(int $id) {
+    public static function findOrNew(int $id) {
         return static::find($id) ?: new static(null);
     }
 }
