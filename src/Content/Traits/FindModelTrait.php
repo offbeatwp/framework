@@ -7,7 +7,7 @@ use OffbeatWP\Exceptions\ModelNotFoundException;
 trait FindModelTrait
 {
     /** @return static|null */
-    public function findById(int $id) {
+    public static function find(int $id) {
         return static::query()->first();
     }
 
@@ -15,8 +15,8 @@ trait FindModelTrait
      * @throws ModelNotFoundException
      * @return static
      */
-    public function findByIdOrFail(int $id) {
-        $item = $this->find($id);
+    public static function findOrFail(int $id) {
+        $item = static::find($id);
         if (!$item) {
             throw new ModelNotFoundException('Could not find ' . static::class . ' model with id ' . $id);
         }
@@ -28,7 +28,7 @@ trait FindModelTrait
      * @param int $id
      * @return static
      */
-    public function findByIdOrCreate(int $id) {
-        return $this->find($id) ?: new static();
+    public static function findOrCreate(int $id) {
+        return static::find($id) ?: new static();
     }
 }
