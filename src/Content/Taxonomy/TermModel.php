@@ -141,9 +141,9 @@ class TermModel implements TermModelInterface
     {
         global $wp_taxonomies;
 
-        $type = self::getDefinedType();
+        $type = self::getModelType();
 
-        // If no post types defined, get postt ypes where the taxonomy is assigned to
+        // If no post types defined, get post types where the taxonomy is assigned to
         if (empty($postTypes)) {
             $postTypes = isset($wp_taxonomies[$type]) ? $wp_taxonomies[$type]->object_type : ['any'];
         }
@@ -151,7 +151,7 @@ class TermModel implements TermModelInterface
         return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm($type, $this->getId(), 'term_id');
     }
 
-    protected static function getDefinedType(): ?string
+    protected static function getModelType(): ?string
     {
         return static::TAXONOMY;
     }

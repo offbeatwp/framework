@@ -520,7 +520,7 @@ class PostModel implements PostModelInterface
         return new BelongsToMany($this, $key);
     }
 
-    protected static function getDefinedType(): ?string
+    protected static function getModelType(): ?string
     {
         return static::POST_TYPE;
     }
