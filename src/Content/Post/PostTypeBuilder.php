@@ -120,7 +120,7 @@ class PostTypeBuilder
         add_action('pre_get_posts', function (WP_Query $query) use ($metaName) {
             if (is_admin() && $query->is_main_query() && $query->get('orderby') === $metaName) {
                 $query->set('orderby', 'meta_value');
-                $query->set('meta_key', 'naam_organisatie');
+                $query->set('meta_key', $metaName);
             }
         });
 
