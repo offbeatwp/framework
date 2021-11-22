@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
+use WP_Query;
 
 class PostTypeBuilder
 {
@@ -85,6 +86,47 @@ class PostTypeBuilder
                 echo $model->$modelFunc();
             }
         }, 10, 2);
+
+        return $this;
+    }
+
+    /**
+     * Easily add a sortabke column to the admin table based on a specific meta value
+     * @param string $metaName  The meta key.
+     * @param string $label     The label to display in the admin. Displays meta key name if omitted.
+     * @param string $orderBy   How the sorting should order the data. Defaults to alphatic. Use 'meta_value_num' for numeric sorting.
+     * @return $this
+     */
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value'): PostTypeBuilder
+    {
+        $label = $label ?: $metaName;
+
+        add_action("manage_{$this->postType}_posts_columns", static function(array $postColumns) use ($metaName, $label) {
+            $postColumns[$metaName] = $label;
+            return $postColumns;
+        });
+
+        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnName, int $postId) use ($metaName) {
+            if ($columnName === $metaName) {
+                echo get_post_meta($postId, $metaName, true);
+            }
+        }, 10, 2);
+
+        add_filter("manage_edit-{$this->postType}_sortable_columns", function (array $columns) use ($metaName) {
+            $columns['naam_organisatie'] = 'naam_organisatie';
+            return $columns;
+        });
+
+        add_action('pre_get_posts', function (WP_Query $query) use ($metaName) {
+            if(!is_admin() || !$query->is_main_query()) {
+                return;
+            }
+
+            if ($query->get('orderby') === $metaName) {
+                $query->set('orderby', 'meta_value');
+                $query->set('meta_key', 'naam_organisatie');
+            }
+        });
 
         return $this;
     }
