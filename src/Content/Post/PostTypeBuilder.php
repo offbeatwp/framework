@@ -99,10 +99,8 @@ class PostTypeBuilder
      */
     public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value'): PostTypeBuilder
     {
-        $label = $label ?: $metaName;
-
         add_action("manage_{$this->postType}_posts_columns", static function(array $postColumns) use ($metaName, $label) {
-            $postColumns[$metaName] = $label;
+            $postColumns[$metaName] = $label ?: $metaName;
             return $postColumns;
         });
 
