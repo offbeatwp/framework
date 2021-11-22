@@ -92,9 +92,9 @@ class PostTypeBuilder
 
     /**
      * Easily add a sortabke column to the admin table based on a specific meta value
-     * @param string $metaName  The meta key.
-     * @param string $label     The label to display in the admin. Displays meta key name if omitted.
-     * @param string $orderBy   How the sorting should order the data. Defaults to alphatic. Use 'meta_value_num' for numeric sorting.
+     * @param string $metaName  The meta key. Required.
+     * @param string $label     The label to display in the admin column. Displays meta key name if omitted.
+     * @param string $orderBy   How the column should be sorted. Defaults to alphatic. Use 'meta_value_num' for numeric sorting.
      * @return $this
      */
     public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value'): PostTypeBuilder
@@ -113,16 +113,12 @@ class PostTypeBuilder
         }, 10, 2);
 
         add_filter("manage_edit-{$this->postType}_sortable_columns", function (array $columns) use ($metaName) {
-            $columns['naam_organisatie'] = 'naam_organisatie';
+            $columns[$metaName] = $metaName;
             return $columns;
         });
 
         add_action('pre_get_posts', function (WP_Query $query) use ($metaName) {
-            if(!is_admin() || !$query->is_main_query()) {
-                return;
-            }
-
-            if ($query->get('orderby') === $metaName) {
+            if (is_admin() && $query->is_main_query() && $query->get('orderby') === $metaName) {
                 $query->set('orderby', 'meta_value');
                 $query->set('meta_key', 'naam_organisatie');
             }
