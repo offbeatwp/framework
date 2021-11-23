@@ -42,6 +42,10 @@ class WpQueryBuilderModel extends WpQueryBuilder
      */
     public function postToModel($post)
     {
+        if ($this->model === PostModel::class) {
+            return parent::postToModel($post);
+        }
+
         return new $this->model($post);
     }
 }
