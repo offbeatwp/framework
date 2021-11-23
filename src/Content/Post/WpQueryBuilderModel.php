@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Exceptions\ModelTypeMismatchException;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use WP_Post;
 
 class WpQueryBuilderModel extends WpQueryBuilder
@@ -9,7 +9,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
     protected $model;
 
     /**
-     * @throws ModelTypeMismatchException
+     * @throws OffbeatInvalidModelException
      * @param class-string<PostModel> $modelClass
      */
     public function __construct(string $modelClass)
@@ -19,7 +19,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
         if (defined("{$modelClass}::POST_TYPE")) {
             $this->wherePostType($modelClass::POST_TYPE);
         } elseif ($modelClass !== PostModel::class) {
-            throw new ModelTypeMismatchException('The POST_TYPE constant must be defined on any model that is not the base PostModel.');
+            throw new OffbeatInvalidModelException('The POST_TYPE constant must be defined on any model that is not abstract or the base PostModel.');
         }
 
         $order = null;
