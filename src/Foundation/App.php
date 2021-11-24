@@ -9,6 +9,7 @@ use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Exceptions\InvalidRouteException;
+use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Wordpress\WordpressService;
@@ -178,6 +179,7 @@ class App
         $this->route = $route;
     }
 
+    /** @throws WpErrorException */
     public function run($config = []): void
     {
         $route = $this->route;
@@ -190,6 +192,10 @@ class App
 
             if ($output === false) {
                 throw new InvalidRouteException('Route returned false, trying to find next match');
+            }
+
+            if ($output instanceof WP_Error) {
+                throw new WpErrorException($output->get_error_message());
             }
 
             $output = apply_filters('route_render_output', $output); //Legacy
