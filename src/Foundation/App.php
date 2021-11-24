@@ -194,12 +194,12 @@ class App
 
             $output = $this->runRoute($route);
 
-            if (is_wp_error($output)) {
-                throw new WpErrorException('Route returned WP_Error: ' . $output->get_error_message());
-            }
-
             if ($output === false) {
                 throw new InvalidRouteException('Route returned false, trying to find next match');
+            }
+
+            if ($output instanceof WP_Error) {
+                throw new WpErrorException($output->get_error_message());
             }
 
             $output = apply_filters('route_render_output', $output); //Legacy
