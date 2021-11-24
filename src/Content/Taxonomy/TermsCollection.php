@@ -2,15 +2,19 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Exceptions\TermsCollectionException;
+use OffbeatWP\Exceptions\OffbeatCollectionException;
 use WP_Term;
+use ArrayAccess;
 
-/** @template T */
+/**
+ * @template T of TermModel
+ * @template-extends ArrayAccess<array-key|null, T>
+ */
 class TermsCollection extends Collection
 {
     /**
      * @param int[]|WP_Term[]|TermModel[] $items
-     * @throws TermsCollectionException
+     * @throws OffbeatCollectionException
      */
     public function __construct(iterable $items = []) {
         $terms = [];
@@ -34,31 +38,31 @@ class TermsCollection extends Collection
         return collect($this->toArray());
     }
 
-    /** @return T|mixed */
+    /** @return T|TermModel|mixed */
     public function first(callable $callback = null, $default = null)
     {
         return parent::first($callback, $default);
     }
 
-    /** @return T|mixed */
+    /** @return T|TermModel|mixed */
     public function last(callable $callback = null, $default = null)
     {
         return parent::last($callback, $default);
     }
 
-    /** @return T|TermModel|Collection<T|TermModel> */
+    /** @return T|TermModel|static|null */
     public function pop($count = 1)
     {
         return parent::pop($count);
     }
 
-    /** @return T|TermModel|Collection<T|TermModel>|null */
+    /** @return T|TermModel|mixed */
     public function pull($key, $default = null)
     {
         return parent::pull($key, $default);
     }
 
-    /** @return T|TermModel|Collection<T|TermModel> */
+    /** @return T|TermModel|static|null */
     public function shift($count = 1)
     {
         return parent::shift($count);
@@ -66,20 +70,20 @@ class TermsCollection extends Collection
 
     /**
      * @param int|WP_Term|TermModel $item
-     * @throws TermsCollectionException
+     * @throws OffbeatCollectionException
      */
     private function createValidTermModel($item): TermModel
     {
         $model = null;
 
         if (is_int($item) || $item instanceof WP_Term) {
-            $model = new TermModel($item);
-        } else if ($item instanceof TermModel) {
+            $model = offbeat('taxonomy')->get($item);
+        } elseif ($item instanceof TermModel) {
             $model = $item;
         }
 
         if (!$model || !$model->wpTerm) {
-            throw new TermsCollectionException('Valid TermCollection could not be created with passed items.');
+            throw new OffbeatCollectionException('Valid TermCollection could not be created with passed items.');
         }
 
         return $model;

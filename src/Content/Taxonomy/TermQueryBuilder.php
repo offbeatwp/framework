@@ -3,7 +3,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
-use OffbeatWP\Exceptions\TermModelNotFoundException;
+use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
 class TermQueryBuilder extends AbstractQueryBuilder
@@ -38,7 +38,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         $this->order($orderBy, $order);
     }
 
-    // Retrieval methods
+    /** @return TermsCollection<TermModel> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
@@ -72,13 +72,13 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
 
         if (!$result) {
-            throw new TermModelNotFoundException('The query did not return any TermModels');
+            throw new OffbeatModelNotFoundException('The query did not return any TermModels');
         }
 
         return $result;
@@ -90,10 +90,10 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findBy('id', $id);
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByIdOrFail(int $id): TermModel
     {
-        return $this->findOrFail('id', $id);
+        return $this->findByOrFail('id', $id);
     }
 
     /** @return TermModel|false */
@@ -102,10 +102,10 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findBy('slug', $slug);
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findBySlugOrFail(string $slug): TermModel
     {
-        return $this->findOrFail('slug', $slug);
+        return $this->findByOrFail('slug', $slug);
     }
 
     /** @return TermModel|false */
@@ -114,10 +114,10 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findBy('name', $name);
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByNameOrFail(string $name): TermModel
     {
-        return $this->findOrFail('name', $name);
+        return $this->findByOrFail('name', $name);
     }
 
     /**
@@ -136,14 +136,14 @@ class TermQueryBuilder extends AbstractQueryBuilder
      * @param string $field
      * @param string|int $value
      * @return TermModel
-     * @throws TermModelNotFoundException
+     *@throws OffbeatModelNotFoundException
      */
-    public function findOrFail(string $field, $value): TermModel
+    public function findByOrFail(string $field, $value): TermModel
     {
         $result = $this->findBy($field, $value);
 
         if (!$result) {
-            throw new TermModelNotFoundException('Could not find term model where ' . $field . ' has a value of ' . $value);
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' where ' . $field . ' has a value of ' . $value);
         }
 
         return $result;
@@ -158,7 +158,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
-     * @param string|string[]|int[] $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
      * @param string|int|string[]|int[] $value
      * @param string $compare
      * @return $this

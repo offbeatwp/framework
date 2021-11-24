@@ -2,8 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
-use OffbeatWP\Exceptions\PostModelNotFoundException;
-use WP_Post;
+use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
 class WpQueryBuilder extends AbstractQueryBuilder
@@ -22,6 +21,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
+    /** @return PostsCollection<PostModel> */
     public function get(): PostsCollection
     {
         $posts = new WP_Query($this->queryVars);
@@ -48,13 +48,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->get()->first();
     }
 
-    /** @throws PostModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function firstOrFail(): PostModel
     {
         $result = $this->first();
 
         if (empty($result)) {
-            throw new PostModelNotFoundException('The query did not return any Postmodels');
+            throw new OffbeatModelNotFoundException('The query did not return any Postmodels');
         }
 
         return $result;
@@ -67,13 +67,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->first();
     }
 
-    /** @throws PostModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByIdOrFail(int $id): PostModel
     {
         $result = $this->findById($id);
 
         if (empty($result)) {
-            throw new PostModelNotFoundException("PostModel with id " . $id . " could not be found");
+            throw new OffbeatModelNotFoundException("PostModel with id " . $id . " could not be found");
         }
 
         return $result;
@@ -86,13 +86,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this->first();
     }
 
-    /** @throws PostModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByNameOrFail(string $name): PostModel
     {
         $result = $this->findByName($name);
 
         if (empty($result)) {
-            throw new PostModelNotFoundException("PostModel with name " . $name . " could not be found");
+            throw new OffbeatModelNotFoundException("PostModel with name " . $name . " could not be found");
         }
 
         return $result;
@@ -177,7 +177,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
-     * @param string|string[]|int[] $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
      * @param string|int|string[]|int[] $value
      * @param string $compare
      * @return $this
