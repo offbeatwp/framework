@@ -1,34 +1,51 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use WP_Post;
+
 class WpQueryBuilderModel extends WpQueryBuilder
 {
     protected $model;
 
-    /** @param class-string<PostModel> $model */
-    public function __construct($model)
+    /**
+     * @throws OffbeatInvalidModelException
+     * @param class-string<PostModel> $modelClass
+     */
+    public function __construct(string $modelClass)
     {
-        $this->model = $model;
+        $this->model = $modelClass;
 
-        $this->wherePostType($model::POST_TYPE);
+        if (defined("{$modelClass}::POST_TYPE")) {
+            $this->wherePostType($modelClass::POST_TYPE);
+        } elseif ($modelClass !== PostModel::class) {
+            throw new OffbeatInvalidModelException('The POST_TYPE constant must be defined on any model that is not abstract or the base PostModel.');
+        }
 
         $order = null;
         $orderDirection = null;
 
-        if (defined("{$model}::ORDER_BY")) {
-            $order = $model::ORDER_BY;
+        if (defined("{$modelClass}::ORDER_BY")) {
+            $order = $modelClass::ORDER_BY;
         }
 
-        if (defined("{$model}::ORDER")) {
-            $orderDirection = $model::ORDER;
+        if (defined("{$modelClass}::ORDER")) {
+            $orderDirection = $modelClass::ORDER;
         }
 
         $this->order($order, $orderDirection);
     }
 
-    /** @return PostModel */
+    /**
+     * @param WP_Post|int|null $post
+     * @return PostModel
+     */
     public function postToModel($post)
     {
+        if ($this->model === PostModel::class) {
+            return parent::postToModel($post);
+        }
+
         return new $this->model($post);
     }
 }
