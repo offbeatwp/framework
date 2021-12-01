@@ -31,4 +31,9 @@ trait FindModelTrait
     public static function findOrNew(int $id) {
         return static::find($id) ?: new static(null);
     }
+
+    /** @return static[] */
+    public static function allAsArray() {
+        return static::query()->all()->toArray();
+    }
 }

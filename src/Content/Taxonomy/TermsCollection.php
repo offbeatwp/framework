@@ -26,6 +26,16 @@ class TermsCollection extends Collection
         parent::__construct($terms);
     }
 
+    /**
+     * Retrieves all object Ids within this collection as an array
+     * @return int[]
+     */
+    public function getIds(): array {
+        return array_map(static function (TermModel $model) {
+            return $model->getId() ?: 0;
+        }, $this->items);
+    }
+
     public function map(callable $callback): Collection {
         $keys = array_keys($this->items);
         $items = array_map($callback, $this->items, $keys);

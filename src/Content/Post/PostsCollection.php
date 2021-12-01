@@ -46,6 +46,16 @@ class PostsCollection extends Collection
         return $this->query;
     }
 
+    /**
+     * Retrieves all object Ids within this collection as an array
+     * @return int[]
+     */
+    public function getIds(): array {
+        return array_map(static function (PostModel $model) {
+            return $model->getId() ?: 0;
+        }, $this->items);
+    }
+
     /** Returns this PostsCollection as a generic Collection */
     public function toCollection(): Collection {
         return collect($this->toArray());
