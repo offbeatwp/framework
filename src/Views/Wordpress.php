@@ -124,7 +124,12 @@ class Wordpress
         return $attachment[0];
     }
 
-    public function getAttachmentImage(?int $attachmentID, $size = 'thumbnail', $classes = ['img-fluid']): string
+    /**
+     * @param int[]|string[]|string $attachmentID
+     * @param int[]|string $size
+     * @param string[] $classes
+     */
+    public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid']): string
     {
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }

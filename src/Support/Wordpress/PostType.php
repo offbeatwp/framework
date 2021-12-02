@@ -25,13 +25,15 @@ class PostType
         $this->postTypeModels[$postType] = $modelClass;
     }
 
+    /** @return class-string<PostModel> */
     public function getModelByPostType(string $postType): ?string
     {
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
 
-    public function getPostTypeByModel(string $model): string
+    /** @param class-string<PostModel> $modelClass */
+    public function getPostTypeByModel(string $modelClass): string
     {
-        return array_search($model, $this->postTypeModels, true);
+        return array_search($modelClass, $this->postTypeModels, true);
     }
 }
