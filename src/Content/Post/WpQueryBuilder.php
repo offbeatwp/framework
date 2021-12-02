@@ -203,6 +203,18 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /** Checks if a meta key's value is 0 or non-existent */
+    public function whereMetaIsFalsy(string $metaKey): WpQueryBuilder
+    {
+        $this->whereMeta([
+            'relation' => 'OR',
+            ['key' => 'hide_in_overview', 'compare' => '=', 'value' => '0'],
+            ['key' => 'hide_in_overview', 'compare' => 'NOT EXISTS']
+        ]);
+
+        return $this;
+    }
+
     /** @param int[]|int $ids */
     public function whereIdNotIn($ids): WpQueryBuilder
     {
