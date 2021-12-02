@@ -73,7 +73,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->findById($id);
 
         if (empty($result)) {
-            throw new OffbeatModelNotFoundException("PostModel with id " . $id . " could not be found");
+            throw new OffbeatModelNotFoundException('PostModel with id ' . $id . ' could not be found');
         }
 
         return $result;
@@ -92,7 +92,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->findByName($name);
 
         if (empty($result)) {
-            throw new OffbeatModelNotFoundException("PostModel with name " . $name . " could not be found");
+            throw new OffbeatModelNotFoundException('PostModel with name ' . $name . ' could not be found');
         }
 
         return $result;
@@ -263,13 +263,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    /**
-     * @param PostModel $model
-     * @param string $key
-     * @param string|null $direction
-     * @return $this
-     */
-    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
+    public function hasRelationshipWith(PostModel $model, string $key, ?string $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),
