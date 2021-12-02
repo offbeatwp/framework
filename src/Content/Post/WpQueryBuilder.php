@@ -203,7 +203,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    /** Checks if a meta key's value is 0 or non-existent */
+    /** Select items where the specified meta key is 0 OR non-existent */
     public function whereMetaIsFalsy(string $metaKey): WpQueryBuilder
     {
         $this->whereMeta([
