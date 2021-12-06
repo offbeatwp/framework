@@ -2,7 +2,10 @@
 
 namespace OffbeatWP\Support\Objects;
 
-class OffbeatImageSrc
+use ArrayIterator;
+use IteratorAggregate;
+
+final class OffbeatImageSrc implements IteratorAggregate
 {
     private $src;
     private $width;
@@ -35,5 +38,10 @@ class OffbeatImageSrc
     public function isResized(): bool
     {
         return $this->resized;
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this);
     }
 }
