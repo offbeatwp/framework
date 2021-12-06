@@ -123,12 +123,7 @@ class Wordpress
     public function getAttachmentImageSrc(int $attachmentId, $size = 'thumbnail', bool $icon = false): ?OffbeatImageSrc
     {
         $attachment = wp_get_attachment_image_src($attachmentId, $size, $icon);
-
-        if (!$attachment) {
-            return null;
-        }
-
-        return new OffbeatImageSrc($attachment);
+        return ($attachment) ? new OffbeatImageSrc($attachment) : null;
     }
 
     /** @deprecated Use getAttachmentImageSrc()->getUrl() instead */
