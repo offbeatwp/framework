@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Exceptions\OffbeatCollectionException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
@@ -11,9 +12,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function all(): PostsCollection
     {
-        $this->queryVars['posts_per_page'] = -1;
-
-        return $this->get();
+        return $this->take(-1);
     }
 
     public function postToModel($post)
@@ -21,7 +20,10 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
-    /** @return PostsCollection<PostModel> */
+    /**
+     * @throws OffbeatCollectionException
+     * @return PostsCollection<PostModel>
+     */
     public function get(): PostsCollection
     {
         $posts = new WP_Query($this->queryVars);
@@ -43,9 +45,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function first(): ?PostModel
     {
-        $this->queryVars['posts_per_page'] = 1;
-
-        return $this->get()->first();
+        return $this->take(1)->first();
     }
 
     /** @throws OffbeatModelNotFoundException */
@@ -73,7 +73,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->findById($id);
 
         if (empty($result)) {
-            throw new OffbeatModelNotFoundException("PostModel with id " . $id . " could not be found");
+            throw new OffbeatModelNotFoundException('PostModel with id ' . $id . ' could not be found');
         }
 
         return $result;
@@ -92,7 +92,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         $result = $this->findByName($name);
 
         if (empty($result)) {
-            throw new OffbeatModelNotFoundException("PostModel with name " . $name . " could not be found");
+            throw new OffbeatModelNotFoundException('PostModel with name ' . $name . ' could not be found');
         }
 
         return $result;
@@ -203,6 +203,18 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /** Select items where the specified meta key is 0 OR non-existent */
+    public function whereMetaIsFalsy(string $metaKey): WpQueryBuilder
+    {
+        $this->whereMeta([
+            'relation' => 'OR',
+            ['key' => $metaKey, 'compare' => '=', 'value' => '0'],
+            ['key' => $metaKey, 'compare' => 'NOT EXISTS']
+        ]);
+
+        return $this;
+    }
+
     /** @param int[]|int $ids */
     public function whereIdNotIn($ids): WpQueryBuilder
     {
@@ -251,13 +263,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    /**
-     * @param PostModel $model
-     * @param string $key
-     * @param string|null $direction
-     * @return $this
-     */
-    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
+    public function hasRelationshipWith(PostModel $model, string $key, ?string $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),
