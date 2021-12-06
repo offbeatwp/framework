@@ -7,22 +7,22 @@ use IteratorAggregate;
 
 final class OffbeatImageSrc implements IteratorAggregate
 {
-    private $src;
+    private $url;
     private $width;
     private $height;
     private $resized;
 
     public function __construct(array $imgData)
     {
-        $this->src = $imgData[0];
+        $this->url = $imgData[0];
         $this->width = $imgData[1];
         $this->height = $imgData[2];
         $this->resized = $imgData[3];
     }
 
-    public function getSrc(): string
+    public function getUrl(): string
     {
-        return $this->src;
+        return $this->url;
     }
 
     public function getWidth(): int

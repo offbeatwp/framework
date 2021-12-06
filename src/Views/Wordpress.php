@@ -131,7 +131,7 @@ class Wordpress
         return new OffbeatImageSrc($attachment);
     }
 
-    /** @deprecated Use getAttachmentImageSrc instead */
+    /** @deprecated Use getAttachmentImageSrc()->getUrl() instead */
     public function attachmentUrl(?int $attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
