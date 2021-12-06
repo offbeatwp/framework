@@ -19,7 +19,7 @@ class PostsCollection extends Collection
      * @throws OffbeatCollectionException
      * @param int[]|WP_Post[]|WP_Query $items
      */
-    public function __construct($items) {
+    public function __construct($items = null) {
         $postItems = [];
 
         if ($items instanceof WP_Query) {
