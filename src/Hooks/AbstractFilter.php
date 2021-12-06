@@ -13,4 +13,6 @@ abstract class AbstractFilter
             container()->call([$this, 'register']);
         }
     }
+
+    abstract public function filter();
 }
