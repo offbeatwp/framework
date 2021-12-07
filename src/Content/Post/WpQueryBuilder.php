@@ -24,14 +24,27 @@ class WpQueryBuilder extends AbstractQueryBuilder
     /** @return PostsCollection<PostModel> */
     public function get(): PostsCollection
     {
+        do_action('offbeatwp/posts/query/before_get', $this);
+
         $posts = new WP_Query($this->queryVars);
 
-        return new PostsCollection($posts);
+        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
     }
 
     public function getQueryVars(): array
     {
         return $this->queryVars;
+    }
+
+    public function getQueryVar(string $var)
+    {
+        $queryVars = $this->getQueryVars();
+
+        if (isset($queryVars[$var])) {
+            return $queryVars[$var];
+        }
+
+        return null;
     }
 
     public function take(int $numberOfItems): PostsCollection
