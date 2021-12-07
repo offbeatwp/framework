@@ -10,6 +10,7 @@ use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Exceptions\InvalidRouteException;
+use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
