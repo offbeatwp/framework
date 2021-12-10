@@ -20,7 +20,7 @@ class Hooks
      * @param ...$parameters
      * @return string
      */
-    public function applyFilters($filter, ...$parameters)
+    public function applyFilters(string $filter, ...$parameters)
     {
         return apply_filters_ref_array($filter, $parameters);
     }
