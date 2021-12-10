@@ -4,7 +4,7 @@ namespace OffbeatWP\Helpers;
 class ArrayHelper {
     public static function isAssoc($array): bool
     {
-        return !empty($array) && is_array($array) && array_keys($array) !== range(0, count($array) - 1);
+        return is_array($array) && $array && array_keys($array) !== range(0, count($array) - 1);
     }
 
     public static function mergeRecursiveAssoc(iterable $array1, iterable $array2): array
