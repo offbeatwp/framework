@@ -15,14 +15,14 @@ class AdminPage
                 $callback = [static::class, 'callbackController'];
             }
 
-            if (!empty($callback)) {
-                $callback = function () use ($callback) {
+            if ($callback) {
+                $callback = static function () use ($callback) {
                     offbeat()->container->call($callback);
                 };
             }
 
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capability, $callback) {
-                add_menu_page($title, $title, $capability, $slug, function () use ($callback) {
+                add_menu_page($title, $title, $capability, $slug, static function () use ($callback) {
                     offbeat()->container->call($callback);
                 }, $icon, $position);
             });
@@ -36,12 +36,12 @@ class AdminPage
                 $capability = 'edit_posts';
             }
 
-            if ($callback == 'controller') {
+            if ($callback === 'controller') {
                 $callback = [static::class, 'callbackController'];
             }
 
             if (!empty($callback)) {
-                $callback = function () use ($callback) {
+                $callback = static function () use ($callback) {
                     offbeat()->container->call($callback);
                 };
             }

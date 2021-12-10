@@ -76,7 +76,7 @@ class Taxonomy
 
         $retrievedTerm = get_term($term);
 
-        if (!empty($retrievedTerm)) {
+        if ($retrievedTerm) {
             return $this->convertWpTermToModel($retrievedTerm);
         }
 
