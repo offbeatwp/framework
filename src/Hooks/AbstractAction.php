@@ -13,6 +13,4 @@ abstract class AbstractAction
             container()->call([$this, 'register']);
         }
     }
-
-    abstract public function action();
 }
