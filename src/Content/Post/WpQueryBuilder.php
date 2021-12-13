@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Exceptions\OffbeatCollectionException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
@@ -11,9 +12,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function all(): PostsCollection
     {
-        $this->queryVars['posts_per_page'] = -1;
-
-        return $this->get();
+        return $this->take(-1);
     }
 
     public function postToModel($post)
@@ -21,7 +20,11 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
-    /** @return PostsCollection<PostModel> */
+    /**
+     * @throws OffbeatCollectionException
+     * @return PostsCollection<PostModel>
+     *
+     */
     public function get(): PostsCollection
     {
         do_action('offbeatwp/posts/query/before_get', $this);
@@ -52,9 +55,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function first(): ?PostModel
     {
-        $this->queryVars['posts_per_page'] = 1;
-
-        return $this->get()->first();
+        return $this->take(1)->first();
     }
 
     /** @throws OffbeatModelNotFoundException */
