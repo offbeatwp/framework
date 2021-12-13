@@ -14,21 +14,30 @@ abstract class AbstractEnqueueBuilder
         $this->handle = $handle;
     }
 
-    /** An array of registered handles that this enqueue depends on */
+    /**
+     * An array of registered handles that this enqueue depends on
+     * @return static
+     */
     public function setDeps(string ...$deps)
     {
         $this->deps = $deps;
         return $this;
     }
 
-    /** String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes */
+    /**
+     * String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes
+     * @return static
+     */
     public function setVersion(string $version)
     {
         $this->version = $version;
         return $this;
     }
 
-    /** Add version number for cache busting equal to current installed WordPress version */
+    /**
+     * Add version number for cache busting equal to current installed WordPress version
+     * @return static
+     */
     public function setVersionToWpVersion()
     {
         $this->version = false;

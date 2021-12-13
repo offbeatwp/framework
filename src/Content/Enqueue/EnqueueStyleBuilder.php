@@ -6,7 +6,10 @@ class EnqueueStyleBuilder extends AbstractEnqueueBuilder
 {
     protected $media = 'all';
 
-    /** The media for which this stylesheet has been defined. Default 'all'. Accepts media types like 'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)' */
+    /**
+     * The media for which this stylesheet has been defined. Default 'all'. Accepts media types like 'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)'
+     * @return static
+     */
     public function setMedia(string $media)
     {
         $this->media = $media;

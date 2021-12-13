@@ -7,14 +7,20 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
     protected $bindingsToPass = [];
     protected $inFooter = false;
 
-    /** Pass an array of data to the enqueued javascript */
+    /**
+     * Pass an array of data to the enqueued javascript
+     * @return static
+     */
     public function addBinding(string $name, array $values)
     {
         $this->bindingsToPass[$name] = $values;
         return $this;
     }
 
-    /** Whether to enqueue the script before instead of in the footer */
+    /**
+     * Whether to enqueue the script before instead of in the footer
+     * @return static
+     */
     public function setInFoorter(bool $value = true)
     {
         $this->inFooter = $value;
