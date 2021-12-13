@@ -53,7 +53,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     {
         $result = $this->first();
 
-        if (empty($result)) {
+        if (!$result) {
             throw new OffbeatModelNotFoundException('The query did not return any Postmodels');
         }
 
@@ -72,7 +72,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     {
         $result = $this->findById($id);
 
-        if (empty($result)) {
+        if (!$result) {
             throw new OffbeatModelNotFoundException('PostModel with id ' . $id . ' could not be found');
         }
 
@@ -91,7 +91,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     {
         $result = $this->findByName($name);
 
-        if (empty($result)) {
+        if (!$result) {
             throw new OffbeatModelNotFoundException('PostModel with name ' . $name . ' could not be found');
         }
 
@@ -199,18 +199,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
         }
 
         $this->queryVars['meta_query'][] = $parameters;
-
-        return $this;
-    }
-
-    /** Select items where the specified meta key is 0 OR non-existent */
-    public function whereMetaIsFalsy(string $metaKey): WpQueryBuilder
-    {
-        $this->whereMeta([
-            'relation' => 'OR',
-            ['key' => $metaKey, 'compare' => '=', 'value' => '0'],
-            ['key' => $metaKey, 'compare' => 'NOT EXISTS']
-        ]);
 
         return $this;
     }
