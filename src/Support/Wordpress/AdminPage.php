@@ -15,7 +15,7 @@ class AdminPage
                 $callback = [static::class, 'callbackController'];
             }
 
-            if (!empty($callback)) {
+            if ($callback) {
                 $callback = function () use ($callback) {
                     offbeat()->container->call($callback);
                 };
@@ -36,7 +36,7 @@ class AdminPage
                 $capability = 'edit_posts';
             }
 
-            if ($callback == 'controller') {
+            if ($callback === 'controller') {
                 $callback = [static::class, 'callbackController'];
             }
 

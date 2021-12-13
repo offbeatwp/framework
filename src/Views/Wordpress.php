@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Views;
 
+use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
 use WP_Site;
 
@@ -113,6 +114,19 @@ class Wordpress
         return get_post_meta($post->ID);
     }
 
+    /**
+     * @param int $attachmentId Image attachment ID.
+     * @param string|int[] $size Optional. Image size. Accepts any registered image size name, or an array of width and height values in pixels (in that order). Default 'thumbnail'.
+     * @param bool $icon Optional. Whether the image should fall back to a mime type icon. Default false.
+     * @return OffbeatImageSrc|null
+     */
+    public function getAttachmentImageSrc(int $attachmentId, $size = 'thumbnail', bool $icon = false): ?OffbeatImageSrc
+    {
+        $attachment = wp_get_attachment_image_src($attachmentId, $size, $icon);
+        return ($attachment) ? new OffbeatImageSrc($attachment) : null;
+    }
+
+    /** @deprecated Use getAttachmentImageSrc()->getUrl() instead */
     public function attachmentUrl(?int $attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);

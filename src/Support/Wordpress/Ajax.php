@@ -10,13 +10,12 @@ class Ajax {
     public function make($action, $ajaxClass, $noPriv = true, $priv = true)
     {
         if (!self::isAjaxRequest()) {
-            return null;
+            return;
         }
 
         if ($priv) {
             add_action("wp_ajax_{$action}", function () use ($ajaxClass) {
                 container()->call([$ajaxClass, 'execute']);
-
                 wp_die();
             });
         }
@@ -24,7 +23,6 @@ class Ajax {
         if ($noPriv) {
             add_action("wp_ajax_nopriv_{$action}", function () use ($ajaxClass) {
                 container()->call([$ajaxClass, 'execute']);
-
                 wp_die();
             });
         }

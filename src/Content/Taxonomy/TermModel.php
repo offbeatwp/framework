@@ -140,7 +140,7 @@ class TermModel implements TermModelInterface
         global $wp_taxonomies;
 
         // If no posttypes defined, get posttypes where the taxonomy is assigned to
-        if (empty($postTypes)) {
+        if (!$postTypes) {
             $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
         }
 

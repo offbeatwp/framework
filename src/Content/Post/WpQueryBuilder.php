@@ -2,7 +2,6 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
-use OffbeatWP\Exceptions\OffbeatCollectionException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
@@ -12,7 +11,9 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function all(): PostsCollection
     {
-        return $this->take(-1);
+        $this->queryVars['posts_per_page'] = -1;
+
+        return $this->get();
     }
 
     public function postToModel($post)
@@ -20,20 +21,26 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
-    /**
-     * @throws OffbeatCollectionException
-     * @return PostsCollection<PostModel>
-     */
+    /** @return PostsCollection<PostModel> */
     public function get(): PostsCollection
     {
+        do_action('offbeatwp/posts/query/before_get', $this);
+
         $posts = new WP_Query($this->queryVars);
 
-        return new PostsCollection($posts);
+        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
     }
 
     public function getQueryVars(): array
     {
         return $this->queryVars;
+    }
+
+    public function getQueryVar(string $var)
+    {
+        $queryVars = $this->getQueryVars();
+
+        return $queryVars[$var] ?? null;
     }
 
     public function take(int $numberOfItems): PostsCollection
@@ -45,7 +52,9 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function first(): ?PostModel
     {
-        return $this->take(1)->first();
+        $this->queryVars['posts_per_page'] = 1;
+
+        return $this->get()->first();
     }
 
     /** @throws OffbeatModelNotFoundException */
@@ -98,10 +107,14 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    public function orderByMeta(string $metaKey): AbstractQueryBuilder
+    public function orderByMeta(string $metaKey, string $direction = ''): AbstractQueryBuilder
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';
+
+        if ($direction) {
+            $this->queryVars['order'] = $direction;
+        }
 
         return $this;
     }
@@ -251,7 +264,13 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
-    public function hasRelationshipWith(PostModel $model, string $key, ?string $direction = null): WpQueryBuilder
+    /**
+     * @param PostModel $model
+     * @param string $key
+     * @param string|null $direction
+     * @return $this
+     */
+    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),
