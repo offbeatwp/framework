@@ -25,8 +25,10 @@ class PostsCollection extends Collection
         if ($items instanceof WP_Query) {
             $this->query = $items;
 
-            foreach ($items->posts as $post) {
-                $postItems[] = offbeat('post')->convertWpPostToModel($post);
+            if (!empty($items->posts)) {
+                foreach ($items->posts as $post) {
+                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
+                }
             }
         } elseif (is_iterable($items)) {
             foreach ($items as $key => $item) {
