@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Enqueue;
 abstract class AbstractEnqueueBuilder
 {
     private $handle;
-    protected $type = 'script';
     protected $src = '';
     protected $deps = [];
     protected $version = null;

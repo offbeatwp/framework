@@ -7,12 +7,6 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
     protected $bindingsToPass = [];
     protected $inFooter = false;
 
-    public function __construct(string $handle)
-    {
-        $this->type = 'script';
-        parent::__construct($handle);
-    }
-
     /** Pass an array of data to the enqueued javascript */
     public function addBinding(string $name, array $values)
     {
