@@ -15,30 +15,28 @@ class PostsCollection extends Collection
 {
     protected $query = null;
 
-    /** @var int[]|WP_Post[]|WP_Query $items */
-    public function __construct($items) {
-        if (is_object($items)) {
+    /**
+     * @throws OffbeatCollectionException
+     * @var int[]|WP_Post[]|WP_Query $items
+     */
+    public function __construct($items = null) {
+        $postItems = [];
+
+        if ($items instanceof WP_Query) {
             $this->query = $items;
 
-            $postItems = [];
-
-            if (!empty($items->posts)) {
-                foreach ($items->posts as $post) {
-                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
-                }
+            foreach ($items->posts as $post) {
+                $postItems[] = offbeat('post')->convertWpPostToModel($post);
             }
-
-            $items = $postItems;
-            $postItems = null;
-        } elseif (is_array($items)) {
-            foreach ($items as $itemKey => $item) {
+        } elseif (is_iterable($items)) {
+            foreach ($items as $key => $item) {
                 if ($item instanceof WP_Post) {
-                    $items[$itemKey] = offbeat('post')->convertWpPostToModel($item);
+                    $postItems[$key] = $this->createValidPostModel($item);
                 }
             }
         }
 
-        parent::__construct($items);
+        parent::__construct($postItems);
     }
 
     public function getIterator(): WpPostsIterator {
