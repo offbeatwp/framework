@@ -39,10 +39,8 @@ class RouteCollection extends SymfonyRouteCollection
 
         $filteredRouteCollection = new self($routes);
 
-        if(!empty($routes)) {
-            foreach ($routes as $routeName => $route) {
-                $filteredRouteCollection->add($routeName, $route);
-            }
+        foreach ($routes as $routeName => $route) {
+            $filteredRouteCollection->add($routeName, $route);
         }
 
         return $filteredRouteCollection;

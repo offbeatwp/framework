@@ -10,7 +10,6 @@ use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Exceptions\InvalidRouteException;
-use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
@@ -107,11 +106,9 @@ class App
 
     private function registerServices(): void
     {
-        if (!empty($this->services)) {
-            foreach ($this->services as $service) {
-                if (is_callable([$service, 'register'])) {
-                    $this->container->call([$service, 'register']);
-                }
+        foreach ($this->services as $service) {
+            if (is_callable([$service, 'register'])) {
+                $this->container->call([$service, 'register']);
             }
         }
     }
@@ -223,7 +220,7 @@ class App
         /** @var Route|null|false $route */
         $route = apply_filters('offbeatwp/route/run/init', $routeToRun);
 
-        if ($route && $route->hasValidActionCallback()) {
+        if ($route !== false && $route !== null && $route->hasValidActionCallback()) {
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
