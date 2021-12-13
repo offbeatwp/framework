@@ -107,9 +107,14 @@ class PostModel implements PostModelInterface
         return $this->wpPost->ID ?? null;
     }
 
-    public function getTitle(bool $unfiltered = false)
+    public function getTitle()
     {
-        return ($unfiltered) ? $this->wpPost->post_title : apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+    }
+
+    public function getUnfilteredTitle(): string
+    {
+        return $this->wpPost->post_title;
     }
 
     public function getContent(): string
