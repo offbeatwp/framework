@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Exceptions\OffbeatCollectionException;
 use WP_Post;
 use WP_Query;
 use ArrayAccess;
@@ -104,5 +105,26 @@ class PostsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
+    }
+
+    /**
+     * @param int|WP_Post|PostModel $item
+     * @throws OffbeatCollectionException
+     */
+    private function createValidPostModel($item): PostModel
+    {
+        $model = null;
+
+        if (is_int($item) || $item instanceof WP_Post) {
+            $model = offbeat('post')->get($item);
+        } elseif ($item instanceof PostModel) {
+            $model = $item;
+        }
+
+        if (!$model || !$model->wpPost) {
+            throw new OffbeatCollectionException('Valid PostsCollection could not be created with passed items.');
+        }
+
+        return $model;
     }
 }
