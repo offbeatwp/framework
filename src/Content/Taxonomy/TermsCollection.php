@@ -2,7 +2,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Exceptions\OffbeatCollectionException;
+use TypeError;
 use WP_Term;
 use ArrayAccess;
 
@@ -12,15 +12,15 @@ use ArrayAccess;
  */
 class TermsCollection extends Collection
 {
-    /**
-     * @param int[]|WP_Term[]|TermModel[] $items
-     * @throws OffbeatCollectionException
-     */
+    /** @param int[]|WP_Term[]|TermModel[] $items */
     public function __construct(iterable $items = []) {
         $terms = [];
 
         foreach ($items as $item) {
-            $terms[] = $this->createValidTermModel($item);
+            $termModel = $this->createValidTermModel($item);
+            if ($termModel) {
+                $terms[] = $termModel;
+            }
         }
 
         parent::__construct($terms);
@@ -78,22 +78,15 @@ class TermsCollection extends Collection
         return parent::shift($count);
     }
 
-    /**
-     * @param int|WP_Term|TermModel $item
-     * @throws OffbeatCollectionException
-     */
-    private function createValidTermModel($item): TermModel
+    /** @param int|WP_Term|TermModel $item */
+    private function createValidTermModel($item): ?TermModel
     {
-        $model = null;
-
         if (is_int($item) || $item instanceof WP_Term) {
             $model = offbeat('taxonomy')->get($item);
         } elseif ($item instanceof TermModel) {
             $model = $item;
-        }
-
-        if (!$model || !$model->wpTerm) {
-            throw new OffbeatCollectionException('Valid TermCollection could not be created with passed items.');
+        } else {
+            throw new TypeError(gettype($item) . ' cannot be used to generate a TermModel.');
         }
 
         return $model;

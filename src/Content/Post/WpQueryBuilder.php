@@ -11,9 +11,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function all(): PostsCollection
     {
-        $this->queryVars['posts_per_page'] = -1;
-
-        return $this->get();
+        return $this->take(-1);
     }
 
     public function postToModel($post)
@@ -52,9 +50,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function first(): ?PostModel
     {
-        $this->queryVars['posts_per_page'] = 1;
-
-        return $this->get()->first();
+        return $this->take(1)->first();
     }
 
     /** @throws OffbeatModelNotFoundException */
