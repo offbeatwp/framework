@@ -23,7 +23,6 @@ class WpQueryBuilder extends AbstractQueryBuilder
     /**
      * @throws OffbeatCollectionException
      * @return PostsCollection<PostModel>
-     *
      */
     public function get(): PostsCollection
     {
