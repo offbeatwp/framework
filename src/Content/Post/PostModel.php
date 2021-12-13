@@ -98,11 +98,7 @@ class PostModel implements PostModelInterface
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
-        if (method_exists($this, $methodName)) {
-            return true;
-        }
-
-        return false;
+        return method_exists($this, $methodName);
     }
 
     /* Attribute methods */
@@ -111,9 +107,9 @@ class PostModel implements PostModelInterface
         return $this->wpPost->ID ?? null;
     }
 
-    public function getTitle()
+    public function getTitle(bool $unfiltered = false)
     {
-        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+        return ($unfiltered) ? $this->wpPost->post_title : apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
 
     public function getContent(): string
@@ -217,7 +213,7 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->getAuthorId();
 
-        if (empty($authorId)) {
+        if (!$authorId) {
             return false;
         }
 
@@ -228,7 +224,7 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->wpPost->post_author;
 
-        if (empty($authorId)) {
+        if (!$authorId) {
             return false;
         }
 
@@ -275,7 +271,8 @@ class PostModel implements PostModelInterface
         }
     }
 
-    public function setMeta(string $key, $value): PostModel
+    /** @return static */
+    public function setMeta(string $key, $value)
     {
         $this->metaInput[$key] = $value;
 
@@ -325,7 +322,7 @@ class PostModel implements PostModelInterface
 
     public function getFeaturedImageId()
     {
-        return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
+        return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
     public function setTitle(string $title): void
@@ -419,7 +416,7 @@ class PostModel implements PostModelInterface
 
         $GLOBALS['post'] = $currentPost;
 
-        if (!empty($adjacentPost)) {
+        if ($adjacentPost) {
             return offbeat('post')->convertWpPostToModel($adjacentPost);
         }
 
@@ -468,7 +465,7 @@ class PostModel implements PostModelInterface
 
     public function save(): int
     {
-        if (!empty($this->metaInput)) {
+        if ($this->metaInput) {
             $this->wpPost->meta_input = $this->metaInput;
         }
 
