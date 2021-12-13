@@ -2,7 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Exceptions\OffbeatCollectionException;
+use TypeError;
 use WP_Post;
 use WP_Query;
 use ArrayAccess;
@@ -15,10 +15,7 @@ class PostsCollection extends Collection
 {
     protected $query = null;
 
-    /**
-     * @throws OffbeatCollectionException
-     * @var int[]|WP_Post[]|WP_Query $items
-     */
+    /** @var int[]|WP_Post[]|WP_Query $items */
     public function __construct($items = []) {
         $postItems = [];
 
@@ -32,8 +29,9 @@ class PostsCollection extends Collection
             }
         } elseif (is_iterable($items)) {
             foreach ($items as $key => $item) {
-                if ($item instanceof WP_Post) {
-                    $postItems[$key] = $this->createValidPostModel($item);
+                $postModel = $this->createValidPostModel($item);
+                if ($postModel) {
+                    $postItems[$key] = $postModel;
                 }
             }
         }
@@ -107,22 +105,15 @@ class PostsCollection extends Collection
         return parent::shift($count);
     }
 
-    /**
-     * @param int|WP_Post|PostModel $item
-     * @throws OffbeatCollectionException
-     */
-    private function createValidPostModel($item): PostModel
+    /** @param int|WP_Post|PostModel $item */
+    private function createValidPostModel($item): ?PostModel
     {
-        $model = null;
-
         if (is_int($item) || $item instanceof WP_Post) {
             $model = offbeat('post')->get($item);
         } elseif ($item instanceof PostModel) {
             $model = $item;
-        }
-
-        if (!$model || !$model->wpPost) {
-            throw new OffbeatCollectionException('Valid PostsCollection could not be created with passed items.');
+        } else {
+            throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
         }
 
         return $model;
