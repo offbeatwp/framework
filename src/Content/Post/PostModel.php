@@ -167,7 +167,7 @@ class PostModel implements PostModelInterface
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
-        if (empty($postType) || empty($postType->label)) {
+        if (!$postType || !$postType->label) {
             return false;
         }
 

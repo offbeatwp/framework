@@ -24,14 +24,23 @@ class WpQueryBuilder extends AbstractQueryBuilder
     /** @return PostsCollection<PostModel> */
     public function get(): PostsCollection
     {
+        do_action('offbeatwp/posts/query/before_get', $this);
+
         $posts = new WP_Query($this->queryVars);
 
-        return new PostsCollection($posts);
+        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
     }
 
     public function getQueryVars(): array
     {
         return $this->queryVars;
+    }
+
+    public function getQueryVar(string $var)
+    {
+        $queryVars = $this->getQueryVars();
+
+        return $queryVars[$var] ?? null;
     }
 
     public function take(int $numberOfItems): PostsCollection
@@ -53,7 +62,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
     {
         $result = $this->first();
 
-        if (empty($result)) {
+        if (!$result) {
             throw new OffbeatModelNotFoundException('The query did not return any Postmodels');
         }
 
@@ -72,8 +81,8 @@ class WpQueryBuilder extends AbstractQueryBuilder
     {
         $result = $this->findById($id);
 
-        if (empty($result)) {
-            throw new OffbeatModelNotFoundException("PostModel with id " . $id . " could not be found");
+        if (!$result) {
+            throw new OffbeatModelNotFoundException('PostModel with id ' . $id . ' could not be found');
         }
 
         return $result;
@@ -91,17 +100,21 @@ class WpQueryBuilder extends AbstractQueryBuilder
     {
         $result = $this->findByName($name);
 
-        if (empty($result)) {
-            throw new OffbeatModelNotFoundException("PostModel with name " . $name . " could not be found");
+        if (!$result) {
+            throw new OffbeatModelNotFoundException('PostModel with name ' . $name . ' could not be found');
         }
 
         return $result;
     }
 
-    public function orderByMeta(string $metaKey): AbstractQueryBuilder
+    public function orderByMeta(string $metaKey, string $direction = ''): AbstractQueryBuilder
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';
+
+        if ($direction) {
+            $this->queryVars['order'] = $direction;
+        }
 
         return $this;
     }

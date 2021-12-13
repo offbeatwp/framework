@@ -19,13 +19,9 @@ class Post
     /** @param null|int|WP_Post $id */
     public function get($id = null): ?PostModel
     {
-        if (is_null($id)) {
-            $id = get_the_ID();
-        }
+        $post = get_post($id ?? get_the_ID());
 
-        $post = get_post($id);
-
-        if (!empty($post)) {
+        if ($post) {
             return $this->convertWpPostToModel($post);
         }
 
