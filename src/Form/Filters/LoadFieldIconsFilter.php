@@ -16,11 +16,7 @@ class LoadFieldIconsFilter extends AbstractFilter {
 
         foreach (glob($iconsPattern) as $filename) {
             $basename = basename($filename, '.svg');
-            if ($field['type'] === 'button_group') {
-                $field['choices'][$basename] = "<i class='oif oif-{$basename}'></i>";
-            } else {
-                $field['choices'][$basename] = $basename;
-            }
+            $field['choices'][$basename] = "<i class='oif oif-{$basename}'></i>";
         }
 
         return $field;
