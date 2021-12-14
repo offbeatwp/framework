@@ -38,16 +38,29 @@ class TermQueryBuilder extends AbstractQueryBuilder
         $this->order($orderBy, $order);
     }
 
+    /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
+    public function include(array $ids) {
+        $this->queryVars['include'] = $ids;
+    }
+
+    /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
+    public function exclude(array $ids) {
+        $this->queryVars['exclude'] = $ids;
+    }
+
+    /** @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored */
+    public function excludeTree(array $ids) {
+        $this->queryVars['exclude_tree'] = $ids;
+    }
+
     /** @return TermsCollection<TermModel> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
         $terms = (new WP_Term_Query($this->queryVars))->get_terms();
 
-        if (!empty($terms)) {
-            foreach ($terms as $term) {
-                $termModels->push(new $this->model($term));
-            }
+        foreach ($terms as $term) {
+            $termModels->push(new $this->model($term));
         }
 
         return $termModels;
@@ -126,7 +139,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        return empty($term) ? $term : new $this->model($term);
+        return !$term ? $term : new $this->model($term);
     }
 
     /**
