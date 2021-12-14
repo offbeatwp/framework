@@ -2,7 +2,7 @@
 namespace OffbeatWP\Form\Fields;
 
 class Select extends AbstractField {
-    const FIELD_TYPE = 'select';
+    public const FIELD_TYPE = 'select';
 
     public $options = [];
 

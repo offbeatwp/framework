@@ -2,7 +2,7 @@
 namespace OffbeatWP\Form\Fields;
 
 class Terms extends AbstractField {
-    const FIELD_TYPE = 'terms';
+    public const FIELD_TYPE = 'terms';
 
     public function fromTaxonomy($taxonomy = []) {
         $this->setAttribute('taxonomy', $taxonomy);

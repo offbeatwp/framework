@@ -2,7 +2,7 @@
 namespace OffbeatWP\Form\Fields;
 
 class ButtonGroup extends AbstractField {
-    const FIELD_TYPE = 'button_group';
+    public const FIELD_TYPE = 'button_group';
 
     public $options = [];
 

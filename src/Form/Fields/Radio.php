@@ -2,7 +2,7 @@
 namespace OffbeatWP\Form\Fields;
 
 class Radio extends AbstractField {
-    const FIELD_TYPE = 'radio';
+    public const FIELD_TYPE = 'radio';
 
     public $options = [];
 

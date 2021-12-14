@@ -20,10 +20,6 @@ abstract class AbstractField implements FieldInterface
         $field->setId($id);
         $field->setLabel($label);
 
-        if (!empty($attr)) {
-            $field->setAttributes($attr);
-        }
-
         return $field;
     }
 
@@ -70,7 +66,7 @@ abstract class AbstractField implements FieldInterface
 
     public function getId(): string
     {
-        if (empty($this->id)) {
+        if (!$this->id) {
             $label = $this->getLabel();
             $label = iconv('utf-8', 'ascii//TRANSLIT', $label);
             $label = preg_replace('/[^A-Za-z0-9_-]/', '', $label);
@@ -102,11 +98,7 @@ abstract class AbstractField implements FieldInterface
     /** @return string|bool|null */
     public function getAttribute($key)
     {
-        if (isset($this->getAttributes()[$key])) {
-            return $this->getAttributes()[$key];
-        }
-
-        return null;
+        return $this->getAttributes()[$key] ?? null;
     }
 
     /* Chain setters */
@@ -117,7 +109,7 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
-    function default($value): AbstractField
+    public function default($value): AbstractField
     {
         $this->setAttribute('default', $value);
 
