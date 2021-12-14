@@ -12,6 +12,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
 
     public function __construct($id, $label)
     {
+        parent::__construct();
         $this->setLabel($label);
         $this->setId($id);
     }
@@ -63,10 +64,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
 
     public function getAttribute($key)
     {
-        if (isset($this->getAttributes()[$key])) {
-            return $this->getAttributes()[$key];
-        }
-        return false;
+        return $this->getAttributes()[$key] ?? false;
     }
 
     public function add($item)
