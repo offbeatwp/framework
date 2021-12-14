@@ -3,6 +3,6 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 class Repeater extends AbstractFieldsContainer
 {
-    const TYPE = 'repeater';
-    const LEVEL = 30;
+    public const TYPE = 'repeater';
+    public const LEVEL = 30;
 }
