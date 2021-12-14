@@ -6,7 +6,7 @@ use OffbeatWP\Hooks\AbstractFilter;
 
 class LoadFieldIconsFilter extends AbstractFilter {
     public function filter($field) {
-        if (!isset($field['wrapper']['class']) || $field['wrapper']['class'] !== 'iconfield') {
+        if (!isset($field['wrapper']['class']) || $field['wrapper']['class'] !== 'offbeat-icon-field') {
             return $field;
         }
 
@@ -15,8 +15,12 @@ class LoadFieldIconsFilter extends AbstractFilter {
         $field['choices'] = ['' => ''];
 
         foreach (glob($iconsPattern) as $filename) {
-            $iconName = basename($filename, '.svg');
-            $field['choices'][$iconName] = $iconName;
+            $basename = basename($filename, '.svg');
+            if ($field['type'] === 'button_group') {
+                $field['choices'][$basename] = "<i class='oif oif-{$basename}'></i>";
+            } else {
+                $field['choices'][$basename] = $basename;
+            }
         }
 
         return $field;

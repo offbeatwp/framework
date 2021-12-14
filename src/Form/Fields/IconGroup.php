@@ -2,9 +2,9 @@
 
 namespace OffbeatWP\Form\Fields;
 
-class Icon extends Select {
+class IconGroup extends ButtonGroup {
     public function __construct() {
-        $this->setAttribute('class', 'iconfield');
+        $this->setAttribute('class', 'offbeat-icon-field');
         $this->setAttribute('allow_null', true);
     }
 }
