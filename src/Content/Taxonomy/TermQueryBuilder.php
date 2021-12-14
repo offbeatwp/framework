@@ -99,7 +99,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    public function findById(int $id)
+    public function findById(int $id): ?TermModel
     {
         return $this->findBy('id', $id);
     }
@@ -110,7 +110,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findByOrFail('id', $id);
     }
 
-    public function findBySlug(string $slug)
+    public function findBySlug(string $slug): ?TermModel
     {
         return $this->findBy('slug', $slug);
     }
@@ -121,7 +121,7 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findByOrFail('slug', $slug);
     }
 
-    public function findByName(string $name)
+    public function findByName(string $name): ?TermModel
     {
         return $this->findBy('name', $name);
     }
@@ -137,11 +137,11 @@ class TermQueryBuilder extends AbstractQueryBuilder
      * @param string|int $value
      * @return TermModel|false|null
      */
-    public function findBy(string $field, $value)
+    public function findBy(string $field, $value): ?TermModel
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        return !$term ? $term : new $this->model($term);
+        return ($term) ? new $this->model($term) : null;
     }
 
     /**

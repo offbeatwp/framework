@@ -8,7 +8,7 @@ trait FindModelTrait
 {
     /** @return static|null */
     public static function find(int $id) {
-        return static::query()->findById($id) ?: null;
+        return static::query()->findById($id);
     }
 
     /**
