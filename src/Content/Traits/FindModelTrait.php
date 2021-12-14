@@ -8,12 +8,12 @@ trait FindModelTrait
 {
     /** @return static|null */
     public static function find(int $id) {
-        return static::query()->findById($id);
+        return static::query()->findById($id) ?: null;
     }
 
     /**
-     * @return static
      * @throws OffbeatModelNotFoundException
+     * @return static
      */
     public static function findOrFail(int $id) {
         $item = static::find($id);
@@ -24,10 +24,7 @@ trait FindModelTrait
         return $item;
     }
 
-    /**
-     * @param int $id
-     * @return static
-     */
+    /** @return static */
     public static function findOrNew(int $id) {
         return static::find($id) ?: new static(null);
     }
