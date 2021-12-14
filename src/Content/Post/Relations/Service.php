@@ -3,17 +3,20 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
+use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
 use WP_Query;
 
 class Service extends AbstractService
 {
     public function register () {
-        add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2 );
+        add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
         if(offbeat('console')->isConsole()) {
             offbeat('console')->register(Install::class);
         }
+
+        offbeat('hooks')->addFilter('acf/load_field', LoadFieldIconsFilter::class);
     }
 
     /** @throws InvalidQueryOperatorException */
@@ -66,7 +69,8 @@ class Service extends AbstractService
         $this->checkOperator($operator);
         global $wpdb;
         $direction = null;
-        if (isset($relationshipQuery['direction']) && $relationshipQuery['direction']) {
+
+        if (!empty($relationshipQuery['direction'])) {
             $direction = $relationshipQuery['direction'];
         }
 
@@ -77,16 +81,16 @@ class Service extends AbstractService
             $columnOn = 'relation_from';
             $columnWhere = 'relation_to';
         }
+
         $sql = [];
         $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
-
         $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} = " . $relationshipQuery['id'];
 
         return $sql;
     }
 
     /** @throws InvalidQueryOperatorException */
-    private function checkOperator(?string $operator) {
+    private function checkOperator(?string $operator): void {
         if ($operator !== 'AND' && $operator !== 'OR') {
             throw new InvalidQueryOperatorException('Operator not valid for the relationships query builder. Only AND / OR are valid operators');
         }
