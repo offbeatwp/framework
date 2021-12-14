@@ -66,11 +66,10 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $termModels;
     }
 
+    /** Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms */
     public function all(): TermsCollection
     {
-        $this->queryVars['number'] = 0;
-
-        return $this->get();
+        return $this->take(0);
     }
 
     public function take(int $numberOfItems): TermsCollection
