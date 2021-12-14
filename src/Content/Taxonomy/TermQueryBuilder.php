@@ -41,16 +41,19 @@ class TermQueryBuilder extends AbstractQueryBuilder
     /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
     public function include(array $ids) {
         $this->queryVars['include'] = $ids;
+        return $this;
     }
 
     /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
     public function exclude(array $ids) {
         $this->queryVars['exclude'] = $ids;
+        return $this;
     }
 
     /** @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored */
     public function excludeTree(array $ids) {
         $this->queryVars['exclude_tree'] = $ids;
+        return $this;
     }
 
     /** @return TermsCollection<TermModel> */
