@@ -84,7 +84,6 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    /** @return TermModel|false */
     public function findById(int $id)
     {
         return $this->findBy('id', $id);
@@ -96,7 +95,6 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findByOrFail('id', $id);
     }
 
-    /** @return TermModel|false */
     public function findBySlug(string $slug)
     {
         return $this->findBy('slug', $slug);
@@ -108,7 +106,6 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->findByOrFail('slug', $slug);
     }
 
-    /** @return TermModel|false */
     public function findByName(string $name)
     {
         return $this->findBy('name', $name);
@@ -133,10 +130,10 @@ class TermQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
+     * @throws OffbeatModelNotFoundException
      * @param string $field
      * @param string|int $value
      * @return TermModel
-     *@throws OffbeatModelNotFoundException
      */
     public function findByOrFail(string $field, $value): TermModel
     {
