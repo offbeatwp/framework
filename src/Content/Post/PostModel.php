@@ -138,6 +138,7 @@ class PostModel implements PostModelInterface
             if (function_exists('wp_filter_content_tags')) {
                 $content = wp_filter_content_tags($content);
             } elseif (function_exists('wp_make_content_images_responsive')) {
+                /** @noinspection PhpDeprecationInspection This method is deprecated but kept for WP <5.5 support */
                 $content = wp_make_content_images_responsive($content);
             }
 

@@ -44,6 +44,7 @@ class Taxonomy
     /** @deprecated Use convertWpTermToModel instead */
     public function convertWpPostToModel(WP_Term $term)
     {
+        trigger_error('Deprecated convertWpPostToModel called in Taxonomy. Use convertWpTermToModel instead.', E_USER_DEPRECATED);
         return $this->convertWpTermToModel($term);
     }
 
