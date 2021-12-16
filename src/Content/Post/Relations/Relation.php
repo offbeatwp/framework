@@ -69,12 +69,14 @@ class Relation
         );
     }
 
-    public function makeRelationships(array $ids, ?string $direction = null): void
+    /**
+     * @param int[] $ids
+     * @param string|null $direction
+     */
+    public function makeRelationships(iterable $ids, ?string $direction = null): void
     {
-        if (!empty($ids)) {
-            foreach ($ids as $id) {
-                $this->makeRelationship($id, $direction);
-            }
+        foreach ($ids as $id) {
+            $this->makeRelationship($id, $direction);
         }
     }
 }

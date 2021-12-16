@@ -3,17 +3,17 @@ namespace OffbeatWP\Content\Post\Relations;
 
 class BelongsToOneOrMany extends Relation
 {
-    public function associate($ids, $append = true)
+    /**
+     * @param int[] $ids
+     * @param bool $append
+     */
+    public function associate(iterable $ids, bool $append = true)
     {
         if (!$append) {
             $this->dissociateAll();
         }
-        
-        if (is_array($ids)) {
-            $this->makeRelationships($ids, 'reverse');
-        } else {
-            $this->makeRelationship($ids, 'reverse');
-        }
+
+        $this->makeRelationships($ids, 'reverse');
     }
 
     public function dissociate()
