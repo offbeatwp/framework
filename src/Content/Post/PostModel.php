@@ -371,10 +371,13 @@ class PostModel implements PostModelInterface
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
     }
 
-    /** @deprecated Use getChildren instead */
+    /**
+     * @deprecated Use getChildren instead
+     * @see getChildren
+     */
     public function getChilds(): PostsCollection
     {
-        trigger_error('Deprecated getChilds called. Use getChildren instead.', E_USER_DEPRECATED);
+        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
         return $this->getChildren();
     }
 
