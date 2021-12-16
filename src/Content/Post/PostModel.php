@@ -138,6 +138,7 @@ class PostModel implements PostModelInterface
             if (function_exists('wp_filter_content_tags')) {
                 $content = wp_filter_content_tags($content);
             } elseif (function_exists('wp_make_content_images_responsive')) {
+                /** @noinspection PhpDeprecationInspection This method is deprecated but kept for WP <5.5 support */
                 $content = wp_make_content_images_responsive($content);
             }
 
@@ -370,10 +371,13 @@ class PostModel implements PostModelInterface
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
     }
 
-    /** @deprecated Use getChildren instead */
+    /**
+     * @deprecated Use getChildren instead
+     * @see getChildren
+     */
     public function getChilds(): PostsCollection
     {
-        trigger_error('Deprecated getChilds called. Use getChildren instead.', E_USER_DEPRECATED);
+        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
         return $this->getChildren();
     }
 

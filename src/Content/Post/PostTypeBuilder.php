@@ -193,6 +193,7 @@ class PostTypeBuilder
     /** @deprecated This function does not actually appear to do anything */
     public function position($position = null): PostTypeBuilder
     {
+        trigger_error('Deprecated position called in PostTypeBuilder.', E_USER_DEPRECATED);
         $this->postTypeArgs['position'] = $position;
 
         return $this;
