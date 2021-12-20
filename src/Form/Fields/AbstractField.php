@@ -130,6 +130,13 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
+    public function allowNull(bool $allowNull = true): AbstractField
+    {
+        $this->setAttribute('allow_null', ($allowNull) ? 1 : 0);
+
+        return $this;
+    }
+
     public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
