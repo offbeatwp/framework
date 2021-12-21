@@ -186,6 +186,29 @@ class WpQueryBuilder extends AbstractQueryBuilder
     }
 
     /**
+     * Retrieves posts by post status. Default value is <i>publish</i>, but if the user is logged in, <i>private</i> is added. Public custom post statuses are also included by default.<br/>
+     * If the query is run in an admin/ajax context, protected statuses are added too.<br/>
+     * By default protected statuses are <i>future</i>, <i>draft</i> and <i>pending</i>.<br/><br/>
+     *
+     * The default WP post statuses are:<br/>
+     * <b>publish</b> – a published post or page<br/>
+     * <b>pending</b> – post is pending review<br/>
+     * <b>draft</b> – a post in draft status<br/>
+     * <b>auto-draft</b> – a newly created post, with no content<br/>
+     * <b>future</b> – a post to publish in the future<br/> <b>private</b> – not visible to users who are not logged in<br/>
+     * <b>inherit</b> – a revision, see get_children()
+     * <b>trash</b> – post is in trashbin<br/>
+     * <b>any</b> – retrieves any status except for <i>inherit</i>, <i>trash</i> and <i>auto-draft</i>. Custom post statuses with <i>exclude_from_search</i> set to true are also excluded
+     * @param string[] $postStatus Array containing the post statuses to include
+     * @return WpQueryBuilder
+     */
+    public function wherePostStatus(array $postStatus): WpQueryBuilder
+    {
+        $this->queryVars['post_status'] = $postStatus;
+        return $this;
+    }
+
+    /**
      * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
      * @param string|int|string[]|int[] $value
      * @param string $compare
