@@ -289,7 +289,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
      * @param string|null $direction
      * @return $this
      */
-    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
+    public function hasRelationshipWith($model, $key, ?string $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),
