@@ -101,7 +101,9 @@ abstract class AbstractComponent
             return null;
         }
 
-        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+        $output = container()->call([$this, 'render'], [
+            'settings' => apply_filters('offbeat.component.settings', $settings, $this)
+        ]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
