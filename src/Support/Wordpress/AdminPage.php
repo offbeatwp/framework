@@ -4,7 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 class AdminPage
 {
-    public static function make(string $title, string $slug, string $icon = '', int $position = 30, ?string $capability = null, ?callable $callback = null)
+    public static function make(string $title, string $slug, string $icon = '', int $position = 30, ?string $capability = null, $callback = null)
     {
         if (is_admin()) {
             if (is_null($capability)) {
@@ -29,7 +29,7 @@ class AdminPage
         }
     }
 
-    public static function makeSub(string $parent, string $title, string $slug, ?string $capability = null, ?callable $callback = null, ?int $position = null)
+    public static function makeSub(string $parent, string $title, string $slug, ?string $capability = null, $callback = null, ?int $position = null)
     {
         if (is_admin()) {
             if (is_null($capability)) {
@@ -74,6 +74,7 @@ class AdminPage
 
     public function callbackController()
     {
+        offbeat()->findRoute();
         offbeat()->run();
     }
 }

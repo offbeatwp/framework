@@ -166,7 +166,7 @@ class App
 
     public function findRoute(): void
     {
-        if (is_admin()) {
+        if (current_action() === 'wp' && is_admin()) {
             return;
         }
 
