@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use TypeError;
 use WP_Post;
@@ -103,6 +104,11 @@ class PostsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
+    }
+
+    public function pluck($value, $key = null)
+    {
+        return new Collection(Arr::pluck($this->items, $value, $key));
     }
 
     /** @param int|WP_Post|PostModel $item */
