@@ -2,9 +2,7 @@
 
 namespace OffbeatWP\Exceptions;
 
-use Exception;
-
-class WpErrorException extends Exception
+class WpErrorException extends OffbeatException
 {
 
 }
