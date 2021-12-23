@@ -79,9 +79,24 @@ class TermsCollection extends Collection
         return parent::shift($count);
     }
 
+    /**
+     * Get the values of a given key. This will return a basic Collection.
+     * @param string|array|int|null  $value
+     * @param string|null $key
+     * @return Collection
+     */
     public function pluck($value, $key = null)
     {
         return new Collection(Arr::pluck($this->items, $value, $key));
+    }
+
+    /**
+     * Get the keys of the collection items. This will return a basic Collection.
+     * @return Collection<array-key>
+     */
+    public function keys()
+    {
+        return new Collection(array_keys($this->items));
     }
 
     /** @param int|WP_Term|TermModel $item */
