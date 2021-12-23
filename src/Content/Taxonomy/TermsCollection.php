@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use TypeError;
 use WP_Term;
@@ -76,6 +77,11 @@ class TermsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
+    }
+
+    public function pluck($value, $key = null)
+    {
+        return new Collection(Arr::pluck($this->items, $value, $key));
     }
 
     /** @param int|WP_Term|TermModel $item */
