@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
 
@@ -256,6 +258,30 @@ class PostModel implements PostModelInterface
         }
 
         return null;
+    }
+
+    /** @throws OffbeatInvalidModelException */
+    public function getCreatedAt(): Carbon
+    {
+        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
+
+        if (!$creationDate) {
+            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID ?? '?');
+        }
+
+        return Carbon::parse($creationDate);
+    }
+
+    /** @throws OffbeatInvalidModelException */
+    public function getUpdatedAt(): Carbon
+    {
+        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
+
+        if (!$updateDate) {
+            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID ?? '?');
+        }
+
+        return Carbon::parse($updateDate);
     }
 
     /** @throws PostMetaNotFoundException */
