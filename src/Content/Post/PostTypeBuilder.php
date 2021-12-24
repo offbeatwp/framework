@@ -214,9 +214,9 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function mapMetaCap(): PostTypeBuilder
+    public function mapMetaCap(bool $mapMetaCap = true): PostTypeBuilder
     {
-        $this->postTypeArgs['map_meta_cap'] = true;
+        $this->postTypeArgs['map_meta_cap'] = $mapMetaCap;
 
         return $this;
     }
