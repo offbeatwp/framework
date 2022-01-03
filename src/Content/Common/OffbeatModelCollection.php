@@ -33,7 +33,7 @@ abstract class OffbeatModelCollection extends Collection
     }
 
     /**
-     * Run a map over each of the items.
+     * Run a map over each of the items. This will return a basic Collection.
      * @param callable $callback
      * @return Collection
      */

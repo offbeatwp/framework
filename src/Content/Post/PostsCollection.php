@@ -48,7 +48,7 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /**
-     * Retrieves all object Ids within this collection as an array
+     * Retrieves all object Ids within this collection as an array.
      * @return int[]
      */
     public function getIds(): array {
