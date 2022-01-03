@@ -55,18 +55,20 @@ class Config {
                 // Get all settings in 'env' variable
                 $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
 
-                if (!empty($envConfigs)) {
+                if ($envConfigs) {
+                    $explicitEnvConfigs = [];
+
                     foreach ($envConfigs as $envKey => $envConfig) {
                         if (preg_match('/^!(.*)/', $envKey, $matches) && !in_array($currentEnvironment, explode('|', $matches[1]))) {
                             $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
                         } elseif (!preg_match('/^!(.*)/', $envKey, $matches)) {
-                            if (in_array($currentEnvironment, explode('|', $envKey))) {
+                            if (in_array($currentEnvironment, explode('|', $envKey), true)) {
                                 $explicitEnvConfigs[] = $envConfig;
                             }
                         }
                     }
 
-                    if (!empty($explicitEnvConfigs)) {
+                    if ($explicitEnvConfigs) {
                         foreach ($explicitEnvConfigs as $explicitEnvConfig) {
                             $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
                         }
