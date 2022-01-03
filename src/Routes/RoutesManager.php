@@ -147,20 +147,16 @@ class RoutesManager
         return false;
     }
 
+    /** @param Route $route */
     public function removeRoute($route)
     {
         if ($route instanceof Route) {
             $routeName = $route->getName();
-        }
 
-        if (
-            $route instanceof Route &&
-            $route->getOption('persistent') === true
-        ) {
-            return;
-        }
+            if ($route->getOption('persistent') === true) {
+                return;
+            }
 
-        if (!empty($routeName)) {
             $this->getRouteCollection()->remove($routeName);
         }
     }
