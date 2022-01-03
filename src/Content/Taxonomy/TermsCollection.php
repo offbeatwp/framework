@@ -1,8 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use OffbeatWP\Content\Common\OffbeatModelCollection;
 use TypeError;
 use WP_Term;
 use ArrayAccess;
@@ -11,7 +11,7 @@ use ArrayAccess;
  * @template T of TermModel
  * @template-extends ArrayAccess<array-key|null, T>
  */
-class TermsCollection extends Collection
+class TermsCollection extends OffbeatModelCollection
 {
     /** @param int[]|WP_Term[]|TermModel[] $items */
     public function __construct(iterable $items = []) {
@@ -35,13 +35,6 @@ class TermsCollection extends Collection
         return array_map(static function (TermModel $model) {
             return $model->getId() ?: 0;
         }, $this->items);
-    }
-
-    public function map(callable $callback): Collection {
-        $keys = array_keys($this->items);
-        $items = array_map($callback, $this->items, $keys);
-
-        return new Collection(array_combine($keys, $items));
     }
 
     /** Returns this TermsCollection as a generic Collection */
@@ -77,26 +70,6 @@ class TermsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
-    }
-
-    /**
-     * Get the values of a given key. This will return a basic Collection.
-     * @param string|array|int|null  $value
-     * @param string|null $key
-     * @return Collection
-     */
-    public function pluck($value, $key = null)
-    {
-        return new Collection(Arr::pluck($this->items, $value, $key));
-    }
-
-    /**
-     * Get the keys of the collection items. This will return a basic Collection.
-     * @return Collection<array-key>
-     */
-    public function keys()
-    {
-        return new Collection(array_keys($this->items));
     }
 
     /** @param int|WP_Term|TermModel $item */

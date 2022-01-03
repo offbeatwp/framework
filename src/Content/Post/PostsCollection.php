@@ -1,8 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use OffbeatWP\Content\Common\OffbeatModelCollection;
 use TypeError;
 use WP_Post;
 use WP_Query;
@@ -12,7 +11,7 @@ use ArrayAccess;
  * @template T of PostModel
  * @template-extends ArrayAccess<array-key|null, T>
  */
-class PostsCollection extends Collection
+class PostsCollection extends OffbeatModelCollection
 {
     protected $query = null;
 
@@ -58,16 +57,10 @@ class PostsCollection extends Collection
         }, $this->items);
     }
 
-    /** Returns this PostsCollection as a generic Collection */
-    public function toCollection(): Collection {
-        return collect($this->toArray());
-    }
-
-    public function map(callable $callback): Collection {
-        $keys = array_keys($this->items);
-        $items = array_map($callback, $this->items, $keys);
-
-        return new Collection(array_combine($keys, $items));
+    /** @return PostModel[]|T[] */
+    public function toArray()
+    {
+        return $this->toCollection()->toArray();
     }
 
     /** @return T|PostModel|mixed */
@@ -104,26 +97,6 @@ class PostsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
-    }
-
-    /**
-     * Get the values of a given key. This will return a basic Collection.
-     * @param string|array|int|null  $value
-     * @param string|null  $key
-     * @return Collection
-     */
-    public function pluck($value, $key = null)
-    {
-        return new Collection(Arr::pluck($this->items, $value, $key));
-    }
-
-    /**
-     * Get the keys of the collection items. This will return a basic Collection.
-     * @return Collection<array-key>
-     */
-    public function keys()
-    {
-        return new Collection(array_keys($this->items));
     }
 
     /** @param int|WP_Post|PostModel $item */
