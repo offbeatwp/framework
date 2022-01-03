@@ -383,7 +383,7 @@ class PostModel implements PostModelInterface
 
     public function getParent(): ?PostModel
     {
-        if (empty($this->getParentId())) {
+        if (!$this->getParentId()) {
             return null;
         }
 
