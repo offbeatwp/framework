@@ -12,16 +12,16 @@ class GenericShortcode
         $this->componentClass = $componentClass;
     }
 
-    public function renderShortcode($atts, $content = "")
+    public function renderShortcode($atts, $content = '')
     {
         if (!is_array($atts)) {
             $atts = [];
         }
 
-        if (!empty($content)) {
+        if ($content) {
             $atts['content'] = $content;
         }
 
-        return $this->render((object) $atts);
+        return $this->render((object)$atts);
     }
 }
