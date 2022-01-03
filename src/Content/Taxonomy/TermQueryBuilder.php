@@ -3,7 +3,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
-use OffbeatWP\Exceptions\TermModelNotFoundException;
+use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
 class TermQueryBuilder extends AbstractQueryBuilder
@@ -38,26 +38,41 @@ class TermQueryBuilder extends AbstractQueryBuilder
         $this->order($orderBy, $order);
     }
 
+    /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
+    public function include(array $ids) {
+        $this->queryVars['include'] = $ids;
+        return $this;
+    }
+
+    /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
+    public function exclude(array $ids) {
+        $this->queryVars['exclude'] = $ids;
+        return $this;
+    }
+
+    /** @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored */
+    public function excludeTree(array $ids) {
+        $this->queryVars['exclude_tree'] = $ids;
+        return $this;
+    }
+
     /** @return TermsCollection<TermModel> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
         $terms = (new WP_Term_Query($this->queryVars))->get_terms();
 
-        if (!empty($terms)) {
-            foreach ($terms as $term) {
-                $termModels->push(new $this->model($term));
-            }
+        foreach ($terms as $term) {
+            $termModels->push(new $this->model($term));
         }
 
         return $termModels;
     }
 
+    /** Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms */
     public function all(): TermsCollection
     {
-        $this->queryVars['number'] = 0;
-
-        return $this->get();
+        return $this->take(0);
     }
 
     public function take(int $numberOfItems): TermsCollection
@@ -72,52 +87,49 @@ class TermQueryBuilder extends AbstractQueryBuilder
         return $this->take(1)->first();
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
 
         if (!$result) {
-            throw new TermModelNotFoundException('The query did not return any TermModels');
+            throw new OffbeatModelNotFoundException('The query did not return any TermModels');
         }
 
         return $result;
     }
 
-    /** @return TermModel|false */
     public function findById(int $id)
     {
         return $this->findBy('id', $id);
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByIdOrFail(int $id): TermModel
     {
-        return $this->findOrFail('id', $id);
+        return $this->findByOrFail('id', $id);
     }
 
-    /** @return TermModel|false */
     public function findBySlug(string $slug)
     {
         return $this->findBy('slug', $slug);
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findBySlugOrFail(string $slug): TermModel
     {
-        return $this->findOrFail('slug', $slug);
+        return $this->findByOrFail('slug', $slug);
     }
 
-    /** @return TermModel|false */
     public function findByName(string $name)
     {
         return $this->findBy('name', $name);
     }
 
-    /** @throws TermModelNotFoundException */
+    /** @throws OffbeatModelNotFoundException */
     public function findByNameOrFail(string $name): TermModel
     {
-        return $this->findOrFail('name', $name);
+        return $this->findByOrFail('name', $name);
     }
 
     /**
@@ -129,21 +141,21 @@ class TermQueryBuilder extends AbstractQueryBuilder
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        return empty($term) ? $term : new $this->model($term);
+        return !$term ? $term : new $this->model($term);
     }
 
     /**
+     * @throws OffbeatModelNotFoundException
      * @param string $field
      * @param string|int $value
      * @return TermModel
-     * @throws TermModelNotFoundException
      */
-    public function findOrFail(string $field, $value): TermModel
+    public function findByOrFail(string $field, $value): TermModel
     {
         $result = $this->findBy($field, $value);
 
         if (!$result) {
-            throw new TermModelNotFoundException('Could not find term model where ' . $field . ' has a value of ' . $value);
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' where ' . $field . ' has a value of ' . $value);
         }
 
         return $result;

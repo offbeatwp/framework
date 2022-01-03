@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
@@ -9,6 +10,8 @@ use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
+use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
 
@@ -30,9 +33,10 @@ class PostModel implements PostModelInterface
     /** @var array|false */
     protected $metas = false;
 
+    use FindModelTrait;
     use Macroable {
-        __call as macroCall;
-        __callStatic as macroCallStatic;
+        Macroable::__call as macroCall;
+        Macroable::__callStatic as macroCallStatic;
     }
 
     /** @param WP_Post|int|null $post */
@@ -96,11 +100,7 @@ class PostModel implements PostModelInterface
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
-        if (method_exists($this, $methodName)) {
-            return true;
-        }
-
-        return false;
+        return method_exists($this, $methodName);
     }
 
     /* Attribute methods */
@@ -112,6 +112,11 @@ class PostModel implements PostModelInterface
     public function getTitle()
     {
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+    }
+
+    public function getUnfilteredTitle(): string
+    {
+        return $this->wpPost->post_title;
     }
 
     public function getContent(): string
@@ -134,7 +139,8 @@ class PostModel implements PostModelInterface
             // wp_make_content_images_responsive is deprecated, but we want to maintain some pre-5.5 compat
             if (function_exists('wp_filter_content_tags')) {
                 $content = wp_filter_content_tags($content);
-            } else if (function_exists('wp_make_content_images_responsive')) {
+            } elseif (function_exists('wp_make_content_images_responsive')) {
+                /** @noinspection PhpDeprecationInspection This method is deprecated but kept for WP <5.5 support */
                 $content = wp_make_content_images_responsive($content);
             }
 
@@ -165,7 +171,7 @@ class PostModel implements PostModelInterface
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
-        if (empty($postType) || empty($postType->label)) {
+        if (!$postType || !$postType->label) {
             return false;
         }
 
@@ -215,7 +221,7 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->getAuthorId();
 
-        if (empty($authorId)) {
+        if (!$authorId) {
             return false;
         }
 
@@ -226,7 +232,7 @@ class PostModel implements PostModelInterface
     {
         $authorId = $this->wpPost->post_author;
 
-        if (empty($authorId)) {
+        if (!$authorId) {
             return false;
         }
 
@@ -254,6 +260,30 @@ class PostModel implements PostModelInterface
         return null;
     }
 
+    /** @throws OffbeatInvalidModelException */
+    public function getCreatedAt(): Carbon
+    {
+        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
+
+        if (!$creationDate) {
+            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID ?? '?');
+        }
+
+        return Carbon::parse($creationDate);
+    }
+
+    /** @throws OffbeatInvalidModelException */
+    public function getUpdatedAt(): Carbon
+    {
+        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
+
+        if (!$updateDate) {
+            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID ?? '?');
+        }
+
+        return Carbon::parse($updateDate);
+    }
+
     /** @throws PostMetaNotFoundException */
     public function getMetaOrFail(string $key): string
     {
@@ -273,7 +303,8 @@ class PostModel implements PostModelInterface
         }
     }
 
-    public function setMeta(string $key, $value): PostModel
+    /** @return static */
+    public function setMeta(string $key, $value)
     {
         $this->metaInput[$key] = $value;
 
@@ -323,7 +354,7 @@ class PostModel implements PostModelInterface
 
     public function getFeaturedImageId()
     {
-        return !empty($id = get_post_thumbnail_id($this->wpPost)) ? $id : false;
+        return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
     public function setTitle(string $title): void
@@ -347,11 +378,7 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        if (!is_null($this->getParentId())) {
-            return true;
-        }
-
-        return false;
+        return !is_null($this->getParentId());
     }
 
     public function getParent(): ?PostModel
@@ -370,9 +397,13 @@ class PostModel implements PostModelInterface
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
     }
 
-    /** @deprecated Use getChildren instead */
+    /**
+     * @deprecated Use getChildren instead
+     * @see getChildren
+     */
     public function getChilds(): PostsCollection
     {
+        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
         return $this->getChildren();
     }
 
@@ -420,7 +451,7 @@ class PostModel implements PostModelInterface
 
         $GLOBALS['post'] = $currentPost;
 
-        if (!empty($adjacentPost)) {
+        if ($adjacentPost) {
             return offbeat('post')->convertWpPostToModel($adjacentPost);
         }
 
@@ -469,7 +500,7 @@ class PostModel implements PostModelInterface
 
     public function save(): int
     {
-        if (!empty($this->metaInput)) {
+        if ($this->metaInput) {
             $this->wpPost->meta_input = $this->metaInput;
         }
 

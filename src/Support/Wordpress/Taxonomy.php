@@ -41,9 +41,13 @@ class Taxonomy
         return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
-    /** @deprecated Use convertWpTermToModel instead */
+    /**
+     * @deprecated Use convertWpTermToModel instead
+     * @see convertWpTermToModel
+     */
     public function convertWpPostToModel(WP_Term $term)
     {
+        trigger_error('Deprecated convertWpPostToModel called in Taxonomy. Use convertWpTermToModel instead.', E_USER_DEPRECATED);
         return $this->convertWpTermToModel($term);
     }
 
@@ -76,7 +80,7 @@ class Taxonomy
 
         $retrievedTerm = get_term($term);
 
-        if (!empty($retrievedTerm)) {
+        if ($retrievedTerm) {
             return $this->convertWpTermToModel($retrievedTerm);
         }
 

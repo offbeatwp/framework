@@ -96,7 +96,14 @@ abstract class AbstractComponent
         }
 
         $this->attachExtraCssClassesFromSettings($settings, self::getSlug());
-        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+
+        if (!apply_filters('offbeat.component.should_render', true, $this, $settings)) {
+            return null;
+        }
+
+        $output = container()->call([$this, 'render'], [
+            'settings' => apply_filters('offbeat.component.settings', $settings, $this)
+        ]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);

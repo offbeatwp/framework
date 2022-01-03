@@ -1,8 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
-use Illuminate\Support\Collection;
-use OffbeatWP\Exceptions\TermsCollectionException;
+use OffbeatWP\Content\Common\OffbeatModelCollection;
+use TypeError;
 use WP_Term;
 use ArrayAccess;
 
@@ -10,32 +10,30 @@ use ArrayAccess;
  * @template T of TermModel
  * @template-extends ArrayAccess<array-key|null, T>
  */
-class TermsCollection extends Collection
+class TermsCollection extends OffbeatModelCollection
 {
-    /**
-     * @param int[]|WP_Term[]|TermModel[] $items
-     * @throws TermsCollectionException
-     */
+    /** @param int[]|WP_Term[]|TermModel[] $items */
     public function __construct(iterable $items = []) {
         $terms = [];
 
         foreach ($items as $item) {
-            $terms[] = $this->createValidTermModel($item);
+            $termModel = $this->createValidTermModel($item);
+            if ($termModel) {
+                $terms[] = $termModel;
+            }
         }
 
         parent::__construct($terms);
     }
 
-    public function map(callable $callback): Collection {
-        $keys = array_keys($this->items);
-        $items = array_map($callback, $this->items, $keys);
-
-        return new Collection(array_combine($keys, $items));
-    }
-
-    /** Returns this TermsCollection as a generic Collection */
-    public function toCollection(): Collection {
-        return collect($this->toArray());
+    /**
+     * Retrieves all object Ids within this collection as an array.
+     * @return int[]
+     */
+    public function getIds(): array {
+        return array_map(static function (TermModel $model) {
+            return $model->getId() ?: 0;
+        }, $this->items);
     }
 
     /** @return T|TermModel|mixed */
@@ -68,24 +66,17 @@ class TermsCollection extends Collection
         return parent::shift($count);
     }
 
-    /**
-     * @param int|WP_Term|TermModel $item
-     * @throws TermsCollectionException
-     */
-    private function createValidTermModel($item): TermModel
+    /** @param int|WP_Term|TermModel $item */
+    protected function createValidTermModel($item): ?TermModel
     {
-        $model = null;
+        if ($item instanceof TermModel) {
+            return $item;
+        }
 
         if (is_int($item) || $item instanceof WP_Term) {
-            $model = offbeat('taxonomy')->get($item);
-        } else if ($item instanceof TermModel) {
-            $model = $item;
+            return offbeat('taxonomy')->get($item);
         }
 
-        if (!$model || !$model->wpTerm) {
-            throw new TermsCollectionException('Valid TermCollection could not be created with passed items.');
-        }
-
-        return $model;
+        throw new TypeError(gettype($item) . ' cannot be used to generate a TermModel.');
     }
 }

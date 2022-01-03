@@ -1,7 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use Illuminate\Support\Collection;
+use OffbeatWP\Content\Common\OffbeatModelCollection;
+use TypeError;
 use WP_Post;
 use WP_Query;
 use ArrayAccess;
@@ -10,32 +11,32 @@ use ArrayAccess;
  * @template T of PostModel
  * @template-extends ArrayAccess<array-key|null, T>
  */
-class PostsCollection extends Collection
+class PostsCollection extends OffbeatModelCollection
 {
     protected $query = null;
 
     /** @var int[]|WP_Post[]|WP_Query $items */
-    public function __construct($items) {
-        if (is_object($items)) {
+    public function __construct($items = []) {
+        $postItems = [];
+
+        if ($items instanceof WP_Query) {
             $this->query = $items;
 
-            $postItems = [];
-
-            foreach ($items->posts as $post) {
-                $postItems[] = offbeat('post')->convertWpPostToModel($post);
+            if (!empty($items->posts)) {
+                foreach ($items->posts as $post) {
+                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
+                }
             }
-
-            $items = $postItems;
-            $postItems = null;
-        } elseif (is_array($items)) {
-            foreach ($items as $itemKey => $item) {
-                if ($item instanceof WP_Post) {
-                    $items[$itemKey] = offbeat('post')->convertWpPostToModel($item);
+        } elseif (is_iterable($items)) {
+            foreach ($items as $key => $item) {
+                $postModel = $this->createValidPostModel($item);
+                if ($postModel) {
+                    $postItems[$key] = $postModel;
                 }
             }
         }
 
-        parent::__construct($items);
+        parent::__construct($postItems);
     }
 
     public function getIterator(): WpPostsIterator {
@@ -46,16 +47,20 @@ class PostsCollection extends Collection
         return $this->query;
     }
 
-    /** Returns this PostsCollection as a generic Collection */
-    public function toCollection(): Collection {
-        return collect($this->toArray());
+    /**
+     * Retrieves all object Ids within this collection as an array.
+     * @return int[]
+     */
+    public function getIds(): array {
+        return array_map(static function (PostModel $model) {
+            return $model->getId() ?: 0;
+        }, $this->items);
     }
 
-    public function map(callable $callback): Collection {
-        $keys = array_keys($this->items);
-        $items = array_map($callback, $this->items, $keys);
-
-        return new Collection(array_combine($keys, $items));
+    /** @return PostModel[]|T[] */
+    public function toArray()
+    {
+        return $this->toCollection()->toArray();
     }
 
     /** @return T|PostModel|mixed */
@@ -92,5 +97,19 @@ class PostsCollection extends Collection
     public function shift($count = 1)
     {
         return parent::shift($count);
+    }
+
+    /** @param int|WP_Post|PostModel $item */
+    protected function createValidPostModel($item): ?PostModel
+    {
+        if ($item instanceof PostModel) {
+            return $item;
+        }
+
+        if (is_int($item) || $item instanceof WP_Post) {
+            return offbeat('post')->get($item);
+        }
+
+        throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 }

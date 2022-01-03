@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
+use WP_Query;
 
 class PostTypeBuilder
 {
@@ -89,6 +90,41 @@ class PostTypeBuilder
         return $this;
     }
 
+    /**
+     * Easily add a sortabke column to the admin table based on a specific meta value
+     * @param string $metaName  The meta key. Required.
+     * @param string $label     The label to display in the admin column. Displays meta key name if omitted.
+     * @param string $orderBy   How the column should be sorted. Defaults to alphatic. Use 'meta_value_num' for numeric sorting.
+     * @return $this
+     */
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value'): PostTypeBuilder
+    {
+        add_action("manage_{$this->postType}_posts_columns", static function(array $postColumns) use ($metaName, $label) {
+            $postColumns[$metaName] = $label ?: $metaName;
+            return $postColumns;
+        });
+
+        add_action("manage_{$this->postType}_posts_custom_column", function(string $columnName, int $postId) use ($metaName) {
+            if ($columnName === $metaName) {
+                echo get_post_meta($postId, $metaName, true);
+            }
+        }, 10, 2);
+
+        add_filter("manage_edit-{$this->postType}_sortable_columns", function (array $columns) use ($metaName) {
+            $columns[$metaName] = $metaName;
+            return $columns;
+        });
+
+        add_action('pre_get_posts', function (WP_Query $query) use ($metaName) {
+            if (is_admin() && $query->is_main_query() && $query->get('orderby') === $metaName) {
+                $query->set('orderby', 'meta_value');
+                $query->set('meta_key', $metaName);
+            }
+        });
+
+        return $this;
+    }
+
     /** @param string[] $supports Valid values: ‘title’ ‘editor’ ‘author’ ‘thumbnail’ ‘excerpt’ ‘trackbacks’ ‘custom-fields’ ‘comments’ ‘revisions’ ‘page-attributes’ ‘post-formats’ */
     public function supports(array $supports): PostTypeBuilder
     {
@@ -157,6 +193,7 @@ class PostTypeBuilder
     /** @deprecated This function does not actually appear to do anything */
     public function position($position = null): PostTypeBuilder
     {
+        trigger_error('Deprecated position called in PostTypeBuilder.', E_USER_DEPRECATED);
         $this->postTypeArgs['position'] = $position;
 
         return $this;
@@ -177,9 +214,9 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function mapMetaCap(): PostTypeBuilder
+    public function mapMetaCap(bool $mapMetaCap = true): PostTypeBuilder
     {
-        $this->postTypeArgs['map_meta_cap'] = true;
+        $this->postTypeArgs['map_meta_cap'] = $mapMetaCap;
 
         return $this;
     }

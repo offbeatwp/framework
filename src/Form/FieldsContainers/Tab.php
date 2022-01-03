@@ -3,6 +3,6 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 class Tab extends AbstractFieldsContainer
 {
-    const TYPE = 'tab';
-    const LEVEL = 10;
+    public const TYPE = 'tab';
+    public const LEVEL = 10;
 }

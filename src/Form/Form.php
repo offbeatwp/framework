@@ -11,6 +11,7 @@ use OffbeatWP\Form\Fields\FieldInterface;
 
 class Form extends Collection
 {
+    /** @var Form|FieldsContainerInterface */
     private $activeItem;
     private $fieldKeys = [];
     private $fieldPrefix = '';
@@ -18,21 +19,26 @@ class Form extends Collection
 
     public function __construct()
     {
+        parent::__construct();
         $this->activeItem = $this;
     }
 
+    /**
+     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface $item
+     * @param bool $prepend
+     */
     public function add($item, $prepend = false)
     {
         // If item is Tab and active itme is Section move back to parent
-
-        if ($this->getActiveItem() != $this && $item instanceof FieldsContainerInterface) {
+        if ($this->getActiveItem() !== $this && $item instanceof FieldsContainerInterface) {
             while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
                 $this->closeField();
             }
         }
 
         // If item is of the same type as the active item move back to parent
-        if (get_class($item) == get_class($this->getActiveItem()) && get_class($item) != self::class) {
+        $itemClass = get_class($item);
+        if ($itemClass === get_class($this->getActiveItem()) && $itemClass !== self::class) {
             $this->closeField();
         }
 
@@ -43,7 +49,6 @@ class Form extends Collection
             } else {
                 $this->push($item);
             }
-
 
             if ($item instanceof FieldsContainerInterface) {
                 $this->setActiveItem($item, true);
@@ -68,6 +73,11 @@ class Form extends Collection
         return $this->activeItem;
     }
 
+    /**
+     * @param FieldsContainerInterface|Form $item
+     * @param bool $setParent
+     * @return FieldsContainerInterface|Form
+     */
     public function setActiveItem($item, $setParent = false)
     {
         if ($setParent) {
@@ -121,7 +131,7 @@ class Form extends Collection
     {
         $parentField = $this->getActiveItem()->getParent();
 
-        if (!empty($parentField)) {
+        if ($parentField) {
             $this->setActiveItem($parentField);
         }
 

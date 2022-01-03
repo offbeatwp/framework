@@ -6,8 +6,6 @@ class NavMenu extends Select {
     public function __construct()
     {        
         $this->addOptions([$this, 'getNavMenus']);
-
-        parent::__construct();
     }
 
     public function getNavMenus () {

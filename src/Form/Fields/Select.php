@@ -2,11 +2,11 @@
 namespace OffbeatWP\Form\Fields;
 
 class Select extends AbstractField {
-    const FIELD_TYPE = 'select';
+    public const FIELD_TYPE = 'select';
 
     public $options = [];
 
-    public function addOptions($options = []) {
+    public function addOptions(array $options = []) {
         $this->options = array_replace($this->options, $options);
 
         return $this;
@@ -22,7 +22,7 @@ class Select extends AbstractField {
         if (is_callable($this->options)) {
             return call_user_func($this->options);
         }
+
         return $this->options;
- 
     }
 }

@@ -33,11 +33,7 @@ class AssetsManager
 
     public function getEntryFromAssetsManifest($filename)
     {
-        if(isset($this->getAssetsManifest()->$filename)) {
-            return $this->getAssetsManifest()->$filename;
-        }
-
-        return false;
+        return $this->getAssetsManifest()->$filename ?? false;
     }
 
     public function getAssetsManifest() {
@@ -60,12 +56,9 @@ class AssetsManager
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
-        if (
-            empty($entrypoints) || 
-            empty($entrypoints->entrypoints) ||
-            empty($entrypoints->entrypoints->$entry) ||
-            empty($entrypoints->entrypoints->$entry->$key)
-        ) return false;
+        if (empty($entrypoints->entrypoints->$entry->$key)) {
+            return false;
+        }
 
         return $entrypoints->entrypoints->$entry->$key;
     }
@@ -111,7 +104,7 @@ class AssetsManager
             return ;
         }
 
-        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false, 'all');
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
     }
 
     public function enqueueScripts($entry) {
