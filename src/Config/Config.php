@@ -68,10 +68,8 @@ class Config {
                         }
                     }
 
-                    if ($explicitEnvConfigs) {
-                        foreach ($explicitEnvConfigs as $explicitEnvConfig) {
-                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
-                        }
+                    foreach ($explicitEnvConfigs as $explicitEnvConfig) {
+                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
                     }
                 }
 
