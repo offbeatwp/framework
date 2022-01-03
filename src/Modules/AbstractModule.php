@@ -43,7 +43,7 @@ abstract class AbstractModule extends AbstractService
 
         $registerableComponents = $this->getRegisterableObjects($directory, true);
 
-        if (!empty($registerableComponents)) {
+        if ($registerableComponents) {
             foreach ($registerableComponents as $class) {
                 offbeat('components')->register($class::getSlug(), $class);
             }
