@@ -62,7 +62,7 @@ class Config {
                         if (preg_match('/^!(.*)/', $envKey, $matches) && !in_array($currentEnvironment, explode('|', $matches[1]))) {
                             $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
                         } elseif (!preg_match('/^!(.*)/', $envKey, $matches)) {
-                            if (in_array($currentEnvironment, explode('|', $envKey), true)) {
+                            if (in_array($currentEnvironment, explode('|', $envKey))) {
                                 $explicitEnvConfigs[] = $envConfig;
                             }
                         }
