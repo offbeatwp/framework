@@ -9,10 +9,7 @@ class UserModel
 {
     protected $wpUser;
 
-    /**
-     * @var WP_User|int
-     * @throws UserModelException
-     */
+    /** @var WP_User|int */
     public function __construct($user)
     {
         if (is_int($user)) {

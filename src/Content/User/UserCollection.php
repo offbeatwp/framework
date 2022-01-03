@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\User;
 
 use OffbeatWP\Content\Common\OffbeatModelCollection;
-use OffbeatWP\Exceptions\UserModelException;
 use TypeError;
 use WP_User;
 use ArrayAccess;
@@ -14,10 +13,7 @@ use ArrayAccess;
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /**
-     * @param int[]|WP_User[]|UserModel[] $items
-     * @throws UserModelException
-     */
+    /** @param int[]|WP_User[]|UserModel[] $items */
     public function __construct(iterable $items = []) {
         $users = [];
 
@@ -51,7 +47,7 @@ class UserCollection extends OffbeatModelCollection
      * Push one or more items onto the end of the collection.
      * @param int|WP_User|UserModel ...$values
      * @return $this
-     * @throws UserModelException
+     * 
      */
     public function push(...$values)
     {
@@ -64,19 +60,17 @@ class UserCollection extends OffbeatModelCollection
         return parent::push(...$userModels);
     }
 
-    /** @throws UserModelException */
     public function offsetSet($key, $value)
     {
         parent::offsetSet($key, $this->createValidUserModel($value));
     }
 
-    /** @throws UserModelException */
     public function prepend($value, $key = null)
     {
         return parent::prepend($this->createValidUserModel($value), $key);
     }
 
-    /** @throws UserModelException */
+    /**  */
     public function add($value)
     {
         return parent::add($this->createValidUserModel($value));
@@ -118,10 +112,7 @@ class UserCollection extends OffbeatModelCollection
         return parent::shift($count);
     }
 
-    /**
-     * @param int|WP_User|UserModel $item
-     * @throws UserModelException
-     */
+    /** @param int|WP_User|UserModel $item */
     protected function createValidUserModel($item): ?UserModel
     {
         if ($item instanceof UserModel) {
