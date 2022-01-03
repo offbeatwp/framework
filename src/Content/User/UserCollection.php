@@ -2,9 +2,136 @@
 
 namespace OffbeatWP\Content\User;
 
-use Illuminate\Support\Collection;
+use OffbeatWP\Content\Common\OffbeatModelCollection;
+use OffbeatWP\Exceptions\UserModelException;
+use TypeError;
+use WP_User;
+use ArrayAccess;
 
-class UserCollection extends Collection
+/**
+ * @template T of UserModel
+ * @template-extends ArrayAccess<array-key|null, T>
+ */
+class UserCollection extends OffbeatModelCollection
 {
+    /**
+     * @param int[]|WP_User[]|UserModel[] $items
+     * @throws UserModelException
+     */
+    public function __construct(iterable $items = []) {
+        $users = [];
 
+        foreach ($items as $item) {
+            $termModel = $this->createValidUserModel($item);
+            if ($termModel) {
+                $users[] = $termModel;
+            }
+        }
+
+        parent::__construct($users);
+    }
+
+    /**
+     * Retrieves all object Ids within this collection as an array.
+     * @return int[]
+     */
+    public function getIds(): array {
+        return array_map(static function (UserModel $model) {
+            return $model->getId() ?: 0;
+        }, $this->items);
+    }
+
+    /** @return UserModel[]|T[] */
+    public function toArray()
+    {
+        return $this->toCollection()->toArray();
+    }
+
+    /**
+     * Push one or more items onto the end of the collection.
+     * @param int|WP_User|UserModel ...$values
+     * @return $this
+     * @throws UserModelException
+     */
+    public function push(...$values)
+    {
+        $userModels = [];
+
+        foreach ($values as $value) {
+            $userModels[] = $this->createValidUserModel($value);
+        }
+
+        return parent::push(...$userModels);
+    }
+
+    /** @throws UserModelException */
+    public function offsetSet($key, $value)
+    {
+        parent::offsetSet($key, $this->createValidUserModel($value));
+    }
+
+    /** @throws UserModelException */
+    public function prepend($value, $key = null)
+    {
+        return parent::prepend($this->createValidUserModel($value), $key);
+    }
+
+    /** @throws UserModelException */
+    public function add($value)
+    {
+        return parent::add($this->createValidUserModel($value));
+    }
+
+    /** @return T|UserModel|mixed */
+    public function first(callable $callback = null, $default = null)
+    {
+        return parent::first($callback, $default);
+    }
+
+    /** @return T|UserModel|mixed */
+    public function last(callable $callback = null, $default = null)
+    {
+        return parent::last($callback, $default);
+    }
+
+    /** @return T|UserModel|static|null */
+    public function pop($count = 1)
+    {
+        return parent::pop($count);
+    }
+
+    /** @return T|UserModel|mixed */
+    public function pull($key, $default = null)
+    {
+        return parent::pull($key, $default);
+    }
+
+    /** @return T|UserModel|null */
+    public function reduce(callable $callback, $initial = null)
+    {
+        return parent::reduce($callback, $initial);
+    }
+
+    /** @return T|UserModel|static|null */
+    public function shift($count = 1)
+    {
+        return parent::shift($count);
+    }
+
+    /**
+     * @param int|WP_User|UserModel $item
+     * @throws UserModelException
+     */
+    protected function createValidUserModel($item): ?UserModel
+    {
+        if ($item instanceof UserModel) {
+            return $item;
+        }
+
+        if (is_int($item) || $item instanceof WP_User) {
+            return new UserModel($item);
+        }
+
+        throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');
+    }
 }

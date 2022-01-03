@@ -10,8 +10,8 @@ class UserModel
     protected $wpUser;
 
     /**
-     * @throws UserModelException
      * @var WP_User|int
+     * @throws UserModelException
      */
     public function __construct($user)
     {
@@ -29,5 +29,10 @@ class UserModel
     public function getWpUser(): WP_User
     {
         return $this->wpUser;
+    }
+
+    public static function query(): UserQueryBuilder
+    {
+        return new UserQueryBuilder();
     }
 }
