@@ -100,16 +100,16 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /** @param int|WP_Post|PostModel $item */
-    private function createValidPostModel($item): ?PostModel
+    protected function createValidPostModel($item): ?PostModel
     {
-        if (is_int($item) || $item instanceof WP_Post) {
-            $model = offbeat('post')->get($item);
-        } elseif ($item instanceof PostModel) {
-            $model = $item;
-        } else {
-            throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
+        if ($item instanceof PostModel) {
+            return $item;
         }
 
-        return $model;
+        if (is_int($item) || $item instanceof WP_Post) {
+            return offbeat('post')->get($item);
+        }
+
+        throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 }
