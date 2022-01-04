@@ -129,8 +129,18 @@ class UserModel
         return self::query()->findByIdOrFail(get_current_user_id());
     }
 
+    /**
+     * Only users match at least one of these roles will be queried.<br/>
+     * Default return value is an empty array.
+     * @return string[]
+     */
+    public static function definedUserRoles(): array
+    {
+        return [];
+    }
+
     public static function query(): UserQueryBuilder
     {
-        return new UserQueryBuilder();
+        return new UserQueryBuilder(static::class);
     }
 }

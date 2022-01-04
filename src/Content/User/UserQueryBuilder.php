@@ -8,7 +8,18 @@ use WP_User_Query;
 
 class UserQueryBuilder extends AbstractQueryBuilder
 {
+    /** @var array */
     protected $queryVars = [];
+    /** @var class-string<UserModel> */
+    protected $model;
+
+    /** @param class-string<UserModel> $modelClass */
+    public function __construct(string $modelClass)
+    {
+        $this->model = $modelClass;
+
+        $this->whereRoleIn($modelClass::definedUserRoles());
+    }
 
     /** @return UserCollection<UserModel> */
     protected function get(): UserCollection
