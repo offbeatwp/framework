@@ -75,6 +75,11 @@ class UserModel
         return $this->wpUser;
     }
 
+    public function getId(): int
+    {
+        return $this->wpUser->ID;
+    }
+
     /** Returns true if this user is the currently logged in user. */
     public function isCurrentUser(): bool
     {
