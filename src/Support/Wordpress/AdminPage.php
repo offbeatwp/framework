@@ -40,7 +40,7 @@ class AdminPage
                 $callback = [static::class, 'callbackController'];
             }
 
-            if (!empty($callback)) {
+            if ($callback) {
                 $callback = function () use ($callback) {
                     offbeat()->container->call($callback);
                 };
