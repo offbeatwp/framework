@@ -83,4 +83,27 @@ class UserQueryBuilder extends AbstractQueryBuilder
         $this->queryVars['role__not_in'] = $roles;
         return $this;
     }
+
+    public function whereMeta(array $metaQueryArray): UserQueryBuilder
+    {
+        if (!isset($this->queryVars['meta_query'])) {
+            $this->queryVars['meta_query'] = [];
+        }
+
+        $this->queryVars['meta_query'][] = $metaQueryArray;
+
+        return $this;
+    }
+
+    public function whereMetaIs(string $metaKey, $value): UserQueryBuilder
+    {
+        $this->whereMeta(['key' => $metaKey, 'compare' => '==', 'value' => $value]);
+        return $this;
+    }
+
+    public function whereMetaIn(string $metaKey, array $values): UserQueryBuilder
+    {
+        $this->whereMeta(['key' => $metaKey, 'compare' => 'IN', 'value' => $values]);
+        return $this;
+    }
 }
