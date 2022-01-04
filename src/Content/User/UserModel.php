@@ -80,6 +80,31 @@ class UserModel
         return $this->wpUser->ID;
     }
 
+    public function getDisplayName(): string
+    {
+        return $this->wpUser->display_name;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->wpUser->first_name;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->wpUser->last_name;
+    }
+
+    public function getLogin(): string
+    {
+        return $this->wpUser->user_login;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->wpUser->user_email;
+    }
+
     /** Returns true if this user is the currently logged in user. */
     public function isCurrentUser(): bool
     {
