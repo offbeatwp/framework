@@ -24,7 +24,7 @@ class RouteCollection extends RoutingRouteCollection
 
         $filteredRouteCollection = new self($routes);
 
-        if(!empty($routes)) {
+        if ($routes) {
             foreach ($routes as $routeName => $route) {
                 $filteredRouteCollection->add($routeName, $route);
             }

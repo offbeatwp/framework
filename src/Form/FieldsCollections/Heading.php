@@ -19,6 +19,7 @@ class Heading extends AbstractFieldsCollection {
                 'h4' => __('h4', 'offbeatwp'),
                 'h5' => __('h5', 'offbeatwp'),
                 'h6' => __('h6', 'offbeatwp'),
+                'div' => __('div', 'offbeatwp'),
             ])
             ->description(__('The heading type is used to let search indexers know what is important on a page', 'offbeatwp'))
             ->default($defaultHeading);

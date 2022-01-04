@@ -18,7 +18,7 @@ class ComponentsService extends AbstractService
     {
         $components = $this->registrableComponents();
 
-        if (!empty($components)) {
+        if ($components) {
             foreach ($components as $class) {
                 container('components')->register($class::getSlug(), $class);
             }

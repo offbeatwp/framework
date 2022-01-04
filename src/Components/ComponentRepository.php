@@ -67,13 +67,17 @@ class ComponentRepository
         register_widget($widget);
     }
 
+    /**
+     * @param string $name
+     * @param class-string<AbstractComponent> $componentClass
+     */
     public function registerShortcode($name, $componentClass)
     {
         $app = offbeat();
 
         $tag = $componentClass::getSetting('shortcode');
 
-        if (empty($tag)) {
+        if (!$tag) {
             $tag = $componentClass::getSlug();
         }
 

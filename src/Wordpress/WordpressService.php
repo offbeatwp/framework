@@ -87,7 +87,7 @@ class WordpressService
     {
         if (is_singular('page') && empty($data['ignore_page_template'])) {
             $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
-            if (!empty($pageTemplate) && $pageTemplate != 'default') {
+            if ($pageTemplate && $pageTemplate !== 'default') {
                 return $pageTemplate;
             }
         }

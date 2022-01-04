@@ -153,7 +153,7 @@ abstract class AbstractComponent
 
     protected function setCachedObject(string $id, ?string $object): ?string
     {
-        if (!empty($object)) {
+        if ($object) {
             container('componentCache')->save($id, $object, 60);
         }
 
@@ -214,6 +214,7 @@ abstract class AbstractComponent
     public static function getForm(): Form
     {
         $form = static::form();
+
         if (is_null($form)) {
             $settings = static::settings();
 
@@ -226,7 +227,7 @@ abstract class AbstractComponent
             }
         }
 
-        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
+        if ($form instanceof Form && isset($settings['variations'])) {
             $form->addField(
                 Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
             );
