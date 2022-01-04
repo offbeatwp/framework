@@ -20,7 +20,7 @@ class UserQueryBuilder extends AbstractQueryBuilder
         return apply_filters('offbeatwp/users/query/get', new UserCollection($userQuery->get_results()), $this);
     }
 
-    public function all()
+    public function all(): UserCollection
     {
         return $this->take(0);
     }
@@ -52,5 +52,35 @@ class UserQueryBuilder extends AbstractQueryBuilder
         }
 
         return $result;
+    }
+
+    /**
+     * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
+     * @return $this
+     */
+    public function withRoles(array $roles): UserQueryBuilder
+    {
+        $this->queryVars['role'] = $roles;
+        return $this;
+    }
+
+    /**
+     * @param string[] $roles An array of role names. Matched users must have at least one of these roles.
+     * @return $this
+     */
+    public function whereRoleIn(array $roles): UserQueryBuilder
+    {
+        $this->queryVars['role__in'] = $roles;
+        return $this;
+    }
+
+    /**
+     * @param string[] $roles An array of role names to exclude. Users matching one or more of these roles will not be included in results.
+     * @return $this
+     */
+    public function whereRoleNotIn(array $roles): UserQueryBuilder
+    {
+        $this->queryVars['role__not_in'] = $roles;
+        return $this;
     }
 }
