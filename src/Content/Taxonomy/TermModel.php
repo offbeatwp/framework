@@ -68,9 +68,9 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
-        return $this->wpTerm->term_id;
+        return $this->wpTerm->term_id ?? null;
     }
 
     public function getName(): string
