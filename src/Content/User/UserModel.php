@@ -42,35 +42,12 @@ class UserModel
             return $this->macroCall($method, $parameters);
         }
 
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        if (!is_null($hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this))) {
-            return $hookValue;
-        }
-
-        return null;
+        return $this->wpUser->$method ?? null;
     }
 
-    public function __get($name)
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        if (method_exists($this, $methodName)) {
-            return $this->$methodName();
-        }
-
-        return null;
-    }
-
-    public function __isset($name): bool
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        return method_exists($this, $methodName);
-    }
-
+    ///////////////
+    /// Getters ///
+    ///////////////
     public function getWpUser(): WP_User
     {
         return $this->wpUser;
@@ -81,9 +58,28 @@ class UserModel
         return $this->wpUser->ID;
     }
 
+    /** @return string The user's login username. */
+    public function getLogin(): string
+    {
+        return $this->wpUser->user_login;
+    }
+
+    /** @return string The URL-friendly user name. Defaults to first name + last name is not specified. */
     public function getDisplayName(): string
     {
         return $this->wpUser->display_name;
+    }
+
+    /** @return string The user's nickname. Default is the user's username. */
+    public function getNickname(): string
+    {
+        return $this->wpUser->nickname;
+    }
+
+    /** @return string The user's display name. Default is the user's username. */
+    public function getNiceName(): string
+    {
+        return $this->wpUser->user_nicename;
     }
 
     public function getFirstName(): string
@@ -96,14 +92,32 @@ class UserModel
         return $this->wpUser->last_name;
     }
 
-    public function getLogin(): string
+    /** @return string The plain-text user password. */
+    public function getPassword(): string
     {
-        return $this->wpUser->user_login;
+        return $this->wpUser->user_pass;
+    }
+
+    /** @return string Password reset key. Default empty. */
+    public function getActivationKey(): string
+    {
+        return $this->wpUser->user_activation_key;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->wpUser->user_url;
     }
 
     public function getEmail(): string
     {
         return $this->wpUser->user_email;
+    }
+
+    /** @return string The user's biographical description. */
+    public function getDescription(): string
+    {
+        return $this->wpUser->description;
     }
 
     /** @return string User's locale. Default empty. */
@@ -118,9 +132,16 @@ class UserModel
         return Carbon::parse($this->wpUser->user_registered);
     }
 
-    public function isDeleted(): bool
+    /** @return bool Returns true if the rich-editor is enabled for the user. */
+    public function isRichEditingEnabled()
     {
-        return (bool)$this->wpUser->deleted;
+        return $this->wpUser->rich_editing === 'true';
+    }
+
+    /** @return bool Returns true if rich code editing is enabled for the user. */
+    public function isSyntaxHighlightingEnabled()
+    {
+        return $this->wpUser->syntax_highlighting === 'true';
     }
 
     /** @return bool Multisite only. Whether the user is marked as spam. Default false. */
