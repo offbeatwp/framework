@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
+use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\FindModelTrait;
 use OffbeatWP\Exceptions\UserModelException;
@@ -105,25 +106,51 @@ class UserModel
         return $this->wpUser->user_email;
     }
 
-    /** Returns true if this user is the currently logged in user. */
+    /** @return string User's locale. Default empty. */
+    public function getLocale(): string
+    {
+        return $this->wpUser->locale;
+    }
+
+    /** @return Carbon Date the user registered as a Carbon Date. */
+    public function getRegistrationDate(): Carbon
+    {
+        return Carbon::parse($this->wpUser->user_registered);
+    }
+
+    public function isDeleted(): bool
+    {
+        return (bool)$this->wpUser->deleted;
+    }
+
+    /** @return bool Multisite only. Whether the user is marked as spam. Default false. */
+    public function isSpam(): bool
+    {
+        return (bool)$this->wpUser->spam;
+    }
+
+    /** @return bool Returns true if this user is the currently logged in user. */
     public function isCurrentUser(): bool
     {
         return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
     }
 
-    /**
-     * Returns the user that is currently logged in, or null if no user is logged in.
-     * @return static|null
-     */
+    /** @return string[] User's roles */
+    public function getRoles(): array
+    {
+        return $this->wpUser->roles;
+    }
+
+    /////////////////////
+    /// Query Methods ///
+    /////////////////////
+    /** @return static|null Returns the user that is currently logged in, or null if no user is logged in. */
     public static function getCurrentUser(): ?UserModel
     {
         return self::query()->findById(get_current_user_id());
     }
 
-    /**
-     * Returns the user that is currently logged in, or null if no user is logged in.
-     * @return static
-     */
+    /** @return static Returns the user that is currently logged in, or null if no user is logged in. */
     public static function getCurrentUserOrFail(): UserModel
     {
         return self::query()->findByIdOrFail(get_current_user_id());

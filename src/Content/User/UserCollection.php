@@ -13,6 +13,9 @@ use ArrayAccess;
  */
 class UserCollection extends OffbeatModelCollection
 {
+    /** @var UserModel[] */
+    protected $items = [];
+
     /** @param int[]|WP_User[]|UserModel[] $items */
     public function __construct(iterable $items = []) {
         $users = [];
