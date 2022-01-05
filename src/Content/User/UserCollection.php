@@ -47,7 +47,7 @@ class UserCollection extends OffbeatModelCollection
     }
 
     /**
-     * Push one or more items onto the end of the collection.
+     * Push one or more items onto the end of the user collection.
      * @param int|WP_User|UserModel ...$values
      * @return $this
      * 
@@ -63,17 +63,32 @@ class UserCollection extends OffbeatModelCollection
         return parent::push(...$userModels);
     }
 
+    /**
+     * Set the model given the offset.
+     * @param array-key $key
+     * @param int|WP_User|UserModel $value
+     */
     public function offsetSet($key, $value)
     {
         parent::offsetSet($key, $this->createValidUserModel($value));
     }
 
+    /**
+     * Push a model onto the beginning of the user collection.
+     * @param int|WP_User|UserModel $value
+     * @param array-key $key
+     * @return UserCollection
+     */
     public function prepend($value, $key = null)
     {
         return parent::prepend($this->createValidUserModel($value), $key);
     }
 
-    /**  */
+    /**
+     * Add a model to the user collection.
+     * @param int|WP_User|UserModel $value
+     * @return UserCollection
+     */
     public function add($value)
     {
         return parent::add($this->createValidUserModel($value));
