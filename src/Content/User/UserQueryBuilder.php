@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\User;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Exceptions\ModelTypeMismatchException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_User_Query;
 
@@ -11,14 +12,13 @@ class UserQueryBuilder extends AbstractQueryBuilder
     /** @var array */
     protected $queryVars = [];
     /** @var class-string<UserModel> */
-    protected $model;
+    protected $modelClass;
 
     /** @param class-string<UserModel> $modelClass */
     public function __construct(string $modelClass)
     {
-        $this->model = $modelClass;
-
-        $this->whereRoleIn($modelClass::definedUserRoles());
+        $this->modelClass = $modelClass;
+        $this->whereRoleIn($this->modelClass::definedUserRoles());
     }
 
     /** @return UserCollection<UserModel> */
@@ -81,6 +81,10 @@ class UserQueryBuilder extends AbstractQueryBuilder
      */
     public function whereRoleIn(array $roles): UserQueryBuilder
     {
+        if ($this->modelClass::definedUserRoles()) {
+            throw new ModelTypeMismatchException('This UserModel cannot use whereRoleIn as it has predefined User Roles.');
+        }
+
         $this->queryVars['role__in'] = $roles;
         return $this;
     }
