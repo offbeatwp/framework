@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\User;
 
 use OffbeatWP\Content\Common\OffbeatModelCollection;
+use OffbeatWP\Support\Wordpress\User;
 use TypeError;
 use WP_User;
 use ArrayAccess;
@@ -21,9 +22,9 @@ class UserCollection extends OffbeatModelCollection
         $users = [];
 
         foreach ($items as $item) {
-            $termModel = $this->createValidUserModel($item);
-            if ($termModel) {
-                $users[] = $termModel;
+            $userModel = $this->createValidUserModel($item);
+            if ($userModel) {
+                $users[] = $userModel;
             }
         }
 
@@ -138,7 +139,7 @@ class UserCollection extends OffbeatModelCollection
         }
 
         if (is_int($item) || $item instanceof WP_User) {
-            return new UserModel($item);
+            return User::get($item);
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');

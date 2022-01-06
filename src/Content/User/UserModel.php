@@ -224,6 +224,7 @@ class UserModel
 
     /**
      * Only users that match at least one of these roles will be queried.<br/>
+     * Generally, you'll only want to return <b>one</b> role unless the model class is abstract.<br/>
      * Default return value is null.
      * @return string[]|null
      */
