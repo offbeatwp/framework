@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
+use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\FindModelTrait;
@@ -36,13 +37,22 @@ class UserModel
         $this->wpUser = $user;
     }
 
+    /**
+     * @param string $method
+     * @param array $parameters
+     * @return mixed|void
+     */
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
         }
 
-        return $this->wpUser->$method ?? null;
+        if (isset($this->wpUser->$method)) {
+            return $this->wpUser->$method;
+        }
+
+        throw new BadMethodCallException('Call to undefined method ' . $method);
     }
 
     ///////////////
