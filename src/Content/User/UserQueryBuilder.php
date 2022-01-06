@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\User;
 
 use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_User_Query;
 
@@ -65,6 +66,24 @@ class UserQueryBuilder extends AbstractQueryBuilder
         }
 
         return $result;
+    }
+
+    /**
+     * @param string[]|string $properties  Sort retrieved users by parameter. Defaults to <i>login</i>.
+     * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
+     * @return $this;
+     */
+    public function orderBy($properties, string $direction = ''): UserQueryBuilder
+    {
+        $this->queryVars['orderby'] = $properties;
+
+        if ($direction === 'ASC' || $direction === 'DESC') {
+            $this->queryVars['order'] = $direction;
+        } elseif ($direction !== '') {
+            throw new InvalidQueryOperatorException('Attempted to use incorrect direction in UserQueryBuilder. Only ASC and DESC are valid.');
+        }
+
+        return $this;
     }
 
     /**
