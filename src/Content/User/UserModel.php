@@ -6,12 +6,15 @@ use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\UserModelException;
 use WP_User;
 
 class UserModel
 {
     protected $wpUser;
+    /** @var null|array */
+    protected $metas = null;
 
     use FindModelTrait;
     use Macroable {
@@ -24,6 +27,7 @@ class UserModel
     {
         if ($user === null) {
             $user = new WP_User();
+            $this->metas = [];
         }
 
         if (is_int($user)) {
@@ -66,6 +70,36 @@ class UserModel
     public function getId(): int
     {
         return $this->wpUser->ID;
+    }
+
+    public function getMetas(): ?array
+    {
+        if ($this->metas === null) {
+            $metas = get_user_meta($this->getId());
+
+            if ($metas === false) {
+                throw new OffbeatInvalidModelException('UserModel attempted to get meta with invalid ID: ' . $this->getId());
+            }
+
+            if (is_array($metas)) {
+                $this->metas = $metas;
+            } else {
+                return null;
+            }
+        }
+
+        return $this->metas;
+    }
+
+    public function getMeta(string $key, bool $single = true)
+    {
+        $metas = $this->getMetas();
+
+        if (isset($metas[$key])) {
+            return ($single && is_array($metas[$key])) ? reset($metas[$key]) : $metas[$key];
+        }
+
+        return null;
     }
 
     /** @return string The user's login username. */
