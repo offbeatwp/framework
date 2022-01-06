@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
+use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\FindModelTrait;
@@ -36,13 +37,22 @@ class UserModel
         $this->wpUser = $user;
     }
 
+    /**
+     * @param string $method
+     * @param array $parameters
+     * @return mixed|void
+     */
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
         }
 
-        return $this->wpUser->$method ?? null;
+        if (isset($this->wpUser->$method)) {
+            return $this->wpUser->$method;
+        }
+
+        throw new BadMethodCallException('Call to undefined method ' . $method);
     }
 
     ///////////////
@@ -64,7 +74,7 @@ class UserModel
         return $this->wpUser->user_login;
     }
 
-    /** @return string The URL-friendly user name. Defaults to first name + last name is not specified. */
+    /** @return string The URL-friendly user name. Defaults to first name + last name. */
     public function getDisplayName(): string
     {
         return $this->wpUser->display_name;
@@ -109,6 +119,7 @@ class UserModel
         return $this->wpUser->user_url;
     }
 
+    /** @return string The user's email. */
     public function getEmail(): string
     {
         return $this->wpUser->user_email;
@@ -132,31 +143,31 @@ class UserModel
         return Carbon::parse($this->wpUser->user_registered);
     }
 
-    /** @return bool Returns true if the rich-editor is enabled for the user. */
+    /** @return bool Whether the user has the rich-editor enabled for writing. */
     public function isRichEditingEnabled()
     {
         return $this->wpUser->rich_editing === 'true';
     }
 
-    /** @return bool Returns true if rich code editing is enabled for the user. */
+    /** @return bool Whether the user has syntax highlighting enabled when editing code. */
     public function isSyntaxHighlightingEnabled()
     {
         return $this->wpUser->syntax_highlighting === 'true';
     }
 
-    /** @return bool Multisite only. Whether the user is marked as spam. Default false. */
+    /** @return bool Whether the user is marked as spam. Multisite only. Default false. */
     public function isSpam(): bool
     {
         return (bool)$this->wpUser->spam;
     }
 
-    /** @return bool Returns true if this user is the currently logged in user. */
+    /** @return bool Whether this user is the currently logged in user. */
     public function isCurrentUser(): bool
     {
         return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
     }
 
-    /** @return string[] User's roles */
+    /** @return string[] Returns the user's roles */
     public function getRoles(): array
     {
         return $this->wpUser->roles;
@@ -171,20 +182,20 @@ class UserModel
         return self::query()->findById(get_current_user_id());
     }
 
-    /** @return static Returns the user that is currently logged in, or null if no user is logged in. */
+    /** @return static Returns the user that is currently logged in, or throws an exception if no user is logged in. */
     public static function getCurrentUserOrFail(): UserModel
     {
         return self::query()->findByIdOrFail(get_current_user_id());
     }
 
     /**
-     * Only users match at least one of these roles will be queried.<br/>
-     * Default return value is an empty array.
-     * @return string[]
+     * Only users that match at least one of these roles will be queried.<br/>
+     * Default return value is null.
+     * @return string[]|null
      */
-    public static function definedUserRoles(): array
+    public static function definedUserRoles(): ?array
     {
-        return [];
+        return null;
     }
 
     public static function query(): UserQueryBuilder
