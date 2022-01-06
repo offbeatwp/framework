@@ -18,7 +18,10 @@ class UserQueryBuilder extends AbstractQueryBuilder
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
-        $this->whereRoleIn($this->modelClass::definedUserRoles());
+
+        if (!is_null($this->modelClass::definedUserRoles())) {
+            $this->whereRoleIn($this->modelClass::definedUserRoles());
+        }
     }
 
     /** @return UserCollection<UserModel> */
@@ -81,8 +84,8 @@ class UserQueryBuilder extends AbstractQueryBuilder
      */
     public function whereRoleIn(array $roles): UserQueryBuilder
     {
-        if ($this->modelClass::definedUserRoles()) {
-            throw new ModelTypeMismatchException('This UserModel cannot use whereRoleIn as it has predefined User Roles.');
+        if (!is_null($this->modelClass::definedUserRoles())) {
+            throw new ModelTypeMismatchException('This UserModel cannot use whereRoleIn as it has predefined user roles.');
         }
 
         $this->queryVars['role__in'] = $roles;
