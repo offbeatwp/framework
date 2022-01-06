@@ -201,6 +201,11 @@ class UserModel
         return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
     }
 
+    public function hasCapability(string $capabilityName): bool
+    {
+        return $this->wpUser->has_cap($capabilityName);
+    }
+
     /** @return string[] Returns the user's roles */
     public function getRoles(): array
     {
