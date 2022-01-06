@@ -17,7 +17,8 @@ class User
             }
         }
 
-        return new UserModel($user);
+        $model = UserRole::getDefaultUserModel();
+        return new $model($user);
     }
 
     /** @param int|WP_User $id */
