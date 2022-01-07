@@ -33,6 +33,17 @@ abstract class OffbeatModelCollection extends Collection
     }
 
     /**
+     * Run an associative map over each of the items. This will return a basic Collection.
+     * The callback should return an associative array with a single key/value pair.
+     * @param callable  $callback
+     * @return Collection
+     */
+    public function mapWithKeys(callable $callback)
+    {
+        return $this->toCollection()->mapWithKeys($callback);
+    }
+
+    /**
      * Run a map over each of the items. This will return a basic Collection.
      * @param callable $callback
      * @return Collection
