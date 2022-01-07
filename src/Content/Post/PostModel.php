@@ -122,7 +122,7 @@ class PostModel implements PostModelInterface
     public function getContent(): string
     {
         if ($this->isPasswordRequired()) {
-            return get_the_password_form($this->wpPost);
+            return $this->getPasswordForm();
         }
 
         $content = $this->wpPost->post_content;
@@ -461,6 +461,11 @@ class PostModel implements PostModelInterface
     public function isPasswordRequired(): bool
     {
         return post_password_required($this->wpPost);
+    }
+
+    public function getPasswordForm(): string
+    {
+        return get_the_password_form($this->wpPost);
     }
 
     /* Display methods */
