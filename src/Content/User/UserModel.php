@@ -218,6 +218,20 @@ class UserModel
         return $this->wpUser->roles;
     }
 
+    /** @return string[] Returns the translated user roles. Roles without translations will retain their original name. */
+    public function getTranslatedRoles(string $domain = 'default'): array
+    {
+        return array_map(static function (string $role) use ($domain) {
+            return translate_user_role($role, $domain);
+        }, $this->wpUser->roles);
+    }
+
+    /** @return string|null Returns the role at the specified index, or null if no role exists at the specified index. */
+    public function getRole(int $index): ?string
+    {
+        return $this->getRoles()[$index] ?? null;
+    }
+
     /**
      * @param int $index The index of the role to be translated.
      * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings. Default 'default'.
@@ -225,13 +239,8 @@ class UserModel
      */
     public function getTranslatedRole(int $index, string $domain = 'default'): ?string
     {
-        $roles = $this->getRoles();
-
-        if (isset($roles[$index])) {
-            return translate_user_role($roles[$index], $domain);
-        }
-
-        return null;
+        $role = $this->getRole($index);
+        return (!is_null($role)) ? translate_user_role($role, $domain) : null;
     }
 
     /////////////////////
