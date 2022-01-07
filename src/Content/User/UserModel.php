@@ -153,6 +153,12 @@ class UserModel
         return $this->wpUser->user_url;
     }
 
+    /** @return string The URL of the avatar on success, null on failure. */
+    public function getAvatarUrl(): ?string
+    {
+        return get_avatar_url($this->getId()) ?: null;
+    }
+
     /** @return string The user's email. */
     public function getEmail(): string
     {
@@ -210,6 +216,22 @@ class UserModel
     public function getRoles(): array
     {
         return $this->wpUser->roles;
+    }
+
+    /**
+     * @param int $index The index of the role to be translated.
+     * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings. Default 'default'.
+     * @return string|null The translated role name on success. The untranslated role name if no translation is available. Null if no role exists at the provided index.
+     */
+    public function getTranslatedRole(int $index, string $domain = 'default'): ?string
+    {
+        $roles = $this->getRoles();
+
+        if (isset($roles[$index])) {
+            return translate_user_role($roles[$index], $domain);
+        }
+
+        return null;
     }
 
     /////////////////////
