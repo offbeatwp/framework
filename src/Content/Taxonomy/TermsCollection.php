@@ -1,14 +1,20 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
+use ArrayIterator;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
 use TypeError;
 use WP_Term;
-use ArrayAccess;
 
 /**
- * @template T of TermModel
- * @template-extends ArrayAccess<array-key|null, T>
+ * @method TermModel|mixed pull($key, $default = null)
+ * @method TermModel|mixed first(callable $callback = null, $default = null)
+ * @method TermModel|mixed last(callable $callback = null, $default = null)
+ * @method TermModel|static|null pop(int $count = 1)
+ * @method TermModel|static|null shift(int $count = 1)
+ * @method TermModel|null reduce(callable $callback, $initial = null)
+ * @method TermModel offsetGet($key)
+ * @method ArrayIterator|TermModel[] getIterator()
  */
 class TermsCollection extends OffbeatModelCollection
 {
@@ -34,36 +40,6 @@ class TermsCollection extends OffbeatModelCollection
         return array_map(static function (TermModel $model) {
             return $model->getId() ?: 0;
         }, $this->items);
-    }
-
-    /** @return T|TermModel|mixed */
-    public function first(callable $callback = null, $default = null)
-    {
-        return parent::first($callback, $default);
-    }
-
-    /** @return T|TermModel|mixed */
-    public function last(callable $callback = null, $default = null)
-    {
-        return parent::last($callback, $default);
-    }
-
-    /** @return T|TermModel|static|null */
-    public function pop($count = 1)
-    {
-        return parent::pop($count);
-    }
-
-    /** @return T|TermModel|mixed */
-    public function pull($key, $default = null)
-    {
-        return parent::pull($key, $default);
-    }
-
-    /** @return T|TermModel|static|null */
-    public function shift($count = 1)
-    {
-        return parent::shift($count);
     }
 
     /** @param int|WP_Term|TermModel $item */

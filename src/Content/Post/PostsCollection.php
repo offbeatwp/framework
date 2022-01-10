@@ -5,11 +5,15 @@ use OffbeatWP\Content\Common\OffbeatModelCollection;
 use TypeError;
 use WP_Post;
 use WP_Query;
-use ArrayAccess;
 
 /**
- * @template T of PostModel
- * @template-extends ArrayAccess<array-key|null, T>
+ * @method PostModel|mixed pull($key, $default = null)
+ * @method PostModel|mixed first(callable $callback = null, $default = null)
+ * @method PostModel|mixed last(callable $callback = null, $default = null)
+ * @method PostModel|static|null pop(int $count = 1)
+ * @method PostModel|static|null shift(int $count = 1)
+ * @method PostModel|null reduce(callable $callback, $initial = null)
+ * @method PostModel offsetGet($key)
  */
 class PostsCollection extends OffbeatModelCollection
 {
@@ -39,6 +43,7 @@ class PostsCollection extends OffbeatModelCollection
         parent::__construct($postItems);
     }
 
+    /** @return WpPostsIterator|PostModel[] */
     public function getIterator(): WpPostsIterator {
         return new WpPostsIterator($this->items);
     }
@@ -57,46 +62,10 @@ class PostsCollection extends OffbeatModelCollection
         }, $this->items);
     }
 
-    /** @return PostModel[]|T[] */
+    /** @return PostModel[] */
     public function toArray()
     {
         return $this->toCollection()->toArray();
-    }
-
-    /** @return T|PostModel|mixed */
-    public function first(callable $callback = null, $default = null)
-    {
-        return parent::first($callback, $default);
-    }
-
-    /** @return T|PostModel|mixed */
-    public function last(callable $callback = null, $default = null)
-    {
-        return parent::last($callback, $default);
-    }
-
-    /** @return T|PostModel|static|null */
-    public function pop($count = 1)
-    {
-        return parent::pop($count);
-    }
-
-    /** @return T|PostModel|mixed */
-    public function pull($key, $default = null)
-    {
-        return parent::pull($key, $default);
-    }
-
-    /** @return T|PostModel|null */
-    public function reduce(callable $callback, $initial = null)
-    {
-        return parent::reduce($callback, $initial);
-    }
-
-    /** @return T|PostModel|static|null */
-    public function shift($count = 1)
-    {
-        return parent::shift($count);
     }
 
     /** @param int|WP_Post|PostModel $item */

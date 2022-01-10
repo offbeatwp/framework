@@ -2,15 +2,21 @@
 
 namespace OffbeatWP\Content\User;
 
+use ArrayIterator;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
 use OffbeatWP\Support\Wordpress\User;
 use TypeError;
 use WP_User;
-use ArrayAccess;
 
 /**
- * @template T of UserModel
- * @template-extends ArrayAccess<array-key|null, T>
+ * @method UserModel|mixed pull($key, $default = null)
+ * @method UserModel|mixed first(callable $callback = null, $default = null)
+ * @method UserModel|mixed last(callable $callback = null, $default = null)
+ * @method UserModel|static|null pop(int $count = 1)
+ * @method UserModel|static|null shift(int $count = 1)
+ * @method UserModel|null reduce(callable $callback, $initial = null)
+ * @method UserModel offsetGet($key)
+ * @method ArrayIterator|UserModel[] getIterator()
  */
 class UserCollection extends OffbeatModelCollection
 {
@@ -41,7 +47,7 @@ class UserCollection extends OffbeatModelCollection
         }, $this->items);
     }
 
-    /** @return UserModel[]|T[] */
+    /** @return UserModel[] */
     public function toArray()
     {
         return $this->toCollection()->toArray();
@@ -87,48 +93,12 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * Add a model to the user collection.
-     * @param int|WP_User|UserModel $value
+     * @param int|WP_User|UserModel $item
      * @return UserCollection
      */
-    public function add($value)
+    public function add($item)
     {
-        return parent::add($this->createValidUserModel($value));
-    }
-
-    /** @return T|UserModel|mixed */
-    public function first(callable $callback = null, $default = null)
-    {
-        return parent::first($callback, $default);
-    }
-
-    /** @return T|UserModel|mixed */
-    public function last(callable $callback = null, $default = null)
-    {
-        return parent::last($callback, $default);
-    }
-
-    /** @return T|UserModel|static|null */
-    public function pop($count = 1)
-    {
-        return parent::pop($count);
-    }
-
-    /** @return T|UserModel|mixed */
-    public function pull($key, $default = null)
-    {
-        return parent::pull($key, $default);
-    }
-
-    /** @return T|UserModel|null */
-    public function reduce(callable $callback, $initial = null)
-    {
-        return parent::reduce($callback, $initial);
-    }
-
-    /** @return T|UserModel|static|null */
-    public function shift($count = 1)
-    {
-        return parent::shift($count);
+        return parent::add($this->createValidUserModel($item));
     }
 
     /** @param int|WP_User|UserModel $item */
