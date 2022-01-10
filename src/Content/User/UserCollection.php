@@ -9,13 +9,13 @@ use TypeError;
 use WP_User;
 
 /**
- * @method UserModel|mixed pull($key, $default = null)
- * @method UserModel|mixed first(callable $callback = null, $default = null)
- * @method UserModel|mixed last(callable $callback = null, $default = null)
+ * @method UserModel|mixed pull(int|string $key, mixed $default = null)
+ * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
+ * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
  * @method UserModel|static|null pop(int $count = 1)
  * @method UserModel|static|null shift(int $count = 1)
- * @method UserModel|null reduce(callable $callback, $initial = null)
- * @method UserModel offsetGet($key)
+ * @method UserModel|null reduce(callable $callback, mixed $initial = null)
+ * @method UserModel offsetGet(int|string $key)
  * @method ArrayIterator|UserModel[] getIterator()
  */
 class UserCollection extends OffbeatModelCollection

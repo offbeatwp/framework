@@ -7,13 +7,13 @@ use WP_Post;
 use WP_Query;
 
 /**
- * @method PostModel|mixed pull($key, $default = null)
- * @method PostModel|mixed first(callable $callback = null, $default = null)
- * @method PostModel|mixed last(callable $callback = null, $default = null)
+ * @method PostModel|mixed pull(int|string $key, mixed $default = null)
+ * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
+ * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
  * @method PostModel|static|null pop(int $count = 1)
  * @method PostModel|static|null shift(int $count = 1)
- * @method PostModel|null reduce(callable $callback, $initial = null)
- * @method PostModel offsetGet($key)
+ * @method PostModel|null reduce(callable $callback, mixed $initial = null)
+ * @method PostModel offsetGet(int|string $key)
  */
 class PostsCollection extends OffbeatModelCollection
 {

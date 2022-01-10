@@ -7,13 +7,13 @@ use TypeError;
 use WP_Term;
 
 /**
- * @method TermModel|mixed pull($key, $default = null)
- * @method TermModel|mixed first(callable $callback = null, $default = null)
- * @method TermModel|mixed last(callable $callback = null, $default = null)
+ * @method TermModel|mixed pull(int|string $key, $default = null)
+ * @method TermModel|mixed first(callable $callback = null, mixed $default = null)
+ * @method TermModel|mixed last(callable $callback = null, mixed $default = null)
  * @method TermModel|static|null pop(int $count = 1)
  * @method TermModel|static|null shift(int $count = 1)
- * @method TermModel|null reduce(callable $callback, $initial = null)
- * @method TermModel offsetGet($key)
+ * @method TermModel|null reduce(callable $callback, mixed $initial = null)
+ * @method TermModel offsetGet(int|string $key)
  * @method ArrayIterator|TermModel[] getIterator()
  */
 class TermsCollection extends OffbeatModelCollection
