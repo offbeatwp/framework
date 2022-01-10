@@ -468,6 +468,12 @@ class PostModel implements PostModelInterface
         return get_the_password_form($this->wpPost);
     }
 
+    /** @return string The page template slug used by this post or <i>null</i> if it is not found. */
+    public function getPageTemplate(): ?string
+    {
+        return get_page_template_slug($this->wpPost) ?: null;
+    }
+
     /* Display methods */
     public function setup(): void
     {
