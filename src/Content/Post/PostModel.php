@@ -304,9 +304,11 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    public function setMetas(array $metas): void
+    public function setMetas(iterable $metadata): void
     {
-        $this->metas = $metas;
+        foreach ($metadata as $key => $value) {
+            $this->setMeta($key, $value);
+        }
     }
 
     /** @return static */
