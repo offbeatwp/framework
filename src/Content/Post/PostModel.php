@@ -30,7 +30,7 @@ class PostModel implements PostModelInterface
     public $wpPost;
     /** @var array */
     public $metaInput = [];
-    /** @var array|false */
+    /** @var array|false|string */
     protected $metas = false;
 
     use FindModelTrait;
@@ -239,7 +239,7 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array */
+    /** @return array|false|string */
     public function getMetas()
     {
         if ($this->metas === false) {
@@ -252,9 +252,7 @@ class PostModel implements PostModelInterface
     public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
-            return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
+            return ($single && is_array($this->getMetas()[$key])) ? reset($this->getMetas()[$key]) : $this->getMetas()[$key];
         }
 
         return null;
