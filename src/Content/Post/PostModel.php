@@ -114,11 +114,15 @@ class PostModel implements PostModelInterface
         $this->wpPost->ID = null;
         // Since the new post is unsaved, we'll have to add all meta values
         foreach ($this->getMetaValues() as $key => $value) {
-            $this->setMeta($key, $value);
+            if (!isset($metaInput[$key])) {
+                $this->setMeta($key, $value);
+            }
         }
     }
 
-    /* Attribute methods */
+    ///////////////////////////
+    /// Getters and Setters ///
+    ///////////////////////////
     public function getId(): ?int
     {
         return $this->wpPost->ID ?? null;
@@ -325,11 +329,14 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    public function setMetas(iterable $metadata): void
+    /** @return static */
+    public function setMetas(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
         }
+
+        return $this;
     }
 
     /** @return static */
@@ -386,14 +393,18 @@ class PostModel implements PostModelInterface
         return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
-    public function setTitle(string $title): void
+    /** @return static */
+    public function setTitle(string $title)
     {
         $this->wpPost->post_title = $title;
+        return $this;
     }
 
-    public function setPostName(string $postName): void
+    /** @return static */
+    public function setPostName(string $postName)
     {
         $this->wpPost->post_name = $postName;
+        return $this;
     }
 
     public function getParentId(): ?int
@@ -503,7 +514,9 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    /* Display methods */
+    ///////////////////////
+    /// Display Methods ///
+    ///////////////////////
     public function setup(): void
     {
         global $wp_query;
@@ -519,7 +532,9 @@ class PostModel implements PostModelInterface
         $wp_query->in_the_loop = false;
     }
 
-    /* Change methods */
+    //////////////////////
+    /// Change Methods ///
+    //////////////////////
     /**
      * When the post and page is permanently deleted, everything that is tied to it is deleted also.
      * This includes comments, post meta fields, and terms associated with the post.
@@ -547,6 +562,12 @@ class PostModel implements PostModelInterface
         return wp_untrash_post($this->getId());
     }
 
+    /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
+    public function replicate()
+    {
+        return clone $this;
+    }
+
     public function save(): int
     {
         if ($this->metaInput) {
@@ -564,7 +585,9 @@ class PostModel implements PostModelInterface
         return wp_update_post($this->wpPost);
     }
 
-    /* Relations */
+    /////////////////////
+    /// Query Methods ///
+    /////////////////////
     public function getMethodByRelationKey($key)
     {
         $method = $key;
