@@ -1,12 +1,14 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
-class WpQueryBuilder extends AbstractQueryBuilder
+class WpQueryBuilder
 {
+    use OffbeatQueryTrait;
+
     protected $queryVars = [];
 
     public function all(): PostsCollection
@@ -103,7 +105,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    public function orderByMeta(string $metaKey, string $direction = ''): AbstractQueryBuilder
+    public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';

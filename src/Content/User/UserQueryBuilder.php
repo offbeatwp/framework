@@ -2,13 +2,15 @@
 
 namespace OffbeatWP\Content\User;
 
-use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_User_Query;
 
-class UserQueryBuilder extends AbstractQueryBuilder
+class UserQueryBuilder
 {
+    use OffbeatQueryTrait;
+
     /** @var array */
     protected $queryVars = [];
     /** @var class-string<UserModel> */
