@@ -19,7 +19,7 @@ class UserQueryBuilder extends AbstractQueryBuilder
     {
         $this->modelClass = $modelClass;
 
-        if (!is_null($this->modelClass::definedUserRoles())) {
+        if ($this->modelClass::definedUserRoles() !== null) {
             $this->whereRoleIn($this->modelClass::definedUserRoles());
         }
     }

@@ -36,7 +36,7 @@ class UserRoleBuilder
     {
         add_role($this->roleName, $this->roleDisplayName);
 
-        if (!is_null($this->modelClass)) {
+        if ($this->modelClass !== null) {
             UserRole::registerUserRole($this->roleName, $this->modelClass);
         }
     }

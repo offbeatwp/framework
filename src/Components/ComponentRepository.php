@@ -90,7 +90,7 @@ class ComponentRepository
     /** @throws NonexistentComponentException */
     public function get($name = null)
     {
-        if (is_null($name)) {
+        if ($name === null) {
             return $this->components;
         }
 

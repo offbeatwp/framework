@@ -240,7 +240,7 @@ class UserModel
     public function getTranslatedRole(int $index, string $domain = 'default'): ?string
     {
         $role = $this->getRole($index);
-        return (!is_null($role)) ? translate_user_role($role, $domain) : null;
+        return ($role !== null) ? translate_user_role($role, $domain) : null;
     }
 
     /////////////////////

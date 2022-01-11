@@ -57,7 +57,8 @@ class TermModel implements TermModelInterface
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this))) {
+        $hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this);
+        if ($hookValue !== null) {
             return $hookValue;
         }
         
