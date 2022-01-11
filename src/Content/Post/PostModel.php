@@ -42,7 +42,7 @@ class PostModel implements PostModelInterface
     /** @param WP_Post|int|null $post */
     public function __construct($post = null)
     {
-        if (is_null($post)) {
+        if ($post === null) {
             $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
@@ -74,7 +74,8 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this))) {
+        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
+        if ($hookValue !== null) {
             return $hookValue;
         }
 
@@ -239,7 +240,7 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return array|false|string */
+    /** @return false|array|string */
     public function getMetas()
     {
         if ($this->metas === false) {
@@ -252,7 +253,9 @@ class PostModel implements PostModelInterface
     public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
-            return ($single && is_array($this->getMetas()[$key])) ? reset($this->getMetas()[$key]) : $this->getMetas()[$key];
+            return $single && is_array($this->getMetas()[$key])
+                ? reset($this->getMetas()[$key])
+                : $this->getMetas()[$key];
         }
 
         return null;
@@ -294,11 +297,9 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    public function setMetas(array $metadata): void
+    public function setMetas(array $metas): void
     {
-        foreach ($metadata as $key => $value) {
-            $this->setMeta($key, $value);
-        }
+        $this->metas = $metas;
     }
 
     /** @return static */
@@ -376,7 +377,7 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        return !is_null($this->getParentId());
+        return (bool)$this->getParentId();
     }
 
     public function getParent(): ?PostModel
@@ -528,7 +529,7 @@ class PostModel implements PostModelInterface
             $this->wpPost->meta_input = $this->metaInput;
         }
 
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             $postId = wp_insert_post((array)$this->wpPost);
 
             $this->wpPost = get_post($postId);
