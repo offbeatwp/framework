@@ -106,9 +106,16 @@ class PostModel implements PostModelInterface
 
     public function __clone()
     {
+        // Gather all metas while we still have the original wpPost reference
+        $this->getMetas();
+        // Now clone the wpPost reference
         $this->wpPost = clone $this->wpPost;
+        // Set ID to null
         $this->wpPost->ID = null;
-        $this->setMetas($this->getMetas());
+        // Since the new post is unsaved, we'll have to add all meta values
+        foreach ($this->getMetaValues() as $key => $value) {
+            $this->setMeta($key, $value);
+        }
     }
 
     /* Attribute methods */
@@ -255,6 +262,20 @@ class PostModel implements PostModelInterface
         }
 
         return $this->metas;
+    }
+
+    /** @return array An array of all values whose key is not prefixed with <i>_</i> */
+    public function getMetaValues(): array
+    {
+        $values = [];
+
+        foreach ($this->getMetas() as $key => $value) {
+            if ($key[0] !== '_') {
+                $values[$key] = reset($value);
+            }
+        }
+
+        return $values;
     }
 
     public function getMeta(string $key, bool $single = true)
