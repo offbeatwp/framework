@@ -37,7 +37,7 @@ class AssetsManager
     }
 
     public function getAssetsManifest() {
-        if (is_null($this->manifest) && file_exists($this->getAssetsPath('manifest.json'))) {
+        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json'))) {
             $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json')));
         }
 
@@ -45,7 +45,7 @@ class AssetsManager
     }
 
     public function getAssetsEntryPoints() {
-        if (is_null($this->entrypoints) && file_exists($this->getAssetsPath('entrypoints.json'))) {
+        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json'))) {
             $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json')));
         }
 

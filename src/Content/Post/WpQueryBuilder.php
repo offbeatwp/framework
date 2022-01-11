@@ -141,7 +141,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
-        if (is_null($field)) {
+        if ($field === null) {
             $field = 'slug';
         }
 
@@ -149,7 +149,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $terms = [$terms];
         }
 
-        if (is_null($operator)) {
+        if ($operator === null) {
             $operator = 'IN';
         }
 

@@ -5,7 +5,7 @@ use OffbeatWP\Foundation\App;
 
 if (!function_exists('offbeat')) {
     function offbeat($service = null) {
-        if (!is_null($service)) {
+        if ($service !== null) {
             return container($service);
         }
 
@@ -21,7 +21,7 @@ if (!function_exists('config')) {
 
 if (!function_exists('container')) {
     function container($definition = null) {
-        if (!is_null($definition)) {
+        if ($definition !== null) {
             return offbeat()->container->get($definition);
         }
 

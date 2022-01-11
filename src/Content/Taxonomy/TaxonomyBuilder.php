@@ -202,7 +202,7 @@ class TaxonomyBuilder
     {
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);
 
-        if (!is_null($this->modelClass)) {
+        if ($this->modelClass !== null) {
             offbeat('taxonomy')->registerTermModel($this->taxonomy, $this->modelClass);
         }
     }

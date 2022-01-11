@@ -215,7 +215,7 @@ abstract class AbstractComponent
     {
         $form = static::form();
 
-        if (is_null($form)) {
+        if ($form === null) {
             $settings = static::settings();
 
             if (isset($settings['form'])) {

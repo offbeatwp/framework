@@ -10,7 +10,7 @@ class Config {
     public function __construct($app) {
         $this->app = $app;
 
-        if (is_null($this->config)) {
+        if ($this->config === null) {
             $this->loadConfig();
         }
     }

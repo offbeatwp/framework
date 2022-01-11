@@ -19,11 +19,11 @@ abstract class AbstractQueryBuilder {
                 $this->queryVars['orderby'] = 'meta_value_num';
             }
 
-        } elseif (!is_null($orderBy)) {
+        } elseif ($orderBy !== null) {
             $this->queryVars['orderby'] = $orderBy;
         }
 
-        if (!is_null($order)) {
+        if ($order !== null) {
             $this->queryVars['order'] = $order;
         }
 
