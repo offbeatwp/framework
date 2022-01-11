@@ -509,6 +509,19 @@ class PostModel implements PostModelInterface
         return wp_untrash_post($this->getId());
     }
 
+    /**
+     * Clones this PostModel's WP_POST object and uses it to create a new PostModel of the same type.
+     * @param int|null $withId The ID that the copy will use. Defaults to <i>null</i>.
+     * @return static
+     */
+    public function duplicate(?int $withId = null)
+    {
+        $wpPostCopy = clone $this->wpPost;
+        $wpPostCopy->ID = $withId;
+
+        return new static($wpPostCopy);
+    }
+
     public function save(): int
     {
         if ($this->metaInput) {
