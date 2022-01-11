@@ -106,9 +106,16 @@ class PostModel implements PostModelInterface
 
     public function __clone()
     {
+        // Gather all metas while we still have the original wpPost reference
+        $this->getMetas();
+        // Now clone the wpPost reference
         $this->wpPost = clone $this->wpPost;
+        // Set ID to null
         $this->wpPost->ID = null;
-        $this->setMetas($this->getMetas());
+        // Since the new post is unsaved, we'll have to add all meta values
+        foreach ($this->getMetaValues() as $key => $value) {
+            $this->setMeta($key, $value);
+        }
     }
 
     /* Attribute methods */
@@ -255,6 +262,20 @@ class PostModel implements PostModelInterface
         }
 
         return $this->metas;
+    }
+
+    /** @return array An array of all values whose key is not prefixed with <i>_</i> */
+    public function getMetaValues(): array
+    {
+        $values = [];
+
+        foreach ($this->getMetas() as $key => $value) {
+            if ($key[0] !== '_') {
+                $values[$key] = reset($value);
+            }
+        }
+
+        return $values;
     }
 
     public function getMeta(string $key, bool $single = true)
@@ -499,13 +520,22 @@ class PostModel implements PostModelInterface
     }
 
     /* Change methods */
-    /** @return false|WP_Post|null */
+    /**
+     * When the post and page is permanently deleted, everything that is tied to it is deleted also.
+     * This includes comments, post meta fields, and terms associated with the post.
+     * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
+     * @var bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
+     * @return false|WP_Post|null
+     */
     public function delete(bool $force = true)
     {
         return wp_delete_post($this->getId(), $force);
     }
 
-    /** @return false|WP_Post|null */
+    /**
+     * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
+     * @return false|WP_Post|null
+     */
     public function trash()
     {
         return wp_trash_post($this->getId());
@@ -532,31 +562,6 @@ class PostModel implements PostModelInterface
         }
 
         return wp_update_post($this->wpPost);
-    }
-
-    /**
-     * Replace an existing post with the one. <b>The overwritten post will be hard deleted.</b>
-     * @param int $postIdToOverwrite ID of the post to overwrite.
-     * @return bool Whetever the post was overwritten successfully.
-     */
-    public function overwrite(int $postIdToOverwrite): bool
-    {
-        $existingPost = PostModel::find($postIdToOverwrite);
-
-        if ($existingPost) {
-            return false;
-        }
-
-        if (!$existingPost->delete()) {
-            return false;
-        }
-
-        $oldPostId = $this->getId();
-        $this->wpPost->ID = $postIdToOverwrite;
-        wp_insert_post($this->wpPost->to_array());
-        $this->wpPost->ID = $oldPostId;
-
-        return true;
     }
 
     /* Relations */
