@@ -30,7 +30,7 @@ class PostModel implements PostModelInterface
     public $wpPost;
     /** @var array */
     public $metaInput = [];
-    /** @var array|false */
+    /** @var array|false|string */
     protected $metas = false;
 
     use FindModelTrait;
@@ -42,7 +42,7 @@ class PostModel implements PostModelInterface
     /** @param WP_Post|int|null $post */
     public function __construct($post = null)
     {
-        if (is_null($post)) {
+        if ($post === null) {
             $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
@@ -74,7 +74,8 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this))) {
+        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
+        if ($hookValue !== null) {
             return $hookValue;
         }
 
@@ -101,6 +102,13 @@ class PostModel implements PostModelInterface
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
         return method_exists($this, $methodName);
+    }
+
+    public function __clone()
+    {
+        $this->wpPost = clone $this->wpPost;
+        $this->wpPost->ID = null;
+        $this->setMetas($this->getMetas());
     }
 
     /* Attribute methods */
@@ -239,7 +247,7 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array */
+    /** @return false|array|string */
     public function getMetas()
     {
         if ($this->metas === false) {
@@ -296,11 +304,9 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    public function setMetas(array $metadata): void
+    public function setMetas(array $metas): void
     {
-        foreach ($metadata as $key => $value) {
-            $this->setMeta($key, $value);
-        }
+        $this->metas = $metas;
     }
 
     /** @return static */
@@ -378,7 +384,7 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        return !is_null($this->getParentId());
+        return (bool)$this->getParentId();
     }
 
     public function getParent(): ?PostModel
@@ -509,26 +515,13 @@ class PostModel implements PostModelInterface
         return wp_untrash_post($this->getId());
     }
 
-    /**
-     * Clones this PostModel's WP_POST object and uses it to create a new PostModel of the same type.
-     * @param int|null $withId The ID that the copy will use. Defaults to <i>null</i>.
-     * @return static
-     */
-    public function duplicate(?int $withId = null)
-    {
-        $wpPostCopy = clone $this->wpPost;
-        $wpPostCopy->ID = $withId;
-
-        return new static($wpPostCopy);
-    }
-
     public function save(): int
     {
         if ($this->metaInput) {
             $this->wpPost->meta_input = $this->metaInput;
         }
 
-        if (is_null($this->getId())) {
+        if ($this->getId() === null) {
             $postId = wp_insert_post((array)$this->wpPost);
 
             $this->wpPost = get_post($postId);
@@ -537,6 +530,31 @@ class PostModel implements PostModelInterface
         }
 
         return wp_update_post($this->wpPost);
+    }
+
+    /**
+     * Replace an existing post with the one. <b>The overwritten post will be hard deleted.</b>
+     * @param int $postIdToOverwrite ID of the post to overwrite.
+     * @return bool Whetever the post was overwritten successfully.
+     */
+    public function overwrite(int $postIdToOverwrite): bool
+    {
+        $existingPost = PostModel::find($postIdToOverwrite);
+
+        if ($existingPost) {
+            return false;
+        }
+
+        if (!$existingPost->delete()) {
+            return false;
+        }
+
+        $oldPostId = $this->getId();
+        $this->wpPost->ID = $postIdToOverwrite;
+        wp_insert_post($this->wpPost->to_array());
+        $this->wpPost->ID = $oldPostId;
+
+        return true;
     }
 
     /* Relations */
