@@ -516,10 +516,12 @@ class PostModel implements PostModelInterface
      */
     public function duplicate(?int $withId = null)
     {
-        $wpPostCopy = clone $this->wpPost;
-        $wpPostCopy->ID = $withId;
+        $copy = clone $this;
+        $copy->wpPost = clone $this->wpPost;
+        $copy->wpPost->ID = $withId;
+        $copy->setMetas($this->getMetas());
 
-        return new static($wpPostCopy);
+        return $copy;
     }
 
     public function save(): int
