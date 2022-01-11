@@ -104,6 +104,13 @@ class PostModel implements PostModelInterface
         return method_exists($this, $methodName);
     }
 
+    public function __clone()
+    {
+        $this->wpPost = clone $this->wpPost;
+        $this->wpPost->ID = null;
+        $this->setMetas($this->getMetas());
+    }
+
     /* Attribute methods */
     public function getId(): ?int
     {
@@ -506,21 +513,6 @@ class PostModel implements PostModelInterface
     public function untrash()
     {
         return wp_untrash_post($this->getId());
-    }
-
-    /**
-     * Clones this PostModel's WP_POST object and uses it to create a new PostModel of the same type.
-     * @param int|null $withId The ID that the copy will use. Defaults to <i>null</i>.
-     * @return static
-     */
-    public function duplicate(?int $withId = null)
-    {
-        $copy = clone $this;
-        $copy->wpPost = clone $this->wpPost;
-        $copy->wpPost->ID = $withId;
-        $copy->setMetas($this->getMetas());
-
-        return $copy;
     }
 
     public function save(): int
