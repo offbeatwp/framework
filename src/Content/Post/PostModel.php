@@ -532,6 +532,31 @@ class PostModel implements PostModelInterface
         return wp_update_post($this->wpPost);
     }
 
+    /**
+     * Replace an existing post with the one. <b>The overwritten post will be hard deleted.</b>
+     * @param int $postIdToOverwrite ID of the post to overwrite.
+     * @return bool Whetever the post was overwritten successfully.
+     */
+    public function overwrite(int $postIdToOverwrite): bool
+    {
+        $existingPost = PostModel::find($postIdToOverwrite);
+
+        if ($existingPost) {
+            return false;
+        }
+
+        if (!$existingPost->delete()) {
+            return false;
+        }
+
+        $oldPostId = $this->getId();
+        $this->wpPost->ID = $postIdToOverwrite;
+        wp_insert_post($this->wpPost->to_array());
+        $this->wpPost->ID = $oldPostId;
+
+        return true;
+    }
+
     /* Relations */
     public function getMethodByRelationKey($key)
     {
