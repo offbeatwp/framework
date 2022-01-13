@@ -171,6 +171,16 @@ class PostModel implements PostModelInterface
         return apply_filters('the_content', $content);
     }
 
+    /**
+     * Set the (unfiltered) post content.
+     * @param string $content
+     * @return static
+     */
+    public function setContent(string $content) {
+        $this->wpPost->post_content = $content;
+        return $this;
+    }
+
     public function getPostName(): string
     {
         return $this->wpPost->post_name;
@@ -383,7 +393,7 @@ class PostModel implements PostModelInterface
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @param int[]|string[]|string $attr
-     * @return string
+     * @return string The post thumbnail image tag.
      */
     public function getFeaturedImage($size = 'thumbnail', $attr = []): string
     {
@@ -392,7 +402,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @return false|string
+     * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
     {
@@ -402,6 +412,13 @@ class PostModel implements PostModelInterface
     public function getFeaturedImageId()
     {
         return get_post_thumbnail_id($this->wpPost) ?: false;
+    }
+
+    /** @return static */
+    public function setExcerpt(string $excerpt)
+    {
+        $this->wpPost->post_excerpt = $excerpt;
+        return $this;
     }
 
     /** @return static */
