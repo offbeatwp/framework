@@ -392,12 +392,12 @@ class PostModel implements PostModelInterface
 
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @param int[]|string[]|string $attributes
+     * @param int[]|string[]|string $attr
      * @return string The post thumbnail image tag.
      */
-    public function getFeaturedImage($size = 'thumbnail', $attributes = []): string
+    public function getFeaturedImage($size = 'thumbnail', $attr = []): string
     {
-        return get_the_post_thumbnail($this->wpPost, $size, $attributes);
+        return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
 
     /**
