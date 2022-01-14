@@ -10,7 +10,7 @@ use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
-use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
@@ -33,7 +33,7 @@ class PostModel implements PostModelInterface
     /** @var array|false|string */
     protected $metas = false;
 
-    use FindModelTrait;
+    use BaseModelTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
