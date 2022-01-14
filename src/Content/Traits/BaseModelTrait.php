@@ -4,10 +4,11 @@ namespace OffbeatWP\Content\Traits;
 
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 
-trait FindModelTrait
+trait BaseModelTrait
 {
     /** @return static|null */
-    public static function find(int $id) {
+    public static function find(int $id)
+    {
         return static::query()->findById($id) ?: null;
     }
 
@@ -15,7 +16,8 @@ trait FindModelTrait
      * @throws OffbeatModelNotFoundException
      * @return static
      */
-    public static function findOrFail(int $id) {
+    public static function findOrFail(int $id)
+    {
         $item = static::find($id);
         if (!$item) {
             throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' model with id ' . $id);
@@ -25,12 +27,20 @@ trait FindModelTrait
     }
 
     /** @return static */
-    public static function findOrNew(int $id) {
-        return static::find($id) ?: new static(null);
+    public static function findOrNew(int $id)
+    {
+        return static::find($id) ?: static::create();
     }
 
     /** @return static[] */
-    public static function allAsArray() {
+    public static function allAsArray()
+    {
         return static::query()->all()->toArray();
+    }
+
+    /** @return static */
+    public static function create()
+    {
+        return new static(null);
     }
 }

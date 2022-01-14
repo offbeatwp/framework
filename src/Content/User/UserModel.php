@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\User;
 use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
-use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\UserModelException;
 use WP_User;
@@ -16,7 +16,7 @@ class UserModel
     /** @var null|array */
     protected $metas = null;
 
-    use FindModelTrait;
+    use BaseModelTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
