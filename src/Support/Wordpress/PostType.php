@@ -36,10 +36,4 @@ class PostType
     {
         return array_search($modelClass, $this->postTypeModels, true);
     }
-
-    public static function createModelFromPostType(string $postType): PostModel
-    {
-        $modelClass = (new PostType())->getModelByPostType($postType);
-        return new $modelClass();
-    }
 }
