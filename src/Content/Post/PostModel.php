@@ -603,14 +603,14 @@ class PostModel implements PostModelInterface
         }
 
         if ($this->getId() === null) {
-            $postId = wp_insert_post((array)$this->wpPost);
-            $insertedPost = get_post($postId);
+            $insertedPostId = wp_insert_post((array)$this->wpPost);
+            $insertedPost = get_post($insertedPostId);
 
             if ($insertedPost instanceof WP_Post) {
                 $this->wpPost = $insertedPost;
             }
 
-            return $postId;
+            return $insertedPostId;
         }
 
         return wp_update_post($this->wpPost);
