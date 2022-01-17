@@ -26,7 +26,7 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|null */
+    /** @var WP_Post|object|null */
     public $wpPost;
     /** @var array */
     public $metaInput = [];
@@ -603,11 +603,14 @@ class PostModel implements PostModelInterface
         }
 
         if ($this->getId() === null) {
-            $postId = wp_insert_post((array)$this->wpPost);
+            $insertedPostId = wp_insert_post((array)$this->wpPost);
+            $insertedPost = get_post($insertedPostId);
 
-            $this->wpPost = get_post($postId);
+            if ($insertedPost instanceof WP_Post) {
+                $this->wpPost = $insertedPost;
+            }
 
-            return $postId;
+            return $insertedPostId;
         }
 
         return wp_update_post($this->wpPost);

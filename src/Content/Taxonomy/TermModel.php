@@ -69,6 +69,11 @@ class TermModel implements TermModelInterface
         return false;
     }
 
+    public function __clone()
+    {
+        $this->wpTerm = clone $this->wpTerm;
+    }
+
     public function getId(): ?int
     {
         return $this->wpTerm->term_id ?? null;

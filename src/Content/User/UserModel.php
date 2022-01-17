@@ -59,6 +59,11 @@ class UserModel
         throw new BadMethodCallException('Call to undefined method ' . $method);
     }
 
+    public function __clone()
+    {
+        $this->wpUser = clone $this->wpUser;
+    }
+
     ///////////////
     /// Getters ///
     ///////////////
