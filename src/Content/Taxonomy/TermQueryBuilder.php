@@ -2,12 +2,15 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
-class TermQueryBuilder extends AbstractQueryBuilder
+class TermQueryBuilder
 {
+    use OffbeatQueryTrait;
+
+    protected $queryVars = [];
     protected $model;
     protected $taxonomy;
 

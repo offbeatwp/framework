@@ -56,7 +56,7 @@ class GenericWidget extends WP_Widget
 
         $fields = get_fields($this->widgetId);
 
-        if (empty($fields)) {
+        if (!$fields) {
             return $settings;
         }
 

@@ -126,7 +126,6 @@ class Wordpress
         return ($attachment) ? new OffbeatImageSrc($attachment) : null;
     }
 
-    /** @deprecated Use getAttachmentImageSrc()->getUrl() instead */
     public function attachmentUrl(?int $attachmentID, $size = 'full')
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
@@ -171,7 +170,7 @@ class Wordpress
     {
         $url = untrailingslashit(get_template_directory_uri());
 
-        if (!is_null($path)) {
+        if ($path !== null) {
             $url .= $path;
         }
 

@@ -4,7 +4,7 @@ namespace OffbeatWP\Content\Taxonomy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
-use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Content\Traits\BaseModelTrait;
 use WP_Term;
 
 /**
@@ -12,7 +12,7 @@ use WP_Term;
  */
 class TermModel implements TermModelInterface
 {
-    use FindModelTrait;
+    use BaseModelTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
@@ -57,7 +57,8 @@ class TermModel implements TermModelInterface
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this))) {
+        $hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this);
+        if ($hookValue !== null) {
             return $hookValue;
         }
         
@@ -68,9 +69,14 @@ class TermModel implements TermModelInterface
         return false;
     }
 
-    public function getId(): int
+    public function __clone()
     {
-        return $this->wpTerm->term_id;
+        $this->wpTerm = clone $this->wpTerm;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->wpTerm->term_id ?? null;
     }
 
     public function getName(): string

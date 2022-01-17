@@ -1,12 +1,14 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
-class WpQueryBuilder extends AbstractQueryBuilder
+class WpQueryBuilder
 {
+    use OffbeatQueryTrait;
+
     protected $queryVars = [];
 
     public function all(): PostsCollection
@@ -103,7 +105,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    public function orderByMeta(string $metaKey, string $direction = ''): AbstractQueryBuilder
+    public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';
@@ -141,7 +143,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
     public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
-        if (is_null($field)) {
+        if ($field === null) {
             $field = 'slug';
         }
 
@@ -149,7 +151,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $terms = [$terms];
         }
 
-        if (is_null($operator)) {
+        if ($operator === null) {
             $operator = 'IN';
         }
 
@@ -182,6 +184,29 @@ class WpQueryBuilder extends AbstractQueryBuilder
 
         $this->queryVars['date_query'][] = $args;
 
+        return $this;
+    }
+
+    /**
+     * Retrieves posts by post status. Default value is <i>publish</i>, but if the user is logged in, <i>private</i> is added. Public custom post statuses are also included by default.<br/>
+     * If the query is run in an admin/ajax context, protected statuses are added too.<br/>
+     * By default protected statuses are <i>future</i>, <i>draft</i> and <i>pending</i>.<br/><br/>
+     *
+     * The default WP post statuses are:<br/>
+     * <b>publish</b> – a published post or page<br/>
+     * <b>pending</b> – post is pending review<br/>
+     * <b>draft</b> – a post in draft status<br/>
+     * <b>auto-draft</b> – a newly created post, with no content<br/>
+     * <b>future</b> – a post to publish in the future<br/> <b>private</b> – not visible to users who are not logged in<br/>
+     * <b>inherit</b> – a revision, see get_children()
+     * <b>trash</b> – post is in trashbin<br/>
+     * <b>any</b> – retrieves any status except for <i>inherit</i>, <i>trash</i> and <i>auto-draft</i>. Custom post statuses with <i>exclude_from_search</i> set to true are also excluded
+     * @param string[] $postStatus Array containing the post statuses to include
+     * @return WpQueryBuilder
+     */
+    public function wherePostStatus(array $postStatus): WpQueryBuilder
+    {
+        $this->queryVars['post_status'] = $postStatus;
         return $this;
     }
 
@@ -266,7 +291,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
      * @param string|null $direction
      * @return $this
      */
-    public function hasRelationshipWith($model, $key, $direction = null): WpQueryBuilder
+    public function hasRelationshipWith($model, $key, ?string $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
             'id' => $model->getId(),

@@ -36,6 +36,11 @@ class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
+    public function firstOrNew(): PostModel
+    {
+        return $this->first() ?: new $this->model(null);
+    }
+
     /**
      * @param WP_Post|int|null $post
      * @return PostModel

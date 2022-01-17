@@ -37,7 +37,7 @@ class AssetsManager
     }
 
     public function getAssetsManifest() {
-        if (is_null($this->manifest) && file_exists($this->getAssetsPath('manifest.json'))) {
+        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json'))) {
             $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json')));
         }
 
@@ -45,7 +45,7 @@ class AssetsManager
     }
 
     public function getAssetsEntryPoints() {
-        if (is_null($this->entrypoints) && file_exists($this->getAssetsPath('entrypoints.json'))) {
+        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json'))) {
             $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json')));
         }
 
@@ -66,7 +66,7 @@ class AssetsManager
     public function getAssetsPath($path = '')
     {
         $path = ltrim($path, '/');
-        $path = ( !empty($path) ? "/{$path}" : '' );
+        $path = ($path) ? "/{$path}" : '';
 
         if ($basepath = config('app.assets.path'))  {
             return $basepath . $path;
@@ -82,7 +82,7 @@ class AssetsManager
         }
 
         $path = ltrim($path, '/');
-        $path = ( !empty($path) ? "/{$path}" : '' );
+        $path = ($path) ? "/{$path}" : '';
 
         if ($url = config('app.assets.url'))  {
             return $url . $path;
@@ -94,14 +94,14 @@ class AssetsManager
     public function enqueueStyles($entry) {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
-        if (!empty($assets)) {
+        if ($assets) {
             foreach ($assets as $key => $asset) {
                 $asset = ltrim($asset, './');
                 $assetKey = 'css-' . $entry . '-' . ($key > 0 ? $key : '');
                 wp_enqueue_style($assetKey, $this->getAssetsUrl($asset), [], false, false);
             }
 
-            return ;
+            return;
         }
 
         wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
@@ -110,14 +110,14 @@ class AssetsManager
     public function enqueueScripts($entry) {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
 
-        if (!empty($assets)) {
+        if ($assets) {
             foreach ($assets as $key => $asset) {
                 $asset = ltrim($asset, './');
                 $assetKey = 'js-' . $entry . '-' . ($key > 0 ? $key : '');
                 wp_enqueue_script($assetKey, $this->getAssetsUrl($asset), ['jquery'], false, true);
             }
 
-            return ;
+            return;
         }
 
         wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), ['jquery'], false, true);

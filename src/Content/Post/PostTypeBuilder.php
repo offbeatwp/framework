@@ -193,6 +193,7 @@ class PostTypeBuilder
     /** @deprecated This function does not actually appear to do anything */
     public function position($position = null): PostTypeBuilder
     {
+        trigger_error('Deprecated position called in PostTypeBuilder.', E_USER_DEPRECATED);
         $this->postTypeArgs['position'] = $position;
 
         return $this;
@@ -213,9 +214,9 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function mapMetaCap(): PostTypeBuilder
+    public function mapMetaCap(bool $mapMetaCap = true): PostTypeBuilder
     {
-        $this->postTypeArgs['map_meta_cap'] = true;
+        $this->postTypeArgs['map_meta_cap'] = $mapMetaCap;
 
         return $this;
     }
@@ -231,7 +232,7 @@ class PostTypeBuilder
     {
         register_post_type($this->postType, $this->postTypeArgs);
 
-        if (!is_null($this->modelClass)) {
+        if ($this->modelClass !== null) {
             offbeat('post-type')->registerPostModel($this->postType, $this->modelClass);
         }
     }

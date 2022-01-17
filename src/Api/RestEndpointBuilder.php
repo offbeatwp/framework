@@ -68,4 +68,14 @@ class RestEndpointBuilder
             ]);
         });
     }
+
+    public static function get(string $namespace, string $route, callable $callback)
+    {
+        return new static($namespace, $route, $callback);
+    }
+
+    public static function post(string $namespace, string $route, callable $callback)
+    {
+        return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
+    }
 }

@@ -101,7 +101,9 @@ abstract class AbstractComponent
             return null;
         }
 
-        $output = container()->call([$this, 'render'], ['settings' => $settings]);
+        $output = container()->call([$this, 'render'], [
+            'settings' => apply_filters('offbeat.component.settings', $settings, $this)
+        ]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
@@ -151,7 +153,7 @@ abstract class AbstractComponent
 
     protected function setCachedObject(string $id, ?string $object): ?string
     {
-        if (!empty($object)) {
+        if ($object) {
             container('componentCache')->save($id, $object, 60);
         }
 
@@ -212,7 +214,8 @@ abstract class AbstractComponent
     public static function getForm(): Form
     {
         $form = static::form();
-        if (is_null($form)) {
+
+        if ($form === null) {
             $settings = static::settings();
 
             if (isset($settings['form'])) {
@@ -224,7 +227,7 @@ abstract class AbstractComponent
             }
         }
 
-        if (!empty($form) && $form instanceof Form && isset($settings['variations'])) {
+        if ($form instanceof Form && isset($settings['variations'])) {
             $form->addField(
                 Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
             );
