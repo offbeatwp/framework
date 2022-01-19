@@ -78,4 +78,9 @@ class RestEndpointBuilder
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
+
+    public static function delete(string $namespace, string $route, callable $callback)
+    {
+        return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
+    }
 }
