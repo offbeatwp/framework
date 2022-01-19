@@ -18,8 +18,6 @@ class WpQueryBuilderModel extends WpQueryBuilder
 
         if (defined("{$modelClass}::POST_TYPE")) {
             $this->wherePostType($modelClass::POST_TYPE);
-        } elseif ($modelClass !== PostModel::class) {
-            throw new OffbeatInvalidModelException('The POST_TYPE constant must be defined on any model that is not abstract or the base PostModel.');
         }
 
         $order = null;
