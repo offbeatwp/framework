@@ -141,6 +141,13 @@ class WpQueryBuilder
         return $this;
     }
 
+    /**
+     * @param string $taxonomy The taxonomy.
+     * @param string|int|string[]|int[] $terms Taxonomy term(s).
+     * @param string|null $field Select taxonomy term by. Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
+     * @param string|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
+     * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
+     */
     public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
         if ($field === null) {
