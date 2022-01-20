@@ -30,8 +30,8 @@ class PostModel implements PostModelInterface
     public $wpPost;
     /** @var array */
     public $metaInput = [];
-    /** @var array|false|string */
-    protected $metas = false;
+    /** @var array|null */
+    protected $metas = null;
 
     use BaseModelTrait;
     use Macroable {
@@ -279,11 +279,10 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array|string */
-    public function getMetas()
+    public function getMetas(): ?array
     {
-        if ($this->metas === false) {
-            $this->metas = get_post_meta($this->getId());
+        if ($this->metas === null) {
+            $this->metas = get_post_meta($this->getId()) ?: null;
         }
 
         return $this->metas;
@@ -300,9 +299,22 @@ class PostModel implements PostModelInterface
             }
         }
 
+        foreach ($this->metaInput as $key => $value) {
+            if ($key[0] !== '_') {
+                $values[$key] = $value;
+            }
+        }
+
         return $values;
     }
 
+    /** Retrieves a single meta value. If an unsaved meta value exists on this model with the specified key, then that value will be returned. */
+    public function getMetaValue(string $key)
+    {
+        return (array_key_exists($key, $this->metaInput)) ? $this->metaInput[$key] : $this->getMeta($key);
+    }
+
+    /** Retrieves a meta value. Ignores any unsaved modifications to the metadata. */
     public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
@@ -350,7 +362,10 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    /** @return static */
+    /**
+     * @deprecated
+     * @return static
+     */
     public function setMetas(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
@@ -608,6 +623,8 @@ class PostModel implements PostModelInterface
 
             if ($insertedPost instanceof WP_Post) {
                 $this->wpPost = $insertedPost;
+                $this->metaInput = [];
+                $this->metas = null;
             }
 
             return $insertedPostId;
@@ -619,6 +636,10 @@ class PostModel implements PostModelInterface
     /////////////////////
     /// Query Methods ///
     /////////////////////
+    /**
+     * @param string $key
+     * @return string|null
+     */
     public function getMethodByRelationKey($key)
     {
         $method = $key;
