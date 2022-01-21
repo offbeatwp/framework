@@ -196,6 +196,10 @@ class PostModel implements PostModelInterface
         return get_permalink($this->getId());
     }
 
+    /**
+     * @param string $metaKey The ID stored in this meta-field will be used to retrieve the attachment.
+     * @return string|null The attachment url or <i>null</i> if the attachment could not be found.
+     */
     public function getAttachmentUrl(string $metaKey): ?string
     {
         return wp_get_attachment_url($this->getMeta($metaKey)) ?: null;
