@@ -196,6 +196,11 @@ class PostModel implements PostModelInterface
         return get_permalink($this->getId());
     }
 
+    public function getAttachmentUrl(string $metaKey): ?string
+    {
+        return wp_get_attachment_url($this->getMeta($metaKey)) ?: null;
+    }
+
     public function getPostTypeLabel()
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
