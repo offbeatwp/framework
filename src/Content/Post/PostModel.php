@@ -111,7 +111,7 @@ class PostModel implements PostModelInterface
         // Now clone the wpPost reference
         $this->wpPost = clone $this->wpPost;
         // Set ID to null
-        $this->wpPost->ID = null;
+        $this->setId(null);
         // Since the new post is unsaved, we'll have to add all meta values
         foreach ($this->getMetaValues() as $key => $value) {
             if (!isset($metaInput[$key])) {
@@ -171,12 +171,20 @@ class PostModel implements PostModelInterface
         return apply_filters('the_content', $content);
     }
 
+    /** @return static */
+    public function setId(?int $id)
+    {
+        $this->wpPost->ID = $id;
+        return $this;
+    }
+
     /**
      * Set the (unfiltered) post content.
      * @param string $content
      * @return static
      */
-    public function setContent(string $content) {
+    public function setContent(string $content)
+    {
         $this->wpPost->post_content = $content;
         return $this;
     }
