@@ -113,8 +113,13 @@ class PostModel implements PostModelInterface
         // Set ID to null
         $this->setId(null);
         // Since the new post is unsaved, we'll have to add all meta values
+        $this->refreshMetaInput();
+    }
+
+    protected function refreshMetaInput(): void
+    {
         foreach ($this->getMetaValues() as $key => $value) {
-            if (!isset($metaInput[$key])) {
+            if (!array_key_exists($key, $this->metaInput)) {
                 $this->setMeta($key, $value);
             }
         }
