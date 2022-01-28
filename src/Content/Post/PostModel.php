@@ -638,6 +638,23 @@ class PostModel implements PostModelInterface
         return wp_update_post($this->wpPost);
     }
 
+    /** @return positive-int */
+    public function saveOrFail(): int
+    {
+        $result = $this->save();
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
+        }
+
+        return $result;
+    }
+
+    protected function getBaseClassName(): string
+    {
+        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
+    }
+
     /////////////////////
     /// Query Methods ///
     /////////////////////
