@@ -13,6 +13,8 @@ use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
+use OffbeatWP\Exceptions\WpErrorException;
+use WP_Error;
 use WP_Post;
 
 /**
@@ -618,7 +620,8 @@ class PostModel implements PostModelInterface
         return clone $this;
     }
 
-    public function save(): int
+    /** @return int|WP_Error */
+    public function save()
     {
         if ($this->metaInput) {
             $this->wpPost->meta_input = $this->metaInput;
@@ -636,6 +639,27 @@ class PostModel implements PostModelInterface
         }
 
         return wp_update_post($this->wpPost);
+    }
+
+    /** @return positive-int */
+    public function saveOrFail(): int
+    {
+        $result = $this->save();
+
+        if ($result instanceof WP_Error) {
+            throw new WpErrorException($result->get_error_message());
+        }
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
+        }
+
+        return $result;
+    }
+
+    protected function getBaseClassName(): string
+    {
+        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
     }
 
     /////////////////////
