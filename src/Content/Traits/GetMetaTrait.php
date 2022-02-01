@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Traits;
 
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Collection;
 
 trait GetMetaTrait
 {
@@ -11,32 +12,32 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as a string.<br/>
-     * If the meta value is falsy, does not exist, or is not a scalar value then an <b>empty string</b> is returned.
+     * If the meta value does not exist or is falsy, then an <b>empty string</b> is returned.
      */
     public function getMetaString(string $key): string
     {
         $value = $this->getMeta($key);
-        return is_scalar($value) ? (string)$value : '';
+        return ($value) ? (string)$value : '';
     }
 
     /**
      * Retrieve a meta value as an integer.<br/>
-     * If the meta value is falsy, does not exist, or is not a scalar value then <b>0</b> is returned.
+     * If the meta value does not exist or is falsy, then <b>0</b> is returned.
      */
     public function getMetaInt(string $key): int
     {
         $value = $this->getMeta($key);
-        return is_scalar($value) ? (int)$value : 0;
+        return ($value) ? (int)$value : 0;
     }
 
     /**
      * Retrieve a meta value as a floating point number.<br/>
-     * If the meta value is falsy, does not exist, or is not a scalar value then <b>0</b> is returned.
+     * If the meta value is falsy or does not exist, then <b>0</b> is returned.
      */
     public function getMetaFloat(string $key): float
     {
         $value = $this->getMeta($key);
-        return is_scalar($value) ? (float)$value : 0;
+        return ($value) ? (float)$value : 0;
     }
 
     /**
@@ -46,6 +47,26 @@ trait GetMetaTrait
     public function getMetaBool(string $key): bool
     {
         return (bool)$this->getMeta($key);
+    }
+
+    /**
+     * Retrieve a meta value as an array.<br/>
+     * If the meta value is falsy or does not exist, then <b>an empty array</b> is returned.
+     */
+    public function getMetaArray(string $key): array
+    {
+        $value = $this->getMeta($key);
+        return $this->valueIsNotEmptyIsh($value) ? (array)$value : [];
+    }
+
+
+    /**
+     * Retrieve a meta value as a collection.<br/>
+     * If the meta value is falsy or does not exist, then <b>an empty collection</b> is returned.
+     */
+    public function getMetaCollection(string $key): Collection
+    {
+        return collect($this->getMetaArray($key));
     }
 
     /**
@@ -60,9 +81,15 @@ trait GetMetaTrait
         }
 
         try {
-            return Carbon::parse(null);
+            return Carbon::parse($value);
         } catch (Exception $e) {
             return null;
         }
+    }
+
+    /** @param mixed $value */
+    private function valueIsNotEmptyIsh($value): bool
+    {
+        return $value === null || $value === false;
     }
 }
