@@ -18,7 +18,7 @@ trait GetMetaTrait
     private function getRawMetaValue(string $key, $defaultValue)
     {
         $metas = $this->getMetas();
-        if ($metas && $metas[$key] && is_array($metas[$key])) {
+        if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
             return reset($metas[$key]);
         }
 
