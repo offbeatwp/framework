@@ -8,7 +8,22 @@ use Illuminate\Support\Collection;
 
 trait GetMetaTrait
 {
-    abstract public function getMeta(string $key, bool $single = true);
+    abstract public function getMetas();
+
+    /**
+     * @param string $key
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    private function getRawMetaValue(string $key, $defaultValue)
+    {
+        $metas = $this->getMetas();
+        if ($metas && $metas[$key] && is_array($metas[$key])) {
+            return reset($metas[$key]);
+        }
+
+        return $defaultValue;
+    }
 
     /**
      * Retrieve a meta value as a string.<br/>
@@ -16,8 +31,7 @@ trait GetMetaTrait
      */
     public function getMetaString(string $key): string
     {
-        $value = $this->getMeta($key);
-        return ($value) ? (string)$value : '';
+        return (string)$this->getRawMetaValue($key, '');
     }
 
     /**
@@ -26,8 +40,7 @@ trait GetMetaTrait
      */
     public function getMetaInt(string $key): int
     {
-        $value = $this->getMeta($key);
-        return ($value) ? (int)$value : 0;
+        return (int)$this->getRawMetaValue($key, 0);
     }
 
     /**
@@ -36,8 +49,7 @@ trait GetMetaTrait
      */
     public function getMetaFloat(string $key): float
     {
-        $value = $this->getMeta($key);
-        return ($value) ? (float)$value : 0;
+        return (float)$this->getRawMetaValue($key, 0);
     }
 
     /**
@@ -46,7 +58,7 @@ trait GetMetaTrait
      */
     public function getMetaBool(string $key): bool
     {
-        return (bool)$this->getMeta($key);
+        return (bool)$this->getRawMetaValue($key, false);
     }
 
     /**
@@ -55,8 +67,7 @@ trait GetMetaTrait
      */
     public function getMetaArray(string $key): array
     {
-        $value = $this->getMeta($key);
-        return $this->valueIsNotEmptyIsh($value) ? (array)$value : [];
+        return (array)$this->getRawMetaValue($key, []);
     }
 
 
@@ -75,7 +86,7 @@ trait GetMetaTrait
      */
     public function getMetaCarbon(string $key): ?Carbon
     {
-        $value = $this->getMeta($key);
+        $value = $this->getRawMetaValue($key, null);
         if (!$value) {
             return null;
         }
@@ -85,11 +96,5 @@ trait GetMetaTrait
         } catch (Exception $e) {
             return null;
         }
-    }
-
-    /** @param mixed $value */
-    private function valueIsNotEmptyIsh($value): bool
-    {
-        return $value === null || $value === false;
     }
 }

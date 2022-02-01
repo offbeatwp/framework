@@ -5,6 +5,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
+use OffbeatWP\Content\Traits\GetMetaTrait;
 use WP_Term;
 
 /**
@@ -13,6 +14,7 @@ use WP_Term;
 class TermModel implements TermModelInterface
 {
     use BaseModelTrait;
+    use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
@@ -128,6 +130,12 @@ class TermModel implements TermModelInterface
         return $this->getAncestorIds()->map(function ($ancestorId) {
             return static::query()->findById($ancestorId);
         });
+    }
+
+    /** @return array|false|string */
+    public function getMetas()
+    {
+        return get_term_meta($this->getId());
     }
 
     public function getMeta(string $key, bool $single = true)
