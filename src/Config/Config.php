@@ -10,7 +10,7 @@ class Config {
     public function __construct($app) {
         $this->app = $app;
 
-        if (is_null($this->config)) {
+        if ($this->config === null) {
             $this->loadConfig();
         }
     }
@@ -55,7 +55,9 @@ class Config {
                 // Get all settings in 'env' variable
                 $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
 
-                if (!empty($envConfigs)) {
+                if ($envConfigs) {
+                    $explicitEnvConfigs = [];
+
                     foreach ($envConfigs as $envKey => $envConfig) {
                         if (preg_match('/^!(.*)/', $envKey, $matches) && !in_array($currentEnvironment, explode('|', $matches[1]))) {
                             $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
@@ -66,10 +68,8 @@ class Config {
                         }
                     }
 
-                    if (!empty($explicitEnvConfigs)) {
-                        foreach ($explicitEnvConfigs as $explicitEnvConfig) {
-                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
-                        }
+                    foreach ($explicitEnvConfigs as $explicitEnvConfig) {
+                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
                     }
                 }
 

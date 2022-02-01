@@ -26,7 +26,7 @@ class Design
 
         $classes = $rowThemes[$id]['classes'];
 
-        if (!is_null($subId) && isset($rowThemes[$id]['sub_themes'][$subId])) {
+        if ($subId !== null && isset($rowThemes[$id]['sub_themes'][$subId])) {
             $classes .= ' ' . $rowThemes[$id]['sub_themes'][$subId]['classes'];
         }
 

@@ -1,12 +1,14 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\AbstractQueryBuilder;
+use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
-class WpQueryBuilder extends AbstractQueryBuilder
+class WpQueryBuilder
 {
+    use OffbeatQueryTrait;
+
     protected $queryVars = [];
 
     public function all(): PostsCollection
@@ -103,7 +105,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $result;
     }
 
-    public function orderByMeta(string $metaKey, string $direction = ''): AbstractQueryBuilder
+    public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';
@@ -139,9 +141,16 @@ class WpQueryBuilder extends AbstractQueryBuilder
         return $this;
     }
 
+    /**
+     * @param string $taxonomy The taxonomy.
+     * @param string|int|string[]|int[] $terms Taxonomy term(s).
+     * @param string|null $field Select taxonomy term by. Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
+     * @param string|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
+     * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
+     */
     public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
     {
-        if (is_null($field)) {
+        if ($field === null) {
             $field = 'slug';
         }
 
@@ -149,7 +158,7 @@ class WpQueryBuilder extends AbstractQueryBuilder
             $terms = [$terms];
         }
 
-        if (is_null($operator)) {
+        if ($operator === null) {
             $operator = 'IN';
         }
 

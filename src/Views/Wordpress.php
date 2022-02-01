@@ -170,7 +170,7 @@ class Wordpress
     {
         $url = untrailingslashit(get_template_directory_uri());
 
-        if (!is_null($path)) {
+        if ($path !== null) {
             $url .= $path;
         }
 

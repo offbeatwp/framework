@@ -154,11 +154,11 @@ class App
 
     public function config($config, $default)
     {
-        if (is_null($this->config)) {
+        if ($this->config === null) {
             $this->config = new Config($this);
         }
 
-        if (!is_null($config)) {
+        if ($config !== null) {
             return $this->config->get($config, $default);
         }
         return $this->config;

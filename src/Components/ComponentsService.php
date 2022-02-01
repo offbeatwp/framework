@@ -18,7 +18,7 @@ class ComponentsService extends AbstractService
     {
         $components = $this->registrableComponents();
 
-        if (!empty($components)) {
+        if ($components) {
             foreach ($components as $class) {
                 container('components')->register($class::getSlug(), $class);
             }
@@ -35,7 +35,7 @@ class ComponentsService extends AbstractService
         }
 
         if ($handle = opendir($componentsDirectory)) {
-            while (false !== ($entry = readdir($handle))) {
+            while (($entry = readdir($handle)) !== false) {
                 if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) {
                     continue;
                 }

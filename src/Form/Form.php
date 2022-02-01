@@ -191,4 +191,9 @@ class Form extends Collection
     {
         return $this->parent;
     }
+
+    public static function create()
+    {
+        return new static();
+    }
 }

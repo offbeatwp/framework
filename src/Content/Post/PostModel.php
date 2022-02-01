@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
@@ -9,7 +10,8 @@ use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
-use OffbeatWP\Content\Traits\FindModelTrait;
+use OffbeatWP\Content\Traits\BaseModelTrait;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
 
@@ -24,14 +26,14 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|null */
+    /** @var WP_Post|object|null */
     public $wpPost;
     /** @var array */
     public $metaInput = [];
-    /** @var array|false */
+    /** @var array|false|string */
     protected $metas = false;
 
-    use FindModelTrait;
+    use BaseModelTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
@@ -40,7 +42,7 @@ class PostModel implements PostModelInterface
     /** @param WP_Post|int|null $post */
     public function __construct($post = null)
     {
-        if (is_null($post)) {
+        if ($post === null) {
             $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
@@ -72,7 +74,8 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        if (!is_null($hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this))) {
+        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
+        if ($hookValue !== null) {
             return $hookValue;
         }
 
@@ -101,7 +104,30 @@ class PostModel implements PostModelInterface
         return method_exists($this, $methodName);
     }
 
-    /* Attribute methods */
+    public function __clone()
+    {
+        // Gather all metas while we still have the original wpPost reference
+        $this->getMetas();
+        // Now clone the wpPost reference
+        $this->wpPost = clone $this->wpPost;
+        // Set ID to null
+        $this->setId(null);
+        // Since the new post is unsaved, we'll have to add all meta values
+        $this->refreshMetaInput();
+    }
+
+    protected function refreshMetaInput(): void
+    {
+        foreach ($this->getMetaValues() as $key => $value) {
+            if (!array_key_exists($key, $this->metaInput)) {
+                $this->setMeta($key, $value);
+            }
+        }
+    }
+
+    ///////////////////////////
+    /// Getters and Setters ///
+    ///////////////////////////
     public function getId(): ?int
     {
         return $this->wpPost->ID ?? null;
@@ -120,7 +146,7 @@ class PostModel implements PostModelInterface
     public function getContent(): string
     {
         if ($this->isPasswordRequired()) {
-            return get_the_password_form($this->wpPost);
+            return $this->getPasswordForm();
         }
 
         $content = $this->wpPost->post_content;
@@ -148,6 +174,24 @@ class PostModel implements PostModelInterface
         }
 
         return apply_filters('the_content', $content);
+    }
+
+    /** @return static */
+    public function setId(?int $id)
+    {
+        $this->wpPost->ID = $id;
+        return $this;
+    }
+
+    /**
+     * Set the (unfiltered) post content.
+     * @param string $content
+     * @return static
+     */
+    public function setContent(string $content)
+    {
+        $this->wpPost->post_content = $content;
+        return $this;
     }
 
     public function getPostName(): string
@@ -181,9 +225,29 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_type;
     }
 
+    /**
+     * @param string $metaKey The ID stored in this meta-field will be used to retrieve the attachment.
+     * @return string|null The attachment url or <i>null</i> if the attachment could not be found.
+     */
+    public function getAttachmentUrl(string $metaKey): ?string
+    {
+        return wp_get_attachment_url($this->getMeta($metaKey)) ?: null;
+    }
+
     public function getPostStatus(): string
     {
         return $this->wpPost->post_status;
+    }
+
+    /**
+     * @see PostStatus
+     * @param string $newStatus
+     * @return static
+     */
+    public function setPostStatus(string $newStatus)
+    {
+        $this->wpPost->post_status = $newStatus;
+        return $this;
     }
 
     public function isPostType(string $postType): bool
@@ -237,7 +301,7 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array */
+    /** @return false|array|string */
     public function getMetas()
     {
         if ($this->metas === false) {
@@ -245,6 +309,20 @@ class PostModel implements PostModelInterface
         }
 
         return $this->metas;
+    }
+
+    /** @return array An array of all values whose key is not prefixed with <i>_</i> */
+    public function getMetaValues(): array
+    {
+        $values = [];
+
+        foreach ($this->getMetas() as $key => $value) {
+            if ($key[0] !== '_') {
+                $values[$key] = reset($value);
+            }
+        }
+
+        return $values;
     }
 
     public function getMeta(string $key, bool $single = true)
@@ -256,6 +334,30 @@ class PostModel implements PostModelInterface
         }
 
         return null;
+    }
+
+    /** @throws OffbeatInvalidModelException */
+    public function getCreatedAt(): Carbon
+    {
+        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
+
+        if (!$creationDate) {
+            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID ?? '?');
+        }
+
+        return Carbon::parse($creationDate);
+    }
+
+    /** @throws OffbeatInvalidModelException */
+    public function getUpdatedAt(): Carbon
+    {
+        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
+
+        if (!$updateDate) {
+            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID ?? '?');
+        }
+
+        return Carbon::parse($updateDate);
     }
 
     /** @throws PostMetaNotFoundException */
@@ -270,11 +372,14 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    public function setMetas(array $metadata): void
+    /** @return static */
+    public function setMetas(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
         }
+
+        return $this;
     }
 
     /** @return static */
@@ -310,7 +415,7 @@ class PostModel implements PostModelInterface
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @param int[]|string[]|string $attr
-     * @return string
+     * @return string The post thumbnail image tag.
      */
     public function getFeaturedImage($size = 'thumbnail', $attr = []): string
     {
@@ -319,7 +424,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @return false|string
+     * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
     {
@@ -331,14 +436,25 @@ class PostModel implements PostModelInterface
         return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
-    public function setTitle(string $title): void
+    /** @return static */
+    public function setExcerpt(string $excerpt)
     {
-        $this->wpPost->post_title = $title;
+        $this->wpPost->post_excerpt = $excerpt;
+        return $this;
     }
 
-    public function setPostName(string $postName): void
+    /** @return static */
+    public function setTitle(string $title)
+    {
+        $this->wpPost->post_title = $title;
+        return $this;
+    }
+
+    /** @return static */
+    public function setPostName(string $postName)
     {
         $this->wpPost->post_name = $postName;
+        return $this;
     }
 
     public function getParentId(): ?int
@@ -352,12 +468,12 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        return !is_null($this->getParentId());
+        return (bool)$this->getParentId();
     }
 
     public function getParent(): ?PostModel
     {
-        if (empty($this->getParentId())) {
+        if (!$this->getParentId()) {
             return null;
         }
 
@@ -437,7 +553,20 @@ class PostModel implements PostModelInterface
         return post_password_required($this->wpPost);
     }
 
-    /* Display methods */
+    public function getPasswordForm(): string
+    {
+        return get_the_password_form($this->wpPost);
+    }
+
+    /** @return string The page template slug used by this post or <i>null</i> if it is not found. */
+    public function getPageTemplate(): ?string
+    {
+        return get_page_template_slug($this->wpPost) ?: null;
+    }
+
+    ///////////////////////
+    /// Display Methods ///
+    ///////////////////////
     public function setup(): void
     {
         global $wp_query;
@@ -453,14 +582,25 @@ class PostModel implements PostModelInterface
         $wp_query->in_the_loop = false;
     }
 
-    /* Change methods */
-    /** @return false|WP_Post|null */
+    //////////////////////
+    /// Change Methods ///
+    //////////////////////
+    /**
+     * When the post and page is permanently deleted, everything that is tied to it is deleted also.
+     * This includes comments, post meta fields, and terms associated with the post.
+     * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
+     * @var bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
+     * @return false|WP_Post|null
+     */
     public function delete(bool $force = true)
     {
         return wp_delete_post($this->getId(), $force);
     }
 
-    /** @return false|WP_Post|null */
+    /**
+     * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
+     * @return false|WP_Post|null
+     */
     public function trash()
     {
         return wp_trash_post($this->getId());
@@ -472,24 +612,52 @@ class PostModel implements PostModelInterface
         return wp_untrash_post($this->getId());
     }
 
+    /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
+    public function replicate()
+    {
+        return clone $this;
+    }
+
     public function save(): int
     {
         if ($this->metaInput) {
             $this->wpPost->meta_input = $this->metaInput;
         }
 
-        if (is_null($this->getId())) {
-            $postId = wp_insert_post((array)$this->wpPost);
+        if ($this->getId() === null) {
+            $insertedPostId = wp_insert_post((array)$this->wpPost);
+            $insertedPost = get_post($insertedPostId);
 
-            $this->wpPost = get_post($postId);
+            if ($insertedPost instanceof WP_Post) {
+                $this->wpPost = $insertedPost;
+            }
 
-            return $postId;
+            return $insertedPostId;
         }
 
         return wp_update_post($this->wpPost);
     }
 
-    /* Relations */
+    /** @return positive-int */
+    public function saveOrFail(): int
+    {
+        $result = $this->save();
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
+        }
+
+        return $result;
+    }
+
+    protected function getBaseClassName(): string
+    {
+        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
+    }
+
+    /////////////////////
+    /// Query Methods ///
+    /////////////////////
     public function getMethodByRelationKey($key)
     {
         $method = $key;

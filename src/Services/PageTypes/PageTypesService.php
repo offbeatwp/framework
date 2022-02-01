@@ -2,13 +2,15 @@
 
 namespace OffbeatWP\Services\PageTypes;
 
+use OffbeatWP\Content\Taxonomy\TermModel;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
+use WP_Query;
 
 class PageTypesService extends AbstractService
 {
-    const TAXONOMY = 'page-type';
-    const POST_TYPES = 'page';
+    public const TAXONOMY = 'page-type';
+    public const POST_TYPES = 'page';
 
     public $isPageTypeSaved = false;
 
@@ -35,11 +37,11 @@ class PageTypesService extends AbstractService
         $post_type = self::POST_TYPES;
         $taxonomy = self::TAXONOMY;
 
-        if ($typenow == $post_type) {
+        if ($typenow === $post_type) {
             $selected = $_GET[$taxonomy] ?? '';
 
             wp_dropdown_categories([
-                'show_option_all' => __("Show all page types", 'offbeatwp'),
+                'show_option_all' => __('Show all page types', 'offbeatwp'),
                 'taxonomy' => $taxonomy,
                 'name' => $taxonomy,
                 'orderby' => 'name',
@@ -50,17 +52,18 @@ class PageTypesService extends AbstractService
         }
     }
 
+    /** @var WP_Query $query */
     public function tsm_convert_id_to_term_in_query($query)
     {
         global $pagenow;
 
-        $post_type = self::POST_TYPES;
+        $postType = self::POST_TYPES;
         $taxonomy = self::TAXONOMY;
 
-        $q_vars = &$query->query_vars;
-        if (isset($q_vars['post_type'], $q_vars[$taxonomy]) && $pagenow === 'edit.php' && $q_vars['post_type'] == $post_type && is_numeric($q_vars[$taxonomy]) && $q_vars[$taxonomy] != 0) {
-            $term = get_term_by('id', $q_vars[$taxonomy], $taxonomy);
-            $q_vars[$taxonomy] = $term->slug;
+        $qVars = &$query->query_vars;
+        if (isset($qVars['post_type'], $qVars[$taxonomy]) && $pagenow === 'edit.php' && $qVars['post_type'] === $postType && is_numeric($qVars[$taxonomy]) && $qVars[$taxonomy] != 0) {
+            $term = get_term_by('id', $qVars[$taxonomy], $taxonomy);
+            $qVars[$taxonomy] = $term->slug;
         }
     }
 
@@ -69,9 +72,9 @@ class PageTypesService extends AbstractService
         $taxonomy = self::TAXONOMY;
         $post_type = self::POST_TYPES;
 
-        if ($post_type === get_post_type($post) && 'auto-draft' !== get_post_status($post)) {
+        if ($post_type === get_post_type($post) && get_post_status($post) !== 'auto-draft') {
             $pageType = wp_get_object_terms($post->ID, $taxonomy, ['orderby' => 'term_id', 'order' => 'ASC']);
-            if (is_wp_error($pageType) || empty($pageType)) {
+            if (is_wp_error($pageType) || !$pageType) {
                 printf(
                     '<div class="error below-h2"><p>%s</p></div>',
                     esc_html__('Page type is mandatory', 'offbeatwp')
@@ -80,7 +83,7 @@ class PageTypesService extends AbstractService
         }
     }
 
-    public function savePageType($post_id)
+    public function savePageType($postId)
     {
         if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || $this->isPageTypeSaved) {
             return;
@@ -94,17 +97,17 @@ class PageTypesService extends AbstractService
 
         $pageType = sanitize_text_field($_POST['page_type']);
 
-        if (empty($pageType)) {
+        if (!$pageType) {
             $postdata = [
-                'ID' => $post_id,
+                'ID' => $postId,
                 'post_status' => 'draft',
             ];
             wp_update_post($postdata);
         } else {
             $term = get_term_by('slug', $pageType, $taxonomy);
 
-            if (!empty($term) && !is_wp_error($term)) {
-                wp_set_object_terms($post_id, $term->term_id, $taxonomy, false);
+            if ($term && !is_wp_error($term)) {
+                wp_set_object_terms($postId, $term->term_id, $taxonomy, false);
             }
         }
 
@@ -127,10 +130,10 @@ class PageTypesService extends AbstractService
             $slug = $terms->first()->getSlug();
         }
 
-        $terms->each(function ($term) use ($slug) {
+        $terms->each(function (TermModel $term) use ($slug) {
             ?>
             <label title='<?php esc_attr_e($term->getName()); ?>'>
-                <input type="radio" name="page_type" value="<?= $term->getSlug(); ?>" <?php checked($term->getSlug(), $slug); ?>>
+                <input type="radio" name="page_type" value="<?= $term->getSlug() ?>" <?php checked($term->getSlug(), $slug); ?>>
                 <span><?php esc_html_e($term->getName()); ?></span>
             </label><br>
             <?php
