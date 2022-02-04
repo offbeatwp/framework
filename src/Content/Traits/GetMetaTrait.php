@@ -26,6 +26,16 @@ trait GetMetaTrait
     }
 
     /**
+     * Check if a meta value exists at all.
+     * @return bool True if the meta key exists, regardless of it's value. False if the meta key does not exist.
+     */
+    public function hasMeta(string $key): bool
+    {
+        $metas = $this->getMetas();
+        return ($metas && array_key_exists($key, $metas));
+    }
+
+    /**
      * Retrieve a meta value as a string.<br/>
      * If the meta value does not exist or is falsy, then an <b>empty string</b> is returned.
      */
