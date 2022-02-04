@@ -132,7 +132,7 @@ class TermQueryBuilder
     }
 
     /**
-     * @param string $field
+     * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @param string|int $value
      * @return TermModel|null
      */
@@ -144,7 +144,7 @@ class TermQueryBuilder
     }
 
     /**
-     * @param string $field
+     * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @param string|int $value
      * @return TermModel
      */
