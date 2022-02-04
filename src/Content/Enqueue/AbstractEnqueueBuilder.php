@@ -4,9 +4,13 @@ namespace OffbeatWP\Content\Enqueue;
 
 abstract class AbstractEnqueueBuilder
 {
+    /** @var string */
     private $handle;
+    /** @var string */
     protected $src = '';
+    /** @var string[] */
     protected $deps = [];
+    /** @var null|false|string */
     protected $version = null;
 
     public function __construct(string $handle)
@@ -14,8 +18,14 @@ abstract class AbstractEnqueueBuilder
         $this->handle = $handle;
     }
 
+    /** @param string $src The file location. */
+    public function setSrc(string $src)
+    {
+        $this->src = get_stylesheet_directory_uri() . $src;
+    }
+
     /**
-     * An array of registered handles that this enqueue depends on
+     * @param string[] $deps An array of registered handles that this enqueue depends on.
      * @return static
      */
     public function setDeps(string ...$deps)
@@ -25,7 +35,7 @@ abstract class AbstractEnqueueBuilder
     }
 
     /**
-     * String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes
+     * @param string $version String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes
      * @return static
      */
     public function setVersion(string $version)

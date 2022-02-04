@@ -8,20 +8,22 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
     protected $inFooter = false;
 
     /**
-     * Pass an array of data to the enqueued javascript
+     * Pass an array of data to the enqueued script.
+     * @param string $objectName Script name.
+     * @param array $objectValues Array of values.
      * @return static
      */
-    public function addBinding(string $name, array $values)
+    public function addBinding(string $objectName, array $objectValues)
     {
-        $this->bindingsToPass[$name] = $values;
+        $this->bindingsToPass[$objectName] = $objectValues;
         return $this;
     }
 
     /**
-     * Whether to enqueue the script before instead of in the footer
+     * @param bool $value Whether to enqueue the script before BODY instead of in the HEAD.
      * @return static
      */
-    public function setInFoorter(bool $value = true)
+    public function setInFooter(bool $value = true)
     {
         $this->inFooter = $value;
         return $this;
@@ -33,6 +35,15 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
 
         foreach ($this->bindingsToPass as $name => $value) {
             wp_localize_script($this->getHandle(), $name, $value);
+        }
+    }
+
+    public function register(): void
+    {
+        wp_register_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
+
+        foreach ($this->bindingsToPass as $objectName => $objectValues) {
+            wp_localize_script($this->getHandle(), $objectName, $objectValues);
         }
     }
 }
