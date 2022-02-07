@@ -6,7 +6,7 @@ use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
-use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\UserModelException;
 use WP_User;
 
@@ -17,6 +17,7 @@ class UserModel
     protected $metas = null;
 
     use BaseModelTrait;
+    use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
@@ -79,12 +80,8 @@ class UserModel
 
     public function getMetas(): ?array
     {
-        if ($this->metas === null) {
+        if ($this->metas === null && $this->getId() > 0) {
             $metas = get_user_meta($this->getId());
-
-            if ($metas === false) {
-                throw new OffbeatInvalidModelException('UserModel attempted to get meta with invalid ID: ' . $this->getId());
-            }
 
             if (is_array($metas)) {
                 $this->metas = $metas;

@@ -90,7 +90,6 @@ class TermQueryBuilder
         return $this->take(1)->first();
     }
 
-    /** @throws OffbeatModelNotFoundException */
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
@@ -102,54 +101,50 @@ class TermQueryBuilder
         return $result;
     }
 
-    public function findById(int $id)
+    public function findById(int $id): ?TermModel
     {
         return $this->findBy('id', $id);
     }
 
-    /** @throws OffbeatModelNotFoundException */
     public function findByIdOrFail(int $id): TermModel
     {
         return $this->findByOrFail('id', $id);
     }
 
-    public function findBySlug(string $slug)
+    public function findBySlug(string $slug): ?TermModel
     {
         return $this->findBy('slug', $slug);
     }
 
-    /** @throws OffbeatModelNotFoundException */
     public function findBySlugOrFail(string $slug): TermModel
     {
         return $this->findByOrFail('slug', $slug);
     }
 
-    public function findByName(string $name)
+    public function findByName(string $name): ?TermModel
     {
         return $this->findBy('name', $name);
     }
 
-    /** @throws OffbeatModelNotFoundException */
     public function findByNameOrFail(string $name): TermModel
     {
         return $this->findByOrFail('name', $name);
     }
 
     /**
-     * @param string $field
+     * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @param string|int $value
-     * @return TermModel|false|null
+     * @return TermModel|null
      */
-    public function findBy(string $field, $value)
+    public function findBy(string $field, $value): ?TermModel
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        return !$term ? $term : new $this->model($term);
+        return ($term) ? new $this->model($term) : null;
     }
 
     /**
-     * @throws OffbeatModelNotFoundException
-     * @param string $field
+     * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @param string|int $value
      * @return TermModel
      */
