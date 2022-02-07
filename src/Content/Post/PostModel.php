@@ -33,8 +33,8 @@ class PostModel implements PostModelInterface
     public $wpPost;
     /** @var array */
     public $metaInput = [];
-    /** @var array|false|string */
-    protected $metas = false;
+    /** @var array|null */
+    protected $metas = null;
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -339,11 +339,11 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array|string */
-    public function getMetas()
+    public function getMetas(): ?array
     {
-        if ($this->metas === false) {
-            $this->metas = get_post_meta($this->getId());
+        if ($this->metas === null) {
+            $postMeta = get_post_meta($this->getId());
+            $this->metas = is_array($postMeta) ? $postMeta : null;
         }
 
         return $this->metas;
@@ -366,14 +366,14 @@ class PostModel implements PostModelInterface
     /**
      * @param string $key
      * @param bool $single
-     * @return false|mixed|string|null
+     * @return mixed
      */
     public function getMeta(string $key, bool $single = true)
     {
-        if (isset($this->getMetas()[$key])) {
-            return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
+        $metas = $this->getMetas();
+
+        if (isset($metas[$key])) {
+            return ($single && is_array($metas[$key])) ? reset($metas[$key]) : $metas[$key];
         }
 
         return null;
