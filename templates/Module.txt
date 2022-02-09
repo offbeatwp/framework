@@ -5,10 +5,8 @@ use OffbeatWP\Modules\AbstractModule;
 
 class {{ classname }} extends AbstractModule
 {
-
     public function register()
     {
 
     }
-
 }

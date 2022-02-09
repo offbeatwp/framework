@@ -5,7 +5,7 @@ use OffbeatWP\Content\Taxonomy\TermModel;
 
 class {{ classname }} extends TermModel
 {
-    const TAXONOMY  = '{{ taxonomy }}';
-    const ORDER_BY  = 'menu_order';
-    const ORDER     = 'ASC';
+    public const TAXONOMY  = '{{ taxonomy }}';
+    public const ORDER_BY  = 'menu_order';
+    public const ORDER     = 'ASC';
 }
