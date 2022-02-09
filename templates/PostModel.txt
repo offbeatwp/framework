@@ -3,7 +3,7 @@ namespace {{ namespace }};
 
 use OffbeatWP\Content\Post\PostModel;
 
-class {{ classname }} extends OffbeatWpPostModel {
+class {{ classname }} extends PostModel {
     public const POST_TYPE = '{{ post_type }}';
     public const ORDERBY   = 'post_date';
     public const ORDER     = 'DESC';
