@@ -1,10 +1,10 @@
 <?php
 namespace {{ namespace }};
 
-use \OffbeatWP\Components\AbstractComponent;
-use \OffbeatWP\Form\Form;
-use \OffbeatWP\AcfLayout\Fields\ComponentsField;
-use \OffbeatWP\Form\Fields\Text;
+use OffbeatWP\Components\AbstractComponent;
+use OffbeatWP\Form\Form;
+use OffbeatWP\AcfLayout\Fields\ComponentsField;
+use OffbeatWP\Form\Fields\Text;
 
 class {{ classname }} extends AbstractComponent
 {
@@ -14,38 +14,23 @@ class {{ classname }} extends AbstractComponent
             'name'       => '{{ name }}',
             'slug'       => '{{ slug }}',
             'supports'   => [{{ supports }}],
-            // 'variations' => self::variations(),
             'form'       => self::form(),
         ];
     }
-
-    public function render($settings)
-    {
-        return $this->view('component', [
-            'settings' => $settings,
-        ]);
-    }
-
-    // public static function variations()
-    // {
-    //     return [
-    //         'default' => [
-    //             'label'    => __('Default', 'raow'),
-    //             'sections' => [],
-    //         ],
-    //         'alternative' => [
-    //             'label'    => __('Alternative', 'raow'),
-    //             'sections' => [],
-    //         ],
-    //     ];
-    // }
 
     public static function form()
     {
         $form = new Form();
 
-        $form->addField(Text::make('utility_classes', __('Utility Classes', 'lynx')));
+        $form->addField(Text::make('utility_classes', __('Utility Classes', 'offbeatwp')));
 
         return $form;
+    }
+
+    public function render($settings)
+    {
+        return $this->view(self::getSlug(), [
+            'settings' => $settings,
+        ]);
     }
 }

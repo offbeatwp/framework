@@ -5,10 +5,8 @@ use OffbeatWP\Controllers\AbstractController;
 
 class {{ classname }} extends AbstractController
 {
-
     public function actionIndex()
     {
         return $this->render('index', []);
     }
-
 }
