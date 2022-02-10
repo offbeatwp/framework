@@ -453,7 +453,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param non-empty-string $key Metadata name.
-     * @param mixed $value Rows will only be removed that match the value. Must be serializable if non-scalar and cannot be an empty string.
+     * @param true|float|int|non-empty-string|array|object $value Rows will only be removed that match the value. Must be serializable if non-scalar and cannot be false, null or an empty string.
      * @return static
      */
     public function unsetMetaWithValue(string $key, $value)
