@@ -774,6 +774,12 @@ class PostModel implements PostModelInterface
         return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
     }
 
+    public function refreshMetas()
+    {
+        $this->metas = false;
+        $this->getMetas();
+    }
+
     /////////////////////
     /// Query Methods ///
     /////////////////////
