@@ -546,27 +546,29 @@ class PostModel implements PostModelInterface
         return $this->getChildren();
     }
 
-    /**
-     * @return PostsCollection
-     */
+    /** @return PostsCollection Retrieves the children of this post. */
     public function getChildren()
     {
         return static::query()->where(['post_parent' => $this->getId()])->all();
     }
 
-    /** @return int[] */
+    /** @return int[] Retrieves the IDs of the ancestors of a post. */
     public function getAncestorIds(): array
     {
         return get_post_ancestors($this->getId());
     }
 
+    /** @return Collection Returns the ancestors of a post. */
     public function getAncestors(): Collection
     {
         $ancestors = collect();
 
         if ($this->hasParent()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
-                $ancestors->push(offbeat('post')->get($ancestorId));
+                $ancestor = offbeat('post')->get($ancestorId);
+                if ($ancestor) {
+                    $ancestors->push($ancestor);
+                }
             }
         }
 
@@ -577,7 +579,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return false|PostModel|null
+     * @return string|PostModel|null
      */
     public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -588,7 +590,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return false|PostModel|null
+     * @return string|PostModel|null
      */
     public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -600,7 +602,7 @@ class PostModel implements PostModelInterface
      * @param string $excludedTerms
      * @param bool $previous
      * @param string $taxonomy
-     * @return false|PostModel|null
+     * @return string|PostModel|null
      */
     public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
     {
@@ -619,11 +621,16 @@ class PostModel implements PostModelInterface
         return false;
     }
 
+    /**
+     * Whether post requires password and correct password has been provided.
+     * @return bool <i>false</i> if a password is not required or the correct password cookie is present, <i>true</i> otherwise.
+     */
     public function isPasswordRequired(): bool
     {
         return post_password_required($this->wpPost);
     }
 
+    /** Retrieve protected post password form content. */
     public function getPasswordForm(): string
     {
         return get_the_password_form($this->wpPost);
@@ -677,7 +684,10 @@ class PostModel implements PostModelInterface
         return wp_trash_post($this->getId());
     }
 
-    /** @return false|WP_Post|null */
+    /**
+     * Restores a post from the Trash.
+     * @return false|WP_Post|null
+     */
     public function untrash()
     {
         return wp_untrash_post($this->getId());
@@ -782,6 +792,16 @@ class PostModel implements PostModelInterface
     public function belongsToMany($key): BelongsToMany
     {
         return new BelongsToMany($this, $key);
+    }
+
+    /**
+     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
+     * @return static|null
+     */
+    public static function current()
+    {
+        $post = offbeat('post')->get();
+        return ($post instanceof static) ? $post : null;
     }
 
     public static function query(): WpQueryBuilderModel
