@@ -459,7 +459,7 @@ class PostModel implements PostModelInterface
     public function unsetMetaWithValue(string $key, $value)
     {
         if ($value === '' || $value === null || $value === false) {
-            throw new InvalidArgumentException('Cannot check for empty string values with unsetMetaWithValue.');
+            throw new InvalidArgumentException('Cannot check for empty string, false or null values with unsetMetaWithValue.');
         }
 
         $this->metaToUnset[$key] = $value;
