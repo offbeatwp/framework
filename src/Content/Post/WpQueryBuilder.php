@@ -69,6 +69,10 @@ class WpQueryBuilder
 
     public function findById(int $id): ?PostModel
     {
+        if ($id <= 0) {
+            return null;
+        }
+
         $this->queryVars['p'] = $id;
 
         return $this->first();
