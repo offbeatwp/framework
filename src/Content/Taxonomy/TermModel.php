@@ -22,6 +22,8 @@ class TermModel implements TermModelInterface
 
     public $wpTerm;
     public $id;
+    protected $metaInput = [];
+    protected $metaToUnset = [];
 
     /** @param WP_Term|int|null */
     public function __construct($term)

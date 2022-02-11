@@ -8,15 +8,22 @@ use Illuminate\Support\Collection;
 
 trait GetMetaTrait
 {
-    abstract public function getMetas();
-
     /**
+     * @internal
      * @param string $key
      * @param mixed $defaultValue
      * @return mixed
      */
     private function getRawMetaValue(string $key, $defaultValue)
     {
+        if (array_key_exists($key, $this->metaToUnset)) {
+            return $defaultValue;
+        }
+
+        if (array_key_exists($key, $this->metaInput)) {
+            return $this->metaInput[$key];
+        }
+
         $metas = $this->getMetas();
         if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
             return reset($metas[$key]);
@@ -26,11 +33,31 @@ trait GetMetaTrait
     }
 
     /**
+     * Returns the metaInput value if one with the given key exists.<br/>
+     * If not, returns the meta value with the given key from the database.<br/>
+     * If the value isn't in metaInput or the database, <i>null</i> is returned.
+     * @param non-empty-string $key
+     * @return mixed
+     */
+    public function getMetaValue(string $key)
+    {
+        return $this->getRawMetaValue($key, null);
+    }
+
+    /**
      * Check if a meta value exists at all.
      * @return bool True if the meta key exists, regardless of it's value. False if the meta key does not exist.
      */
     public function hasMeta(string $key): bool
     {
+        if (array_key_exists($key, $this->metaToUnset)) {
+            return false;
+        }
+
+        if (array_key_exists($key, $this->metaInput)) {
+            return true;
+        }
+
         $metas = $this->getMetas();
         return ($metas && array_key_exists($key, $metas));
     }
