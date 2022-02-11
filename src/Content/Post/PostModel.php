@@ -35,7 +35,7 @@ class PostModel implements PostModelInterface
     /** @var array */
     public $metaInput = [];
     /** @var array */
-    public $metaToUnset = [];
+    protected $metaToUnset = [];
     /** @var array|false|string */
     protected $metas = false;
 

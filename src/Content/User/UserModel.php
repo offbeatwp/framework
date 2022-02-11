@@ -16,6 +16,7 @@ class UserModel
     /** @var null|array */
     protected $metas = null;
     protected $metaInput = [];
+    protected $metaToUnset = [];
 
     use BaseModelTrait;
     use GetMetaTrait;

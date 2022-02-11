@@ -16,6 +16,10 @@ trait GetMetaTrait
      */
     private function getRawMetaValue(string $key, $defaultValue)
     {
+        if (array_key_exists($key, $this->metaToUnset)) {
+            return $defaultValue;
+        }
+
         if (array_key_exists($key, $this->metaInput)) {
             return $this->metaInput[$key];
         }
@@ -46,6 +50,10 @@ trait GetMetaTrait
      */
     public function hasMeta(string $key): bool
     {
+        if (array_key_exists($key, $this->metaToUnset)) {
+            return false;
+        }
+
         if (array_key_exists($key, $this->metaInput)) {
             return true;
         }
