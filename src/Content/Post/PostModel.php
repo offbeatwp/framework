@@ -610,7 +610,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null
+     * @return string|PostModel|null|false
      */
     public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -621,7 +621,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null
+     * @return string|PostModel|null|false
      */
     public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -629,6 +629,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param bool $previous
@@ -777,6 +778,12 @@ class PostModel implements PostModelInterface
     protected function getBaseClassName(): string
     {
         return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
+    }
+
+    /** @return string[]|null */
+    protected function getRelationKeyMethods(): ?array
+    {
+        return $this->relationKeyMethods ?? null;
     }
 
     public function refreshMetas()
