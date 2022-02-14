@@ -780,6 +780,12 @@ class PostModel implements PostModelInterface
         return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
     }
 
+    /** @return string[]|null */
+    protected function getRelationKeyMethods(): ?array
+    {
+        return $this->relationKeyMethods ?? null;
+    }
+
     public function refreshMetas()
     {
         $this->metas = false;
