@@ -629,6 +629,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param bool $previous
