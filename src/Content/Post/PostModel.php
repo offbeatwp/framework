@@ -610,7 +610,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null
+     * @return string|PostModel|null|false
      */
     public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -621,7 +621,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null
+     * @return string|PostModel|null|false
      */
     public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
