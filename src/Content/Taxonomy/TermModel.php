@@ -6,11 +6,9 @@ use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use WP_Error;
 use WP_Term;
 
-/**
- * @method mixed getField() getField(string $selector, bool $format_value = true)
- */
 class TermModel implements TermModelInterface
 {
     use BaseModelTrait;
@@ -98,6 +96,7 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->description;
     }
 
+    /** @return string|WP_Error */
     public function getLink()
     {
         return get_term_link($this->wpTerm);
@@ -140,11 +139,21 @@ class TermModel implements TermModelInterface
         return get_term_meta($this->getId());
     }
 
+    /**
+     * @param non-empty-string $key
+     * @param bool $single
+     * @return mixed
+     */
     public function getMeta(string $key, bool $single = true)
     {
         return get_term_meta($this->getId(), $key, $single);
     }
 
+    /**
+     * @param non-empty-string $key
+     * @param mixed $value
+     * @return bool|int|WP_Error
+     */
     public function setMeta(string $key, $value)
     {
         return update_term_meta($this->getId(), $key, $value);

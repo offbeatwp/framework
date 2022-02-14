@@ -19,11 +19,6 @@ use WP_Error;
 use WP_Post;
 use WP_User;
 
-/**
- * @method mixed getField() getField(string $selector, bool $format_value = true)
- * @method array getFieldObject() getFieldObject(string $selector, bool $format_value = true)
- * @method bool updateField() updateField(string $selector, mixed $value = false)
- */
 class PostModel implements PostModelInterface
 {
     private const DEFAULT_POST_STATUS = 'publish';
