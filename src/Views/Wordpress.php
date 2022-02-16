@@ -147,6 +147,19 @@ class Wordpress
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }
 
+    public function getAttachmentImageSrcSet($attachmentId, $sizes = ['thumbnail']): string
+    {
+        $srcset = [];
+
+        foreach ($sizes as $size) {
+            $imageSrc = $this->getAttachmentImageSrc($attachmentId, $size);
+            
+            $srcset[] = $imageSrc->getUrl() . ' ' . $imageSrc->getWidth() . 'w';
+        }
+
+        return implode(', ', $srcset);
+    }
+
     public function formatDate(?string $format, $date, bool $strtotime = false): string
     {
         if ($strtotime) {
