@@ -41,13 +41,13 @@ class TermQueryBuilder
         $this->order($orderBy, $order);
     }
 
-    /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
+    /** @param int[] $ids Array of term IDs to include. */
     public function include(array $ids) {
         $this->queryVars['include'] = $ids;
         return $this;
     }
 
-    /** @param int[] $ids Array of term IDs to exclude. If include is non-empty, exclude is ignored */
+    /** @param int[] $ids Array of term IDs to exclude. */
     public function exclude(array $ids) {
         $this->queryVars['exclude'] = $ids;
         return $this;
