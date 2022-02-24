@@ -104,7 +104,9 @@ trait GetMetaTrait
      */
     public function getMetaArray(string $key): array
     {
-        return (array)$this->getRawMetaValue($key, []);
+        $value = $this->getRawMetaValue($key, []);
+        $value = is_serialized($value) ? unserialize($value, false) : $value;
+        return (array)$value;
     }
 
 
