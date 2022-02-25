@@ -112,7 +112,8 @@ class TermModel implements TermModelInterface
         return ($this->wpTerm->parent) ?: null;
     }
 
-    public function getParent(): ?TermModel
+    /** @return static|null */
+    public function getParent()
     {
         if ($this->getParentId()) {
             return static::query()->findById($this->getParentId()) ?: null;
