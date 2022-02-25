@@ -27,6 +27,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     private const DEFAULT_PING_STATUS = 'closed';
 
     public ?WP_Post $wpPost;
+    public ?array $relationKeyMethods = null;
 
     use BaseModelTrait;
     use GetMetaTrait;
