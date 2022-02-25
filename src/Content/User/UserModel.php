@@ -5,18 +5,15 @@ namespace OffbeatWP\Content\User;
 use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\UserModelException;
 use WP_User;
 
-class UserModel
+class UserModel extends AbstractOffbeatModel
 {
-    protected $wpUser;
-    /** @var null|array */
-    protected $metas = null;
-    protected $metaInput = [];
-    protected $metaToUnset = [];
+    protected ?WP_User $wpUser;
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -30,7 +27,7 @@ class UserModel
     {
         if ($user === null) {
             $user = new WP_User();
-            $this->metas = [];
+            $this->metaData = [];
         }
 
         if (is_int($user)) {
@@ -75,24 +72,24 @@ class UserModel
         return $this->wpUser;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->wpUser->ID;
     }
 
     public function getMetas(): ?array
     {
-        if ($this->metas === null && $this->getId() > 0) {
+        if ($this->metaData === null && $this->getId() > 0) {
             $metas = get_user_meta($this->getId());
 
             if (is_array($metas)) {
-                $this->metas = $metas;
+                $this->metaData = $metas;
             } else {
-                return null;
+                return [];
             }
         }
 
-        return $this->metas;
+        return $this->metaData;
     }
 
     public function getMeta(string $key, bool $single = true)
@@ -225,9 +222,7 @@ class UserModel
     /** @return string[] Returns the translated user roles. Roles without translations will retain their original name. */
     public function getTranslatedRoles(string $domain = 'default'): array
     {
-        return array_map(static function (string $role) use ($domain) {
-            return translate_user_role($role, $domain);
-        }, $this->wpUser->roles);
+        return array_map(static fn(string $role) => translate_user_role($role, $domain), $this->wpUser->roles);
     }
 
     /** @return string|null Returns the role at the specified index, or null if no role exists at the specified index. */
@@ -276,5 +271,10 @@ class UserModel
     public static function query(): UserQueryBuilder
     {
         return new UserQueryBuilder(static::class);
+    }
+
+    public function getMetaData(): array
+    {
+        return get_user_meta($this->getId()) ?: [];
     }
 }

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
@@ -19,20 +20,13 @@ use WP_Error;
 use WP_Post;
 use WP_User;
 
-class PostModel implements PostModelInterface
+class PostModel extends AbstractOffbeatModel implements PostModelInterface
 {
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|object|null */
-    public $wpPost;
-    /** @var array */
-    public $metaInput = [];
-    /** @var array */
-    protected $metaToUnset = [];
-    /** @var array|false|string */
-    protected $metas = false;
+    public ?WP_Post $wpPost;
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -45,7 +39,7 @@ class PostModel implements PostModelInterface
     public function __construct($post = null)
     {
         if ($post === null) {
-            $this->wpPost = (object)[];
+            $this->wpPost = new WP_Post((object)[]);
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
             $this->wpPost->comment_status = self::DEFAULT_COMMENT_STATUS;
@@ -127,7 +121,7 @@ class PostModel implements PostModelInterface
     public function __clone()
     {
         // Gather all metas while we still have the original wpPost reference
-        $this->getMetas();
+        $this->getMetaData();
         // Now clone the wpPost reference
         $this->wpPost = clone $this->wpPost;
         // Set ID to null
@@ -337,14 +331,13 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array|string */
-    public function getMetas()
+    public function getMetaData(): array
     {
-        if ($this->metas === false) {
-            $this->metas = get_post_meta($this->getId());
+        if ($this->metaData === null) {
+            $this->metaData = get_post_meta($this->getId());
         }
 
-        return $this->metas;
+        return $this->metaData ?: [];
     }
 
     /** @return array An array of all values whose key is not prefixed with <i>_</i> */
@@ -352,7 +345,7 @@ class PostModel implements PostModelInterface
     {
         $values = [];
 
-        foreach ($this->getMetas() as $key => $value) {
+        foreach ($this->getMetaData() as $key => $value) {
             if ($key[0] !== '_') {
                 $values[$key] = reset($value);
             }
@@ -368,10 +361,10 @@ class PostModel implements PostModelInterface
      */
     public function getMeta(string $key, bool $single = true)
     {
-        if (isset($this->getMetas()[$key])) {
-            return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
+        if (isset($this->getMetaData()[$key])) {
+            return $single && is_array($this->getMetaData()[$key])
+                ? reset($this->getMetaData()[$key])
+                : $this->getMetaData()[$key];
         }
 
         return null;
@@ -414,7 +407,7 @@ class PostModel implements PostModelInterface
     }
 
     /** @return static */
-    public function setMetas(iterable $metadata)
+    public function setMetaData(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
@@ -788,8 +781,8 @@ class PostModel implements PostModelInterface
 
     public function refreshMetas()
     {
-        $this->metas = false;
-        $this->getMetas();
+        $this->metaData = null;
+        $this->getMetaData();
     }
 
     /////////////////////

@@ -24,7 +24,7 @@ trait GetMetaTrait
             return $this->metaInput[$key];
         }
 
-        $metas = $this->getMetas();
+        $metas = $this->getMetaData();
         if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
             return reset($metas[$key]);
         }
@@ -58,7 +58,7 @@ trait GetMetaTrait
             return true;
         }
 
-        $metas = $this->getMetas();
+        $metas = $this->getMetaData();
         return ($metas && array_key_exists($key, $metas));
     }
 

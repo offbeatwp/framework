@@ -3,13 +3,14 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use WP_Error;
 use WP_Term;
 
-class TermModel implements TermModelInterface
+class TermModel extends AbstractOffbeatModel implements TermModelInterface
 {
     use BaseModelTrait;
     use GetMetaTrait;
@@ -18,10 +19,7 @@ class TermModel implements TermModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    public $wpTerm;
-    public $id;
-    protected $metaInput = [];
-    protected $metaToUnset = [];
+    protected ?WP_Term $wpTerm;
 
     /** @param WP_Term|int|null */
     public function __construct($term)
@@ -33,10 +31,6 @@ class TermModel implements TermModelInterface
             if ($retrievedTerm instanceof WP_Term) {
                 $this->wpTerm = $retrievedTerm;
             }
-        }
-
-        if (isset($this->wpTerm)) {
-            $this->id = $this->wpTerm->term_id;
         }
     }
 
@@ -128,15 +122,12 @@ class TermModel implements TermModelInterface
 
     public function getAncestors(): Collection
     {
-        return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::query()->findById($ancestorId);
-        });
+        return $this->getAncestorIds()->map(fn($ancestorId) => static::query()->findById($ancestorId));
     }
 
-    /** @return array|false|string */
-    public function getMetas()
+    public function getMetaData(): array
     {
-        return get_term_meta($this->getId());
+        return get_term_meta($this->getId()) ?: [];
     }
 
     /**
