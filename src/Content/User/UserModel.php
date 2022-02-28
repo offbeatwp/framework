@@ -77,32 +77,6 @@ class UserModel extends AbstractOffbeatModel
         return $this->wpUser->ID;
     }
 
-    public function getMetas(): ?array
-    {
-        if ($this->metaData === null && $this->getId() > 0) {
-            $metas = get_user_meta($this->getId());
-
-            if (is_array($metas)) {
-                $this->metaData = $metas;
-            } else {
-                return [];
-            }
-        }
-
-        return $this->metaData;
-    }
-
-    public function getMeta(string $key, bool $single = true)
-    {
-        $metas = $this->getMetas();
-
-        if (isset($metas[$key])) {
-            return ($single && is_array($metas[$key])) ? reset($metas[$key]) : $metas[$key];
-        }
-
-        return null;
-    }
-
     /** @return string The user's login username. */
     public function getLogin(): string
     {
@@ -275,6 +249,10 @@ class UserModel extends AbstractOffbeatModel
 
     public function getMetaData(): array
     {
-        return get_user_meta($this->getId()) ?: [];
+        if ($this->metaData === null) {
+            $this->metaData = get_user_meta($this->getId()) ?: [];
+        }
+
+        return $this->metaData;
     }
 }

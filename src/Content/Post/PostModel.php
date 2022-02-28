@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
-use InvalidArgumentException;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
@@ -16,7 +15,6 @@ use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
-use WP_Error;
 use WP_Post;
 use WP_User;
 
@@ -148,10 +146,9 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $this->wpPost->ID ?? null;
     }
 
-    /** @return string */
-    public function getTitle()
+    public function getTitle(): string
     {
-        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+        return (string)apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
 
     public function getUnfilteredTitle(): string
@@ -196,6 +193,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     public function setId(?int $id)
     {
         $this->wpPost->ID = $id;
+        $this->metaData = [];
         return $this;
     }
 
@@ -220,19 +218,17 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string|WP_Error */
-    public function getPermalink()
+    public function getPermalink(): string
     {
-        return get_permalink($this->getId());
+        return get_permalink($this->getId()) ?: '';
     }
 
-    /** @return false|string */
-    public function getPostTypeLabel()
+    public function getPostTypeLabel(): ?string
     {
-        $postType = get_post_type_object(get_post_type($this->wpPost));
+        $postType = get_post_type_object($this->getPostType());
 
         if (!$postType || !$postType->label) {
-            return false;
+            return null;
         }
 
         return $postType->label;
@@ -273,23 +269,15 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $this->getPostType() === $postType;
     }
 
-    /**
-     * @param string $format
-     * @return false|string
-     */
-    public function getPostDate(string $format = '')
+    public function getPostDate(string $format = ''): string
     {
-        return get_the_date($format, $this->wpPost);
+        return get_the_date($format, $this->wpPost) ?: '';
     }
 
-    /**
-     * @param bool $formatted
-     * @return false|string
-     */
-    public function getExcerpt(bool $formatted = true)
+    public function getExcerpt(bool $formatted = true): string
     {
         if (!$formatted) {
-            return get_the_excerpt($this->wpPost);
+            return get_the_excerpt($this->wpPost) ?: '';
         }
 
         $currentPost = $GLOBALS['post'] ?? null;
@@ -298,47 +286,43 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
 
         ob_start();
         the_excerpt();
-        $excerpt = ob_get_clean();
+        $excerpt = ob_get_clean() ?: '';
 
         $GLOBALS['post'] = $currentPost;
 
         return $excerpt;
     }
 
-    /**
-     * @deprecated Consider using getAuthorModel instead
-     * @return false|WP_User
-     */
-    public function getAuthor()
+    /** @deprecated Consider using getAuthorModel instead */
+    public function getAuthor(): ?WP_User
     {
         $authorId = $this->getAuthorId();
 
         if (!$authorId) {
-            return false;
+            return null;
         }
 
         return get_userdata($authorId);
     }
 
-    /** @return false|int|numeric-string */
-    public function getAuthorId()
+    public function getAuthorId(): ?int
     {
         $authorId = $this->wpPost->post_author;
 
         if (!$authorId) {
-            return false;
+            return null;
         }
 
-        return $authorId;
+        return (int)$authorId;
     }
 
     public function getMetaData(): array
     {
         if ($this->metaData === null) {
-            $this->metaData = get_post_meta($this->getId());
+            $this->metaData = get_post_meta($this->getId()) ?: [];
         }
 
-        return $this->metaData ?: [];
+        return $this->metaData;
     }
 
     /** @return array An array of all values whose key is not prefixed with <i>_</i> */
@@ -353,22 +337,6 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         }
 
         return $values;
-    }
-
-    /**
-     * @param non-empty-string $key
-     * @param bool $single
-     * @return false|mixed|string|null
-     */
-    public function getMeta(string $key, bool $single = true)
-    {
-        if (isset($this->getMetaData()[$key])) {
-            return $single && is_array($this->getMetaData()[$key])
-                ? reset($this->getMetaData()[$key])
-                : $this->getMetaData()[$key];
-        }
-
-        return null;
     }
 
     /** @throws OffbeatInvalidModelException */
@@ -407,53 +375,12 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $result;
     }
 
-    /** @return static */
+    /** @deprecated  */
     public function setMetaData(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
         }
-
-        return $this;
-    }
-
-    /** @return static */
-    public function setMeta(string $key, $value)
-    {
-        $this->metaInput[$key] = $value;
-
-        unset($this->metaToUnset[$key]);
-
-        return $this;
-    }
-
-    /**
-     * @param non-empty-string $key Metadata name.
-     * @return static
-     */
-    public function unsetMeta(string $key)
-    {
-        $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
-        return $this;
-    }
-
-    /**
-     * @param non-empty-string $key Metadata name.
-     * @param true|float|int|non-empty-string|array|object $value Rows will only be removed that match the value. Must be serializable if non-scalar and cannot be false, null or an empty string.
-     * @return static
-     */
-    public function unsetMetaWithValue(string $key, $value)
-    {
-        if ($value === '' || $value === null || $value === false) {
-            throw new InvalidArgumentException('Cannot check for empty string, false or null values with unsetMetaWithValue.');
-        }
-
-        $this->metaToUnset[$key] = $value;
-
-        unset($this->metaInput[$key]);
 
         return $this;
     }
@@ -604,9 +531,9 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null|false
+     * @return PostModel|null
      */
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?PostModel
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
@@ -615,9 +542,9 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null|false
+     * @return PostModel|null
      */
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?PostModel
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
@@ -628,23 +555,19 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
      * @param string $excludedTerms
      * @param bool $previous
      * @param string $taxonomy
-     * @return string|PostModel|null
+     * @return PostModel|null
      */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
+    private function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?PostModel
     {
         $currentPost = $GLOBALS['post'];
 
         $GLOBALS['post'] = $this->wpPost;
 
-        $adjacentPost = get_adjacent_post($inSameTerm, $excludedTerms, $previous, $taxonomy);
+        $adjacentPost = get_adjacent_post($inSameTerm, $excludedTerms, $previous, $taxonomy) ?: null;
 
         $GLOBALS['post'] = $currentPost;
 
-        if ($adjacentPost) {
-            return offbeat('post')->convertWpPostToModel($adjacentPost);
-        }
-
-        return false;
+        return ($adjacentPost) ? offbeat('post')->convertWpPostToModel($adjacentPost) : null;
     }
 
     /**
@@ -694,29 +617,29 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
      * This includes comments, post meta fields, and terms associated with the post.
      * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
      * @var bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
-     * @return false|WP_Post|null
+     * @return WP_Post|null
      */
-    public function delete(bool $force = true)
+    public function delete(bool $force = true): ?WP_Post
     {
-        return wp_delete_post($this->getId(), $force);
+        return wp_delete_post($this->getId(), $force) ?: null;
     }
 
     /**
      * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
      * @return false|WP_Post|null
      */
-    public function trash()
+    public function trash(): ?WP_Post
     {
-        return wp_trash_post($this->getId());
+        return wp_trash_post($this->getId()) ?: null;
     }
 
     /**
      * Restores a post from the Trash.
      * @return false|WP_Post|null
      */
-    public function untrash()
+    public function untrash(): ?WP_Post
     {
-        return wp_untrash_post($this->getId());
+        return wp_untrash_post($this->getId()) ?: null;
     }
 
     /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
@@ -780,7 +703,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $this->relationKeyMethods ?? null;
     }
 
-    public function refreshMetas()
+    public function refreshMetas(): void
     {
         $this->metaData = null;
         $this->getMetaData();
@@ -789,57 +712,37 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function getMethodByRelationKey($key)
+    public function getMethodByRelationKey(string $key): ?string
     {
-        $method = $key;
+        $methodName = $key;
 
         if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
-            $method = $this->relationKeyMethods[$key];
+            $methodName = $this->relationKeyMethods[$key];
         }
 
-        if (method_exists($this, $method)) {
-            return $method;
+        if (method_exists($this, $methodName)) {
+            return $methodName;
         }
 
         return null;
     }
 
-    /**
-     * @param string $key
-     * @return HasMany
-     */
-    public function hasMany($key): HasMany
+    public function hasMany(string $key): HasMany
     {
         return new HasMany($this, $key);
     }
 
-    /**
-     * @param string $key
-     * @return HasOne
-     */
-    public function hasOne($key): HasOne
+    public function hasOne(string $key): HasOne
     {
         return new HasOne($this, $key);
     }
 
-    /**
-     * @param string $key
-     * @return BelongsTo
-     */
-    public function belongsTo($key): BelongsTo
+    public function belongsTo(string $key): BelongsTo
     {
         return new BelongsTo($this, $key);
     }
 
-    /**
-     * @param string $key
-     * @return BelongsToMany
-     */
-    public function belongsToMany($key): BelongsToMany
+    public function belongsToMany(string $key): BelongsToMany
     {
         return new BelongsToMany($this, $key);
     }

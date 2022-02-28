@@ -7,7 +7,6 @@ use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
-use WP_Error;
 use WP_Term;
 
 class TermModel extends AbstractOffbeatModel implements TermModelInterface
@@ -90,8 +89,7 @@ class TermModel extends AbstractOffbeatModel implements TermModelInterface
         return $this->wpTerm->description;
     }
 
-    /** @return string|WP_Error */
-    public function getLink()
+    public function getLink(): string
     {
         return get_term_link($this->wpTerm);
     }
@@ -106,7 +104,8 @@ class TermModel extends AbstractOffbeatModel implements TermModelInterface
         return ($this->wpTerm->parent) ?: null;
     }
 
-    public function getParent(): ?TermModel
+    /** @return static|null */
+    public function getParent()
     {
         if ($this->getParentId()) {
             return static::query()->findById($this->getParentId()) ?: null;
@@ -127,27 +126,11 @@ class TermModel extends AbstractOffbeatModel implements TermModelInterface
 
     public function getMetaData(): array
     {
-        return get_term_meta($this->getId()) ?: [];
-    }
+        if ($this->metaData === null) {
+            $this->metaData = get_term_meta($this->getId()) ?: [];
+        }
 
-    /**
-     * @param non-empty-string $key
-     * @param bool $single
-     * @return mixed
-     */
-    public function getMeta(string $key, bool $single = true)
-    {
-        return get_term_meta($this->getId(), $key, $single);
-    }
-
-    /**
-     * @param non-empty-string $key
-     * @param mixed $value
-     * @return bool|int|WP_Error
-     */
-    public function setMeta(string $key, $value)
-    {
-        return update_term_meta($this->getId(), $key, $value);
+        return $this->metaData;
     }
 
     /** @param string|string[]|null $postTypes */
