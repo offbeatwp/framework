@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Common;
 
 use InvalidArgumentException;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 
 abstract class AbstractOffbeatModel
 {
@@ -12,6 +13,7 @@ abstract class AbstractOffbeatModel
 
     abstract public function getId(): ?int;
     abstract public function getMetaData(): array;
+    abstract public function save(): ?int;
 
     /**
      * @internal
@@ -29,9 +31,9 @@ abstract class AbstractOffbeatModel
             return $this->metaInput[$key];
         }
 
-        $metas = $this->getMetaData();
-        if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
-            return reset($metas[$key]);
+        $dbMetas = $this->getMetaData();
+        if ($dbMetas && array_key_exists($key, $dbMetas) && is_array($dbMetas[$key])) {
+            return reset($dbMetas[$key]);
         }
 
         return $defaultValue;
@@ -78,7 +80,7 @@ abstract class AbstractOffbeatModel
      */
     public function unsetMeta(string $key)
     {
-        $this->metaToUnset[$key] = '';
+        $this->metaToUnset[$key] = ''; // An empty string acts as a value wildcard when unsetting meta.
 
         unset($this->metaInput[$key]);
 
@@ -86,6 +88,7 @@ abstract class AbstractOffbeatModel
     }
 
     /**
+     * Unset a meta-key with a specific value.
      * @param non-empty-string $key Metadata name.
      * @param true|float|int|non-empty-string|array|object $value Rows will only be removed that match the value. Must be serializable if non-scalar and cannot be false, null or an empty string.
      * @return static
@@ -101,5 +104,22 @@ abstract class AbstractOffbeatModel
         unset($this->metaInput[$key]);
 
         return $this;
+    }
+
+    /** @return positive-int */
+    public function saveOrFail(): int
+    {
+        $result = $this->save();
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
+        }
+
+        return $result;
+    }
+
+    protected function getBaseClassName(): string
+    {
+        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
     }
 }

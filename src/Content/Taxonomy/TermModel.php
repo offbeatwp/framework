@@ -150,4 +150,10 @@ class TermModel extends AbstractOffbeatModel implements TermModelInterface
     {
         return new TermQueryBuilder(static::class);
     }
+
+    public function save(): ?int
+    {
+        // TODO: Implement save() method.
+        return null;
+    }
 }

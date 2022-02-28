@@ -255,4 +255,10 @@ class UserModel extends AbstractOffbeatModel
 
         return $this->metaData;
     }
+
+    public function save(): ?int
+    {
+        // TODO: Implement save() method.
+        return null;
+    }
 }
