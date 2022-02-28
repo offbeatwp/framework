@@ -7,6 +7,7 @@ class AssetsManager
     public $manifest = null;
     public $entrypoints = null;
 
+    /** @return string|false */
     public function getUrl($filename)
     {
         if ($this->getEntryFromAssetsManifest($filename) !== false) {
@@ -22,6 +23,7 @@ class AssetsManager
         return false;
     }
 
+    /** @return string|false */
     public function getPath($filename)
     {
         if ($this->getEntryFromAssetsManifest($filename) !== false) {
@@ -31,6 +33,7 @@ class AssetsManager
         return false;
     }
 
+    /** @return string|false */
     public function getEntryFromAssetsManifest($filename)
     {
         return $this->getAssetsManifest()->$filename ?? false;
@@ -63,6 +66,10 @@ class AssetsManager
         return $entrypoints->entrypoints->$entry->$key;
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
     public function getAssetsPath($path = '')
     {
         $path = ltrim($path, '/');
@@ -75,6 +82,10 @@ class AssetsManager
         return get_template_directory() . '/assets' . $path; 
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
     public function getAssetsUrl($path = '')
     {
         if (strpos($path, 'http') === 0) {
@@ -91,6 +102,10 @@ class AssetsManager
         return get_template_directory_uri() . '/assets' . $path; 
     }
 
+    /**
+     * @param string $entry
+     * @return void
+     */
     public function enqueueStyles($entry) {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
@@ -107,6 +122,10 @@ class AssetsManager
         wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
     }
 
+    /**
+     * @param string $entry
+     * @return void
+     */
     public function enqueueScripts($entry) {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
 

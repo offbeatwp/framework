@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Assets;
 
 use OffbeatWP\Services\AbstractService;
@@ -11,8 +12,8 @@ class ServiceEnqueueScripts extends AbstractService
             return;
         }
 
-        add_action('wp_enqueue_scripts',    [$this, 'enqueueScripts'], 1);
-        add_action('wp_footer',    [$this, 'footerVars'], 5);
+        add_action('wp_enqueue_scripts', [$this, 'enqueueScripts'], 1);
+        add_action('wp_footer', [$this, 'footerVars'], 5);
     }
 
     public function enqueueScripts()
