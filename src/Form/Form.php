@@ -194,7 +194,7 @@ class Form extends Collection
         return $this->parent;
     }
 
-    public function getDefaultVales(): array
+    public function getDefaultValues(): array
     {
         $values = [];
 
