@@ -7,8 +7,9 @@ trait ComponentInterfaceTrait {
     {
         $component = container()->make($this->componentClass);
 
-        if (is_array($settings)) 
-            $settings = (object) $settings;
+        if (is_array($settings)) {
+            $settings = (object)$settings;
+        }
 
         return container()->call([$component, 'render'], [$settings]);
 
