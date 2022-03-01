@@ -4,6 +4,7 @@ namespace OffbeatWP\Components;
 
 use OffbeatWP\Exceptions\NonexistentComponentException;
 use OffbeatWP\Layout\ContextInterface;
+use OffbeatWP\Layout\Frontend;
 
 class ComponentRepository
 {
@@ -86,11 +87,7 @@ class ComponentRepository
         });
     }
 
-    /**
-     * @param array-key|null $name
-     * @return mixed
-     * @throws NonexistentComponentException
-     */
+    /** @throws NonexistentComponentException */
     public function get($name = null)
     {
         if ($name === null) {
@@ -104,11 +101,7 @@ class ComponentRepository
         throw new NonexistentComponentException("Component does not exist ({$name})");
     }
 
-    /**
-     * @param array-key|null $name
-     * @return mixed
-     * @throws NonexistentComponentException
-     */
+    /** @throws NonexistentComponentException */
     public function make($name)
     {
         $componentClass = $this->get($name);
@@ -116,13 +109,13 @@ class ComponentRepository
         return offbeat()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
-    /**
-     * @param array-key $name
-     * @return bool
-     */
     public function exists($name): bool
     {
-        return (isset($this->components[$name]));
+        if (isset($this->components[$name])) {
+            return true;
+        }
+
+        return false;
     }
 
     public function render($name, $args = [])
