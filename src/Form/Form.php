@@ -2,7 +2,9 @@
 namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
+use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
 use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
@@ -196,13 +198,13 @@ class Form extends Collection
     {
         $values = [];
 
+        /** @var AbstractField|AbstractFieldsContainer $item */
         foreach ($this->items as $item) {
             $values[$item->getId()] = $item->getAttribute('default');
         }
 
         return $values;
     }
-
 
     public static function create()
     {
