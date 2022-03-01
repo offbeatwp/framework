@@ -192,6 +192,18 @@ class Form extends Collection
         return $this->parent;
     }
 
+    public function getDefaultVales(): array
+    {
+        $values = [];
+
+        foreach ($this->items as $item) {
+            $values[$item->getId()] = $item->getAttribute('default');
+        }
+
+        return $values;
+    }
+
+
     public static function create()
     {
         return new static();
