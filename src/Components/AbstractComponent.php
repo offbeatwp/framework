@@ -101,8 +101,11 @@ abstract class AbstractComponent
             return null;
         }
 
+        $filteredSettings = apply_filters('offbeat.component.settings', $settings, $this);
+        $defaultValues = self::getForm()->getDefaultValues();
+
         $output = container()->call([$this, 'render'], [
-            'settings' => apply_filters('offbeat.component.settings', $settings, $this)
+            'settings' => new ComponentSettings($filteredSettings, $defaultValues)
         ]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);

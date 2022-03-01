@@ -6,15 +6,9 @@ final class ComponentSettings
 {
     private $defaultValues;
 
-    /**
-     * @param object|iterable $args
-     * @param array $defaultValues
-     */
-    public function __construct($args, array $defaultValues = [])
+    public function __construct(object $args, array $defaultValues = [])
     {
-        $args = is_object($args) ? get_object_vars($args) : $args;
-
-        foreach ($args as $key => $value) {
+        foreach (get_object_vars($args) as $key => $value) {
             $this->$key = $value;
         }
 

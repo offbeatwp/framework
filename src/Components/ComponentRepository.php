@@ -128,9 +128,6 @@ class ComponentRepository
     public function render($name, $args = [])
     {
         $component = $this->make($name);
-        $defaultValues = ($component instanceof AbstractComponent) ? $component::getForm()->getDefaultVales() : [];
-        $componentSettings = new ComponentSettings($args, $defaultValues);
-
-        return $component->renderComponent($componentSettings);
+        return $component->renderComponent((object)$args);
     }
 }
