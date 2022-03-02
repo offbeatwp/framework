@@ -257,6 +257,17 @@ class PostModel implements PostModelInterface
         return wp_get_attachment_url($this->getMeta($metaKey)) ?: null;
     }
 
+    /**
+     * @param string $metaKey
+     * @param int[]|string $size Image size. Accepts any registered image size name, or an array of width and height values in pixels (in that order). Default 'thumbnail'.
+     * @param array $attributes Attributes for the image markup. Default <i>thumbnail<i/>.
+     * @return string HTML image element or empty string on failure.
+     */
+    public function getAttachmentImage(string $metaKey, $size = 'thumbnail', array $attributes = []): string
+    {
+        return wp_get_attachment_image($this->getMetaInt($metaKey), $size, false, $attributes);
+    }
+
     public function getPostStatus(): string
     {
         return $this->wpPost->post_status;
