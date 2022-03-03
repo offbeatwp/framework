@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
-use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
@@ -451,24 +450,6 @@ class PostModel implements PostModelInterface
     public function unsetMeta(string $key)
     {
         $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
-        return $this;
-    }
-
-    /**
-     * @param non-empty-string $key Metadata name.
-     * @param true|float|int|non-empty-string|array|object $value Rows will only be removed that match the value. Must be serializable if non-scalar and cannot be false, null or an empty string.
-     * @return static
-     */
-    public function unsetMetaWithValue(string $key, $value)
-    {
-        if ($value === '' || $value === null || $value === false) {
-            throw new InvalidArgumentException('Cannot check for empty string, false or null values with unsetMetaWithValue.');
-        }
-
-        $this->metaToUnset[$key] = $value;
 
         unset($this->metaInput[$key]);
 
