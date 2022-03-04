@@ -14,6 +14,7 @@ use WP_Query;
  * @method PostModel|static|null shift(int $count = 1)
  * @method PostModel|null reduce(callable $callback, mixed $initial = null)
  * @method PostModel offsetGet(int|string $key)
+ * @method PostModel[] toArray()
  */
 class PostsCollection extends OffbeatModelCollection
 {
@@ -33,7 +34,7 @@ class PostsCollection extends OffbeatModelCollection
             }
         } elseif (is_iterable($items)) {
             foreach ($items as $key => $item) {
-                $postModel = $this->createValidPostModel($item);
+                $postModel = $this->convertToModel($item);
                 if ($postModel) {
                     $postItems[$key] = $postModel;
                 }
@@ -48,28 +49,13 @@ class PostsCollection extends OffbeatModelCollection
         return new WpPostsIterator($this->items);
     }
 
-    public function getQuery() {
+    public function getQuery(): ?WP_Query
+    {
         return $this->query;
     }
 
-    /**
-     * Retrieves all object Ids within this collection as an array.
-     * @return int[]
-     */
-    public function getIds(): array {
-        return array_map(static function (PostModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
-    }
-
-    /** @return PostModel[] */
-    public function toArray()
-    {
-        return $this->toCollection()->toArray();
-    }
-
     /** @param int|WP_Post|PostModel $item */
-    protected function createValidPostModel($item): ?PostModel
+    protected function convertToModel($item): ?PostModel
     {
         if ($item instanceof PostModel) {
             return $item;

@@ -3,13 +3,56 @@
 namespace OffbeatWP\Content\Common;
 
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 abstract class OffbeatModelCollection extends Collection
 {
-    /** Convert this typed collection to a basic Collection */
-    public function toCollection(): Collection
+    /**
+     * Push one or more items onto the end of the collection.
+     * @param int|object ...$values
+     * @return static
+     *
+     */
+    public function push(...$values)
     {
-        return collect($this->items);
+        $models = [];
+
+        foreach ($values as $value) {
+            $models[] = $this->convertToModelOrFail($value);
+        }
+
+        return parent::push(...$models);
+    }
+
+    /**
+     * Push a model onto the beginning of the user collection.
+     * @param int|object $value
+     * @param array-key $key
+     * @return static
+     */
+    public function prepend($value, $key = null)
+    {
+        return parent::prepend($this->convertToModelOrFail($value), $key);
+    }
+
+    /**
+     * Add a model to the user collection.
+     * @param int|object $item
+     * @return static
+     */
+    public function add($item)
+    {
+        return parent::add($this->convertToModelOrFail($item));
+    }
+
+    /**
+     * Set the model given the offset.
+     * @param array-key $key
+     * @param int|object $value
+     */
+    public function offsetSet($key, $value)
+    {
+        parent::offsetSet($key, $this->convertToModelOrFail($value));
     }
 
     /**
@@ -51,5 +94,50 @@ abstract class OffbeatModelCollection extends Collection
     public function map(callable $callback): Collection
     {
         return $this->toCollection()->map($callback);
+    }
+
+    /** @return AbstractOffbeatModel[] */
+    public function toArray()
+    {
+        return $this->toCollection()->toArray();
+    }
+
+    //////////////////
+    /// Extensions ///
+    //////////////////
+    /** Convert this typed collection to a basic Collection */
+    public function toCollection(): Collection
+    {
+        return collect($this->items);
+    }
+
+    /**
+     * Retrieves all object Ids within this collection as an array.
+     * @return int[]
+     */
+    public function getIds(): array
+    {
+        return array_map(static fn(AbstractOffbeatModel $model) => $model->getId() ?: 0, $this->items);
+    }
+
+    /**
+     * @param int|object $item
+     * @return AbstractOffbeatModel|null
+     */
+    abstract protected function convertToModel($item): ?AbstractOffbeatModel;
+
+    /**
+     * @param int|object $item
+     * @return AbstractOffbeatModel
+     */
+    protected function convertToModelOrFail($item): AbstractOffbeatModel
+    {
+        $model = $this->convertToModel($item);
+
+        if (!$model) {
+            throw new InvalidArgumentException('Could not convert passed value to a model.');
+        }
+
+        return $model;
     }
 }

@@ -17,6 +17,7 @@ use WP_User;
  * @method UserModel|null reduce(callable $callback, mixed $initial = null)
  * @method UserModel offsetGet(int|string $key)
  * @method ArrayIterator|UserModel[] getIterator()
+ * @method UserModel[] toArray()
  */
 class UserCollection extends OffbeatModelCollection
 {
@@ -28,7 +29,7 @@ class UserCollection extends OffbeatModelCollection
         $users = [];
 
         foreach ($items as $item) {
-            $userModel = $this->createValidUserModel($item);
+            $userModel = $this->convertToModel($item);
             if ($userModel) {
                 $users[] = $userModel;
             }
@@ -37,72 +38,8 @@ class UserCollection extends OffbeatModelCollection
         parent::__construct($users);
     }
 
-    /**
-     * Retrieves all object Ids within this collection as an array.
-     * @return int[]
-     */
-    public function getIds(): array {
-        return array_map(static function (UserModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
-    }
-
-    /** @return UserModel[] */
-    public function toArray()
-    {
-        return $this->toCollection()->toArray();
-    }
-
-    /**
-     * Push one or more items onto the end of the user collection.
-     * @param int|WP_User|UserModel ...$values
-     * @return $this
-     * 
-     */
-    public function push(...$values)
-    {
-        $userModels = [];
-
-        foreach ($values as $value) {
-            $userModels[] = $this->createValidUserModel($value);
-        }
-
-        return parent::push(...$userModels);
-    }
-
-    /**
-     * Set the model given the offset.
-     * @param array-key $key
-     * @param int|WP_User|UserModel $value
-     */
-    public function offsetSet($key, $value)
-    {
-        parent::offsetSet($key, $this->createValidUserModel($value));
-    }
-
-    /**
-     * Push a model onto the beginning of the user collection.
-     * @param int|WP_User|UserModel $value
-     * @param array-key $key
-     * @return UserCollection
-     */
-    public function prepend($value, $key = null)
-    {
-        return parent::prepend($this->createValidUserModel($value), $key);
-    }
-
-    /**
-     * Add a model to the user collection.
-     * @param int|WP_User|UserModel $item
-     * @return UserCollection
-     */
-    public function add($item)
-    {
-        return parent::add($this->createValidUserModel($item));
-    }
-
     /** @param int|WP_User|UserModel $item */
-    protected function createValidUserModel($item): ?UserModel
+    protected function convertToModel($item): ?UserModel
     {
         if ($item instanceof UserModel) {
             return $item;

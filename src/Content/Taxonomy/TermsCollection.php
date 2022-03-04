@@ -15,6 +15,7 @@ use WP_Term;
  * @method TermModel|null reduce(callable $callback, mixed $initial = null)
  * @method TermModel offsetGet(int|string $key)
  * @method ArrayIterator|TermModel[] getIterator()
+ * @method TermModel[] toArray()
  */
 class TermsCollection extends OffbeatModelCollection
 {
@@ -23,7 +24,7 @@ class TermsCollection extends OffbeatModelCollection
         $terms = [];
 
         foreach ($items as $item) {
-            $termModel = $this->createValidTermModel($item);
+            $termModel = $this->convertToModel($item);
             if ($termModel) {
                 $terms[] = $termModel;
             }
@@ -32,18 +33,8 @@ class TermsCollection extends OffbeatModelCollection
         parent::__construct($terms);
     }
 
-    /**
-     * Retrieves all object Ids within this collection as an array.
-     * @return int[]
-     */
-    public function getIds(): array {
-        return array_map(static function (TermModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
-    }
-
     /** @param int|WP_Term|TermModel $item */
-    protected function createValidTermModel($item): ?TermModel
+    protected function convertToModel($item): ?TermModel
     {
         if ($item instanceof TermModel) {
             return $item;
