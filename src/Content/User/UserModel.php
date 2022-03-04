@@ -6,8 +6,6 @@ use BadMethodCallException;
 use Carbon\Carbon;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
-use OffbeatWP\Content\Traits\BaseModelTrait;
-use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\UserModelException;
 use WP_User;
 
@@ -15,8 +13,6 @@ class UserModel extends AbstractOffbeatModel
 {
     protected ?WP_User $wpUser;
 
-    use BaseModelTrait;
-    use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;

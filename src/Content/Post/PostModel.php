@@ -11,8 +11,6 @@ use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
-use OffbeatWP\Content\Traits\BaseModelTrait;
-use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
@@ -27,8 +25,6 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     public ?WP_Post $wpPost;
     public ?array $relationKeyMethods = null;
 
-    use BaseModelTrait;
-    use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;

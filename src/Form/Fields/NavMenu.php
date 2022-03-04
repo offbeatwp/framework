@@ -3,8 +3,9 @@ namespace OffbeatWP\Form\Fields;
 
 class NavMenu extends Select {
 
-    public function __construct()
-    {        
+    public function __construct(string $id, string $label = '')
+    {
+        parent::__construct($id, $label);
         $this->addOptions([$this, 'getNavMenus']);
     }
 

@@ -5,14 +5,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
-use OffbeatWP\Content\Traits\BaseModelTrait;
-use OffbeatWP\Content\Traits\GetMetaTrait;
 use WP_Term;
 
 class TermModel extends AbstractOffbeatModel implements TermModelInterface
 {
-    use BaseModelTrait;
-    use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;

@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Form\Fields;
 
-abstract class AbstractField implements FieldInterface
+abstract class AbstractField
 {
     /** @var string */
     public $id;
@@ -13,14 +13,15 @@ abstract class AbstractField implements FieldInterface
     /** @var string[]|bool[] */
     public $attributes = [];
 
-    public static function make(string $id, string $label)
+    public function __construct(string $id, string $label = '')
     {
-        $field = new static();
+        $this->id = $id;
+        $this->label = $label ?: ucfirst($id);
+    }
 
-        $field->setId($id);
-        $field->setLabel($label);
-
-        return $field;
+    public static function make(string $id, string $label = ''): AbstractField
+    {
+        return new static($id, $label);
     }
 
     /* Basic Setters */
