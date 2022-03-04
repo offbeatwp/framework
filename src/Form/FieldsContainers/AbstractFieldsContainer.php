@@ -76,9 +76,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
 
     public function toArray()
     {
-        $items = $this->map(function ($item) {
-            return $item->toArray();
-        });
+        $items = $this->map(fn($item) => $item->toArray());
 
         return [
             'type'       => $this->getType(),
