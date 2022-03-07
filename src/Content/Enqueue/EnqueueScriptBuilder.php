@@ -58,7 +58,7 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
         wp_register_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
 
         foreach ($this->bindingsToPass as $varName => $args) {
-            if (!array_key_exists($varName, self::$vars) ||self::$vars[$varName] !== $args['value']) {
+            if (!array_key_exists($varName, self::$vars) || self::$vars[$varName] !== $args['value']) {
                 wp_add_inline_script($this->getHandle(), "var {$varName} = {$args['value']};", $args['position']);
                 self::$vars[$varName] = $args['value'];
             }
