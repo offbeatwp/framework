@@ -173,7 +173,7 @@ class Form extends Collection
         $activeItem = $this->getActiveItem();
 
         if (!is_object($componentForm = $component::getForm())) {
-            return ;
+            return;
         }
 
         $form = clone $componentForm;
@@ -198,9 +198,10 @@ class Form extends Collection
     {
         $values = [];
 
-        /** @var AbstractField|AbstractFieldsContainer $item */
         foreach ($this->items as $item) {
-            $values[$item->getId()] = $item->getAttribute('default');
+            if ($item instanceof AbstractField || $item instanceof AbstractFieldsContainer) {
+                $values[$item->getId()] = $item->getAttribute('default');
+            }
         }
 
         return $values;
