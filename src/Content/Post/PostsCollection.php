@@ -68,6 +68,19 @@ class PostsCollection extends OffbeatModelCollection
         return $this->toCollection()->toArray();
     }
 
+    /**
+     * Deletes <b>all</b> the items in this collection.
+     * @param bool $force
+     */
+    public function deleteAll(bool $force)
+    {
+        $this->each(function (PostModel $model) use ($force) {
+            $model->delete($force);
+        });
+
+        $this->items = [];
+    }
+
     /** @param int|WP_Post|PostModel $item */
     protected function createValidPostModel($item): ?PostModel
     {
