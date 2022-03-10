@@ -18,6 +18,18 @@ class EnqueueStyleBuilder extends AbstractEnqueueBuilder
 
     public function enqueue(): void
     {
-        wp_enqueue_style($this->getHandle(), $this->src, $this->deps, $this->version, $this->media);
+        if ($this->registered) {
+            wp_enqueue_style($this->getHandle());
+        } else {
+            wp_enqueue_style($this->getHandle(), $this->src, $this->deps, $this->version, $this->media);
+        }
+    }
+
+    /** @return static */
+    public function register()
+    {
+        wp_register_style($this->getHandle(), $this->src, $this->deps, $this->version, $this->media);
+        $this->registered = true;
+        return $this;
     }
 }
