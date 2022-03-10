@@ -443,6 +443,16 @@ class PostModel implements PostModelInterface
         return $this;
     }
 
+    /** @return static */
+    public function setMetaIfUnset(string $key, $value)
+    {
+        if ($this->hasMeta($key)) {
+            $this->setMeta($key, $value);
+        }
+
+        return $this;
+    }
+
     /**
      * @param non-empty-string $key Metadata name.
      * @return static
