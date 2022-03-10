@@ -1,6 +1,8 @@
 <?php
 namespace OffbeatWP\Wordpress;
 
+use OffbeatWP\Content\Enqueue\EnqueueScriptBuilder;
+use OffbeatWP\Content\Enqueue\EnqueueStyleBuilder;
 use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
@@ -15,16 +17,18 @@ use OffbeatWP\Support\Wordpress\Taxonomy;
 class WordpressService
 {
     public $bindings = [
-        'admin-page' => AdminPage::class,
-        'ajax'       => Ajax::class,
-        'rest-api'   => RestApi::class,
-        'console'    => Console::class,
-        'hooks'      => Hooks::class,
-        'post-type'  => PostType::class,
-        'post'       => Post::class,
-        'page'       => Page::class,
-        'taxonomy'   => Taxonomy::class,
-        'design'     => Design::class,
+        'admin-page'        => AdminPage::class,
+        'ajax'              => Ajax::class,
+        'rest-api'          => RestApi::class,
+        'console'           => Console::class,
+        'hooks'             => Hooks::class,
+        'post-type'         => PostType::class,
+        'post'              => Post::class,
+        'page'              => Page::class,
+        'taxonomy'          => Taxonomy::class,
+        'design'            => Design::class,
+        'enqueue-script'    => EnqueueScriptBuilder::class,
+        'enqueue-style'     => EnqueueStyleBuilder::class,
     ];
 
     public function register()
