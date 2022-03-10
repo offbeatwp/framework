@@ -443,14 +443,13 @@ class PostModel implements PostModelInterface
         return $this;
     }
 
-    /** @return static */
-    public function setMetaIfUnset(string $key, $value)
+    /** Moves a meta value from one key to another. Only works if the new key is not set. */
+    public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
     {
-        if ($this->hasMeta($key)) {
-            $this->setMeta($key, $value);
+        if ($this->hasMeta($newMetaKey)) {
+            $this->setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
+            $this->unsetMeta($oldMetaKey);
         }
-
-        return $this;
     }
 
     /**
