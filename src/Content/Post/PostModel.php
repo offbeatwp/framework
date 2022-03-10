@@ -445,8 +445,8 @@ class PostModel implements PostModelInterface
 
     /**
      * Moves a meta value from one key to another.
-     * @param non-empty-string $oldMetaKey Must be set, or the post will be skipped.
-     * @param non-empty-string $newMetaKey Must NOT be set, or the post will be skipped.
+     * @param non-empty-string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
+     * @param non-empty-string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
      */
     public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
     {
