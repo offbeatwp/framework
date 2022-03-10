@@ -18,10 +18,14 @@ abstract class AbstractEnqueueBuilder
         $this->handle = $handle;
     }
 
-    /** @param string $src The file location. */
+    /**
+     * @param string $src The file location.
+     * @return static
+     */
     public function setSrc(string $src)
     {
         $this->src = get_stylesheet_directory_uri() . $src;
+        return $this;
     }
 
     /**
