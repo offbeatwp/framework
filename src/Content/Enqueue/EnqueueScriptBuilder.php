@@ -46,16 +46,11 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
 
     public function enqueue(): void
     {
-        wp_enqueue_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
-
-        foreach ($this->bindingsToPass as $name => $value) {
-            wp_localize_script($this->getHandle(), $name, $value);
+        if ($this->registered) {
+            wp_enqueue_script($this->getHandle());
+        } else {
+            wp_enqueue_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
         }
-    }
-
-    public function register(): void
-    {
-        wp_register_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
 
         foreach ($this->bindingsToPass as $varName => $args) {
             if (!array_key_exists($varName, self::$vars) || self::$vars[$varName] !== $args['value']) {
@@ -63,5 +58,13 @@ class EnqueueScriptBuilder extends AbstractEnqueueBuilder
                 self::$vars[$varName] = $args['value'];
             }
         }
+    }
+
+    /** @return static */
+    public function register()
+    {
+        wp_register_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
+        $this->registered = true;
+        return $this;
     }
 }

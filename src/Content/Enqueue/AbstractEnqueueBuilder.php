@@ -12,6 +12,8 @@ abstract class AbstractEnqueueBuilder
     protected $deps = [];
     /** @var null|false|string */
     protected $version = null;
+    /** @var bool */
+    protected $registered = false;
 
     public function __construct(string $handle)
     {
@@ -62,6 +64,8 @@ abstract class AbstractEnqueueBuilder
     {
         return $this->handle;
     }
+
+    abstract public function register();
 
     abstract public function enqueue(): void;
 }
