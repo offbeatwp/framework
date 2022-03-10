@@ -443,10 +443,14 @@ class PostModel implements PostModelInterface
         return $this;
     }
 
-    /** Moves a meta value from one key to another. Only works if the new key is not set. */
+    /**
+     * Moves a meta value from one key to another.
+     * @param non-empty-string $oldMetaKey Must be set, or the post will be skipped.
+     * @param non-empty-string $newMetaKey Must NOT be set, or the post will be skipped.
+     */
     public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
     {
-        if ($this->hasMeta($newMetaKey)) {
+        if ($this->hasMeta($oldMetaKey) && !$this->hasMeta($newMetaKey)) {
             $this->setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
             $this->unsetMeta($oldMetaKey);
         }
