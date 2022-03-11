@@ -22,6 +22,16 @@ abstract class AbstractEnqueueBuilder
     }
 
     /**
+     * @param string $src The file location.
+     * @return static
+     */
+    public function setAbsoluteSrc(string $src)
+    {
+        $this->src = $src;
+        return $this;
+    }
+
+    /**
      * @param string[] $deps An array of registered handles that this enqueue depends on.
      * @return static
      */
