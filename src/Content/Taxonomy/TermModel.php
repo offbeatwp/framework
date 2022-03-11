@@ -174,7 +174,7 @@ class TermModel implements TermModelInterface
     }
 
     /**
-     * When called on TermModel, empty terms <b>will</b> be excluded.
+     * When called on TermModel, empty terms <b>will</b> be included.
      * @return static[]
      */
     public static function allAsArray()
