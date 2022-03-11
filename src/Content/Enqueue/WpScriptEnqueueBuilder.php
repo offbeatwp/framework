@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Enqueue;
 use InvalidArgumentException;
 
 /** This class requires Wordpress 4.5 or higher. */
-class WpScript extends AbstractEnqueueBuilder
+class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
 {
     /** @var array{value: string, inFooter: bool} */
     protected $bindingsToPass = [];
@@ -44,27 +44,24 @@ class WpScript extends AbstractEnqueueBuilder
         return $this;
     }
 
-    public function enqueue(): void
+    public function enqueue(string $handle): void
     {
-        if ($this->registered) {
-            wp_enqueue_script($this->getHandle());
+        if ($this->src) {
+            wp_enqueue_script($handle, $this->src, $this->deps, $this->version, $this->inFooter);
         } else {
-            wp_enqueue_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
+            wp_enqueue_script($handle);
         }
 
         foreach ($this->bindingsToPass as $varName => $args) {
             if (!array_key_exists($varName, self::$vars) || self::$vars[$varName] !== $args['value']) {
-                wp_add_inline_script($this->getHandle(), "var {$varName} = {$args['value']};", $args['position']);
+                wp_add_inline_script($handle, "var {$varName} = {$args['value']};", $args['position']);
                 self::$vars[$varName] = $args['value'];
             }
         }
     }
 
-    /** @return static */
-    public function register()
+    public function register(string $handle): bool
     {
-        wp_register_script($this->getHandle(), $this->src, $this->deps, $this->version, $this->inFooter);
-        $this->registered = true;
-        return $this;
+        return wp_register_script($handle, $this->src, $this->deps, $this->version, $this->inFooter);
     }
 }

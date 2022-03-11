@@ -5,23 +5,14 @@ namespace OffbeatWP\Content\Enqueue;
 abstract class AbstractEnqueueBuilder
 {
     /** @var string */
-    private $handle;
-    /** @var string */
     protected $src = '';
     /** @var string[] */
     protected $deps = [];
     /** @var null|false|string */
     protected $version = null;
-    /** @var bool */
-    protected $registered = false;
-
-    public function __construct(string $handle)
-    {
-        $this->handle = $handle;
-    }
 
     /**
-     * @param string $src The file location.
+     * @param string $src The file location. Starts in theme stylesheet directory.
      * @return static
      */
     public function setSrc(string $src)
@@ -60,18 +51,7 @@ abstract class AbstractEnqueueBuilder
         return $this;
     }
 
-    final protected function getHandle(): string
-    {
-        return $this->handle;
-    }
+    abstract public function register(string $handle): bool;
 
-    abstract public function register();
-
-    abstract public function enqueue(): void;
-
-    /** @return static */
-    final public static function make(string $handle)
-    {
-        return new static($handle);
-    }
+    abstract public function enqueue(string $handle): void;
 }
