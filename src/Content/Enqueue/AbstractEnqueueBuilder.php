@@ -26,7 +26,7 @@ abstract class AbstractEnqueueBuilder
      */
     public function setSrc(string $src)
     {
-        $this->src = get_stylesheet_directory_uri() . $src;
+        $this->src = get_stylesheet_directory_uri() . '/' . $src;
         return $this;
     }
 
@@ -68,4 +68,10 @@ abstract class AbstractEnqueueBuilder
     abstract public function register();
 
     abstract public function enqueue(): void;
+
+    /** @return static */
+    final public static function make(string $handle)
+    {
+        return new static($handle);
+    }
 }

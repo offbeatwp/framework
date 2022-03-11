@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Enqueue;
 
-class EnqueueStyleBuilder extends AbstractEnqueueBuilder
+class WpStyle extends AbstractEnqueueBuilder
 {
     protected $media = 'all';
 

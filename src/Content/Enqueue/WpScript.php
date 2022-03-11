@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Enqueue;
 use InvalidArgumentException;
 
 /** This class requires Wordpress 4.5 or higher. */
-class EnqueueScriptBuilder extends AbstractEnqueueBuilder
+class WpScript extends AbstractEnqueueBuilder
 {
     /** @var array{value: string, inFooter: bool} */
     protected $bindingsToPass = [];
