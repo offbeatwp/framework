@@ -173,6 +173,15 @@ class TermModel implements TermModelInterface
         return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
     }
 
+    /**
+     * When called on TermModel, empty terms <b>will</b> be excluded.
+     * @return static[]
+     */
+    public static function allAsArray()
+    {
+        return static::query()->excludeEmpty(false)->all()->toArray();
+    }
+
     public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);
