@@ -859,7 +859,7 @@ class PostModel implements PostModelInterface
      * Retrieve an array of posts that are in the same type and share a specific term.
      * @param string $taxonomy
      * @param string $termName
-     * @return PostModel[]
+     * @return static[]
      */
     public function getAssociatedPosts(string $taxonomy, string $termName): array
     {
