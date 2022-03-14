@@ -856,6 +856,17 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * Retrieve an array of posts that are in the same type and share a specific term.
+     * @param string $taxonomy
+     * @param string $termName
+     * @return PostModel[]
+     */
+    public function getAssociatedPosts(string $taxonomy, string $termName): array
+    {
+        return static::query()->whereTerm($taxonomy, $termName)->whereIdNotIn($this->getId())->all()->toArray();
+    }
+
+    /**
      * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
      * @return static|null
      */
