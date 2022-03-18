@@ -18,6 +18,20 @@ trait OffbeatQueryTrait
         return $this;
     }
 
+    /** @return static */
+    public function whereMetaExists(string $metaKey)
+    {
+        $this->whereMeta(['key' => $metaKey, 'compare' => 'EXISTS']);
+        return $this;
+    }
+
+    /** @return static */
+    public function whereMetaNotExists(string $metaKey)
+    {
+        $this->whereMeta(['key' => $metaKey, 'compare' => 'NOT EXISTS']);
+        return $this;
+    }
+
     /**
      * @param string|string[]|null $orderBy
      * @param string|null $order 'ASC'|'DESC'

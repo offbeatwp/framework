@@ -128,16 +128,4 @@ class UserQueryBuilder
 
         return $this;
     }
-
-    public function whereMetaIs(string $metaKey, $value): UserQueryBuilder
-    {
-        $this->whereMeta(['key' => $metaKey, 'compare' => '==', 'value' => $value]);
-        return $this;
-    }
-
-    public function whereMetaIn(string $metaKey, array $values): UserQueryBuilder
-    {
-        $this->whereMeta(['key' => $metaKey, 'compare' => 'IN', 'value' => $values]);
-        return $this;
-    }
 }
