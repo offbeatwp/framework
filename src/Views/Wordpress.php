@@ -54,6 +54,11 @@ class Wordpress
         return get_site_url($id);
     }
 
+    public function themeRootUrl(): string
+    {
+        return get_stylesheet_directory_uri();
+    }
+
     public function siteUrl(): string
     {
         return site_url();
