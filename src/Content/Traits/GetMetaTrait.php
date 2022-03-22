@@ -105,10 +105,9 @@ trait GetMetaTrait
     public function getMetaArray(string $key): array
     {
         $value = $this->getRawMetaValue($key, []);
-        $value = is_serialized($value) ? unserialize($value, false) : $value;
+        $value = is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value;
         return (array)$value;
     }
-
 
     /**
      * Retrieve a meta value as a collection.<br/>
