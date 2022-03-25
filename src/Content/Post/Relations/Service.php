@@ -100,7 +100,7 @@ class Service extends AbstractService
     /** @throws InvalidQueryOperatorException */
     private function checkOperator(?string $operator): void {
         if ($operator !== 'AND' && $operator !== 'OR') {
-            throw new InvalidQueryOperatorException('Operator not valid for the relationships query builder. Only AND/OR are valid operators');
+            throw new InvalidQueryOperatorException('Operator not valid for the relationships query builder. Only AND / OR are valid operators');
         }
     }
 }

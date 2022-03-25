@@ -317,7 +317,7 @@ class WpQueryBuilder
         $this->queryVars['relationships'] = [
             'id' => is_iterable($postModelOrCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
             'key' => $key,
-            'direction' => $direction
+            'direction' => $direction,
         ];
 
         return $this;
