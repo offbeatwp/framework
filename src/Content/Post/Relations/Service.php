@@ -82,9 +82,17 @@ class Service extends AbstractService
             $columnWhere = 'relation_to';
         }
 
+        if (is_array($relationshipQuery['id'])) {
+            $ids = array_map('intval', $relationshipQuery['id']);
+            $idQuery = 'IN (' . implode(', ', $ids) . ')';
+        } else {
+            $id = (int)$relationshipQuery['id'];
+            $idQuery = "= {$id}";
+        }
+
         $sql = [];
         $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
-        $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} = " . $relationshipQuery['id'];
+        $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} " . $idQuery;
 
         return $sql;
     }
