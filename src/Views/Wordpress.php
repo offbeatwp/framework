@@ -209,4 +209,10 @@ class Wordpress
     {
         return get_the_title();
     }
+
+    /** Retrieve the ID of the current item in the WordPress Loop. */
+    public function getPageId(): ?int
+    {
+        return get_the_ID() ?: null;
+    }
 }
