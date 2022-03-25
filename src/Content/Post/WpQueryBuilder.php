@@ -308,7 +308,7 @@ class WpQueryBuilder
             'id' => is_iterable($modelOrCollection) ? $modelOrCollection->getIds() : $modelOrCollection->getId(),
             'key' => $key,
             'direction' => $direction,
-            'operator' => is_iterable($modelOrCollection) ? 'IN': null
+            'operator' => is_iterable($modelOrCollection) ? 'OR': null
         ];
 
         return $this;
