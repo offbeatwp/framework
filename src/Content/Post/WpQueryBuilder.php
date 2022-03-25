@@ -111,10 +111,12 @@ class WpQueryBuilder
 
     public function count(): int
     {
+        $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
         $query = new WP_Query($this->queryVars);
-        return $query->found_posts;
+
+        return $query->post_count;
     }
 
     public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
