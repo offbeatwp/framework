@@ -109,6 +109,14 @@ class WpQueryBuilder
         return $result;
     }
 
+    public function count(): int
+    {
+        $this->queryVars['fields'] = 'ids';
+        $this->queryVars['no_found_rows'] = true;
+        $query = new WP_Query($this->queryVars);
+        return $query->found_posts;
+    }
+
     public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
     {
         $this->queryVars['meta_key'] = $metaKey;
