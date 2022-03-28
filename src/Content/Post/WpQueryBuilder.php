@@ -330,15 +330,4 @@ class WpQueryBuilder
 
         return $this;
     }
-
-    /**
-     * @param PostModel|PostsCollection $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
-     * @param string $key The relation key.
-     * @param bool $reverseDirection Pass true to invert the relation query.
-     * @return $this
-     */
-    public function getRelationshipWith($postModelOrCollection, string $key, bool $reverseDirection = false): WpQueryBuilder
-    {
-        return $this->hasRelationshipWith($postModelOrCollection, $key, $reverseDirection ? 'reverse' : null);
-    }
 }
