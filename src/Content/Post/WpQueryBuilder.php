@@ -308,15 +308,15 @@ class WpQueryBuilder
     }
 
     /**
-     * @param PostModel $model
+     * @param PostModel|PostsCollection $postModelOrCollection
      * @param string $key
      * @param string|null $direction
      * @return $this
      */
-    public function hasRelationshipWith($model, $key, ?string $direction = null): WpQueryBuilder
+    public function hasRelationshipWith($postModelOrCollection, $key, $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
-            'id' => $model->getId(),
+            'id' => is_iterable($postModelOrCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
             'key' => $key,
             'direction' => $direction,
         ];
