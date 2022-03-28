@@ -37,10 +37,18 @@ class Service extends AbstractService
             }
         }
 
+        if ($relationshipSqlClauses) {
+            $clauses['distinct'] = 'DISTINCT';
+        }
+
         return $clauses;
     }
 
-    /** @throws InvalidQueryOperatorException */
+    /**
+     * @param WP_Query $query
+     * @return string[][]
+     * @throws InvalidQueryOperatorException
+     */
     private function getSqlClauses(WP_Query $query): array
     {
         $sql = [];
@@ -63,7 +71,14 @@ class Service extends AbstractService
         return $sql;
     }
 
-    /** @throws InvalidQueryOperatorException */
+
+    /**
+     * @param string[]|int[]|string[][]|int[][] $relationshipQuery
+     * @param string $operator
+     * @param int $n
+     * @return string[]
+     * @throws InvalidQueryOperatorException
+     */
     private function buildQuery(array $relationshipQuery, string $operator = 'AND', int $n = 0): array
     {
         $this->checkOperator($operator);
@@ -91,7 +106,7 @@ class Service extends AbstractService
         }
 
         $sql = [];
-        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
+        $sql['join'] = " OUTER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
         $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} " . $idQuery;
 
         return $sql;
