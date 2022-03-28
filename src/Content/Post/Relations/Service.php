@@ -9,7 +9,7 @@ use WP_Query;
 
 class Service extends AbstractService
 {
-    public function register () {
+    public function register() {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
         if(offbeat('console')->isConsole()) {
@@ -19,7 +19,11 @@ class Service extends AbstractService
         offbeat('hooks')->addFilter('acf/load_field', LoadFieldIconsFilter::class);
     }
 
-    /** @throws InvalidQueryOperatorException */
+    /**
+     * @param string[] $clauses
+     * @param WP_Query $query
+     * @return array
+     */
     public function insertRelationshipsSql(array $clauses, WP_Query $query): array
     {
         if (empty($query->query_vars['relationships'])) {
@@ -37,7 +41,7 @@ class Service extends AbstractService
             }
         }
 
-        if ($relationshipSqlClauses) {
+        if (is_array($query['id'])) {
             $clauses['distinct'] = 'DISTINCT';
         }
 
@@ -70,7 +74,6 @@ class Service extends AbstractService
 
         return $sql;
     }
-
 
     /**
      * @param string[]|int[]|string[][]|int[][] $relationshipQuery
@@ -105,11 +108,10 @@ class Service extends AbstractService
             $idQuery = "= {$id}";
         }
 
-        $sql = [];
-        $sql['join'] = " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ";
-        $sql['where'] = " $operator pr{$n}.key = '" . $relationshipQuery['key'] . "' AND pr{$n}.{$columnWhere} " . $idQuery;
-
-        return $sql;
+        return [
+            'join' => " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ",
+            'where' => " $operator pr{$n}.key = '{$relationshipQuery['key']}' AND pr{$n}.{$columnWhere} {$idQuery}"
+        ];
     }
 
     /** @throws InvalidQueryOperatorException */
