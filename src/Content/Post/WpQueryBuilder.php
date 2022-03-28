@@ -21,9 +21,10 @@ class WpQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
-    /** @return PostsCollection<PostModel> */
     public function get(): PostsCollection
     {
+        $this->queryVars['no_found_rows'] = empty($this->queryVars['paged']);
+
         do_action('offbeatwp/posts/query/before_get', $this);
 
         $posts = new WP_Query($this->queryVars);

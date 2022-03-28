@@ -52,6 +52,11 @@ class PostsCollection extends OffbeatModelCollection
         return $this->query;
     }
 
+    public function foundPosts(): int
+    {
+        return empty($this->query->found_posts) ? $this->count() : $this->query->found_posts;
+    }
+
     /**
      * Retrieves all object Ids within this collection as an array.
      * @return int[]
