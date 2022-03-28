@@ -322,7 +322,7 @@ class WpQueryBuilder
     public function hasRelationshipWith($postModelOrCollection, $key, $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
-            'id' => is_iterable($postModelOrCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
+            'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
             'key' => $key,
             'direction' => $direction,
         ];
