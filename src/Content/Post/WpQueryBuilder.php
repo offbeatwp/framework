@@ -283,7 +283,14 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function paginated(bool $paginated = true): WpQueryBuilder
+    /**
+     * When <i>true</i> is passed, uses the page ID from get_query_var.<br/>
+     * When an <i>integer</i> is passed, the page with that number will be loaded.<br/>
+     * Passing <i>0</i> or <i>false</i> will disable pagination.
+     * @param bool|int $paginated
+     * @return $this
+     */
+    public function paginated($paginated = true): WpQueryBuilder
     {
         if ($paginated) {
             $paged = $paginated;
@@ -308,19 +315,30 @@ class WpQueryBuilder
     }
 
     /**
-     * @param PostModel|PostsCollection $postModelOrCollection
-     * @param string $key
-     * @param string|null $direction
+     * @param PostModel|PostsCollection $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param string $key The relation key.
+     * @param null $direction Pass <b>'reverse'</b> to reverse the relation.
      * @return $this
      */
     public function hasRelationshipWith($postModelOrCollection, $key, $direction = null): WpQueryBuilder
     {
         $this->queryVars['relationships'] = [
-            'id' => is_iterable($postModelOrCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
+            'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
             'key' => $key,
             'direction' => $direction,
         ];
 
         return $this;
+    }
+
+    /**
+     * @param PostModel|PostsCollection $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param string $key The relation key.
+     * @param bool $reverseDirection Pass true to invert the relation query.
+     * @return $this
+     */
+    public function getRelationshipWith($postModelOrCollection, string $key, bool $reverseDirection = false): WpQueryBuilder
+    {
+        return $this->hasRelationshipWith($postModelOrCollection, $key, $reverseDirection ? 'reverse' : null);
     }
 }
