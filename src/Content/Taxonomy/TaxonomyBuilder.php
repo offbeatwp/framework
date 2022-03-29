@@ -52,16 +52,9 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function hierarchical(bool $hierarchical = false): TaxonomyBuilder
-    {
-        $this->args['hierarchical'] = $hierarchical;
-
-        return $this;
-    }
-
     public function hierarchyDepth(int $depth): TaxonomyBuilder
     {
-        $this->hierarchical($depth);
+        $this->hierarchical((bool)$depth);
 
         add_filter('taxonomy_parent_dropdown_args', function (array $dropdownArgs, string $taxonomy) use ($depth) {
             if ($taxonomy === $this->taxonomy) {
@@ -70,6 +63,13 @@ class TaxonomyBuilder
 
             return $dropdownArgs;
         }, 10, 2);
+
+        return $this;
+    }
+
+    public function hierarchical(bool $hierarchical = false): TaxonomyBuilder
+    {
+        $this->args['hierarchical'] = $hierarchical;
 
         return $this;
     }
@@ -145,19 +145,6 @@ class TaxonomyBuilder
     }
 
     /**
-     * Used to render a custom metabox
-     *
-     * __Gutenberg currently does not respect this setting__
-     * @param callable $metaBoxCallback
-     */
-    public function metaBox($metaBoxCallback): TaxonomyBuilder
-    {
-        $this->args['meta_box_cb'] = $metaBoxCallback;
-
-        return $this;
-    }
-
-    /**
      * Used to disable the metabox
      *
      * __Gutenberg currently does not respect this setting__
@@ -184,18 +171,70 @@ class TaxonomyBuilder
         return $this;
     }
 
-    protected function hideTermDescriptionWrap(): void
+    /**
+     * Used to render a custom metabox
+     *
+     * __Gutenberg currently does not respect this setting__
+     * @param callable $metaBoxCallback
+     */
+    public function metaBox($metaBoxCallback): TaxonomyBuilder
     {
-        echo '<style> .term-description-wrap { display:none; } </style>';
+        $this->args['meta_box_cb'] = $metaBoxCallback;
+
+        return $this;
     }
 
     /** Hides the "description" field in on the Taxonomy add/edit page */
     public function hideDescriptionField(): TaxonomyBuilder
     {
-        add_action($this->taxonomy . '_edit_form', function() { $this->hideTermDescriptionWrap(); });
-        add_action($this->taxonomy . '_add_form', function() { $this->hideTermDescriptionWrap(); });
+        add_action($this->taxonomy . '_edit_form', function () {
+            $this->_hideTermDescriptionWrap();
+        });
+        add_action($this->taxonomy . '_add_form', function () {
+            $this->_hideTermDescriptionWrap();
+        });
 
         return $this;
+    }
+
+    private function _hideTermDescriptionWrap(): void
+    {
+        echo '<style> .term-description-wrap { display:none; } </style>';
+    }
+
+    /**
+     * Hides the parent field on the add/edit taxonomy pages.<br/>
+     * <b>Note:</b> This will also hide the "add new term" option on all post edit/add pages.
+     */
+    public function hideParentField(): TaxonomyBuilder
+    {
+        add_action($this->taxonomy . '_edit_form', function () {
+            $this->_hideTermParentWrap();
+        });
+        add_action($this->taxonomy . '_add_form', function () {
+            $this->_hideTermParentWrap();
+        });
+        add_action('admin_footer-post.php', function () {
+            $this->_hideTermAddWrap($this->taxonomy);
+        });
+        add_action('admin_footer-post-new.php', function () {
+            $this->_hideTermAddWrap($this->taxonomy);
+        });
+
+        return $this;
+    }
+
+    private function _hideTermParentWrap(): void
+    {
+        echo '<style> .term-parent-wrap { display:none; } </style>';
+    }
+
+    private function _hideTermAddWrap(?string $taxonomy): void
+    {
+        if ($taxonomy) {
+            $targetElm = "#{$taxonomy}-adder";
+            echo '<style>' . $targetElm . ' { display:none; } </style>';
+        }
     }
 
     public function set(): void
