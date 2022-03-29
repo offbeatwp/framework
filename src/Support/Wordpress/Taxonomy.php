@@ -78,10 +78,12 @@ class Taxonomy
             }
         }
 
-        $retrievedTerm = get_term($term);
+        if (is_numeric($term)) {
+            $retrievedTerm = get_term($term);
 
-        if ($retrievedTerm) {
-            return $this->convertWpTermToModel($retrievedTerm);
+            if ($retrievedTerm instanceof WP_Term) {
+                return $this->convertWpTermToModel($retrievedTerm);
+            }
         }
 
         return null;
