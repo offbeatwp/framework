@@ -211,8 +211,8 @@ class Wordpress
     }
 
     /** Retrieve the ID of the current item in the WordPress Loop. */
-    public function getPageId(): ?int
+    public function getQueriedObjectId(): int
     {
-        return get_the_ID() ?: null;
+        return get_queried_object_id();
     }
 }

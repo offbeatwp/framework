@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
@@ -10,6 +11,7 @@ class WpQueryBuilder
     use OffbeatQueryTrait;
 
     protected $queryVars = [];
+    private $wpQueryClass = WP_Query::class;
 
     public function all(): PostsCollection
     {
@@ -27,7 +29,7 @@ class WpQueryBuilder
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
-        $posts = new WP_Query($this->queryVars);
+        $posts = new $this->wpQueryClass($this->queryVars);
 
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
     }
@@ -115,9 +117,24 @@ class WpQueryBuilder
         $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
-        $query = new WP_Query($this->queryVars);
+        $query = new $this->wpQueryClass($this->queryVars);
 
         return $query->post_count;
+    }
+
+    /**
+     * @param class-string<WP_Query> $queryObjectClassName
+     * @return $this
+     */
+    public function useQuery(string $queryObjectClassName): WpQueryBuilder
+    {
+        if (is_subclass_of($queryObjectClassName, WP_Query::class, true)) {
+            throw new InvalidArgumentException("{$queryObjectClassName} does not extend WP_Query.");
+        }
+
+        $this->wpQueryClass = $queryObjectClassName;
+
+        return $this;
     }
 
     public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
