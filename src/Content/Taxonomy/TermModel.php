@@ -174,6 +174,16 @@ class TermModel implements TermModelInterface
     }
 
     /**
+     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
+     * @return static|null
+     */
+    public static function current()
+    {
+        $taxonomy = offbeat('taxonomy')->get();
+        return ($taxonomy instanceof static) ? $taxonomy : null;
+    }
+
+    /**
      * When called on TermModel, empty terms <b>will</b> be included.
      * @return static[]
      */
