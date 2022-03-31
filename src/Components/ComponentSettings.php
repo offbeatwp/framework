@@ -16,6 +16,16 @@ final class ComponentSettings
     }
 
     /**
+     * Set a value manually.
+     * @param string $index
+     * @param mixed $value
+     */
+    public function set(string $index, $value): void
+    {
+        $this->$index = $value;
+    }
+
+    /**
      * Returns the value of the component setting or the default value of the setting if it does not exist.
      * @param non-empty-string $index The index of the value to retrieve.
      * @return mixed
