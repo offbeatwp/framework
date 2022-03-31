@@ -70,7 +70,7 @@ class WpQueryBuilder
         return $result;
     }
 
-    public function findById(int $id): ?PostModel
+    public function findById(?int $id): ?PostModel
     {
         if ($id <= 0) {
             return null;

@@ -101,8 +101,12 @@ class TermQueryBuilder
         return $result;
     }
 
-    public function findById(int $id): ?TermModel
+    public function findById(?int $id): ?TermModel
     {
+        if ($id < 0) {
+            return null;
+        }
+
         return $this->findBy('id', $id);
     }
 
