@@ -55,7 +55,7 @@ class UserQueryBuilder
 
     public function findById(?int $id): ?UserModel
     {
-        if (!$id || $id < 0) {
+        if ($id < 0) {
             return null;
         }
 

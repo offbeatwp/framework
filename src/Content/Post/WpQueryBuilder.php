@@ -72,7 +72,7 @@ class WpQueryBuilder
 
     public function findById(?int $id): ?PostModel
     {
-        if (!$id || $id <= 0) {
+        if ($id <= 0) {
             return null;
         }
 

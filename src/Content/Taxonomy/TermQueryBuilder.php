@@ -103,7 +103,7 @@ class TermQueryBuilder
 
     public function findById(?int $id): ?TermModel
     {
-        if (!$id || $id < 0) {
+        if ($id < 0) {
             return null;
         }
 
