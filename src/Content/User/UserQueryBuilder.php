@@ -53,8 +53,12 @@ class UserQueryBuilder
         return $this->take(1)->first();
     }
 
-    public function findById(int $id): ?UserModel
+    public function findById(?int $id): ?UserModel
     {
+        if (!$id || $id < 0) {
+            return null;
+        }
+
         $this->queryVars['include'] = [$id];
         return $this->first();
     }
