@@ -1,8 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
+use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Query;
 
@@ -123,15 +123,11 @@ class WpQueryBuilder
     }
 
     /**
-     * @param class-string<WP_Query> $queryObjectClassName
+     * @param class-string<WP_Query|IWpQuerySubstitute> $queryObjectClassName
      * @return $this
      */
     public function useQuery(string $queryObjectClassName): WpQueryBuilder
     {
-        if (is_subclass_of($queryObjectClassName, WP_Query::class, true)) {
-            throw new InvalidArgumentException("{$queryObjectClassName} does not extend WP_Query.");
-        }
-
         $this->wpQueryClass = $queryObjectClassName;
 
         return $this;

@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\Common\OffbeatModelCollection;
+use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;
 use WP_Query;
@@ -23,7 +24,7 @@ class PostsCollection extends OffbeatModelCollection
     public function __construct($items = []) {
         $postItems = [];
 
-        if ($items instanceof WP_Query) {
+        if ($items instanceof WP_Query || $items instanceof IWpQuerySubstitute) {
             $this->query = $items;
 
             if (!empty($items->posts)) {
