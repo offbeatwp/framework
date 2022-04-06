@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\Traits;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
+use OffbeatWP\Content\Post\PostModel;
 
 trait GetMetaTrait
 {
@@ -107,6 +108,20 @@ trait GetMetaTrait
         $value = $this->getRawMetaValue($key, []);
         $value = is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value;
         return (array)$value;
+    }
+
+    /** @return PostModel[] */
+    public function getMetaPostModels(string $key): array
+    {
+        $models = [];
+
+        foreach ($this->getMetaArray($key) as $id) {
+            if ($model = PostModel::find($id)) {
+                $models[] = $model;
+            }
+        }
+
+        return $models;
     }
 
     /**
