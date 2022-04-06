@@ -16,7 +16,7 @@ class Post
         return new $model($post);
     }
 
-    /** @param null|int|WP_Post $id */
+    /** @param null|int|numeric-string|WP_Post $id */
     public function get($id = null): ?PostModel
     {
         $post = get_post($id ?? get_the_ID());
