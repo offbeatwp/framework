@@ -116,7 +116,7 @@ trait GetMetaTrait
         $models = [];
 
         foreach ($this->getMetaArray($key) as $id) {
-            if ($model = PostModel::find($id)) {
+            if ($id && $model = offbeat('post')->get($id)) {
                 $models[] = $model;
             }
         }
