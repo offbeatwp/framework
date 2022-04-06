@@ -38,9 +38,7 @@ class WpQueryBuilder
 
     public function get(): PostsCollection
     {
-        if (!isset($this->queryVars['no_found_rows'])) {
-            $this->queryVars['no_found_rows'] = true;
-        }
+        $this->queryVars['no_found_rows'] = $this->queryVars['no_found_rows'] ?? true;
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
