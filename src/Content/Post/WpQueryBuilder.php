@@ -131,11 +131,11 @@ class WpQueryBuilder
     {
         $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
-        $this->noFoundRows(false);
+        $this->noFoundRows(true);
         /** @var WP_Query|IWpQuerySubstitute $query */
         $query = new $this->wpQueryClass($this->queryVars);
 
-        return $query->found_posts;
+        return $query->post_count;
     }
 
     /**
