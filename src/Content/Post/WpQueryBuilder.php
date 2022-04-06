@@ -23,12 +23,26 @@ class WpQueryBuilder
         return offbeat('post')->convertWpPostToModel($post);
     }
 
+    /**
+     * When true, the query will not count total rows.<br/>
+     * This makes the query slighlty faster, but will not work if the total post count is required.<br/>
+     * One example where total post count is required is pagination.
+     * @param bool $noFoundRows
+     * @return $this
+     */
+    public function noFoundRows(bool $noFoundRows)
+    {
+        $this->queryVars['no_found_rows'] = $noFoundRows;
+        return $this;
+    }
+
     public function get(): PostsCollection
     {
-        $this->queryVars['no_found_rows'] = empty($this->queryVars['paged']);
+        $this->queryVars['no_found_rows'] = $this->queryVars['no_found_rows'] ?? true;
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
+        /** @var WP_Query|IWpQuerySubstitute $posts */
         $posts = new $this->wpQueryClass($this->queryVars);
 
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
@@ -39,6 +53,7 @@ class WpQueryBuilder
         return $this->queryVars;
     }
 
+    /** @return scalar|array|null */
     public function getQueryVar(string $var)
     {
         $queryVars = $this->getQueryVars();
@@ -116,10 +131,11 @@ class WpQueryBuilder
     {
         $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
-        $this->queryVars['no_found_rows'] = true;
+        $this->noFoundRows(false);
+        /** @var WP_Query|IWpQuerySubstitute $query */
         $query = new $this->wpQueryClass($this->queryVars);
 
-        return $query->post_count;
+        return $query->found_posts;
     }
 
     /**
@@ -306,6 +322,7 @@ class WpQueryBuilder
     public function paginated($paginated = true): WpQueryBuilder
     {
         if ($paginated) {
+            $this->noFoundRows(false);
             $paged = $paginated;
 
             if (is_bool($paginated)) {
