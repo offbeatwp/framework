@@ -42,6 +42,7 @@ class WpQueryBuilder
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
+        /** @var WP_Query|IWpQuerySubstitute $posts */
         $posts = new $this->wpQueryClass($this->queryVars);
 
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
@@ -130,10 +131,11 @@ class WpQueryBuilder
     {
         $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
-        $this->noFoundRows(true);
+        $this->noFoundRows(false);
+        /** @var WP_Query|IWpQuerySubstitute $query */
         $query = new $this->wpQueryClass($this->queryVars);
 
-        return $query->post_count;
+        return $query->found_posts;
     }
 
     /**
