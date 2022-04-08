@@ -7,6 +7,7 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use WP_Error;
+use WP_Taxonomy;
 use WP_Term;
 
 class TermModel implements TermModelInterface
@@ -181,6 +182,11 @@ class TermModel implements TermModelInterface
     {
         $taxonomy = offbeat('taxonomy')->get();
         return ($taxonomy instanceof static) ? $taxonomy : null;
+    }
+
+    public function getTaxonomyInstance(): ?WP_Taxonomy
+    {
+        return get_taxonomy($this->wpTerm->taxonomy) ?: null;
     }
 
     /**
