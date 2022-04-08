@@ -248,6 +248,11 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_type;
     }
 
+    public function getPostTypeInstance(): ?WP_Post_Type
+    {
+        return get_post_type_object(get_post_type($this->wpPost));
+    }
+
     /**
      * @param non-empty-string $metaKey The ID stored in this meta-field will be used to retrieve the attachment.
      * @return string|null The attachment url or <i>null</i> if the attachment could not be found.
