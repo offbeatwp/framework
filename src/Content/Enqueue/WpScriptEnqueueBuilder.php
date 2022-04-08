@@ -9,6 +9,8 @@ class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
 {
     /** @var array{value: string, inFooter: bool} */
     protected $bindingsToPass = [];
+    protected $l10nData = [];
+    protected $l10nName = '';
     protected $inFooter = false;
     protected static $vars = [];
 
@@ -27,10 +29,22 @@ class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
         }
 
         $this->bindingsToPass[$varName] = [
-            'value' => json_encode($varValue),
+            'value' => json_encode($varValue, JSON_THROW_ON_ERROR),
             'position' => ($includeAfter) ? 'after' : 'before',
         ];
 
+        return $this;
+    }
+
+    /**
+     * Localize a script.
+     * Works only if the script has already been registered.
+     * @param string[] $l10n Accepts an associative array $l10n and creates a JavaScript object.
+     * @return static
+     */
+    public function localize(array $l10n, string $objectName = 'tl') {
+        $this->l10nData = $l10n;
+        $this->l10nName = $objectName;
         return $this;
     }
 
@@ -57,6 +71,10 @@ class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
                 wp_add_inline_script($handle, "var {$varName} = {$args['value']};", $args['position']);
                 self::$vars[$varName] = $args['value'];
             }
+        }
+
+        if ($this->l10nName) {
+            wp_localize_script($handle, $this->l10nName, $this->l10nData);
         }
     }
 
