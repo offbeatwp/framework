@@ -16,6 +16,7 @@ use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Error;
 use WP_Post;
+use WP_Post_Type;
 use WP_User;
 
 class PostModel implements PostModelInterface
@@ -795,6 +796,22 @@ class PostModel implements PostModelInterface
     {
         $this->metas = false;
         $this->getMetas();
+    }
+
+    /**
+     * Retrieves the associated post type object.
+     * Only works after the post type has been registered.
+     * @return WP_Post_Type|null
+     */
+    public static function getPostTypeObject(): ?WP_Post_Type
+    {
+        $modelClass = static::class;
+
+        if (defined("{$modelClass}::POST_TYPE")) {
+            return get_post_type_object($modelClass::POST_TYPE);
+        }
+
+        return null;
     }
 
     /////////////////////
