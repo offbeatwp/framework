@@ -147,7 +147,7 @@ class ComponentRepository
     public function render($name, $args = [])
     {
         $component = $this->make($name);
-        $component->setRenderIndex($this->renderedComponents);
+        $component->setRenderId($this->renderedComponents);
 
         ++$this->renderedComponents;
 
