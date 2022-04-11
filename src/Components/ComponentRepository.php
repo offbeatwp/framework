@@ -4,14 +4,17 @@ namespace OffbeatWP\Components;
 
 use OffbeatWP\Exceptions\NonexistentComponentException;
 use OffbeatWP\Layout\ContextInterface;
+use OffbeatWP\Layout\Frontend;
 
 class ComponentRepository
 {
     /** @var ContextInterface|null */
     protected $layoutContext;
-    /** @var class-string<AbstractComponent>[] */
-    protected $components = [];
-    protected $renderId = 0;
+
+    public function __construct()
+    {
+
+    }
 
     public function getLayoutContext(): ?ContextInterface
     {
@@ -31,10 +34,6 @@ class ComponentRepository
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param class-string<AbstractComponent> $componentClass
-     */
     public function register($name, $componentClass)
     {
         offbeat('hooks')->doAction('offbeat.component.register', [
@@ -53,10 +52,6 @@ class ComponentRepository
         $this->components[$name] = $componentClass;
     }
 
-    /**
-     * @param string $name
-     * @param class-string<AbstractComponent> $componentClass
-     */
     public function registerWidget($name, $componentClass)
     {
         $componentSettings = $componentClass::settings();
@@ -92,11 +87,7 @@ class ComponentRepository
         });
     }
 
-    /**
-     * @param string|null $name
-     * @return class-string<AbstractComponent>|class-string<AbstractComponent>[]|null
-     * @throws NonexistentComponentException
-     */
+    /** @throws NonexistentComponentException */
     public function get($name = null)
     {
         if ($name === null) {
@@ -110,17 +101,7 @@ class ComponentRepository
         throw new NonexistentComponentException("Component does not exist ({$name})");
     }
 
-    /** @return class-string<AbstractComponent>[] */
-    public function getAll(): array
-    {
-        return $this->components;
-    }
-
-    /**
-     * @param string $name
-     * @return mixed|AbstractComponent
-     * @throws NonexistentComponentException
-     */
+    /** @throws NonexistentComponentException */
     public function make($name)
     {
         $componentClass = $this->get($name);
@@ -128,31 +109,18 @@ class ComponentRepository
         return offbeat()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function exists($name): bool
     {
-        return isset($this->components[$name]);
+        if (isset($this->components[$name])) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * @param string $name
-     * @param array|object $args
-     * @return string|null
-     * @throws NonexistentComponentException
-     */
     public function render($name, $args = [])
     {
         $component = $this->make($name);
-
-        if (is_array($args)) {
-            $args['renderId'] = $this->renderId;
-        }
-
-        ++$this->renderId;
-
         return $component->renderComponent((object)$args);
     }
 }
