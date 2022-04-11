@@ -11,6 +11,7 @@ class ComponentRepository
     protected $layoutContext;
     /** @var class-string<AbstractComponent>[] */
     protected $components = [];
+    /** @var int */
     protected $renderedComponents = 0;
 
     public function getLayoutContext(): ?ContextInterface

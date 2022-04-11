@@ -22,7 +22,8 @@ abstract class AbstractComponent
     public $form = null;
     protected $context;
     private $cssClasses = [];
-    private $renderIndex = -1;
+    /** @var int|null */
+    private $renderIndex = null;
 
     /** @return Form|null */
     public static function form()
