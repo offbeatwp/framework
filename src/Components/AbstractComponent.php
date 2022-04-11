@@ -23,7 +23,7 @@ abstract class AbstractComponent
     protected $context;
     private $cssClasses = [];
     /** @var int|null */
-    private $renderIndex = null;
+    private $renderId = null;
 
     /** @return Form|null */
     public static function form()
@@ -66,16 +66,16 @@ abstract class AbstractComponent
             $data['cssClasses'] = $this->getCssClassesAsString();
         }
 
-        if (!isset($data['renderIndex'])) {
-            $data['renderIndex'] = $this->renderIndex;
+        if (!isset($data['renderId'])) {
+            $data['renderId'] = $this->renderId;
         }
 
         return $this->traitView($name, $data);
     }
 
-    public function setRenderIndex(int $renderIndex): void
+    public function setRenderId(int $renderId): void
     {
-        $this->renderIndex = $renderIndex;
+        $this->renderId = $renderId;
     }
 
     /** Can this component be rendered? */
