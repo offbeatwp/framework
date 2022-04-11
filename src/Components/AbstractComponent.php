@@ -22,6 +22,7 @@ abstract class AbstractComponent
     public $form = null;
     protected $context;
     private $cssClasses = [];
+    private $renderIndex = -1;
 
     /** @return Form|null */
     public static function form()
@@ -64,7 +65,16 @@ abstract class AbstractComponent
             $data['cssClasses'] = $this->getCssClassesAsString();
         }
 
+        if (!isset($data['renderIndex'])) {
+            $data['renderIndex'] = $this->renderIndex;
+        }
+
         return $this->traitView($name, $data);
+    }
+
+    public function setRenderIndex(int $renderIndex): void
+    {
+        $this->renderIndex = $renderIndex;
     }
 
     /** Can this component be rendered? */

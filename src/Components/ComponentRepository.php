@@ -11,7 +11,7 @@ class ComponentRepository
     protected $layoutContext;
     /** @var class-string<AbstractComponent>[] */
     protected $components = [];
-    protected $renderId = 0;
+    protected $renderedComponents = 0;
 
     public function getLayoutContext(): ?ContextInterface
     {
@@ -146,12 +146,9 @@ class ComponentRepository
     public function render($name, $args = [])
     {
         $component = $this->make($name);
+        $component->setRenderIndex($this->renderedComponents);
 
-        if (is_array($args)) {
-            $args['renderId'] = $this->renderId;
-        }
-
-        ++$this->renderId;
+        ++$this->renderedComponents;
 
         return $component->renderComponent((object)$args);
     }
