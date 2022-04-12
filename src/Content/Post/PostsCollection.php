@@ -257,15 +257,13 @@ class PostsCollection extends OffbeatModelCollection
 
         for ($n = 1; $n <= $total; $n++) :
             if ($n === $current) {
-                $page_links[] = sprintf(
-                    '<span aria-current="%s" class="page-numbers current">%s</span>',
-                    esc_attr($args['aria_current']),
+                $page_links[] = sprintf('<span aria-current="%s" class="page-numbers current">%s</span>', esc_attr($args['aria_current']),
                     $args['before_page_number'] . number_format_i18n($n) . $args['after_page_number']
                 );
 
                 $dots = true;
             } elseif ($args['show_all'] || ($n <= $endSize || ($current && $n >= $current - $midSize && $n <= $current + $midSize) || $n > $total - $endSize)) {
-                $link = str_replace('%_%', 1 == $n ? '' : $args['format'], $args['base']);
+                $link = str_replace('%_%', $n === 1 ? '' : $args['format'], $args['base']);
                 $link = str_replace('%#%', $n, $link);
                 if ($addArgs) {
                     $link = add_query_arg($addArgs, $link);
