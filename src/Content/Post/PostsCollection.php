@@ -95,8 +95,6 @@ class PostsCollection extends OffbeatModelCollection
             if ($links) {
                 return _navigation_markup($links, $parsedArgs['class'], $parsedArgs['screen_reader_text'], $parsedArgs['aria_label']);
             }
-
-            return 'sadge';
         }
 
         return '';
@@ -143,7 +141,11 @@ class PostsCollection extends OffbeatModelCollection
         $this->items = [];
     }
 
-    private function paginateLinks($args = '')
+    /**
+     * @param object|array $rawArgs
+     * @return string|null|array
+     */
+    private function paginateLinks($rawArgs)
     {
         global $wp_rewrite;
 
@@ -184,7 +186,7 @@ class PostsCollection extends OffbeatModelCollection
             'after_page_number' => '',
         ];
 
-        $args = wp_parse_args($args, $defaults);
+        $args = wp_parse_args($rawArgs, $defaults);
 
         if (!is_array($args['add_args'])) {
             $args['add_args'] = [];
@@ -194,8 +196,7 @@ class PostsCollection extends OffbeatModelCollection
         if (isset($url_parts[1])) {
             // Find the format argument.
             $format = explode('?', str_replace('%_%', $args['format'], $args['base']));
-            $format_query = isset($format[1]) ? $format[1] : '';
-            wp_parse_str($format_query, $format_args);
+            wp_parse_str($format[1] ?? '', $format_args);
 
             // Find the query args of the requested URL.
             wp_parse_str($url_parts[1], $url_query_args);
@@ -211,29 +212,33 @@ class PostsCollection extends OffbeatModelCollection
         // Who knows what else people pass in $args.
         $total = (int)$args['total'];
         if ($total < 2) {
-            return;
+            return null;
         }
         $current = (int)$args['current'];
-        $end_size = (int)$args['end_size']; // Out of bounds? Make it the default.
-        if ($end_size < 1) {
-            $end_size = 1;
+        $endSize = (int)$args['end_size']; // Out of bounds? Make it the default.
+        if ($endSize < 1) {
+            $endSize = 1;
         }
-        $mid_size = (int)$args['mid_size'];
-        if ($mid_size < 0) {
-            $mid_size = 2;
+        $midSize = (int)$args['mid_size'];
+        if ($midSize < 0) {
+            $midSize = 2;
         }
 
-        $add_args = $args['add_args'];
+        $addArgs = $args['add_args'];
         $r = '';
         $page_links = [];
         $dots = false;
 
         if ($args['prev_next'] && $current && 1 < $current) :
-            $link = str_replace('%_%', 2 == $current ? '' : $args['format'], $args['base']);
-            $link = str_replace('%#%', $current - 1, $link);
-            if ($add_args) {
-                $link = add_query_arg($add_args, $link);
+            $rep = ($current === 2) ? '' : $args['format'];
+            $link = str_replace('%_%', $rep, $args['base']);
+            $rep = (string)$current - 1;
+            $link = str_replace('%#%', $rep, $link);
+
+            if ($addArgs) {
+                $link = add_query_arg($addArgs, $link);
             }
+
             $link .= $args['add_fragment'];
 
             $page_links[] = sprintf(
@@ -251,7 +256,7 @@ class PostsCollection extends OffbeatModelCollection
         endif;
 
         for ($n = 1; $n <= $total; $n++) :
-            if ($n == $current) :
+            if ($n === $current) {
                 $page_links[] = sprintf(
                     '<span aria-current="%s" class="page-numbers current">%s</span>',
                     esc_attr($args['aria_current']),
@@ -259,37 +264,37 @@ class PostsCollection extends OffbeatModelCollection
                 );
 
                 $dots = true;
-            else :
-                if ($args['show_all'] || ($n <= $end_size || ($current && $n >= $current - $mid_size && $n <= $current + $mid_size) || $n > $total - $end_size)) :
-                    $link = str_replace('%_%', 1 == $n ? '' : $args['format'], $args['base']);
-                    $link = str_replace('%#%', $n, $link);
-                    if ($add_args) {
-                        $link = add_query_arg($add_args, $link);
-                    }
-                    $link .= $args['add_fragment'];
+            } elseif ($args['show_all'] || ($n <= $endSize || ($current && $n >= $current - $midSize && $n <= $current + $midSize) || $n > $total - $endSize)) {
+                $link = str_replace('%_%', 1 == $n ? '' : $args['format'], $args['base']);
+                $link = str_replace('%#%', $n, $link);
+                if ($addArgs) {
+                    $link = add_query_arg($addArgs, $link);
+                }
+                $link .= $args['add_fragment'];
 
-                    $page_links[] = sprintf(
-                        '<a class="page-numbers" href="%s">%s</a>',
-                        /** This filter is documented in wp-includes/general-template.php */
-                        esc_url(apply_filters('paginate_links', $link)),
-                        $args['before_page_number'] . number_format_i18n($n) . $args['after_page_number']
-                    );
+                $page_links[] = sprintf(
+                    '<a class="page-numbers" href="%s">%s</a>',
+                    /** This filter is documented in wp-includes/general-template.php */
+                    esc_url(apply_filters('paginate_links', $link)),
+                    $args['before_page_number'] . number_format_i18n($n) . $args['after_page_number']
+                );
 
-                    $dots = true;
-                elseif ($dots && !$args['show_all']) :
-                    $page_links[] = '<span class="page-numbers dots">' . __('&hellip;') . '</span>';
+                $dots = true;
+            } elseif ($dots && !$args['show_all']) {
+                $page_links[] = '<span class="page-numbers dots">' . __('&hellip;') . '</span>';
 
-                    $dots = false;
-                endif;
-            endif;
+                $dots = false;
+            }
         endfor;
 
         if ($args['prev_next'] && $current && $current < $total) :
             $link = str_replace('%_%', $args['format'], $args['base']);
             $link = str_replace('%#%', $current + 1, $link);
-            if ($add_args) {
-                $link = add_query_arg($add_args, $link);
+
+            if ($addArgs) {
+                $link = add_query_arg($addArgs, $link);
             }
+
             $link .= $args['add_fragment'];
 
             $page_links[] = sprintf(
