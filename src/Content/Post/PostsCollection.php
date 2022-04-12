@@ -95,8 +95,6 @@ class PostsCollection extends OffbeatModelCollection
             if ($links) {
                 return _navigation_markup($links, $parsedArgs['class'], $parsedArgs['screen_reader_text'], $parsedArgs['aria_label']);
             }
-
-            return 'sadge';
         }
 
         return '';
@@ -143,7 +141,7 @@ class PostsCollection extends OffbeatModelCollection
         $this->items = [];
     }
 
-    private function paginateLinks($args = '')
+    private function paginateLinks($args = ''): ?string
     {
         global $wp_rewrite;
 
@@ -194,7 +192,7 @@ class PostsCollection extends OffbeatModelCollection
         if (isset($url_parts[1])) {
             // Find the format argument.
             $format = explode('?', str_replace('%_%', $args['format'], $args['base']));
-            $format_query = isset($format[1]) ? $format[1] : '';
+            $format_query = $format[1] ?? '';
             wp_parse_str($format_query, $format_args);
 
             // Find the query args of the requested URL.
@@ -211,7 +209,7 @@ class PostsCollection extends OffbeatModelCollection
         // Who knows what else people pass in $args.
         $total = (int)$args['total'];
         if ($total < 2) {
-            return;
+            return null;
         }
         $current = (int)$args['current'];
         $end_size = (int)$args['end_size']; // Out of bounds? Make it the default.
