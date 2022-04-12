@@ -330,7 +330,7 @@ class WpQueryBuilder
             }
 
             $this->queryVars['paged'] = $paged;
-        } else {
+        } elseif(isset($this->queryVars['paged'])) {
             unset($this->queryVars['paged']);
         }
 
