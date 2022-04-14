@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\Common\OffbeatModelCollection;
@@ -21,7 +22,8 @@ class PostsCollection extends OffbeatModelCollection
     protected $query = null;
 
     /** @var int[]|WP_Post[]|WP_Query $items */
-    public function __construct($items = []) {
+    public function __construct($items = [])
+    {
         $postItems = [];
 
         if ($items instanceof WP_Query || $items instanceof IWpQuerySubstitute) {
@@ -44,12 +46,46 @@ class PostsCollection extends OffbeatModelCollection
         parent::__construct($postItems);
     }
 
+    /** @param int|WP_Post|PostModel $item */
+    protected function createValidPostModel($item): ?PostModel
+    {
+        if ($item instanceof PostModel) {
+            return $item;
+        }
+
+        if (is_int($item) || $item instanceof WP_Post) {
+            return offbeat('post')->get($item);
+        }
+
+        throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
+    }
+
     /** @return WpPostsIterator|PostModel[] */
-    public function getIterator(): WpPostsIterator {
+    public function getIterator(): WpPostsIterator
+    {
         return new WpPostsIterator($this->items);
     }
 
-    public function getQuery() {
+    /**
+     * Retrieves a paginated navigation to next/previous set of posts, when applicable.
+     * @see paginate_links().
+     */
+    public function getPagination(array $args = []): string
+    {
+        if ($this->query instanceof WP_Query) {
+            $GLOBALS['wp_query'] = $this->query;
+            $paginationHtml = get_the_posts_pagination($args);
+            wp_reset_query();
+
+            return $paginationHtml;
+        }
+
+        return '';
+    }
+
+    /** @return IWpQuerySubstitute|WP_Query|null */
+    public function getQuery()
+    {
         return $this->query;
     }
 
@@ -62,7 +98,8 @@ class PostsCollection extends OffbeatModelCollection
      * Retrieves all object Ids within this collection as an array.
      * @return int[]
      */
-    public function getIds(): array {
+    public function getIds(): array
+    {
         return array_map(static function (PostModel $model) {
             return $model->getId() ?: 0;
         }, $this->items);
@@ -85,19 +122,5 @@ class PostsCollection extends OffbeatModelCollection
         });
 
         $this->items = [];
-    }
-
-    /** @param int|WP_Post|PostModel $item */
-    protected function createValidPostModel($item): ?PostModel
-    {
-        if ($item instanceof PostModel) {
-            return $item;
-        }
-
-        if (is_int($item) || $item instanceof WP_Post) {
-            return offbeat('post')->get($item);
-        }
-
-        throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 }
