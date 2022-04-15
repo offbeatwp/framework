@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use DOMDocument;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
@@ -70,17 +71,56 @@ class PostsCollection extends OffbeatModelCollection
      * Retrieves a paginated navigation to next/previous set of posts, when applicable.
      * @see paginate_links().
      */
-    public function getPagination(array $args = []): string
+    public function getPagination(array $rawArgs = []): string
     {
-        if ($this->query instanceof WP_Query) {
-            $GLOBALS['wp_query'] = $this->query;
-            $paginationHtml = get_the_posts_pagination($args);
-            wp_reset_query();
+        if ($this->query instanceof WP_Query && $this->query->max_num_pages > 1) {
+            // Make sure the nav element has an aria-label attribute: fallback to the screen reader text.
+            if (!empty($rawArgs['screen_reader_text']) && empty($rawArgs['aria_label'])) {
+                $rawArgs['aria_label'] = $rawArgs['screen_reader_text'];
+            }
 
-            return $paginationHtml;
+            $args = wp_parse_args($rawArgs, [
+                'mid_size' => 1,
+                'prev_text' => _x('Previous', 'previous set of posts'),
+                'next_text' => _x('Next', 'next set of posts'),
+                'screen_reader_text' => __('Posts navigation'),
+                'aria_label' => __('Posts'),
+                'class' => 'pagination'
+            ]);
+
+            $links = $this->getPaginatedLinks($args);
+
+            if (isset($args['attribs'])) {
+                $attributes = (array)$args['attribs'];
+                $dom = new DOMDocument();
+                $dom->loadHTML($links);
+
+                $nodes = $dom->getElementsByTagName('a');
+                foreach ($nodes as $node) {
+                    foreach ($attributes as $key => $value) {
+                        $node->setAttribute($key, $value);
+                    }
+                }
+
+                $links = $dom->saveHTML();
+            }
+
+            if ($links) {
+                return _navigation_markup($links, $args['class'], $args['screen_reader_text'], $args['aria_label']);
+            }
         }
 
         return '';
+    }
+
+    private function getPaginatedLinks(array $args): string
+    {
+        $GLOBALS['wp_query'] = $this->query;
+        $args['type'] = 'plain';
+        $links = paginate_links($args);
+        wp_reset_query();
+
+        return $links;
     }
 
     /** @return IWpQuerySubstitute|WP_Query|null */
