@@ -7,5 +7,6 @@ class TrueFalse extends AbstractField {
     public function stylisedUI(bool $useStylisedUI = true)
     {
         $this->setAttribute('ui', (int)$useStylisedUI);
+        return $this;
     }
 }
