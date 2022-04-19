@@ -74,19 +74,19 @@ class PostsCollection extends OffbeatModelCollection
     public function getPagination(array $rawArgs = []): string
     {
         if ($this->query instanceof WP_Query && $this->query->max_num_pages > 1) {
-            // Make sure the nav element has an aria-label attribute: fallback to the screen reader text.
-            if (!empty($rawArgs['screen_reader_text']) && empty($rawArgs['aria_label'])) {
-                $rawArgs['aria_label'] = $rawArgs['screen_reader_text'];
-            }
-
             $args = wp_parse_args($rawArgs, [
-                'mid_size' => 1,
-                'prev_text' => _x('Previous', 'previous set of posts'),
-                'next_text' => _x('Next', 'next set of posts'),
-                'screen_reader_text' => __('Posts navigation'),
-                'aria_label' => __('Posts'),
-                'class' => 'pagination'
+                'mid_size'              => 2,
+                'prev_text'             => _x('Previous', 'previous set of posts'),
+                'next_text'             => _x('Next', 'next set of posts'),
+                'screen_reader_text'    => __('Posts navigation'),
+                'aria_label'            => __('Posts'),
+                'class'                 => 'pagination'
             ]);
+
+            // Make sure the nav element has an aria-label attribute: fallback to the screen reader text.
+            if ($rawArgs['screen_reader_text'] && !$rawArgs['aria_label']) {
+                $args['aria_label'] = $args['screen_reader_text'];
+            }
 
             $links = $this->getPaginatedLinks($args);
 
