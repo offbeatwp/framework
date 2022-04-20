@@ -84,7 +84,7 @@ class PostsCollection extends OffbeatModelCollection
             ]);
 
             // Make sure the nav element has an aria-label attribute: fallback to the screen reader text.
-            if ($rawArgs['screen_reader_text'] && !$rawArgs['aria_label']) {
+            if ($args['screen_reader_text'] && !$args['aria_label']) {
                 $args['aria_label'] = $args['screen_reader_text'];
             }
 
