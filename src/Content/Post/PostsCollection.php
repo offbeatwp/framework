@@ -76,8 +76,8 @@ class PostsCollection extends OffbeatModelCollection
         if ($this->query instanceof WP_Query && $this->query->max_num_pages > 1) {
             $args = wp_parse_args($rawArgs, [
                 'mid_size'              => 2,
-                'prev_text'             => '«',
-                'next_text'             => '»',
+                'prev_text'             => '&#171;',
+                'next_text'             => '&#187;',
                 'screen_reader_text'    => __('Posts navigation'),
                 'aria_label'            => __('Posts'),
                 'class'                 => 'pagination'
