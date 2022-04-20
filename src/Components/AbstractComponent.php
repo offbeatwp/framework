@@ -62,13 +62,9 @@ abstract class AbstractComponent
 
     public function view(string $name, array $data = [])
     {
-        if (!isset($data['cssClasses'])) {
-            $data['cssClasses'] = $this->getCssClassesAsString();
-        }
-
-        if (!isset($data['renderId'])) {
-            $data['renderId'] = $this->renderId;
-        }
+        $data['cssClasses'] = $data['cssClasses'] ?? $this->getCssClassesAsString();
+        $data['renderId'] = $data['renderId'] ?? $this->renderId;
+        $data['componentSlug'] = $data['componentSlug'] ?? self::getSlug();
 
         return $this->traitView($name, $data);
     }
