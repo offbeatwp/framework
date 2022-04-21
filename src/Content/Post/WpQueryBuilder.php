@@ -42,10 +42,7 @@ class WpQueryBuilder
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
-        /** @var WP_Query|IWpQuerySubstitute $posts */
-        $posts = new $this->wpQueryClass($this->queryVars);
-
-        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
+        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($this->runQuery()), $this);
     }
 
     public function getQueryVars(): array
@@ -127,15 +124,29 @@ class WpQueryBuilder
         return $result;
     }
 
+    /** @return WP_Query|IWpQuerySubstitute */
+    private function runQuery()
+    {
+        return new $this->wpQueryClass($this->queryVars);
+    }
+
+    /** @return int[] */
+    public function ids(): array
+    {
+        $this->queryVars['posts_per_page'] = -1;
+        $this->queryVars['fields'] = 'ids';
+        $this->queryVars['no_found_rows'] = true;
+
+        return $this->runQuery()->posts;
+    }
+
     public function count(): int
     {
         $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
-        $this->noFoundRows(true);
-        /** @var WP_Query|IWpQuerySubstitute $query */
-        $query = new $this->wpQueryClass($this->queryVars);
+        $this->queryVars['no_found_rows'] = true;
 
-        return $query->post_count;
+        return $this->runQuery()->post_count;
     }
 
     /**
