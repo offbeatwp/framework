@@ -132,13 +132,13 @@ class WpQueryBuilder
     }
 
     /**
-     * @param int $limit
+     * @param positive-int $limit
      * @return $this
      */
     public function limit(int $limit)
     {
-        if ($limit < -1) {
-            throw new InvalidArgumentException("Limit does not accept values lower than -1 but received {$limit}.");
+        if ($limit <= 0) {
+            throw new InvalidArgumentException("Limit expects a positive number, but received {$limit}.");
         }
 
         $this->queryVars['posts_per_page'] = $limit;

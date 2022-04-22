@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use http\Exception\InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
@@ -83,6 +84,30 @@ class TermQueryBuilder
         $this->queryVars['number'] = $numberOfItems;
 
         return $this->get();
+    }
+
+    /**
+     * @param positive-int $limit
+     * @return $this
+     */
+    public function limit(int $limit)
+    {
+        if ($limit <= 0) {
+            throw new InvalidArgumentException("Limit expects a positive number, but received {$limit}.");
+        }
+
+        $this->queryVars['number'] = $limit;
+        return $this;
+    }
+
+    /** @return int[] */
+    public function ids(): array
+    {
+        $this->queryVars['number'] = $this->queryVars['number'] ?? -1;
+        $this->queryVars['fields'] = 'ids';
+        $this->queryVars['no_found_rows'] = true;
+
+        return (new WP_Term_Query($this->queryVars))->get_terms();
     }
 
     public function first(): ?TermModel
