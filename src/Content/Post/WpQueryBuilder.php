@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use http\Exception\InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
@@ -130,10 +131,24 @@ class WpQueryBuilder
         return new $this->wpQueryClass($this->queryVars);
     }
 
+    /**
+     * @param int $limit
+     * @return $this
+     */
+    public function limit(int $limit)
+    {
+        if ($limit < -1) {
+            throw new InvalidArgumentException("Limit does not accept values lower than -1 but received {$limit}.");
+        }
+
+        $this->queryVars['posts_per_page'] = $limit;
+        return $this;
+    }
+
     /** @return int[] */
     public function ids(): array
     {
-        $this->queryVars['posts_per_page'] = -1;
+        $this->queryVars['posts_per_page'] = $this->queryVars['posts_per_page'] ?? -1;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 

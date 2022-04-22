@@ -251,13 +251,13 @@ class UserModel
     /// Query Methods ///
     /////////////////////
     /** @return static|null Returns the user that is currently logged in, or null if no user is logged in. */
-    public static function getCurrentUser(): ?UserModel
+    public static function getCurrentUser()
     {
         return self::query()->findById(get_current_user_id());
     }
 
     /** @return static Returns the user that is currently logged in, or throws an exception if no user is logged in. */
-    public static function getCurrentUserOrFail(): UserModel
+    public static function getCurrentUserOrFail()
     {
         return self::query()->findByIdOrFail(get_current_user_id());
     }
