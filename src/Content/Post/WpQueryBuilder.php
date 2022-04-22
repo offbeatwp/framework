@@ -132,7 +132,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param int $limit
+     * @param positive-int $limit
      * @return $this
      */
     public function limit(int $limit)
