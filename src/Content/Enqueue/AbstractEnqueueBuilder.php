@@ -22,6 +22,15 @@ abstract class AbstractEnqueueBuilder
     }
 
     /**
+     * @param string $src
+     * @return static
+     */
+    public function setAssetSrc(string $src)
+    {
+        return $this->setSrc(offbeat('assets')->getUrl($src));
+    }
+
+    /**
      * @param string $src The file location.
      * @return static
      */
