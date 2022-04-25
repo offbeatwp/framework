@@ -7,6 +7,10 @@ class AssetsManager
     public $manifest = null;
     public $entrypoints = null;
 
+    /**
+     * @param string $filename
+     * @return false|string
+     */
     public function getUrl($filename)
     {
         if ($this->getEntryFromAssetsManifest($filename) !== false) {
@@ -22,6 +26,10 @@ class AssetsManager
         return false;
     }
 
+    /**
+     * @param string $filename
+     * @return false|string
+     */
     public function getPath($filename)
     {
         if ($this->getEntryFromAssetsManifest($filename) !== false) {
@@ -31,11 +39,16 @@ class AssetsManager
         return false;
     }
 
+    /**
+     * @param non-empty-string $filename
+     * @return string|false
+     */
     public function getEntryFromAssetsManifest($filename)
     {
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
+    /** @return object|bool|null */
     public function getAssetsManifest() {
         if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json'))) {
             $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json')));
@@ -44,6 +57,7 @@ class AssetsManager
         return $this->manifest;
     }
 
+    /** @return object|bool|null */
     public function getAssetsEntryPoints() {
         if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json'))) {
             $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json')));
@@ -52,6 +66,11 @@ class AssetsManager
         return $this->entrypoints;
     }
 
+    /**
+     * @param string $entry
+     * @param string $key
+     * @return mixed|false
+     */
     public function getAssetsByEntryPoint($entry, $key)
     {
         $entrypoints = $this->getAssetsEntryPoints();
@@ -63,6 +82,10 @@ class AssetsManager
         return $entrypoints->entrypoints->$entry->$key;
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
     public function getAssetsPath($path = '')
     {
         $path = ltrim($path, '/');
@@ -75,6 +98,10 @@ class AssetsManager
         return get_template_directory() . '/assets' . $path; 
     }
 
+    /**
+     * @param string $path
+     * @return string
+     */
     public function getAssetsUrl($path = '')
     {
         if (strpos($path, 'http') === 0) {
@@ -91,7 +118,9 @@ class AssetsManager
         return get_template_directory_uri() . '/assets' . $path; 
     }
 
-    public function enqueueStyles($entry) {
+    /** @param string $entry */
+    public function enqueueStyles($entry): void
+    {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
         if ($assets) {
@@ -107,7 +136,9 @@ class AssetsManager
         wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
     }
 
-    public function enqueueScripts($entry) {
+    /** @param string $entry */
+    public function enqueueScripts($entry): void
+    {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
 
         if ($assets) {
