@@ -68,12 +68,27 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /**
+     * Returns the maximum number of pages to display.
+     * If this PostsCollection has no query associated with it, then <b>0</b> is returned.
+     * @return int
+     */
+    public function getMaxPages(): int
+    {
+        return $this->query->max_num_pages ?? 0;
+    }
+
+    public function hasPagination(): bool
+    {
+        return $this->getMaxPages() > 1;
+    }
+
+    /**
      * Retrieves a paginated navigation to next/previous set of posts, when applicable.
      * @see paginate_links().
      */
     public function getPagination(array $rawArgs = []): string
     {
-        if ($this->query instanceof WP_Query && $this->query->max_num_pages > 1) {
+        if ($this->hasPagination()) {
             $args = wp_parse_args($rawArgs, [
                 'mid_size'              => 2,
                 'prev_text'             => '&#171;',
