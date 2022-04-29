@@ -52,4 +52,15 @@ abstract class OffbeatModelCollection extends Collection
     {
         return $this->toCollection()->map($callback);
     }
+
+    /**
+     * Group an associative array by a field or using a callback. This will return a basic Collection.
+     * @param array|callable|string $groupBy
+     * @param bool $preserveKeys
+     * @return Collection
+     */
+    public function groupBy($groupBy, $preserveKeys = false): Collection
+    {
+        return $this->toCollection()->groupBy($groupBy, $preserveKeys);
+    }
 }
