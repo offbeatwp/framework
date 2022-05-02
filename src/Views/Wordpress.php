@@ -210,6 +210,16 @@ class Wordpress
         return get_the_title();
     }
 
+    /**
+     * Display the search form.
+     * @param string $ariaLabel ARIA label for the search form. Useful to distinguish multiple search forms on the same page and improve accessibility.
+     * @return string
+     */
+    public function getSearchForm(string $ariaLabel = ''): string
+    {
+        return get_search_form(['echo' => false, 'aria_label' => $ariaLabel]);
+    }
+
     /** Retrieve the ID of the current item in the WordPress Loop. */
     public function getQueriedObjectId(): int
     {
