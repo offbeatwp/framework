@@ -25,6 +25,10 @@ class App
     protected $config = null;
     protected $route;
 
+    final public function __construct() {
+
+    }
+
     public static function singleton()
     {
         if (!isset(static::$instance)) {
