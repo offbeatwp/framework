@@ -19,7 +19,7 @@ final class Form extends Collection
     private $fieldPrefix = '';
     public $parent;
 
-    public function __construct()
+    final public function __construct()
     {
         parent::__construct();
         $this->activeItem = $this;
