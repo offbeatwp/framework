@@ -18,7 +18,7 @@ abstract class AbstractField implements FieldInterface
         $this->init();
     }
 
-    public function init()
+    public function init(): void
     {
 
     }
