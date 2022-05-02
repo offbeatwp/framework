@@ -3,7 +3,7 @@ namespace OffbeatWP\Form\Fields;
 
 class Textalign extends Select {
 
-    public function __construct()
+    public function init()
     {        
         $this->addOptions([
             ''              => __('Default', 'offbeatwp'),

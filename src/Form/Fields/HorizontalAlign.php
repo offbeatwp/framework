@@ -2,8 +2,7 @@
 namespace OffbeatWP\Form\Fields;
 
 class HorizontalAlign extends Select {
-
-    public function __construct()
+    public function init()
     {        
         $this->addOptions([
             ''              => __('Default', 'offbeatwp'),

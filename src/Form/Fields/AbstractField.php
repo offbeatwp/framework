@@ -13,6 +13,16 @@ abstract class AbstractField implements FieldInterface
     /** @var string[]|bool[] */
     public $attributes = [];
 
+    public function __construct()
+    {
+        $this->init();
+    }
+
+    public function init()
+    {
+
+    }
+
     public static function make(string $id, string $label)
     {
         $field = new static();
