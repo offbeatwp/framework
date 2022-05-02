@@ -11,7 +11,7 @@ use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 use OffbeatWP\Form\Fields\FieldInterface;
 
-final class Form extends Collection
+class Form extends Collection
 {
     /** @var Form|FieldsContainerInterface */
     private $activeItem;
