@@ -11,7 +11,7 @@ class UserRoleBuilder
     /** @var class-string<UserModel> */
     private $modelClass;
 
-    private function __construct(string $roleName, string $roleDisplayName)
+    final private function __construct(string $roleName, string $roleDisplayName)
     {
         $this->roleName = $roleName;
         $this->roleDisplayName = $roleDisplayName;

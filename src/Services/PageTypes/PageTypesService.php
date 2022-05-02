@@ -6,6 +6,7 @@ use OffbeatWP\Content\Taxonomy\TermModel;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
 use WP_Query;
+use WP_Term;
 
 class PageTypesService extends AbstractService
 {
@@ -106,7 +107,7 @@ class PageTypesService extends AbstractService
         } else {
             $term = get_term_by('slug', $pageType, $taxonomy);
 
-            if ($term && !is_wp_error($term)) {
+            if ($term instanceof WP_Term) {
                 wp_set_object_terms($postId, $term->term_id, $taxonomy, false);
             }
         }

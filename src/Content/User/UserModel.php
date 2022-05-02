@@ -26,7 +26,7 @@ class UserModel
     }
 
     /** @var WP_User|int|null */
-    public function __construct($user = null)
+    final public function __construct($user = null)
     {
         if ($user === null) {
             $user = new WP_User();
