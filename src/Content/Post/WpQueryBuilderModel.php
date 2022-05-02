@@ -12,7 +12,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
      * @throws OffbeatInvalidModelException
      * @param class-string<PostModel> $modelClass
      */
-    public function __construct(string $modelClass)
+    final public function __construct(string $modelClass)
     {
         $this->model = $modelClass;
 

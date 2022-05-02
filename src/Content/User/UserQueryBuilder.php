@@ -21,8 +21,8 @@ class UserQueryBuilder
     {
         $this->modelClass = $modelClass;
 
-        if ($this->modelClass::definedUserRoles() !== null) {
-            $this->whereRoleIn($this->modelClass::definedUserRoles());
+        if ($modelClass::definedUserRoles() !== null) {
+            $this->whereRoleIn($modelClass::definedUserRoles());
         }
     }
 

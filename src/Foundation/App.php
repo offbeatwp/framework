@@ -17,7 +17,7 @@ use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
-final class App
+class App
 {
     private static $instance;
     public $container;
@@ -29,6 +29,7 @@ final class App
 
     }
 
+    /** @return static */
     public static function singleton()
     {
         if (!isset(static::$instance)) {
@@ -82,6 +83,10 @@ final class App
         }
     }
 
+    /**
+     * @param class-string $serviceClass
+     * @param $containerBuilder
+     */
     private function initiateService($serviceClass, $containerBuilder): void
     {
         if ($this->isServiceInitiated($serviceClass)) {

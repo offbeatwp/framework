@@ -14,7 +14,7 @@ class RestEndpointBuilder
     public $args = [];
     public $permissionCallback = '__return_true';
 
-    public function __construct(string $namespace, string $route, callable $callback)
+    final public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
         $this->route = $route;

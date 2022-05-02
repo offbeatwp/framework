@@ -16,7 +16,7 @@ class TermQueryBuilder
     protected $taxonomy;
 
     /** @param class-string<TermModel> $model */
-    public function __construct($model)
+    final public function __construct($model)
     {
         $this->model = $model;
         $this->taxonomy = $model::TAXONOMY;
