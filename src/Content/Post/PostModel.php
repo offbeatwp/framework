@@ -42,7 +42,7 @@ class PostModel implements PostModelInterface
     }
 
     /** @param WP_Post|int|null $post */
-    public function __construct($post = null)
+    final public function __construct($post = null)
     {
         if ($post === null) {
             $this->wpPost = (object)[];
@@ -55,6 +55,13 @@ class PostModel implements PostModelInterface
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
         }
+
+        $this->init();
+    }
+
+    public function init(): void
+    {
+
     }
 
     /**

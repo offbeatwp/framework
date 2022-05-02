@@ -42,6 +42,12 @@ class UserModel
         }
 
         $this->wpUser = $user;
+        $this->init();
+    }
+
+    public function init(): void
+    {
+
     }
 
     /**
