@@ -11,7 +11,7 @@ class Taxonomy
 {
     public const DEFAULT_TERM_MODEL = TermModel::class;
 
-    /** @var class-string<TermModel> */
+    /** @var class-string<TermModel>[] */
     private $taxonomyModels = [];
 
     /**
