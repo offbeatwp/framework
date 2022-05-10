@@ -2,9 +2,11 @@
 namespace OffbeatWP\Content\Post;
 
 use http\Exception\InvalidArgumentException;
+use http\Exception\UnexpectedValueException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use WP_Post;
 use WP_Query;
 
 class WpQueryBuilder
@@ -158,6 +160,25 @@ class WpQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         return $this->runQuery()->posts;
+    }
+
+    /**
+     * @param bool $forceDelete
+     * @return WP_Post[] Array of all deleted post data.
+     */
+    public function deleteAll(bool $forceDelete): array
+    {
+        $deletedPosts = [];
+
+        foreach ($this->ids() as $id) {
+            if ($deletedPost = wp_delete_post($id, $forceDelete)) {
+                $deletedPosts[] = $deletedPost;
+            } else {
+                throw new UnexpectedValueException('Failed to delete post with id: ' . $id);
+            }
+        }
+
+        return $deletedPosts;
     }
 
     public function count(): int
