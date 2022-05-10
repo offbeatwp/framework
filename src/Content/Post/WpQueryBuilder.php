@@ -145,6 +145,11 @@ class WpQueryBuilder
         return $this;
     }
 
+    public function firstId(): ?int
+    {
+        return $this->ids()[0] ?? null;
+    }
+
     /** @return int[] */
     public function ids(): array
     {
