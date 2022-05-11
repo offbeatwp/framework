@@ -41,7 +41,10 @@ class PostModel implements PostModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    /** @param WP_Post|int|null $post */
+    /**
+     * @final
+     * @param WP_Post|int|null $post
+     */
     public function __construct($post = null)
     {
         if ($post === null) {
@@ -885,6 +888,19 @@ class PostModel implements PostModelInterface
     {
         $post = offbeat('post')->get();
         return ($post instanceof static) ? $post : null;
+    }
+
+    /**
+     * Create a PostModel with an ID without running get_post.
+     * @param int $id Only accepts and ID as parameter.
+     * @return static
+     */
+    public static function createLazy(int $id)
+    {
+        $model = new static(null);
+        $model->setId($id);
+
+        return $model;
     }
 
     public static function query(): WpQueryBuilderModel
