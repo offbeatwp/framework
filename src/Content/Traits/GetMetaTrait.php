@@ -124,11 +124,6 @@ trait GetMetaTrait
         return $models;
     }
 
-    public function getMetaPostModel(string $key): ?PostModel
-    {
-        return offbeat('post')->get($this->getMetaInt($key));
-    }
-
     /**
      * Retrieve a meta value as a collection.<br/>
      * If the meta value is falsy or does not exist, then <b>an empty collection</b> is returned.
