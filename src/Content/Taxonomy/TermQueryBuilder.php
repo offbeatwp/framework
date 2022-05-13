@@ -103,7 +103,7 @@ class TermQueryBuilder
     /** @return int[] */
     public function ids(): array
     {
-        $this->queryVars['number'] = $this->queryVars['number'] ?? -1;
+        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
