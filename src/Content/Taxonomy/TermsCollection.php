@@ -33,6 +33,7 @@ class TermsCollection extends OffbeatModelCollection
     }
 
     /**
+     * @deprecated
      * Retrieves all object Ids within this collection as an array.
      * @return int[]
      */
@@ -40,6 +41,18 @@ class TermsCollection extends OffbeatModelCollection
         return array_map(static function (TermModel $model) {
             return $model->getId() ?: 0;
         }, $this->items);
+    }
+
+    /** @return string[] Returns an array of term names indexed by their id. */
+    public function getNames(): array
+    {
+        $names = [];
+
+        $this->each(function (TermModel $model) use (&$names) {
+            $names[$model->getId()] = $model->getName();
+        });
+
+        return $names;
     }
 
     /** @param int|WP_Term|TermModel $item */
