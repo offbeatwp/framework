@@ -225,4 +225,9 @@ class Wordpress
     {
         return get_queried_object_id();
     }
+
+    public function isMobile(): bool
+    {
+        return wp_is_mobile();
+    }
 }
