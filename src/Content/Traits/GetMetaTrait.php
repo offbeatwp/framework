@@ -83,7 +83,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as a floating point number.<br/>
-     * If the meta value does not exist, then <b>0</b> is returned.
+     * If the meta value does not exist then <b>0</b> is returned.
      */
     public function getMetaFloat(string $key): float
     {
@@ -101,7 +101,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as an array.<br/>
-     * If the meta value does not exist, then <b>an empty array</b> is returned.
+     * If the meta value does not exist then <b>an empty array</b> is returned.
      */
     public function getMetaArray(string $key): array
     {
