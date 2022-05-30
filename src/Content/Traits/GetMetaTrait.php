@@ -65,7 +65,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as a string.<br/>
-     * If the meta value does not exist or is falsy, then an <b>empty string</b> is returned.
+     * If the meta value does not exist then an <b>empty string</b> is returned.
      */
     public function getMetaString(string $key): string
     {
@@ -74,7 +74,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as an integer.<br/>
-     * If the meta value does not exist or is falsy, then <b>0</b> is returned.
+     * If the meta value does not exist then <b>0</b> is returned.
      */
     public function getMetaInt(string $key): int
     {
@@ -83,7 +83,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as a floating point number.<br/>
-     * If the meta value is falsy or does not exist, then <b>0</b> is returned.
+     * If the meta value does not exist then <b>0</b> is returned.
      */
     public function getMetaFloat(string $key): float
     {
@@ -101,7 +101,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as an array.<br/>
-     * If the meta value is falsy or does not exist, then <b>an empty array</b> is returned.
+     * If the meta value does not exist then <b>an empty array</b> is returned.
      */
     public function getMetaArray(string $key): array
     {
@@ -124,10 +124,7 @@ trait GetMetaTrait
         return $models;
     }
 
-    /**
-     * Retrieve a meta value as a collection.<br/>
-     * If the meta value is falsy or does not exist, then <b>an empty collection</b> is returned.
-     */
+    /** Retrieve a meta value as a collection.<br/> */
     public function getMetaCollection(string $key): Collection
     {
         return collect($this->getMetaArray($key));
@@ -135,11 +132,12 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as a Carbon Date.<br/>
-     * If the meta value is falsy, does not exist, or cannot be parsed by carbon then <b>null</b> is returned.
+     * If the meta value does not exist or cannot be parsed by carbon then <b>null</b> is returned.
      */
     public function getMetaCarbon(string $key): ?Carbon
     {
         $value = $this->getRawMetaValue($key, null);
+
         if (!$value) {
             return null;
         }
