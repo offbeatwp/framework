@@ -230,4 +230,9 @@ class Wordpress
     {
         return is_page_template($name);
     }
+  
+    public function isMobile(): bool
+    {
+        return wp_is_mobile();
+    }
 }
