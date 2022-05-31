@@ -225,9 +225,4 @@ class Wordpress
     {
         return get_queried_object_id();
     }
-
-    public function isPageTemplate(string $name): bool
-    {
-        return is_page_template($name);
-    }
 }
