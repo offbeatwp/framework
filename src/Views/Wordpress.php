@@ -226,6 +226,11 @@ class Wordpress
         return get_queried_object_id();
     }
 
+    public function isPageTemplate(string $name): bool
+    {
+        return is_page_template($name);
+    }
+  
     public function isMobile(): bool
     {
         return wp_is_mobile();
