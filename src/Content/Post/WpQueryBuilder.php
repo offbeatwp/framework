@@ -41,7 +41,10 @@ class WpQueryBuilder
 
     public function get(): PostsCollection
     {
-        $this->queryVars['no_found_rows'] = $this->queryVars['no_found_rows'] ?? true;
+        if (!isset($this->queryVars['no_found_rows'])) {
+            $isPaged = (bool)($this->queryVars['paged'] ?? false);
+            $this->queryVars['no_found_rows'] = !$isPaged;
+        }
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
