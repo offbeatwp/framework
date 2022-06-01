@@ -136,12 +136,12 @@ class PostModel implements PostModelInterface
         // Set ID to null
         $this->setId(null);
         // Since the new post is unsaved, we'll have to add all meta values
-        $this->refreshMetaInput();
+        $this->refreshMetaInput(false);
     }
 
-    protected function refreshMetaInput(): void
+    protected function refreshMetaInput(bool $ignoreLowDashPrefix = true): void
     {
-        foreach ($this->getMetaValues() as $key => $value) {
+        foreach ($this->getMetaValues($ignoreLowDashPrefix) as $key => $value) {
             if (!array_key_exists($key, $this->metaInput)) {
                 $this->setMeta($key, $value);
             }
@@ -366,13 +366,16 @@ class PostModel implements PostModelInterface
         return $this->metas;
     }
 
-    /** @return array An array of all values whose key is not prefixed with <i>_</i> */
-    public function getMetaValues(): array
+    /**
+     * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
+     * @return array An array of all values whose key is not prefixed with <i>_</i>
+     */
+    public function getMetaValues(bool $ignoreLowDashPrefix = true): array
     {
         $values = [];
 
         foreach ($this->getMetas() as $key => $value) {
-            if ($key[0] !== '_') {
+            if (!$ignoreLowDashPrefix || $key[0] !== '_') {
                 $values[$key] = reset($value);
             }
         }
