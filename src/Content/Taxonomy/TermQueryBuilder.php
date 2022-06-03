@@ -126,6 +126,18 @@ class TermQueryBuilder
         return $result;
     }
 
+    public function firstOrNew(): TermModel
+    {
+        $result = $this->first();
+
+        if (!$result) {
+            $model = offbeat('taxonomy')->getModelByTaxonomy($this->taxonomy);
+            return new $model(null);
+        }
+
+        return $result;
+    }
+
     public function findById(?int $id): ?TermModel
     {
         if ($id < 0) {

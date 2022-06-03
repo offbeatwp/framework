@@ -89,7 +89,7 @@ class TermModel implements TermModelInterface
 
     public function getSlug(): string
     {
-        return $this->wpTerm->slug;
+        return $this->wpTerm->slug ?? '';
     }
 
     public function getDescription(): string
