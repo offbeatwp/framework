@@ -307,6 +307,15 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * @param string $format
+     * @return false|string
+     */
+    public function getModifiedDate(string $format = '')
+    {
+        return get_the_modified_date($format, $this->wpPost);
+    }
+
+    /**
      * @param bool $formatted
      * @return false|string
      */
