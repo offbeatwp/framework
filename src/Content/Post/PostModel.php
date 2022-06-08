@@ -17,6 +17,7 @@ use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Error;
 use WP_Post;
 use WP_Post_Type;
+use WP_Term;
 use WP_User;
 
 class PostModel implements PostModelInterface
@@ -33,6 +34,8 @@ class PostModel implements PostModelInterface
     protected $metaToUnset = [];
     /** @var array|false|string */
     protected $metas = false;
+    /** @var WP_Term[][] */
+    private $termsToSet = [];
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -499,7 +502,7 @@ class PostModel implements PostModelInterface
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
-        return $model::whereRelatedToPost($this->getId());
+        return $model::whereRelatedToPost($this->getId() ?? [0]);
     }
 
     /**
@@ -760,9 +763,16 @@ class PostModel implements PostModelInterface
     /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
     public function replicate()
     {
-        return clone $this;
-    }
+        $copy = clone $this;
 
+        foreach(get_object_taxonomies($this->wpPost) as $taxonomyName) {
+            if ($terms = get_the_terms($this->getId(), $taxonomyName)) {
+                $this->termsToSet[$taxonomyName][] = $terms;
+            }
+        }
+
+        return $copy;
+    }
     public function save(): int
     {
         if ($this->metaInput) {
@@ -790,6 +800,11 @@ class PostModel implements PostModelInterface
             foreach ($this->metaToUnset as $keyToUnset => $valueToUnset) {
                 delete_post_meta($updatedPostId, $keyToUnset, $valueToUnset);
             }
+        }
+
+        // Attach Terms
+        foreach ($this->termsToSet as $tags) {
+            wp_set_post_terms($updatedPostId, $tags);
         }
 
         return $updatedPostId;
