@@ -34,7 +34,7 @@ class PostModel implements PostModelInterface
     protected $metaToUnset = [];
     /** @var array|false|string */
     protected $metas = false;
-    /** @var TermModel[] */
+    /** @var TermModel[][]|bool[][] */
     private $termsToSet = [];
 
     use BaseModelTrait;
@@ -307,6 +307,15 @@ class PostModel implements PostModelInterface
     public function getPostDate(string $format = '')
     {
         return get_the_date($format, $this->wpPost);
+    }
+
+    /**
+     * @param string $format
+     * @return false|string
+     */
+    public function getModifiedDate(string $format = '')
+    {
+        return get_the_modified_date($format, $this->wpPost);
     }
 
     /**
@@ -760,7 +769,7 @@ class PostModel implements PostModelInterface
             $terms = $this->getTerms($taxonomyName)->excludeEmpty(false)->all();
 
             foreach ($terms as $term) {
-                $copy->termsToSet[] = $term;
+                $copy->termsToSet[] = ['term' => $term, 'append' => false];
             }
         }
 
@@ -785,7 +794,7 @@ class PostModel implements PostModelInterface
 
             // Attach Terms
             foreach ($this->termsToSet as $term) {
-                wp_set_post_terms($insertedPostId, $term->getId(), $term->getTaxonomy(), true);
+                wp_set_post_terms($insertedPostId, $term['term']->getId(), $term['term']->getTaxonomy(), $term['append']);
             }
 
             return $insertedPostId;
@@ -803,7 +812,7 @@ class PostModel implements PostModelInterface
 
         // Attach Terms
         foreach ($this->termsToSet as $term) {
-            wp_set_post_terms($updatedPostId, $term->getId(), $term->getTaxonomy(), true);
+            wp_set_post_terms($updatedPostId, $term['term']->getId(), $term['term']->getTaxonomy(), $term['append']);
         }
 
         return $updatedPostId;
