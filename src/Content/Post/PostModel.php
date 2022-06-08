@@ -9,7 +9,6 @@ use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
-use OffbeatWP\Content\Taxonomy\TermModel;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -34,7 +33,7 @@ class PostModel implements PostModelInterface
     protected $metaToUnset = [];
     /** @var array|false|string */
     protected $metas = false;
-    /** @var TermModel[][]|bool[][] */
+    /** @var int[][][]|bool[][]|string[][] */
     private $termsToSet = [];
 
     use BaseModelTrait;
@@ -766,11 +765,8 @@ class PostModel implements PostModelInterface
         $copy = clone $this;
 
         foreach(get_object_taxonomies($this->wpPost) as $taxonomyName) {
-            $terms = $this->getTerms($taxonomyName)->excludeEmpty(false)->all();
-
-            foreach ($terms as $term) {
-                $copy->termsToSet[] = ['term' => $term, 'append' => false];
-            }
+            $termIds = $this->getTerms($taxonomyName)->excludeEmpty(false)->ids();
+            $copy->termsToSet[] = ['termIds' => $termIds, 'taxonomy' => $taxonomyName, 'append' => false];
         }
 
         return $copy;
@@ -794,7 +790,7 @@ class PostModel implements PostModelInterface
 
             // Attach Terms
             foreach ($this->termsToSet as $term) {
-                wp_set_post_terms($insertedPostId, $term['term']->getId(), $term['term']->getTaxonomy(), $term['append']);
+                wp_set_post_terms($insertedPostId, $term['termIds'], $term['taxonomy'], $term['append']);
             }
 
             return $insertedPostId;
@@ -812,7 +808,7 @@ class PostModel implements PostModelInterface
 
         // Attach Terms
         foreach ($this->termsToSet as $term) {
-            wp_set_post_terms($updatedPostId, $term['term']->getId(), $term['term']->getTaxonomy(), $term['append']);
+            wp_set_post_terms($updatedPostId, $term['termIds'], $term['taxonomy'], $term['append']);
         }
 
         return $updatedPostId;
