@@ -33,7 +33,7 @@ class PostModel implements PostModelInterface
     protected $metaToUnset = [];
     /** @var array|false|string */
     protected $metas = false;
-    /** @var int[][][]|bool[][]|string[][] */
+    /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected $termsToSet = [];
 
     use BaseModelTrait;
@@ -324,16 +324,6 @@ class PostModel implements PostModelInterface
     {
         return get_the_modified_date($format, $this->wpPost) ?: null;
     }
-
-    /**
-     * @param string $format
-     * @return false|string
-     */
-    public function getModifiedDate(string $format = '')
-    {
-        return get_the_modified_date($format, $this->wpPost);
-    }
-
     /**
      * @param bool $formatted
      * @return false|string
