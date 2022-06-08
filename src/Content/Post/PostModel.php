@@ -9,6 +9,7 @@ use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
+use OffbeatWP\Content\Taxonomy\TermModel;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -17,7 +18,6 @@ use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Error;
 use WP_Post;
 use WP_Post_Type;
-use WP_Term;
 use WP_User;
 
 class PostModel implements PostModelInterface
@@ -34,7 +34,7 @@ class PostModel implements PostModelInterface
     protected $metaToUnset = [];
     /** @var array|false|string */
     protected $metas = false;
-    /** @var WP_Term[][] */
+    /** @var TermModel[] */
     private $termsToSet = [];
 
     use BaseModelTrait;
@@ -757,13 +757,16 @@ class PostModel implements PostModelInterface
         $copy = clone $this;
 
         foreach(get_object_taxonomies($this->wpPost) as $taxonomyName) {
-            if ($terms = get_the_terms($this->getId(), $taxonomyName)) {
-                $this->termsToSet[$taxonomyName][] = $terms;
+            $terms = $this->getTerms($taxonomyName)->excludeEmpty(false)->all();
+
+            foreach ($terms as $term) {
+                $copy->termsToSet[] = $term;
             }
         }
 
         return $copy;
     }
+
     public function save(): int
     {
         if ($this->metaInput) {
@@ -780,6 +783,11 @@ class PostModel implements PostModelInterface
                 $this->wpPost = $insertedPost;
             }
 
+            // Attach Terms
+            foreach ($this->termsToSet as $term) {
+                wp_set_post_terms($insertedPostId, $term->getId(), $term->getTaxonomy(), true);
+            }
+
             return $insertedPostId;
         }
 
@@ -794,8 +802,8 @@ class PostModel implements PostModelInterface
         }
 
         // Attach Terms
-        foreach ($this->termsToSet as $tags) {
-            wp_set_post_terms($updatedPostId, $tags);
+        foreach ($this->termsToSet as $term) {
+            wp_set_post_terms($updatedPostId, $term->getId(), $term->getTaxonomy(), true);
         }
 
         return $updatedPostId;
