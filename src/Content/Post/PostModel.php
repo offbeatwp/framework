@@ -34,7 +34,7 @@ class PostModel implements PostModelInterface
     /** @var array|false|string */
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][] */
-    private $termsToSet = [];
+    protected $termsToSet = [];
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -217,6 +217,18 @@ class PostModel implements PostModelInterface
     public function setContent(string $content)
     {
         $this->wpPost->post_content = $content;
+        return $this;
+    }
+
+    /**
+     * @param int|string $terms Id array of the term(s) to set or string of Ids separated by comma's.
+     * @param string $taxonomy Taxonomy name of the term(s) to set.
+     * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
+     * @return static
+     */
+    public function setTerms($terms, string $taxonomy, bool $append = false)
+    {
+        $this->termsToSet[] = ['termIds' => $terms, 'taxonomy' => $taxonomy, 'append' => $append];
         return $this;
     }
 
