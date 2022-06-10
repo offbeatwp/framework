@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Enqueue;
 
-class WpStyleEnqueueBuilder extends AbstractEnqueueBuilder
+final class WpStyleEnqueueBuilder extends AbstractEnqueueBuilder
 {
     protected $media = 'all';
 
@@ -25,8 +25,13 @@ class WpStyleEnqueueBuilder extends AbstractEnqueueBuilder
         }
     }
 
-    public function register(string $handle): bool
+    /** @return WpStyleHolder|null Returns a WpStyle instance if script was registered successfully or null if it was not. */
+    public function register(string $handle)
     {
-        return wp_register_style($handle, $this->src, $this->deps, $this->version, $this->media);
+        if (wp_register_style($handle, $this->src, $this->deps, $this->version, $this->media)) {
+            return new WpStyleHolder($handle);
+        }
+
+        return null;
     }
 }

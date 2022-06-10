@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Enqueue;
 use InvalidArgumentException;
 
 /** This class requires Wordpress 4.5 or higher. */
-class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
+final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
 {
     /** @var array{value: string, inFooter: bool} */
     protected $bindingsToPass = [];
@@ -78,8 +78,13 @@ class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
         }
     }
 
-    public function register(string $handle): bool
+    /** @return WpScriptHolder|null Returns a WpScript instance if script was registered successfully or null if it was not. */
+    public function register(string $handle)
     {
-        return wp_register_script($handle, $this->src, $this->deps, $this->version, $this->inFooter);
+        if (wp_register_script($handle, $this->src, $this->deps, $this->version, $this->inFooter)) {
+            return new WpScriptHolder($handle);
+        }
+
+        return null;
     }
 }
