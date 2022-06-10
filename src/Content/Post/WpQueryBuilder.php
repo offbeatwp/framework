@@ -367,6 +367,13 @@ class WpQueryBuilder
         return $this;
     }
 
+    /** @param int[] $ids */
+    public function whereAuthorIdIn(array $ids): WpQueryBuilder
+    {
+        $this->queryVars['author__in'] = $ids;
+        return $this;
+    }
+
     /**
      * When <i>true</i> is passed, uses the page ID from get_query_var.<br/>
      * When an <i>integer</i> is passed, the page with that number will be loaded.<br/>
