@@ -71,7 +71,8 @@ abstract class AbstractEnqueueBuilder
         return $this;
     }
 
-    abstract public function register(string $handle): bool;
+    /** @return AbstractAssetHolder|null */
+    abstract public function register(string $handle);
 
     abstract public function enqueue(string $handle): void;
 }
