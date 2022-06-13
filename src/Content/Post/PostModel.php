@@ -645,7 +645,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null|false
+     * @return PostModel|null
      */
     public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -656,7 +656,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return string|PostModel|null|false
+     * @return PostModel|null
      */
     public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -669,23 +669,25 @@ class PostModel implements PostModelInterface
      * @param string $excludedTerms
      * @param bool $previous
      * @param string $taxonomy
-     * @return string|PostModel|null
+     * @return PostModel|null
      */
     public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
     {
-        $currentPost = $GLOBALS['post'];
+        $currentPost = $GLOBALS['post'] ?? null;
 
         $GLOBALS['post'] = $this->wpPost;
 
         $adjacentPost = get_adjacent_post($inSameTerm, $excludedTerms, $previous, $taxonomy);
 
-        $GLOBALS['post'] = $currentPost;
+        if ($currentPost !== null) {
+            $GLOBALS['post'] = $currentPost;
+        }
 
         if ($adjacentPost) {
             return offbeat('post')->convertWpPostToModel($adjacentPost);
         }
 
-        return false;
+        return null;
     }
 
     /**
