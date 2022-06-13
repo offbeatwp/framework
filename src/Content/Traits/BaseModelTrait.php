@@ -29,6 +29,18 @@ trait BaseModelTrait
         return $item;
     }
 
+    /** @return static|null */
+    public static function first()
+    {
+        return static::query()->first();
+    }
+
+    /** @return static */
+    public static function firstOrFail()
+    {
+        return static::query()->firstOrFail();
+    }
+
     /** @return static[] */
     public static function allAsArray()
     {
