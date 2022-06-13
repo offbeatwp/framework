@@ -110,6 +110,32 @@ class TermQueryBuilder
         return (new WP_Term_Query($this->queryVars))->get_terms();
     }
 
+    /**
+     * @param bool $indexById When true, the names will be indexed with their respective term ID.
+     * @return string[]
+     */
+    public function names(bool $indexById): array
+    {
+        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
+        $this->queryVars['fields'] = ($indexById) ? 'id=>name' : 'names';
+        $this->queryVars['no_found_rows'] = true;
+
+        return (new WP_Term_Query($this->queryVars))->get_terms();
+    }
+
+    /**
+     * @param bool $indexById When true, the slugs will be indexed with their respective term ID.
+     * @return string[]
+     */
+    public function slugs(bool $indexById): array
+    {
+        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
+        $this->queryVars['fields'] = ($indexById) ? 'id=>slug' : 'slugs';
+        $this->queryVars['no_found_rows'] = true;
+
+        return (new WP_Term_Query($this->queryVars))->get_terms();
+    }
+
     public function first(): ?TermModel
     {
         return $this->take(1)->first();
