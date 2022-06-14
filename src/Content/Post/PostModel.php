@@ -17,6 +17,7 @@ use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Error;
 use WP_Post;
 use WP_Post_Type;
+use WP_Term;
 use WP_User;
 
 class PostModel implements PostModelInterface
@@ -221,7 +222,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param int|string $terms Id array of the term(s) to set or string of Ids separated by comma's.
+     * @param string|string[]|int[]|WP_Term[] $terms An array of terms to set for the post, or a string of term slugs separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
      * @param string $taxonomy Taxonomy name of the term(s) to set.
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
      * @return static
@@ -797,10 +798,7 @@ class PostModel implements PostModelInterface
                 $this->wpPost = $insertedPost;
             }
 
-            // Attach Terms
-            foreach ($this->termsToSet as $term) {
-                wp_set_post_terms($insertedPostId, $term['termIds'], $term['taxonomy'], $term['append']);
-            }
+            $this->attachTerms($insertedPostId);
 
             return $insertedPostId;
         }
@@ -816,11 +814,16 @@ class PostModel implements PostModelInterface
         }
 
         // Attach Terms
-        foreach ($this->termsToSet as $term) {
-            wp_set_post_terms($updatedPostId, $term['termIds'], $term['taxonomy'], $term['append']);
-        }
+        $this->attachTerms($updatedPostId);
 
         return $updatedPostId;
+    }
+
+    private function attachTerms(int $id)
+    {
+        foreach ($this->termsToSet as $term) {
+            wp_set_post_terms($id, $term['termIds'], $term['taxonomy'], $term['append']);
+        }
     }
 
     /** @return positive-int */
