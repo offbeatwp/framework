@@ -222,7 +222,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param string|string[]|int[]|WP_Term[] $terms An array of terms to set for the post, or a string of terms separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
+     * @param string|string[]|int[]|WP_Term[] $terms An array of terms to set for the post, or a string of term slugs separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
      * @param string $taxonomy Taxonomy name of the term(s) to set.
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
      * @return static
