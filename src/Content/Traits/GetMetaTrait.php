@@ -91,6 +91,29 @@ trait GetMetaTrait
     }
 
     /**
+     * Retrieve a meta value as a localised formatted date string.
+     * @param string $key Meta key.
+     * @param string $format The date format. If not specified, will default to the date_format WordPress option.
+     * @return string <b>Formatted date string</b> if the meta key exists and is a valid date. Otherwise, an <b>empty string</b> is returned.
+     */
+    public function getMetaDate(string $key, string $format = ''): string
+    {
+        $strDate = strtotime($this->getMetaString($key));
+
+        if ($strDate) {
+            if ($format) {
+                return date_i18n($format, $strDate);
+            }
+
+            if ($defaultFormat = get_option('date_format')) {
+                return date_i18n($defaultFormat, $strDate);
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * Retrieve a meta value as a boolean.<br/>
      * If the meta value does not exist then <b>false</b> is returned.
      */
