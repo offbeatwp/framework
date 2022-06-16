@@ -224,6 +224,17 @@ class WpQueryBuilder
         return $this;
     }
 
+    /**
+     * Search keyword(s).<br>
+     * Prepending a term with a hyphen will exclude posts matching that term.<br>
+     * EG: 'pillow -sofa' will return posts containing 'pillow' but not 'sofa'.
+     */
+    public function search(string $searchString) {
+        $this->queryVars['s'] = $searchString;
+
+        return $this;
+    }
+
     /** @param string|string[] $postTypes */
     public function wherePostType($postTypes): WpQueryBuilder
     {
