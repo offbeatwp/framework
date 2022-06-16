@@ -99,7 +99,7 @@ class PostTypeBuilder
         if (isset($labels['enter_title_here'])) {
             add_filter('enter_title_here', function ($text, WP_Post $post) use ($labels) {
                 return ($post->post_type === $this->getPostType()) ? $labels['enter_title_here'] : $text;
-            });
+            }, 10, 2);
             unset($labels['enter_title_here']);
         }
 
