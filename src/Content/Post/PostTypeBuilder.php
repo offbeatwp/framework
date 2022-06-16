@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Illuminate\Support\Traits\Macroable;
+use WP_Post;
 use WP_Query;
 
 class PostTypeBuilder
@@ -96,8 +97,8 @@ class PostTypeBuilder
 
         // WP requires the use of a filter to add unique title placeholder text....
         if (isset($labels['enter_title_here'])) {
-            add_filter('enter_title_here', function () use ($labels) {
-                return $labels['enter_title_here'];
+            add_filter('enter_title_here', function ($text, WP_Post $post) use ($labels) {
+                return ($post->post_type === $this->getPostType()) ? $labels['enter_title_here'] : $text;
             });
             unset($labels['enter_title_here']);
         }
