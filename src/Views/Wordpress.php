@@ -226,6 +226,12 @@ class Wordpress
         return get_queried_object_id();
     }
 
+    /** @return string|null Retrieves the customisable header image url. */
+    public function getHeaderImageUrl(): ?string
+    {
+        return get_header_image() ?: null;
+    }
+
     public function isMobile(): bool
     {
         return wp_is_mobile();
