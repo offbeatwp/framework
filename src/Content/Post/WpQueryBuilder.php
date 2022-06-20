@@ -46,9 +46,9 @@ class WpQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
-        do_action('offbeatwp/posts/query/before_get', $this);
+        $query = $this->runQuery();
 
-        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($this->runQuery()), $this);
+        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
     }
 
     public function getQueryVars(): array
@@ -133,7 +133,11 @@ class WpQueryBuilder
     /** @return WP_Query|IWpQuerySubstitute */
     private function runQuery()
     {
-        return new $this->wpQueryClass($this->queryVars);
+        do_action('offbeatwp/posts/query/before_get', $this);
+        $query = new $this->wpQueryClass($this->queryVars);
+        do_action('offbeatwp/posts/query/after_get', $this);
+
+        return $query;
     }
 
     /**
