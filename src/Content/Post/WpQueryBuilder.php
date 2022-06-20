@@ -15,6 +15,8 @@ class WpQueryBuilder
 
     protected $queryVars = [];
     private $wpQueryClass = WP_Query::class;
+    /** @var int */
+    private $targetBlogId = null;
 
     public function all(): PostsCollection
     {
@@ -48,7 +50,7 @@ class WpQueryBuilder
 
         do_action('offbeatwp/posts/query/before_get', $this);
 
-        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($this->runQuery()), $this);
+        return apply_filters('offbeatwp/posts/query/get', $this->getQueryResults('collection'), $this);
     }
 
     public function getQueryVars(): array
@@ -130,10 +132,41 @@ class WpQueryBuilder
         return $result;
     }
 
-    /** @return WP_Query|IWpQuerySubstitute */
-    private function runQuery()
+    /**
+     * @param string $type Options are 'collection', 'count' and 'posts'.
+     * @return PostsCollection|int|int[]
+     */
+    private function getQueryResults(string $type)
     {
-        return new $this->wpQueryClass($this->queryVars);
+        if ($this->targetBlogId) {
+            switch_to_blog($this->targetBlogId);
+        }
+
+        /** @var WP_Query|object $query */
+        $query = new $this->wpQueryClass($this->queryVars);
+        $value = null;
+
+        if ($type === 'collection') {
+            $value = new PostsCollection($query);
+        }
+
+        if ($type === 'count') {
+            $value = $query->post_count;
+        }
+
+        if ($type === 'posts') {
+            $value = $query->posts;
+        }
+
+        if ($value !== null) {
+            if ($this->targetBlogId) {
+                restore_current_blog();
+            }
+
+            return $value;
+        }
+
+        throw new UnexpectedValueException('Unexpected query type!');
     }
 
     /**
@@ -162,7 +195,7 @@ class WpQueryBuilder
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
-        return $this->runQuery()->posts;
+        return $this->getQueryResults('post');
     }
 
     /**
@@ -190,7 +223,7 @@ class WpQueryBuilder
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
-        return $this->runQuery()->post_count;
+        return $this->getQueryResults('count');
     }
 
     /**
@@ -413,6 +446,17 @@ class WpQueryBuilder
     public function suppressFilters(bool $suppress = true): WpQueryBuilder
     {
         $this->queryVars['suppress_filters'] = $suppress;
+
+        return $this;
+    }
+
+    /**
+     * @param int $siteId
+     * @return $this
+     */
+    public function fromSite($siteId)
+    {
+        $this->targetBlogId = $siteId;
 
         return $this;
     }
