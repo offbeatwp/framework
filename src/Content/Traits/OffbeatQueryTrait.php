@@ -11,6 +11,23 @@ trait OffbeatQueryTrait
         return $this;
     }
 
+    /**
+     * Get objects where the meta value is NOT equal to the given value.
+     * @param non-empty-string $metaKey
+     * @param scalar $value
+     * @return static
+     */
+    public function whereMetaIsNot(string $metaKey, $value)
+    {
+        $this->whereMeta([
+            'relation' => 'OR',
+            ['key' => $metaKey, 'compare' => '!=', 'value' => $value],
+            ['key' => $metaKey, 'compare' => 'NOT EXISTS']
+        ]);
+
+        return $this;
+    }
+
     /** @return static */
     public function whereMetaIn(string $metaKey, array $values)
     {
