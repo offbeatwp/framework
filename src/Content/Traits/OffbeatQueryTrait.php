@@ -4,7 +4,12 @@ namespace OffbeatWP\Content\Traits;
 
 trait OffbeatQueryTrait
 {
-    /** @return static */
+    /**
+     * Get objects where the meta value is equal to the given value.
+     * @param string $metaKey
+     * @param scalar|null $value
+     * @return $this
+     */
     public function whereMetaIs(string $metaKey, $value)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => '==', 'value' => $value]);
@@ -14,7 +19,7 @@ trait OffbeatQueryTrait
     /**
      * Get objects where the meta value is NOT equal to the given value.
      * @param non-empty-string $metaKey
-     * @param scalar $value
+     * @param scalar|null $value
      * @return static
      */
     public function whereMetaIsNot(string $metaKey, $value)
