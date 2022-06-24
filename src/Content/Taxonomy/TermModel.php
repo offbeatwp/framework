@@ -189,6 +189,11 @@ class TermModel implements TermModelInterface
         return get_taxonomy($this->wpTerm->taxonomy) ?: null;
     }
 
+    public function count(): int
+    {
+        return $this->wpTerm->count;
+    }
+
     /**
      * When called on TermModel, empty terms <b>will</b> be included.
      * @return static[]
