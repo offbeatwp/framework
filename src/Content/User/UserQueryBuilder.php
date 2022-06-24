@@ -132,4 +132,23 @@ class UserQueryBuilder
 
         return $this;
     }
+
+    public function limit(int $amount): UserQueryBuilder
+    {
+        $this->queryVars['number'] = $amount;
+        return $this;
+    }
+
+    /** @return int[] */
+    public function Ids(): array
+    {
+        $this->queryVars['fields'] = 'ID';
+        return (new WP_User_Query($this->queryVars))->get_results();
+    }
+
+    public function firstId(): ?int
+    {
+        $this->limit(1);
+        return $this->Ids()[0] ?? null;
+    }
 }
