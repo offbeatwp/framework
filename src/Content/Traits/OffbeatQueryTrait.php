@@ -81,7 +81,7 @@ trait OffbeatQueryTrait
 
     public function exists(): bool
     {
-        return (bool)$this->first();
+        return (bool)$this->firstId();
     }
 
     /** @return static */
