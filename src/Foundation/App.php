@@ -231,6 +231,6 @@ class App
             return $actionReturn;
         }
 
-        return new WP_Error('broke', __('No route matched', 'offbeatwp'));
+        return new WP_Error('broke', sprintf(__('No route matched on URI: %s', 'offbeatwp'), $_SERVER['REQUEST_URI'] ?? '???'));
     }
 }
