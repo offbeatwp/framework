@@ -8,6 +8,7 @@ use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\UserModelException;
+use OffbeatWP\Support\Wordpress\User;
 use WP_User;
 
 class UserModel
@@ -260,6 +261,20 @@ class UserModel
     public static function getCurrentUserOrFail()
     {
         return self::query()->findByIdOrFail(get_current_user_id());
+    }
+
+    /** @return static|null Returns a user with the specified email address */
+    public static function findByEmail(string $email)
+    {
+        if ($wpUser = get_user_by('email', $email)) {
+            $user = User::convertWpUserToModel($wpUser);
+
+            if ($user instanceof static) {
+                return $user;
+            }
+        }
+
+        return null;
     }
 
     /**
