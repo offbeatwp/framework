@@ -237,6 +237,11 @@ class UserModel
         return $this->getRoles()[$index] ?? null;
     }
 
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->getRoles(), true);
+    }
+
     /**
      * @param int $index The index of the role to be translated.
      * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings. Default 'default'.
