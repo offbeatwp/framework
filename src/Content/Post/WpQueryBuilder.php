@@ -1,11 +1,11 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use http\Exception\InvalidArgumentException;
-use http\Exception\UnexpectedValueException;
+use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
 
@@ -21,6 +21,10 @@ class WpQueryBuilder
         return $this->take(-1);
     }
 
+    /**
+     * @param WP_Post $post
+     * @return PostModel|null
+     */
     public function postToModel($post)
     {
         return offbeat('post')->convertWpPostToModel($post);
@@ -141,22 +145,17 @@ class WpQueryBuilder
     }
 
     /**
-     * @param positive-int $limit
+     * @param positive-int $amount
      * @return $this
      */
-    public function limit(int $limit)
+    public function limit(int $amount)
     {
-        if ($limit <= 0) {
-            throw new InvalidArgumentException("Limit expects a positive number, but received {$limit}.");
+        if ($amount <= 0) {
+            throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
         }
 
-        $this->queryVars['posts_per_page'] = $limit;
+        $this->queryVars['posts_per_page'] = $amount;
         return $this;
-    }
-
-    public function firstId(): ?int
-    {
-        return $this->ids()[0] ?? null;
     }
 
     /** @return int[] */

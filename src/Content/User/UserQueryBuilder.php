@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
+use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
@@ -133,8 +134,16 @@ class UserQueryBuilder
         return $this;
     }
 
+    /**
+     * @param positive-int $amount
+     * @return $this
+     */
     public function limit(int $amount): UserQueryBuilder
     {
+        if ($amount <= 0) {
+            throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
+        }
+
         $this->queryVars['number'] = $amount;
         return $this;
     }
@@ -144,11 +153,5 @@ class UserQueryBuilder
     {
         $this->queryVars['fields'] = 'ID';
         return (new WP_User_Query($this->queryVars))->get_results();
-    }
-
-    public function firstId(): ?int
-    {
-        $this->limit(1);
-        return $this->Ids()[0] ?? null;
     }
 }

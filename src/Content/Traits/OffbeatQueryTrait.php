@@ -79,6 +79,11 @@ trait OffbeatQueryTrait
         return $this;
     }
 
+    public function firstId(): ?int
+    {
+        return $this->limit(1)->ids()[0] ?? null;
+    }
+
     public function exists(): bool
     {
         return (bool)$this->firstId();
