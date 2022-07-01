@@ -141,6 +141,11 @@ class TermQueryBuilder
         return $this->take(1)->first();
     }
 
+    public function firstId(): ?int
+    {
+        return $this->ids()[0] ?? null;
+    }
+
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
