@@ -13,6 +13,11 @@ abstract class AbstractField implements FieldInterface
     /** @var string[]|bool[] */
     public $attributes = [];
 
+    /**
+     * @param non-empty-string $id
+     * @param string $label
+     * @return static
+     */
     public static function make(string $id, string $label)
     {
         $field = new static();
@@ -89,13 +94,16 @@ abstract class AbstractField implements FieldInterface
         return $this->required;
     }
 
-    /** @return string[]|bool[] */
+    /** @return scalar[] */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    /** @return string|bool|null */
+    /**
+     * @param string $key
+     * @return scalar|null
+     */
     public function getAttribute($key)
     {
         return $this->getAttributes()[$key] ?? null;
@@ -109,6 +117,10 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param scalar|null $value
+     * @return $this
+     */
     public function default($value): AbstractField
     {
         $this->setAttribute('default', $value);
@@ -137,9 +149,21 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param string $key
+     * @param scalar $value
+     * @return $this
+     */
     public function attribute(string $key, $value): AbstractField
     {
         $this->setAttribute($key, $value);
+
+        return $this;
+    }
+
+    public function width(int $percent): AbstractField
+    {
+        $this->setAttribute('width', $percent);
 
         return $this;
     }
