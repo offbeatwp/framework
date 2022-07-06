@@ -784,39 +784,43 @@ class PostModel implements PostModelInterface
         return $copy;
     }
 
+    /** @return int The ID of the inserted/updated model. Returns <b>0</b> on failure. */
     public function save(): int
     {
         if ($this->metaInput) {
             $this->wpPost->meta_input = $this->metaInput;
         }
 
-        // Insert the post if ID is null
         if ($this->getId() === null) {
-            $insertedPostId = wp_insert_post((array)$this->wpPost);
-            $insertedPost = get_post($insertedPostId);
+            // Insert post
+            $updatedPostId = wp_insert_post((array)$this->wpPost);
+            $insertedPost = get_post($updatedPostId);
 
-            // Update internal wpPost
+            // Set internal wpPost
             if ($insertedPost instanceof WP_Post) {
                 $this->wpPost = $insertedPost;
             }
+        } else {
+            // Update post
+            $updatedPostId = wp_update_post($this->wpPost);
 
-            $this->attachTerms($insertedPostId);
-
-            return $insertedPostId;
-        }
-
-        // Otherwise, update the post
-        $updatedPostId = wp_update_post($this->wpPost);
-
-        // Unset Meta
-        if ($updatedPostId && is_int($updatedPostId)) {
-            foreach ($this->metaToUnset as $keyToUnset => $valueToUnset) {
-                delete_post_meta($updatedPostId, $keyToUnset, $valueToUnset);
+            // Unset Meta
+            if ($updatedPostId && is_int($updatedPostId)) {
+                foreach ($this->metaToUnset as $keyToUnset => $valueToUnset) {
+                    delete_post_meta($updatedPostId, $keyToUnset, $valueToUnset);
+                }
             }
         }
 
-        // Attach Terms
-        $this->attachTerms($updatedPostId);
+        if ($updatedPostId) {
+            // Attach Terms to post
+            $this->attachTerms($updatedPostId);
+
+            // Update the relations
+            foreach (array_keys($this->metaInput + $this->metaToUnset) as $key) {
+                $this->updateRelation($key);
+            }
+        }
 
         return $updatedPostId;
     }
@@ -985,7 +989,7 @@ class PostModel implements PostModelInterface
         return [];
     }
     
-    final public function updateRelation(string $key): void
+    private function updateRelation(string $key): void
     {
         if (($method = $this->getMethodByRelationKey($key)) && ($relation = $this->$method())) {
             $ids = $this->getMetaRelationIds($key);
