@@ -817,7 +817,11 @@ class PostModel implements PostModelInterface
             $this->attachTerms($updatedPostId);
 
             // Update the relations
-            foreach ($this->metaInput as $key => $value) {
+            foreach (array_keys($this->metaInput) as $key) {
+                $this->updateRelation($key);
+            }
+
+            foreach (array_keys($this->metaToUnset) as $key) {
                 $this->updateRelation($key);
             }
         }
