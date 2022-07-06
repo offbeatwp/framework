@@ -26,7 +26,7 @@ class Form extends Collection
     }
 
     /**
-     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface $item
+     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface|Form $item
      * @param bool $prepend
      */
     public function add($item, $prepend = false)
