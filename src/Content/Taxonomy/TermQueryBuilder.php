@@ -123,6 +123,11 @@ class TermQueryBuilder
         return (new WP_Term_Query($this->queryVars))->get_terms();
     }
 
+    public function firstName(): ?string
+    {
+        return $this->limit(1)->names(false)[0] ?? null;
+    }
+
     /**
      * @param bool $indexById When true, the slugs will be indexed with their respective term ID.
      * @return string[]
@@ -134,6 +139,11 @@ class TermQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         return (new WP_Term_Query($this->queryVars))->get_terms();
+    }
+
+    public function firstSlug(): ?string
+    {
+        return $this->limit(1)->slugs(false)[0] ?? null;
     }
 
     public function first(): ?TermModel
