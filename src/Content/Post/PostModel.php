@@ -989,7 +989,7 @@ class PostModel implements PostModelInterface
         return [];
     }
     
-    final public function updateRelation(string $key): void
+    private function updateRelation(string $key): void
     {
         if (($method = $this->getMethodByRelationKey($key)) && ($relation = $this->$method())) {
             $ids = $this->getMetaRelationIds($key);
