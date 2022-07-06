@@ -1001,12 +1001,4 @@ class PostModel implements PostModelInterface
             }
         }
     }
-
-    /** Update the relations associated with the meta of this model. */
-    final protected function updateRelations(): void
-    {
-        foreach ($this->metas as $metaKey => $metaInput) {
-            $this->updateRelation($metaKey);
-        }
-    }
 }
