@@ -293,6 +293,12 @@ class UserModel
         return null;
     }
 
+    /** @return UserCollection<static> */
+    public static function all(): UserCollection
+    {
+        return static::query()->all();
+    }
+
     public static function query(): UserQueryBuilder
     {
         return new UserQueryBuilder(static::class);

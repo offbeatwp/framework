@@ -5,7 +5,7 @@
   "type": "library",
   "require": {
     "php-di/php-di": "^6.0",
-    "illuminate/support": "^8.0",
+    "illuminate/support": "^v8.83.18",
     "symfony/routing": "^4.2",
     "symfony/http-foundation": "^4.2",
     "symfony/cache": "^5.0",
@@ -19,5 +19,8 @@
     "psr-4": {
       "OffbeatWP\\": "src"
     }
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
   }
 }

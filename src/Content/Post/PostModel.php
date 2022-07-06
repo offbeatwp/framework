@@ -952,6 +952,12 @@ class PostModel implements PostModelInterface
         return $model;
     }
 
+    /** @return PostsCollection<static> */
+    public static function all(): PostsCollection
+    {
+        return static::query()->all();
+    }
+
     public static function query(): WpQueryBuilderModel
     {
         return new WpQueryBuilderModel(static::class);
