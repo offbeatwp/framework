@@ -200,7 +200,7 @@ class TermModel implements TermModelInterface
      */
     public static function all(): TermsCollection
     {
-        return static::query()->all();
+        return static::query()->excludeEmpty(false)->all();
     }
 
     /**
