@@ -196,6 +196,15 @@ class TermModel implements TermModelInterface
 
     /**
      * When called on TermModel, empty terms <b>will</b> be included.
+     * @return TermsCollection<static>
+     */
+    public static function all(): TermsCollection
+    {
+        return static::query()->all();
+    }
+
+    /**
+     * When called on TermModel, empty terms <b>will</b> be included.
      * @return static[]
      */
     public static function allAsArray()
