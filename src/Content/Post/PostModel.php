@@ -7,8 +7,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
+use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
+use OffbeatWP\Content\Post\Relations\HasOneOrMany;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -961,5 +963,50 @@ class PostModel implements PostModelInterface
     public static function query(): WpQueryBuilderModel
     {
         return new WpQueryBuilderModel(static::class);
+    }
+
+    /** @return int[] Retrieves the value of a meta field as an array of IDs. */
+    private function getMetaRelationIds(string $key): array
+    {
+        $value = get_post_meta($this->getId(), $key, true);
+
+        if (is_serialized($value)) {
+            $value = unserialize($value, ['allowed_classes' => false]);
+        }
+
+        if (is_array($value)) {
+            return array_map('intval', $value);
+        }
+
+        if (is_numeric($value)) {
+            return [(int)$value];
+        }
+
+        return [];
+    }
+    
+    final public function updateRelation(string $key): void
+    {
+        if (($method = $this->getMethodByRelationKey($key)) && ($relation = $this->$method())) {
+            $ids = $this->getMetaRelationIds($key);
+
+            if ($ids && $relation instanceof HasOneOrMany) {
+                $relation->attach($ids, false);
+            } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
+                $relation->associate($ids, false);
+            } elseif ($relation instanceof HasOneOrMany) {
+                $relation->detachAll();
+            } elseif ($relation instanceof BelongsToOneOrMany) {
+                $relation->dissociateAll();
+            }
+        }
+    }
+
+    /** Update the relations associated with the meta of this model. */
+    final protected function updateRelations(): void
+    {
+        foreach ($this->metas as $metaKey => $metaInput) {
+            $this->updateRelation($metaKey);
+        }
     }
 }
