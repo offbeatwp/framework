@@ -32,7 +32,7 @@ trait BaseModelTrait
     /** @return static[] */
     public static function allAsArray()
     {
-        return static::query()->all()->toArray();
+        return static::all()->toArray();
     }
 
     /** @return static */
