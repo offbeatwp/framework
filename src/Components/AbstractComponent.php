@@ -193,7 +193,7 @@ abstract class AbstractComponent
         return $settings[$key] ?? null;
     }
 
-    public static function getSlug(): ?string
+    public static function getSlug(): string
     {
         return static::getSetting('slug');
     }
