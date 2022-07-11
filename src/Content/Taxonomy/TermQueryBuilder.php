@@ -236,6 +236,14 @@ class TermQueryBuilder
         return $result;
     }
 
+    /** @param string[] $slugs Array of slugs to return term(s) for. */
+    public function whereSlugIn(array $slugs)
+    {
+        $this->queryVars['slug'] = $slugs;
+
+        return $this;
+    }
+
     // Chainable methods
     public function whereParent(int $parentId): TermQueryBuilder
     {
