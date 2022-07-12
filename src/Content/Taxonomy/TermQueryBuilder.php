@@ -64,7 +64,7 @@ class TermQueryBuilder
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
-        $terms = (new WP_Term_Query($this->queryVars))->get_terms();
+        $terms = $this->runQuery()->get_terms();
 
         foreach ($terms as $term) {
             $termModels->push(new $this->model($term));
@@ -107,7 +107,7 @@ class TermQueryBuilder
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
-        return (new WP_Term_Query($this->queryVars))->get_terms();
+        return $this->runQuery()->get_terms();
     }
 
     /**
@@ -120,7 +120,7 @@ class TermQueryBuilder
         $this->queryVars['fields'] = ($indexById) ? 'id=>name' : 'names';
         $this->queryVars['no_found_rows'] = true;
 
-        return (new WP_Term_Query($this->queryVars))->get_terms();
+        return $this->runQuery()->get_terms();
     }
 
     public function firstName(): ?string
@@ -138,7 +138,7 @@ class TermQueryBuilder
         $this->queryVars['fields'] = ($indexById) ? 'id=>slug' : 'slugs';
         $this->queryVars['no_found_rows'] = true;
 
-        return (new WP_Term_Query($this->queryVars))->get_terms();
+        return $this->runQuery()->get_terms();
     }
 
     public function firstSlug(): ?string
@@ -292,5 +292,14 @@ class TermQueryBuilder
         $this->queryVars['hide_empty'] = $hideEmpty;
 
         return $this;
+    }
+
+    private function runQuery(): WP_Term_Query
+    {
+        $query = new WP_Term_Query($this->queryVars);
+
+        self::$lastRequest = $query->request;
+
+        return $query;
     }
 }

@@ -139,6 +139,8 @@ class WpQueryBuilder
         $query = new $this->wpQueryClass($this->queryVars);
         do_action('offbeatwp/posts/query/after_get', $this);
 
+        self::$lastRequest = $query->request;
+
         return $query;
     }
 
