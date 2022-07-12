@@ -7,6 +7,7 @@ class PostStatus
 {
     final private function __construct() {}
 
+    public const ANY = 'any';
     public const PUBLISHED = 'publish';
     public const FUTURE = 'future';
     public const DRAFT = 'draft';

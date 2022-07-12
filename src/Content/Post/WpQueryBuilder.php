@@ -15,6 +15,7 @@ class WpQueryBuilder
 
     protected $queryVars = [];
     private $wpQueryClass = WP_Query::class;
+    protected static $lastRequest = '';
 
     public function all(): PostsCollection
     {
@@ -138,6 +139,8 @@ class WpQueryBuilder
         do_action('offbeatwp/posts/query/before_get', $this);
         $query = new $this->wpQueryClass($this->queryVars);
         do_action('offbeatwp/posts/query/after_get', $this);
+
+        self::$lastRequest = $query->request;
 
         return $query;
     }
@@ -444,5 +447,11 @@ class WpQueryBuilder
         ];
 
         return $this;
+    }
+
+    /** @return string Returns the last executed query as raw query string. */
+    public static function getLastRequest(): string
+    {
+        return self::$lastRequest;
     }
 }
