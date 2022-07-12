@@ -117,7 +117,7 @@ class WpQueryBuilder
 
     public function findByName(string $name): ?PostModel
     {
-        return $this->whereName($name)->first();
+        return $this->whereSlug($name)->first();
     }
 
     /** @throws OffbeatModelNotFoundException */
@@ -239,12 +239,12 @@ class WpQueryBuilder
     }
 
     /**
-     * @param string $name The post slug.
+     * @param string $slug The post slug.
      * @return static
      */
-    public function whereName(string $name)
+    public function whereSlug(string $slug)
     {
-        $this->queryVars['name'] = $name;
+        $this->queryVars['name'] = $slug;
 
         return $this;
     }
