@@ -32,7 +32,7 @@ class UserQueryBuilder
     {
         do_action('offbeatwp/users/query/before_get', $this);
 
-        $userQuery = new WP_User_Query($this->queryVars);
+        $userQuery = $this->runQuery();
 
         return apply_filters('offbeatwp/users/query/get', new UserCollection($userQuery->get_results()), $this);
     }
@@ -152,6 +152,15 @@ class UserQueryBuilder
     public function Ids(): array
     {
         $this->queryVars['fields'] = 'ID';
-        return (new WP_User_Query($this->queryVars))->get_results();
+        return $this->runQuery()->get_results();
+    }
+
+    public function runQuery(): WP_User_Query
+    {
+        $query = new WP_User_Query($this->queryVars);
+
+        self::$lastRequest = $query->request;
+
+        return $query;
     }
 }

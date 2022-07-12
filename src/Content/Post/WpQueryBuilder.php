@@ -15,7 +15,6 @@ class WpQueryBuilder
 
     protected $queryVars = [];
     private $wpQueryClass = WP_Query::class;
-    protected static $lastRequest = '';
 
     public function all(): PostsCollection
     {
@@ -447,11 +446,5 @@ class WpQueryBuilder
         ];
 
         return $this;
-    }
-
-    /** @return string Returns the last executed query as raw query string. */
-    public static function getLastRequest(): string
-    {
-        return self::$lastRequest;
     }
 }

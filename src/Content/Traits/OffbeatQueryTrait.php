@@ -4,6 +4,8 @@ namespace OffbeatWP\Content\Traits;
 
 trait OffbeatQueryTrait
 {
+    protected static $lastRequest = '';
+
     /**
      * Get objects where the meta value is equal to the given value.
      * @param string $metaKey
@@ -95,5 +97,11 @@ trait OffbeatQueryTrait
         $this->queryVars = array_merge($this->queryVars, $parameters);
 
         return $this;
+    }
+
+    /** @return string Returns the last executed query as raw query string. */
+    public static function getLastRequest(): string
+    {
+        return self::$lastRequest;
     }
 }
