@@ -115,21 +115,32 @@ class WpQueryBuilder
         return $result;
     }
 
-    public function findByName(string $name): ?PostModel
+    public function findBySlug(string $slug): ?PostModel
     {
-        return $this->whereSlug($name)->first();
+        return $this->whereSlug($slug)->first();
     }
 
-    /** @throws OffbeatModelNotFoundException */
-    public function findByNameOrFail(string $name): PostModel
+    public function findBySlugOrFail(string $slug): PostModel
     {
-        $result = $this->findByName($name);
+        $result = $this->findBySlug($slug);
 
         if (!$result) {
-            throw new OffbeatModelNotFoundException('PostModel with slug ' . $name . ' could not be found');
+            throw new OffbeatModelNotFoundException('PostModel with slug ' . $slug . ' could not be found');
         }
 
         return $result;
+    }
+
+    /** @deprecated Find a post based by it's <b>slug</b>. */
+    public function findByName(string $slug): ?PostModel
+    {
+        return $this->findBySlug($slug);
+    }
+
+    /** @deprecated Find a post based by it's <b>slug</b>, or throw an Exception if no post with the provided slug was found. */
+    public function findByNameOrFail(string $slug): PostModel
+    {
+        return $this->findBySlugOrFail($slug);
     }
 
     /** @return WP_Query|IWpQuerySubstitute */
