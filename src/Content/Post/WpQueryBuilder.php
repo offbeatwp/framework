@@ -344,7 +344,7 @@ class WpQueryBuilder
      * <b>trash</b> – post is in trashbin<br/>
      * <b>any</b> – retrieves any status except for <i>inherit</i>, <i>trash</i> and <i>auto-draft</i>. Custom post statuses with <i>exclude_from_search</i> set to true are also excluded
      * @param string[] $postStatus Array containing the post statuses to include
-     * @return WpQueryBuilder
+     * @return $this
      */
     public function wherePostStatus(array $postStatus): WpQueryBuilder
     {
