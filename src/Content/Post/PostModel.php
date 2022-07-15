@@ -404,11 +404,6 @@ class PostModel implements PostModelInterface
         return $values;
     }
 
-    /**
-     * @param non-empty-string $key
-     * @param bool $single
-     * @return false|mixed|string|null
-     */
     public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
@@ -418,6 +413,12 @@ class PostModel implements PostModelInterface
         }
 
         return null;
+    }
+
+    /** Retrieves the WP Admin edit link for this post. <br>Returns <i>null</i> if the post type does not exist or does not allow an editing UI. */
+    public function getEditLink(): ?string
+    {
+        return get_edit_post_link($this->getId());
     }
 
     /** @throws OffbeatInvalidModelException */
