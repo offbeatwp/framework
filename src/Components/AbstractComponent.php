@@ -87,7 +87,7 @@ abstract class AbstractComponent
     /**
      * Render the component.
      * @param object|array $settings
-     * @return string
+     * @return string|null
      */
     public function renderComponent($settings)
     {
