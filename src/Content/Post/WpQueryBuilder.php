@@ -131,13 +131,13 @@ class WpQueryBuilder
         return $result;
     }
 
-    /** @deprecated Find a post based by it's <b>slug</b>. */
+    /** @deprecated Find a post based by it's <b>slug</b>. Consider using <b>findBySlug</b> instead. */
     public function findByName(string $slug): ?PostModel
     {
         return $this->findBySlug($slug);
     }
 
-    /** @deprecated Find a post based by it's <b>slug</b>, or throw an Exception if no post with the provided slug was found. */
+    /** @deprecated Find a post based by it's <b>slug</b>, or throw an Exception if no post with the provided slug was found. Consider using <b>findBySlugOrFail</b> instead. */
     public function findByNameOrFail(string $slug): PostModel
     {
         return $this->findBySlugOrFail($slug);
