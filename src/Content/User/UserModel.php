@@ -182,6 +182,11 @@ class UserModel
         return $this->wpUser->locale;
     }
 
+    public function getPhoneNumber(): string
+    {
+        return $this->getMetaString('phone_number');
+    }
+
     /** @return Carbon Date the user registered as a Carbon Date. */
     public function getRegistrationDate(): Carbon
     {
