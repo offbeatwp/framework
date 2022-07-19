@@ -182,6 +182,11 @@ class UserModel
         return $this->wpUser->locale;
     }
 
+    public function getEditLink(): string
+    {
+        return get_edit_user_link($this->getId());
+    }
+
     public function getPhoneNumber(): string
     {
         return $this->getMetaString('phone_number');

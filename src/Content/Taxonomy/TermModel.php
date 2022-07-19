@@ -128,6 +128,11 @@ class TermModel implements TermModelInterface
         return collect(get_ancestors( $this->getId(), $this->getTaxonomy(), 'taxonomy'));
     }
 
+    public function getEditLink(): string
+    {
+        return get_edit_term_link($this->wpTerm ?: $this->getId()) ?: '';
+    }
+
     public function getAncestors(): Collection
     {
         return $this->getAncestorIds()->map(function ($ancestorId) {
