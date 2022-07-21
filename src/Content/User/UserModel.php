@@ -96,6 +96,7 @@ class UserModel
         return $this->metas;
     }
 
+    /** @return mixed|null */
     public function getMeta(string $key, bool $single = true)
     {
         $metas = $this->getMetas();
@@ -263,6 +264,22 @@ class UserModel
         return ($role !== null) ? translate_user_role($role, $domain) : null;
     }
 
+    /**
+     * Log in as this user. Only works if used is not already logged in.
+     * @return bool <b>true</b> on success, <b>false</b> if the user is already logged in.
+     */
+    public function loginAsUser(): bool
+    {
+        if (!is_user_logged_in() && $this->getId()) {
+            wp_clear_auth_cookie();
+            wp_set_current_user($this->getId());
+            wp_set_auth_cookie($this->getId());
+            return true;
+        }
+
+        return false;
+    }
+
     /////////////////////
     /// Query Methods ///
     /////////////////////
@@ -281,7 +298,9 @@ class UserModel
     /** @return static|null Returns a user with the specified email address */
     public static function findByEmail(string $email)
     {
-        if ($wpUser = get_user_by('email', $email)) {
+        $wpUser = get_user_by('email', $email);
+
+        if ($wpUser) {
             $user = User::convertWpUserToModel($wpUser);
 
             if ($user instanceof static) {
