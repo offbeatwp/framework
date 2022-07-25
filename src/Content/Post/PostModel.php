@@ -649,7 +649,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return PostModel|null
+     * @return static|null
      */
     public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -660,7 +660,7 @@ class PostModel implements PostModelInterface
      * @param bool $inSameTerm
      * @param string $excludedTerms
      * @param string $taxonomy
-     * @return PostModel|null
+     * @return static|null
      */
     public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
@@ -673,7 +673,7 @@ class PostModel implements PostModelInterface
      * @param string $excludedTerms
      * @param bool $previous
      * @param string $taxonomy
-     * @return PostModel|null
+     * @return static|null
      */
     public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
     {
