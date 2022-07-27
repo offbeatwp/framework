@@ -22,6 +22,7 @@ use WP_Post_Type;
 use WP_Term;
 use WP_User;
 
+/** @template TModel of PostModel */
 class PostModel implements PostModelInterface
 {
     private const DEFAULT_POST_STATUS = 'publish';
@@ -321,6 +322,11 @@ class PostModel implements PostModelInterface
     public function getPostDate(string $format = '')
     {
         return get_the_date($format, $this->wpPost);
+    }
+
+    public function getEditLink(): string
+    {
+        return get_edit_post_link($this->getId());
     }
 
     public function getModifiedDate(string $format = ''): ?string
@@ -964,6 +970,7 @@ class PostModel implements PostModelInterface
         return static::query()->all();
     }
 
+    /** @return WpQueryBuilderModel<TModel> */
     public static function query(): WpQueryBuilderModel
     {
         return new WpQueryBuilderModel(static::class);

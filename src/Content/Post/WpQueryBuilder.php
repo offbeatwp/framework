@@ -188,7 +188,9 @@ class WpQueryBuilder
         $deletedPosts = [];
 
         foreach ($this->ids() as $id) {
-            if ($deletedPost = wp_delete_post($id, $forceDelete)) {
+            $deletedPost = wp_delete_post($id, $forceDelete);
+
+            if ($deletedPost) {
                 $deletedPosts[] = $deletedPost;
             } else {
                 throw new UnexpectedValueException('Failed to delete post with id: ' . $id);
@@ -211,14 +213,19 @@ class WpQueryBuilder
      * @param class-string<WP_Query|IWpQuerySubstitute> $queryObjectClassName
      * @return $this
      */
-    public function useQuery(string $queryObjectClassName): WpQueryBuilder
+    public function useQuery(string $queryObjectClassName)
     {
         $this->wpQueryClass = $queryObjectClassName;
 
         return $this;
     }
 
-    public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
+    /**
+     * @param string $metaKey
+     * @param string $direction
+     * @return $this
+     */
+    public function orderByMeta(string $metaKey, string $direction = '')
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';
@@ -230,8 +237,12 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
-    public function offset(int $numberOfItems): WpQueryBuilder
+    /**
+     * Note: Wordpress Pagination automatically handles offset, so using this method might interfere with that
+     * @param int $numberOfItems
+     * @return $this
+     */
+    public function offset(int $numberOfItems)
     {
         $this->queryVars['offset'] = $numberOfItems;
 
@@ -242,6 +253,8 @@ class WpQueryBuilder
      * Search keyword(s).<br>
      * Prepending a term with a hyphen will exclude posts matching that term.<br>
      * EG: 'pillow -sofa' will return posts containing 'pillow' but not 'sofa'.
+     * @param string $searchString
+     * @return $this
      */
     public function search(string $searchString) {
         $this->queryVars['s'] = $searchString;
@@ -251,7 +264,7 @@ class WpQueryBuilder
 
     /**
      * @param string $slug The post slug.
-     * @return static
+     * @return $this
      */
     public function whereSlug(string $slug)
     {
@@ -260,8 +273,11 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @param string|string[] $postTypes */
-    public function wherePostType($postTypes): WpQueryBuilder
+    /**
+     * @param string|string[] $postTypes
+     * @return $this
+     */
+    public function wherePostType($postTypes)
     {
         if (!isset($this->queryVars['post_type'])) {
             $this->queryVars['post_type'] = [];
@@ -282,8 +298,9 @@ class WpQueryBuilder
      * @param string|null $field Select taxonomy term by. Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
      * @param string|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
      * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
+     * @return $this
      */
-    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
+    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true)
     {
         if ($field === null) {
             $field = 'slug';
@@ -318,7 +335,7 @@ class WpQueryBuilder
      * @param int[]|string[] $args
      * @return $this
      */
-    public function whereDate(array $args): WpQueryBuilder
+    public function whereDate(array $args)
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
@@ -344,9 +361,9 @@ class WpQueryBuilder
      * <b>trash</b> – post is in trashbin<br/>
      * <b>any</b> – retrieves any status except for <i>inherit</i>, <i>trash</i> and <i>auto-draft</i>. Custom post statuses with <i>exclude_from_search</i> set to true are also excluded
      * @param string[] $postStatus Array containing the post statuses to include
-     * @return WpQueryBuilder
+     * @return $this
      */
-    public function wherePostStatus(array $postStatus): WpQueryBuilder
+    public function wherePostStatus(array $postStatus)
     {
         $this->queryVars['post_status'] = $postStatus;
         return $this;
@@ -358,7 +375,7 @@ class WpQueryBuilder
      * @param string $compare
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
+    public function whereMeta($key, $value = '', string $compare = '=')
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -379,8 +396,11 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @param int[]|int $ids */
-    public function whereIdNotIn($ids): WpQueryBuilder
+    /**
+     * @param int[]|int $ids
+     * @return $this
+     */
+    public function whereIdNotIn($ids)
     {
         if (!is_array($ids)) {
             $ids = [$ids];
@@ -391,8 +411,11 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @param int[]|int $ids */
-    public function whereIdIn($ids): WpQueryBuilder
+    /**
+     * @param int[]|int $ids
+     * @return $this
+     */
+    public function whereIdIn($ids)
     {
         if (!is_array($ids)) {
             $ids = [$ids];
@@ -403,8 +426,11 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @param int[] $ids */
-    public function whereAuthorIdIn(array $ids): WpQueryBuilder
+    /**
+     * @param int[] $ids
+     * @return $this
+     */
+    public function whereAuthorIdIn(array $ids)
     {
         $this->queryVars['author__in'] = $ids;
         return $this;
@@ -417,7 +443,7 @@ class WpQueryBuilder
      * @param bool|int $paginated
      * @return $this
      */
-    public function paginated($paginated = true): WpQueryBuilder
+    public function paginated($paginated = true)
     {
         if ($paginated) {
             $this->noFoundRows(false);
@@ -435,7 +461,11 @@ class WpQueryBuilder
         return $this;
     }
 
-    public function suppressFilters(bool $suppress = true): WpQueryBuilder
+    /**
+     * @param bool $suppress
+     * @return $this
+     */
+    public function suppressFilters(bool $suppress = true)
     {
         $this->queryVars['suppress_filters'] = $suppress;
 
@@ -448,7 +478,7 @@ class WpQueryBuilder
      * @param null $direction Pass <b>'reverse'</b> to reverse the relation.
      * @return $this
      */
-    public function hasRelationshipWith($postModelOrCollection, $key, $direction = null): WpQueryBuilder
+    public function hasRelationshipWith($postModelOrCollection, $key, $direction = null)
     {
         $this->queryVars['relationships'] = [
             'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
