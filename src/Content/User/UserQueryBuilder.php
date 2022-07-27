@@ -94,6 +94,22 @@ class UserQueryBuilder
     }
 
     /**
+     * @param string $email Must be a valid email address, or an exception will be thrown.
+     * @return $this
+     */
+    public function whereEmail(string $email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException('whereEmail only accepts valid email strings.');
+        }
+
+        $this->queryVars['search'] = $email;
+        $this->queryVars['search_columns'] = 'user_email';
+
+        return $this;
+    }
+
+    /**
      * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
      * @return $this
      */
@@ -153,6 +169,13 @@ class UserQueryBuilder
     {
         $this->queryVars['fields'] = 'ID';
         return $this->runQuery()->get_results();
+    }
+
+    public function firstDisplayName(): ?string
+    {
+        $this->queryVars['fields'] = 'display_name';
+        $this->queryVars['numbers'] = 1;
+        return $this->runQuery()->get_results()[0] ?? null;
     }
 
     public function runQuery(): WP_User_Query
