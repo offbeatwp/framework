@@ -324,11 +324,6 @@ class PostModel implements PostModelInterface
         return get_the_date($format, $this->wpPost);
     }
 
-    public function getEditLink(): string
-    {
-        return get_edit_post_link($this->getId());
-    }
-
     public function getModifiedDate(string $format = ''): ?string
     {
         return get_the_modified_date($format, $this->wpPost) ?: null;
