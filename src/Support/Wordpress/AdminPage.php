@@ -72,7 +72,7 @@ class AdminPage
                 'pages' => 'edit.php?post_type=page',
                 'comments' => 'edit-comments.php',
                 'appearance' => 'themes.php',
-                'plubins' => 'plugins.php',
+                'plugins' => 'plugins.php',
                 'users' => 'users.php',
                 'tools' => 'tools.php',
                 'settings' => 'options-general.php',
