@@ -22,7 +22,6 @@ use WP_Post_Type;
 use WP_Term;
 use WP_User;
 
-/** @template TModel of PostModel */
 class PostModel implements PostModelInterface
 {
     private const DEFAULT_POST_STATUS = 'publish';
@@ -966,7 +965,7 @@ class PostModel implements PostModelInterface
         return static::query()->all();
     }
 
-    /** @return WpQueryBuilderModel<TModel> */
+    /** @return WpQueryBuilderModel<static> */
     public static function query(): WpQueryBuilderModel
     {
         return new WpQueryBuilderModel(static::class);

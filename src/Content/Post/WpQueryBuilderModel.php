@@ -4,15 +4,15 @@ namespace OffbeatWP\Content\Post;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use WP_Post;
 
-/** @template T of PostModel */
+/** @template TModel of PostModel */
 class WpQueryBuilderModel extends WpQueryBuilder
 {
-    /** @var class-string<T> */
+    /** @var class-string<TModel> */
     protected $model;
 
     /**
      * @throws OffbeatInvalidModelException
-     * @param class-string<T> $modelClass
+     * @param class-string<TModel> $modelClass
      */
     public function __construct(string $modelClass)
     {
@@ -36,6 +36,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
+    /** @return TModel|PostModel */
     public function firstOrNew(): PostModel
     {
         return $this->first() ?: new $this->model(null);
@@ -43,7 +44,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
 
     /**
      * @param WP_Post|int|null $post
-     * @return T
+     * @return TModel|PostModel|null
      */
     public function postToModel($post)
     {
