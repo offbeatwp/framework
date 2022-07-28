@@ -16,6 +16,7 @@ use WP_User;
 
 class UserModel
 {
+    /** @var WP_User */
     protected $wpUser;
     /** @var null|array */
     protected $metas = null;
@@ -81,7 +82,7 @@ class UserModel
      */
     public function setEmail(string $email)
     {
-        $this->wpUser = $email;
+        $this->wpUser->user_email = $email;
         return $this;
     }
 
