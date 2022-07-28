@@ -54,4 +54,16 @@ class WpQueryBuilderModel extends WpQueryBuilder
 
         return new $this->model($post);
     }
+
+    /** @return TModel|null */
+    public function first(): ?PostModel
+    {
+        return parent::first();
+    }
+
+    /** @return TModel */
+    public function firstOrFail(): PostModel
+    {
+        return parent::firstOrFail();
+    }
 }
