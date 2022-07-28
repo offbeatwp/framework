@@ -8,6 +8,7 @@ use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_User_Query;
 
+/** @template TModel of UserModel */
 class UserQueryBuilder
 {
     use OffbeatQueryTrait;
@@ -17,7 +18,7 @@ class UserQueryBuilder
     /** @var class-string<UserModel> */
     protected $modelClass;
 
-    /** @param class-string<UserModel> $modelClass */
+    /** @param class-string<TModel> $modelClass */
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
@@ -27,7 +28,7 @@ class UserQueryBuilder
         }
     }
 
-    /** @return UserCollection<UserModel> */
+    /** @return UserCollection<TModel> */
     protected function get(): UserCollection
     {
         do_action('offbeatwp/users/query/before_get', $this);
@@ -37,11 +38,16 @@ class UserQueryBuilder
         return apply_filters('offbeatwp/users/query/get', new UserCollection($userQuery->get_results()), $this);
     }
 
+    /** @return UserCollection<TModel> */
     public function all(): UserCollection
     {
         return $this->take(0);
     }
 
+    /**
+     * @param int $numberOfUsers
+     * @return UserCollection
+     */
     public function take(int $numberOfUsers): UserCollection
     {
         $this->queryVars['number'] = $numberOfUsers;
@@ -49,11 +55,13 @@ class UserQueryBuilder
         return $this->get();
     }
 
+    /** @return TModel|null */
     public function first(): ?UserModel
     {
         return $this->take(1)->first();
     }
 
+    /** @return TModel|null */
     public function findById(?int $id): ?UserModel
     {
         if ($id < 0) {
@@ -64,6 +72,7 @@ class UserQueryBuilder
         return $this->first();
     }
 
+    /** @return TModel */
     public function findByIdOrFail(int $id): UserModel
     {
         $result = $this->findById($id);
@@ -78,7 +87,7 @@ class UserQueryBuilder
     /**
      * @param string[]|string $properties Sort retrieved users by parameter. Defaults to <i>login</i>.
      * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
-     * @return $this;
+     * @return $this
      */
     public function orderBy($properties, string $direction = ''): UserQueryBuilder
     {
