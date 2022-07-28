@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Views;
 
+use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
 use WP_Site;
@@ -235,5 +236,10 @@ class Wordpress
     public function isMobile(): bool
     {
         return wp_is_mobile();
+    }
+
+    public function getCurrentUser(): ?UserModel
+    {
+        return UserModel::getCurrentUser();
     }
 }
