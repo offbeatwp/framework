@@ -7,6 +7,7 @@ use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
+/** @template TModel of TermModel */
 class TermQueryBuilder
 {
     use OffbeatQueryTrait;
@@ -15,7 +16,7 @@ class TermQueryBuilder
     protected $model;
     protected $taxonomy;
 
-    /** @param class-string<TermModel> $model */
+    /** @param class-string<TModel> $model */
     public function __construct($model)
     {
         $this->model = $model;
@@ -73,12 +74,19 @@ class TermQueryBuilder
         return $termModels;
     }
 
-    /** Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms */
+    /**
+     * Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms
+     * @return TermsCollection<TModel>
+     */
     public function all(): TermsCollection
     {
         return $this->take(0);
     }
 
+    /**
+     * @param int $numberOfItems
+     * @return TermsCollection
+     */
     public function take(int $numberOfItems): TermsCollection
     {
         $this->queryVars['number'] = $numberOfItems;
@@ -146,11 +154,13 @@ class TermQueryBuilder
         return $this->limit(1)->slugs(false)[0] ?? null;
     }
 
+    /** @return TModel|null */
     public function first(): ?TermModel
     {
         return $this->take(1)->first();
     }
 
+    /** @return TModel */
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
@@ -162,6 +172,7 @@ class TermQueryBuilder
         return $result;
     }
 
+    /** @return TModel */
     public function firstOrNew(): TermModel
     {
         $result = $this->first();
@@ -174,6 +185,7 @@ class TermQueryBuilder
         return $result;
     }
 
+    /** @return TModel|null */
     public function findById(?int $id): ?TermModel
     {
         if ($id < 0) {
@@ -183,26 +195,31 @@ class TermQueryBuilder
         return $this->findBy('id', $id);
     }
 
+    /** @return TModel */
     public function findByIdOrFail(int $id): TermModel
     {
         return $this->findByOrFail('id', $id);
     }
 
+    /** @return TModel|null */
     public function findBySlug(string $slug): ?TermModel
     {
         return $this->findBy('slug', $slug);
     }
 
+    /** @return TModel */
     public function findBySlugOrFail(string $slug): TermModel
     {
         return $this->findByOrFail('slug', $slug);
     }
 
+    /** @return TModel|null */
     public function findByName(string $name): ?TermModel
     {
         return $this->findBy('name', $name);
     }
 
+    /** @return TModel */
     public function findByNameOrFail(string $name): TermModel
     {
         return $this->findByOrFail('name', $name);
@@ -211,7 +228,7 @@ class TermQueryBuilder
     /**
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @param string|int $value
-     * @return TermModel|null
+     * @return TModel|null
      */
     public function findBy(string $field, $value): ?TermModel
     {
@@ -223,7 +240,7 @@ class TermQueryBuilder
     /**
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @param string|int $value
-     * @return TermModel
+     * @return TModel
      */
     public function findByOrFail(string $field, $value): TermModel
     {
