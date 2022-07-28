@@ -296,10 +296,10 @@ class TermQueryBuilder
         return $this;
     }
 
-    /** @param int|int[] $postIds */
+    /** @param int|int[]|null $postIds */
     public function whereRelatedToPost($postIds): TermQueryBuilder
     {
-        $this->queryVars['object_ids'] = $postIds;
+        $this->queryVars['object_ids'] = $postIds ?: [0];
 
         return $this;
     }

@@ -512,7 +512,7 @@ class PostModel implements PostModelInterface
     {
         $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
 
-        return $model::whereRelatedToPost($this->getId() ?? [0]);
+        return $model::query()->whereRelatedToPost($this->getId());
     }
 
     /**
