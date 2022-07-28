@@ -9,6 +9,7 @@ use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Support\Wordpress\User;
 use UnexpectedValueException;
@@ -30,7 +31,7 @@ class UserModel
         Macroable::__callStatic as macroCallStatic;
     }
 
-    /** @var WP_User|int|null */
+    /** @param WP_User|int|null $user */
     public function __construct($user = null)
     {
         if ($user === null) {
@@ -39,7 +40,13 @@ class UserModel
         }
 
         if (is_int($user)) {
-            $user = get_userdata($user);
+            $userData = get_userdata($user);
+
+            if (!$userData) {
+                throw new OffbeatModelNotFoundException('Could not find WP_User with ID ' . $user);
+            }
+
+            $user = $userData;
         }
 
         if (!$user instanceof WP_User) {
@@ -94,6 +101,18 @@ class UserModel
     public function setDisplayName(string $displayName)
     {
         $this->wpUser->display_name = $displayName;
+        return $this;
+    }
+
+    public function setFirstName(string $firstName)
+    {
+        $this->wpUser->first_name = $firstName;
+        return $this;
+    }
+
+    public function setSurname(string $lastName)
+    {
+        $this->wpUser->last_name = $lastName;
         return $this;
     }
 
