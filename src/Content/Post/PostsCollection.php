@@ -2,7 +2,9 @@
 
 namespace OffbeatWP\Content\Post;
 
+use ArrayAccess;
 use DOMDocument;
+use Illuminate\Support\Enumerable;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
@@ -10,6 +12,11 @@ use WP_Post;
 use WP_Query;
 
 /**
+ * @template TModel
+ *
+ * @implements ArrayAccess<array-key, TModel>
+ * @implements Enumerable<array-key, TModel>
+ *
  * @method PostModel|mixed pull(int|string $key, mixed $default = null)
  * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
  * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
@@ -160,7 +167,7 @@ class PostsCollection extends OffbeatModelCollection
         }, $this->items);
     }
 
-    /** @return PostModel[] */
+    /** @return TModel[]|PostModel[] */
     public function toArray()
     {
         return $this->toCollection()->toArray();
