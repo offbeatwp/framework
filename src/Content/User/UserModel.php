@@ -110,7 +110,7 @@ class UserModel
         return $this;
     }
 
-    public function setSurname(string $lastName)
+    public function setLastName(string $lastName)
     {
         $this->wpUser->last_name = $lastName;
         return $this;
