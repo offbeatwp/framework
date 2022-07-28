@@ -4,11 +4,14 @@ namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Support\Wordpress\User;
+use UnexpectedValueException;
 use WP_User;
 
 class UserModel
@@ -66,6 +69,31 @@ class UserModel
     public function __clone()
     {
         $this->wpUser = clone $this->wpUser;
+    }
+
+    ///////////////
+    /// Setters ///
+    ///////////////
+    /**
+     * The user's email address. <b>Setting this is required.</b>
+     * @param non-empty-string $email
+     * @return $this
+     */
+    public function setEmail(string $email)
+    {
+        $this->wpUser = $email;
+        return $this;
+    }
+
+    /**
+     * The user's display name. Default is the user's username.
+     * @param non-empty-string $displayName
+     * @return $this
+     */
+    public function setDisplayName(string $displayName)
+    {
+        $this->wpUser->display_name = $displayName;
+        return $this;
     }
 
     ///////////////
@@ -262,6 +290,60 @@ class UserModel
     {
         $role = $this->getRole($index);
         return ($role !== null) ? translate_user_role($role, $domain) : null;
+    }
+
+
+    ///////////////////////
+    /// Special Methods ///
+    ///////////////////////
+    public function save(): int
+    {
+        if (!$this->wpUser->user_email) {
+            throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
+        }
+
+        if (!$this->wpUser->user_login) {
+            $this->wpUser->user_login = $this->wpUser->user_email;
+        }
+
+        if (!$this->wpUser->user_pass) {
+            $this->wpUser->user_pass = Str::random(32);
+        }
+
+        if (self::definedUserRoles()) {
+            foreach (self::definedUserRoles() as $role) {
+                $this->wpUser->set_role($role);
+            }
+        }
+
+        if ($this->getId()) {
+            $userId = wp_update_user($this->wpUser);
+        } else {
+            $userId = wp_insert_user($this->wpUser);
+        }
+
+        if (!is_int($userId)) {
+            return 0;
+        }
+
+        $wpUser = get_user_by('id', $userId);
+        if ($wpUser) {
+            $this->wpUser = $wpUser;
+        }
+
+        return $userId;
+    }
+
+    /** @return positive-int */
+    public function saveOrFail(): int
+    {
+        $result = $this->save();
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save UserModel.');
+        }
+
+        return $result;
     }
 
     /**
