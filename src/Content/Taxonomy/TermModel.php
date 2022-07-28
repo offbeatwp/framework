@@ -205,6 +205,7 @@ class TermModel implements TermModelInterface
         return static::query()->excludeEmpty(false)->all();
     }
 
+    /** @return TermQueryBuilder<static> */
     public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);

@@ -13,6 +13,7 @@ class TermQueryBuilder
     use OffbeatQueryTrait;
 
     protected $queryVars = [];
+    /** @var class-string<TModel> */
     protected $model;
     protected $taxonomy;
 
@@ -61,7 +62,7 @@ class TermQueryBuilder
         return $this;
     }
 
-    /** @return TermsCollection<TermModel> */
+    /** @return TermsCollection<TModel> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
@@ -85,7 +86,7 @@ class TermQueryBuilder
 
     /**
      * @param int $numberOfItems
-     * @return TermsCollection
+     * @return TermsCollection<TModel>
      */
     public function take(int $numberOfItems): TermsCollection
     {
