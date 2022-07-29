@@ -87,30 +87,25 @@ class UserModel
      * @param non-empty-string $email
      * @return $this
      */
-    public function setEmail(string $email)
+    public function setEmail(string $email): self
     {
         $this->wpUser->user_email = $email;
         return $this;
     }
 
-    /**
-     * The user's display name. Default is the user's username.
-     * @param non-empty-string $displayName
-     * @return $this
-     */
-    public function setDisplayName(string $displayName)
+    public function setDisplayName(string $displayName): self
     {
         $this->wpUser->display_name = $displayName;
         return $this;
     }
 
-    public function setFirstName(string $firstName)
+    public function setFirstName(string $firstName): self
     {
         $this->wpUser->first_name = $firstName;
         return $this;
     }
 
-    public function setLastName(string $lastName)
+    public function setLastName(string $lastName): self
     {
         $this->wpUser->last_name = $lastName;
         return $this;
@@ -248,13 +243,13 @@ class UserModel
     }
 
     /** @return bool Whether the user has the rich-editor enabled for writing. */
-    public function isRichEditingEnabled()
+    public function isRichEditingEnabled(): bool
     {
         return $this->wpUser->rich_editing === 'true';
     }
 
     /** @return bool Whether the user has syntax highlighting enabled when editing code. */
-    public function isSyntaxHighlightingEnabled()
+    public function isSyntaxHighlightingEnabled(): bool
     {
         return $this->wpUser->syntax_highlighting === 'true';
     }
@@ -330,12 +325,6 @@ class UserModel
             $this->wpUser->user_pass = Str::random(32);
         }
 
-        if (self::definedUserRoles()) {
-            foreach (self::definedUserRoles() as $role) {
-                $this->wpUser->set_role($role);
-            }
-        }
-
         if ($this->getId()) {
             $userId = wp_update_user($this->wpUser);
         } else {
@@ -349,6 +338,13 @@ class UserModel
         $wpUser = get_user_by('id', $userId);
         if ($wpUser) {
             $this->wpUser = $wpUser;
+        }
+
+        $roles = static::definedUserRoles();
+        if ($roles) {
+            foreach ($roles as $role) {
+                $this->wpUser->set_role($role);
+            }
         }
 
         return $userId;
@@ -430,6 +426,7 @@ class UserModel
         return static::query()->all();
     }
 
+    /** @return UserQueryBuilder<static> */
     public static function query(): UserQueryBuilder
     {
         return new UserQueryBuilder(static::class);

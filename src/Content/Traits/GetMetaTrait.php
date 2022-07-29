@@ -101,12 +101,10 @@ trait GetMetaTrait
         $strDate = strtotime($this->getMetaString($key));
 
         if ($strDate) {
-            if ($format) {
-                return date_i18n($format, $strDate);
-            }
+            $dateFormat = $format ?: get_option('date_format');
 
-            if ($defaultFormat = get_option('date_format')) {
-                return date_i18n($defaultFormat, $strDate);
+            if ($dateFormat) {
+                return date_i18n($dateFormat, $strDate);
             }
         }
 
@@ -139,8 +137,12 @@ trait GetMetaTrait
         $models = [];
 
         foreach ($this->getMetaArray($key) as $id) {
-            if ($id && $model = offbeat('post')->get($id)) {
-                $models[] = $model;
+            if ($id) {
+                $model = offbeat('post')->get($id);
+
+                if ($model) {
+                    $models[] = $model;
+                }
             }
         }
 
@@ -159,7 +161,9 @@ trait GetMetaTrait
      */
     public function getMetaCarbon(string $key): ?Carbon
     {
-        if ($value = $this->getMeta($key)) {
+        $value = $this->getMeta($key);
+
+        if ($value) {
             try {
                 return Carbon::parse($value);
             } catch (Exception $e) {
