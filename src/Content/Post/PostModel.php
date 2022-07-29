@@ -14,6 +14,7 @@ use OffbeatWP\Content\Post\Relations\HasOneOrMany;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Error;
@@ -40,6 +41,7 @@ class PostModel implements PostModelInterface
     protected $termsToSet = [];
 
     use BaseModelTrait;
+    use SetMetaTrait;
     use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
@@ -467,16 +469,6 @@ class PostModel implements PostModelInterface
         return $this;
     }
 
-    /** @return static */
-    public function setMeta(string $key, $value)
-    {
-        $this->metaInput[$key] = $value;
-
-        unset($this->metaToUnset[$key]);
-
-        return $this;
-    }
-
     /**
      * Moves a meta value from one key to another.
      * @param non-empty-string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
@@ -488,19 +480,6 @@ class PostModel implements PostModelInterface
             $this->setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
             $this->unsetMeta($oldMetaKey);
         }
-    }
-
-    /**
-     * @param non-empty-string $key Metadata name.
-     * @return static
-     */
-    public function unsetMeta(string $key)
-    {
-        $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
-        return $this;
     }
 
     /**

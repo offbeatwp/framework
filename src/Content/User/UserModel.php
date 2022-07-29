@@ -21,7 +21,9 @@ class UserModel
     protected $wpUser;
     /** @var null|array */
     protected $metas = null;
+    /** @var array */
     protected $metaInput = [];
+    /** @var array */
     protected $metaToUnset = [];
 
     use BaseModelTrait;
@@ -90,6 +92,29 @@ class UserModel
     public function setEmail(string $email): self
     {
         $this->wpUser->user_email = $email;
+        return $this;
+    }
+
+    /** @return static */
+    public function setMeta(string $key, $value)
+    {
+        $this->metaInput[$key] = $value;
+
+        unset($this->metaToUnset[$key]);
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $key Metadata name.
+     * @return static
+     */
+    public function unsetMeta(string $key)
+    {
+        $this->metaToUnset[$key] = '';
+
+        unset($this->metaInput[$key]);
+
         return $this;
     }
 
@@ -307,7 +332,6 @@ class UserModel
         return ($role !== null) ? translate_user_role($role, $domain) : null;
     }
 
-
     ///////////////////////
     /// Special Methods ///
     ///////////////////////
@@ -325,10 +349,13 @@ class UserModel
             $this->wpUser->user_pass = Str::random(32);
         }
 
+        $userData = $this->wpUser->to_array();
+        $userData['meta_input'] = $this->metaInput;
+
         if ($this->getId()) {
-            $userId = wp_update_user($this->wpUser);
+            $userId = wp_update_user($userData);
         } else {
-            $userId = wp_insert_user($this->wpUser);
+            $userId = wp_insert_user($userData);
         }
 
         if (!is_int($userId)) {
