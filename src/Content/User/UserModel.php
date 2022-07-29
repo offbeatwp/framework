@@ -349,10 +349,13 @@ class UserModel
             $this->wpUser->user_pass = Str::random(32);
         }
 
+        $userData = $this->wpUser->to_array();
+        $userData['meta_input'] = $this->metaInput;
+
         if ($this->getId()) {
-            $userId = wp_update_user($this->wpUser);
+            $userId = wp_update_user($userData);
         } else {
-            $userId = wp_insert_user($this->wpUser);
+            $userId = wp_insert_user($userData);
         }
 
         if (!is_int($userId)) {
