@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
@@ -28,6 +29,7 @@ class UserModel
 
     use BaseModelTrait;
     use GetMetaTrait;
+    use SetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
@@ -92,29 +94,6 @@ class UserModel
     public function setEmail(string $email): self
     {
         $this->wpUser->user_email = $email;
-        return $this;
-    }
-
-    /** @return $this */
-    public function setMeta(string $key, $value)
-    {
-        $this->metaInput[$key] = $value;
-
-        unset($this->metaToUnset[$key]);
-
-        return $this;
-    }
-
-    /**
-     * @param non-empty-string $key Metadata name.
-     * @return $this
-     */
-    public function unsetMeta(string $key)
-    {
-        $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
         return $this;
     }
 
