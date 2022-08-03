@@ -95,7 +95,7 @@ class UserModel
         return $this;
     }
 
-    /** @return static */
+    /** @return $this */
     public function setMeta(string $key, $value)
     {
         $this->metaInput[$key] = $value;
@@ -107,7 +107,7 @@ class UserModel
 
     /**
      * @param non-empty-string $key Metadata name.
-     * @return static
+     * @return $this
      */
     public function unsetMeta(string $key)
     {
