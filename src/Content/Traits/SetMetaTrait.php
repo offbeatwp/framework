@@ -9,7 +9,7 @@ trait SetMetaTrait
      * @param mixed $value The new metadata value.
      * @return $this
      */
-    public function setMeta(string $key, $value)
+    public function setMeta(string $key, $value): self
     {
         $this->metaInput[$key] = $value;
 
@@ -22,7 +22,7 @@ trait SetMetaTrait
      * @param non-empty-string $key Metadata name.
      * @return $this
      */
-    public function unsetMeta(string $key)
+    public function unsetMeta(string $key): self
     {
         $this->metaToUnset[$key] = '';
 
