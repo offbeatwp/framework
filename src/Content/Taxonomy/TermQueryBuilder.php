@@ -263,6 +263,10 @@ class TermQueryBuilder
     }
 
     // Chainable methods
+    /**
+     * @param int $parentId
+     * @return $this
+     */
     public function whereParent(int $parentId): TermQueryBuilder
     {
         $this->queryVars['parent'] = $parentId;
@@ -297,7 +301,10 @@ class TermQueryBuilder
         return $this;
     }
 
-    /** @param int|int[]|null $postIds */
+    /**
+     * @param int|int[]|null $postIds
+     * @return $this
+     */
     public function whereRelatedToPost($postIds): TermQueryBuilder
     {
         $this->queryVars['object_ids'] = $postIds ?: [0];
@@ -305,6 +312,10 @@ class TermQueryBuilder
         return $this;
     }
 
+    /**
+     * @param bool $hideEmpty
+     * @return $this
+     */
     public function excludeEmpty(bool $hideEmpty = true): TermQueryBuilder
     {
         $this->queryVars['hide_empty'] = $hideEmpty;

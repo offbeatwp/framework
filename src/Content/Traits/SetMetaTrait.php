@@ -5,9 +5,9 @@ namespace OffbeatWP\Content\Traits;
 trait SetMetaTrait
 {
     /**
-     * @param non-empty-string $key Metadata name.
+     * @param string $key Metadata name.
      * @param mixed $value The new metadata value.
-     * @return static
+     * @return $this
      */
     public function setMeta(string $key, $value)
     {
@@ -20,7 +20,7 @@ trait SetMetaTrait
 
     /**
      * @param non-empty-string $key Metadata name.
-     * @return static
+     * @return $this
      */
     public function unsetMeta(string $key)
     {
