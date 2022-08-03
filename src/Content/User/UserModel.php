@@ -86,11 +86,7 @@ class UserModel
     ///////////////
     /// Setters ///
     ///////////////
-    /**
-     * The user's email address. <b>Setting this is required.</b>
-     * @param non-empty-string $email
-     * @return $this
-     */
+    /** The user's email address. <b>Setting this is required.</b> */
     public function setEmail(string $email): self
     {
         $this->wpUser->user_email = $email;
