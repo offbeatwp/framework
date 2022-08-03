@@ -26,6 +26,8 @@ class UserModel
     protected $metaInput = [];
     /** @var array */
     protected $metaToUnset = [];
+    /** @var string */
+    private $newUserLogin = '';
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -111,6 +113,12 @@ class UserModel
         return $this;
     }
 
+    public function setLogin(string $userLogin): self
+    {
+        $this->newUserLogin = $userLogin;
+        return $this;
+    }
+
     ///////////////
     /// Getters ///
     ///////////////
@@ -154,7 +162,7 @@ class UserModel
     /** @return string The user's login username. */
     public function getLogin(): string
     {
-        return $this->wpUser->user_login;
+        return $this->newUserLogin ?: $this->wpUser->user_login;
     }
 
     /** @return string The URL-friendly user name. Defaults to first name + last name. */
@@ -329,6 +337,13 @@ class UserModel
 
         if ($this->getId()) {
             $userId = wp_update_user($userData);
+
+            // Surprise, wp_update_user ignores updates to user_login!
+            if (is_int($userId) && $this->newUserLogin && $this->wpUser->user_login !== $this->newUserLogin) {
+                global $wpdb;
+                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
+                $this->newUserLogin = '';
+            }
         } else {
             $userId = wp_insert_user($userData);
         }
