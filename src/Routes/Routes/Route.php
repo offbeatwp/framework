@@ -2,31 +2,22 @@
 namespace OffbeatWP\Routes\Routes;
 
 use Closure;
-use Symfony\Component\Routing\Route as RoutingRoute;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 
-class Route extends RoutingRoute
+class Route extends SymfonyRoute
 {
     protected $name;
     private $actionCallback;
 
-    /**
-     * @var string|Callable $target
-     */
-    public function __construct(string $name, string $path, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '') {
+    public function __construct(string $name, string $path, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '')
+    {
         $this->setName($name);
         $this->setActionCallback($actionCallback);
-
-        $this->setPath($path);
-        $this->addDefaults($defaults);
-        $this->addRequirements($requirements);
-        $this->setOptions($options);
-        $this->setHost($host);
-        $this->setSchemes($schemes);
-        $this->setMethods($methods);
-        $this->setCondition($condition);
+        parent::__construct($path, $defaults, $requirements, $options, $host, $schemes, $methods, $condition);
     }
 
-    public function setActionCallback($actionCallback) {
+    public function setActionCallback($actionCallback)
+    {
         $this->actionCallback = $actionCallback;
     }
 
@@ -52,13 +43,9 @@ class Route extends RoutingRoute
         return container()->call($actionCallback, $this->getParameters());
     }
 
-    public function hasValidActionCallback():bool
+    public function hasValidActionCallback(): bool
     {
-        if (is_callable($this->actionCallback)) {
-            return true;
-        }
-        
-        return false;
+        return is_callable($this->actionCallback);
     }
 
     public function getParameters()
@@ -72,11 +59,18 @@ class Route extends RoutingRoute
         return $parameters;
     }
 
-    public function setName($name) {
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getName() {
+    /** @return string */
+    public function getName()
+    {
         return $this->name;
     }
 }
