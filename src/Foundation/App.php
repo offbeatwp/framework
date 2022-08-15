@@ -11,6 +11,7 @@ use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
+use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Wordpress\WordpressService;
 use WP_Error;
@@ -209,7 +210,10 @@ class App
         }
     }
 
-    /** @return string|WP_Error|false */
+    /**
+     * @param Route|false $route
+     * @return false|string|WP_Error
+     */
     public function runRoute($route)
     {
         $route = apply_filters('offbeatwp/route/run/init', $route);
@@ -218,7 +222,8 @@ class App
             $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
 
             if (!$actionReturn) {
-                $actionReturn = $route->doActionCallback(); 
+                $route = $route->runMiddleware();
+                $actionReturn = $route->doActionCallback();
             }
 
             $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);

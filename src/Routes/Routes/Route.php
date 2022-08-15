@@ -2,7 +2,10 @@
 namespace OffbeatWP\Routes\Routes;
 
 use Closure;
+use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\IMiddleware;
+use OffbeatWP\Routes\WpRedirect;
+use OffbeatWP\Routes\RouteRequest;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class Route extends SymfonyRoute
@@ -104,5 +107,26 @@ class Route extends SymfonyRoute
     {
         $this->middleware = $classNames;
         return $this;
+    }
+
+    public function runMiddleware(Route $route): Route
+    {
+        $request = new RouteRequest($route);
+
+        foreach ($this->middleware as $middleware) {
+            /** @var IMiddleware $middlewareInstance */
+            $middlewareInstance = new $middleware();
+            $result = $middlewareInstance->handle($request);
+
+            if ($result instanceof WpRedirect) {
+                $result->execute();
+            }
+
+            if (!$result instanceof RouteRequest) {
+                throw new InvalidRouteException('Unexpected Middleware return value received.');
+            }
+        }
+
+        return $request->getRoute();
     }
 }
