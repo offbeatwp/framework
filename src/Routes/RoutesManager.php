@@ -138,10 +138,7 @@ class RoutesManager
 
         /** @var CallbackRoute $callbackRoute */
         foreach ($callbackRoutes->all() as $callbackRoute) {
-            if (
-                apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) &&
-                $callbackRoute->doMatchCallback()
-            ) {
+            if (apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) && $callbackRoute->doMatchCallback()) {
                 return $callbackRoute;
             }
         }
