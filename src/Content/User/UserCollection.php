@@ -4,11 +4,13 @@ namespace OffbeatWP\Content\User;
 
 use ArrayIterator;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
+use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Support\Wordpress\User;
 use TypeError;
 use WP_User;
 
 /**
+ * @template TModel
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
  * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
@@ -20,7 +22,7 @@ use WP_User;
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var UserModel[] */
+    /** @var UserModel|TModel[] */
     protected $items = [];
 
     /** @param int[]|WP_User[]|UserModel[] $items */
@@ -41,7 +43,8 @@ class UserCollection extends OffbeatModelCollection
      * Retrieves all object Ids within this collection as an array.
      * @return int[]
      */
-    public function getIds(): array {
+    public function getIds(): array
+    {
         return array_map(static function (UserModel $model) {
             return $model->getId() ?: 0;
         }, $this->items);
@@ -78,6 +81,25 @@ class UserCollection extends OffbeatModelCollection
     public function offsetSet($key, $value)
     {
         parent::offsetSet($key, $this->createValidUserModel($value));
+    }
+
+    /**
+     * @template T
+     * @param class-string<T|UserModel> $className
+     * @return UserCollection<T>
+     */
+    public function as(string $className): UserCollection
+    {
+        if (!is_a($className, UserModel::class, true)) {
+            throw new UserModelException('Cannot cast items in UserCollection to a class that does not extend UserModel.');
+        }
+
+        $collection = new UserCollection();
+        foreach ($this as $user) {
+            $collection->add(new $className($user->getWpUser()));
+        }
+
+        return $collection;
     }
 
     /**
