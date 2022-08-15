@@ -109,9 +109,9 @@ class Route extends SymfonyRoute
         return $this;
     }
 
-    public function runMiddleware(Route $route): Route
+    public function runMiddleware(): Route
     {
-        $request = new RouteRequest($route);
+        $request = new RouteRequest($this);
 
         foreach ($this->middleware as $middleware) {
             /** @var IMiddleware $middlewareInstance */
