@@ -163,7 +163,7 @@ class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdIn($ids)
+    public function whereIdIn($ids): UserQueryBuilder
     {
         if (!is_array($ids)) {
             $ids = [$ids];
@@ -178,7 +178,7 @@ class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdNotIn($ids)
+    public function whereIdNotIn($ids): UserQueryBuilder
     {
         if (!is_array($ids)) {
             $ids = [$ids];
