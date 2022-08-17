@@ -160,6 +160,36 @@ class UserQueryBuilder
     }
 
     /**
+     * @param int[]|int $ids
+     * @return $this
+     */
+    public function whereIdIn($ids)
+    {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        $this->queryVars['include'] = $ids;
+
+        return $this;
+    }
+
+    /**
+     * @param int[]|int $ids
+     * @return $this
+     */
+    public function whereIdNotIn($ids)
+    {
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        $this->queryVars['exclude'] = $ids;
+
+        return $this;
+    }
+
+    /**
      * @param positive-int $amount
      * @return $this
      */
