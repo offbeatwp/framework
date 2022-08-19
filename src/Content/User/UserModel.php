@@ -95,6 +95,12 @@ class UserModel
         return $this;
     }
 
+    public function setNickname(string $nickname): self
+    {
+        $this->wpUser->nickname = $nickname;
+        return $this;
+    }
+
     public function setDisplayName(string $displayName): self
     {
         $this->wpUser->display_name = $displayName;
