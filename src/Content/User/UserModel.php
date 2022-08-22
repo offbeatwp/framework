@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
-use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
@@ -31,7 +30,6 @@ class UserModel
 
     use BaseModelTrait;
     use GetMetaTrait;
-    use SetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
@@ -122,6 +120,33 @@ class UserModel
     public function setLogin(string $userLogin): self
     {
         $this->newUserLogin = $userLogin;
+        return $this;
+    }
+
+    /**
+     * @param string $key Metadata name.
+     * @param mixed $value The new metadata value.
+     * @return $this
+     */
+    public function setMeta(string $key, $value): self
+    {
+        $this->metaInput[$key] = $value;
+
+        unset($this->metaToUnset[$key]);
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $key Metadata name.
+     * @return $this
+     */
+    public function unsetMeta(string $key): self
+    {
+        $this->metaToUnset[$key] = '';
+
+        unset($this->metaInput[$key]);
+
         return $this;
     }
 
@@ -291,7 +316,19 @@ class UserModel
         return $this->wpUser->roles;
     }
 
-    /** @return string[] Returns the translated user roles. Roles without translations will retain their original name. */
+    /** @return string[] */
+    public function getRoleLabels(): array
+    {
+        $roles = [];
+
+        foreach ($this->wpUser->roles as $role) {
+            $roles[] = wp_roles()->role_names[$role] ?? '';
+        }
+
+        return $roles;
+    }
+
+    /** @deprecated */
     public function getTranslatedRoles(string $domain = 'default'): array
     {
         return array_map(static function (string $role) use ($domain) {
@@ -305,16 +342,17 @@ class UserModel
         return $this->getRoles()[$index] ?? null;
     }
 
+    public function getRoleLabel(int $index): string
+    {
+        return wp_roles()->role_names[$this->getRole($index)] ?? '';
+    }
+
     public function hasRole(string $role): bool
     {
         return in_array($role, $this->getRoles(), true);
     }
 
-    /**
-     * @param int $index The index of the role to be translated.
-     * @param string $domain Optional. Text domain. Unique identifier for retrieving translated strings. Default 'default'.
-     * @return string|null The translated role name on success. The untranslated role name if no translation is available. Null if no role exists at the provided index.
-     */
+    /** @deprecated */
     public function getTranslatedRole(int $index, string $domain = 'default'): ?string
     {
         $role = $this->getRole($index);
