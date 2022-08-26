@@ -101,11 +101,8 @@ trait GetMetaTrait
         $strDate = strtotime($this->getMetaString($key));
 
         if ($strDate) {
-            $dateFormat = $format ?: get_option('date_format');
-
-            if ($dateFormat) {
-                return date_i18n($dateFormat, $strDate);
-            }
+            $dateFormat = $format ?: get_option('date_format') ?: 'Y-m-d H:i:s';
+            return date_i18n($dateFormat, $strDate);
         }
 
         return '';
