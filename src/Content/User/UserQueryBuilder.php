@@ -169,7 +169,7 @@ class UserQueryBuilder
             $ids = [$ids];
         }
 
-        $this->queryVars['include'] = $ids;
+        $this->queryVars['include'] = $ids ?: 0;
 
         return $this;
     }

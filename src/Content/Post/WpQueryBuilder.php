@@ -421,7 +421,7 @@ class WpQueryBuilder
             $ids = [$ids];
         }
 
-        $this->queryVars['post__in'] = $ids;
+        $this->queryVars['post__in'] = $ids ?: 0;
 
         return $this;
     }
