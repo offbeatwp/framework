@@ -213,6 +213,10 @@ class TermModel implements TermModelInterface
      */
     public static function exists(?int $id): bool
     {
+        if ($id <= 0) {
+            return false;
+        }
+
         return static::query()->excludeEmpty(false)->include([$id])->exists();
     }
 

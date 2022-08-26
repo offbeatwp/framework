@@ -36,6 +36,10 @@ trait BaseModelTrait
      */
     public static function exists(?int $id): bool
     {
+        if ($id <= 0) {
+            return false;
+        }
+
         return static::query()->whereIdIn([$id])->exists();
     }
 
