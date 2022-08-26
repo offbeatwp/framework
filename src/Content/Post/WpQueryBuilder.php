@@ -402,12 +402,7 @@ class WpQueryBuilder
      */
     public function whereIdNotIn($ids)
     {
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
-
-        $this->queryVars['post__not_in'] = $ids;
-
+        $this->queryVars['post__not_in'] = (array)$ids;
         return $this;
     }
 
@@ -417,12 +412,7 @@ class WpQueryBuilder
      */
     public function whereIdIn($ids)
     {
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
-
-        $this->queryVars['post__in'] = $ids ?: 0;
-
+        $this->queryVars['post__in'] = (array)$ids ?: [0];
         return $this;
     }
 

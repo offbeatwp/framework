@@ -165,12 +165,7 @@ class UserQueryBuilder
      */
     public function whereIdIn($ids): UserQueryBuilder
     {
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
-
-        $this->queryVars['include'] = $ids ?: 0;
-
+        $this->queryVars['include'] = (array)$ids ?: [0];
         return $this;
     }
 
@@ -180,11 +175,7 @@ class UserQueryBuilder
      */
     public function whereIdNotIn($ids): UserQueryBuilder
     {
-        if (!is_array($ids)) {
-            $ids = [$ids];
-        }
-
-        $this->queryVars['exclude'] = $ids;
+        $this->queryVars['exclude'] = (array)$ids;
 
         return $this;
     }
