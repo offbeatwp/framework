@@ -29,6 +29,16 @@ trait BaseModelTrait
         return $item;
     }
 
+    /**
+     * Checks if a model with the given ID exists.
+     * @param int|null $id
+     * @return bool
+     */
+    public static function exists(?int $id): bool
+    {
+        return static::query()->whereIdIn([$id])->exists();
+    }
+
     /** @return static[] */
     public static function allAsArray()
     {
