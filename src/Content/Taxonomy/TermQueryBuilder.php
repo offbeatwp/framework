@@ -46,7 +46,7 @@ class TermQueryBuilder
 
     /** @param int[] $ids Array of term IDs to include. */
     public function include(array $ids) {
-        $this->queryVars['include'] = $ids;
+        $this->queryVars['include'] = $ids ?: [0];
         return $this;
     }
 
