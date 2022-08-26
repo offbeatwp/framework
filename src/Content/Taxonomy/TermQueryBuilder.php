@@ -21,11 +21,11 @@ class TermQueryBuilder
     public function __construct($model)
     {
         $this->model = $model;
-        $this->taxonomy = $model::TAXONOMY;
 
-        $this->queryVars = [
-            'taxonomy' => $model::TAXONOMY,
-        ];
+        if (defined("$model::TAXONOMY")) {
+            $this->taxonomy = $model::TAXONOMY;
+            $this->queryVars['taxonomy'] = $model::TAXONOMY;
+        }
 
         if (method_exists($model, 'defaultQuery')) {
             $model::defaultQuery($this);
@@ -46,7 +46,7 @@ class TermQueryBuilder
 
     /** @param int[] $ids Array of term IDs to include. */
     public function include(array $ids) {
-        $this->queryVars['include'] = $ids;
+        $this->queryVars['include'] = $ids ?: [0];
         return $this;
     }
 
@@ -325,6 +325,11 @@ class TermQueryBuilder
 
     private function runQuery(): WP_Term_Query
     {
+        // This is a fix for to ensure that passing an empty array to include returns no results.
+        if (isset($this->queryVars['include']) && $this->queryVars['include'] === [0]) {
+            $this->queryVars['object_ids'] = 0;
+        }
+
         $query = new WP_Term_Query($this->queryVars);
 
         self::$lastRequest = $query->request;
