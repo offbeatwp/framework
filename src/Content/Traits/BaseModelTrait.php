@@ -29,6 +29,11 @@ trait BaseModelTrait
         return $item;
     }
 
+    public static function exists(?int $id): bool
+    {
+        return static::query()->whereIdIn([$id])->exists();
+    }
+
     /** @return static[] */
     public static function allAsArray()
     {
