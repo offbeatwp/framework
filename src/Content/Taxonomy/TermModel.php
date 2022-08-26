@@ -206,6 +206,16 @@ class TermModel implements TermModelInterface
         return static::query()->excludeEmpty(false)->all();
     }
 
+    /**
+     * Checks if a model with the given ID exists.
+     * @param int|null $id
+     * @return bool
+     */
+    public static function exists(?int $id): bool
+    {
+        return static::query()->excludeEmpty(false)->include([$id])->exists();
+    }
+
     /** @return TermQueryBuilder<static> */
     public static function query(): TermQueryBuilder
     {
