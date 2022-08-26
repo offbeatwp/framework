@@ -21,11 +21,11 @@ class TermQueryBuilder
     public function __construct($model)
     {
         $this->model = $model;
-        $this->taxonomy = $model::TAXONOMY;
 
-        $this->queryVars = [
-            'taxonomy' => $model::TAXONOMY,
-        ];
+        if (defined("$model::TAXONOMY")) {
+            $this->taxonomy = $model::TAXONOMY;
+            $this->queryVars['taxonomy'] = $model::TAXONOMY;
+        }
 
         if (method_exists($model, 'defaultQuery')) {
             $model::defaultQuery($this);
