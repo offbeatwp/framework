@@ -484,7 +484,7 @@ class UserModel
     /** @return UserCollection<static> */
     public static function all(): UserCollection
     {
-        return static::query()->all();
+        return static::query()->get();
     }
 
     /** @return UserQueryBuilder<static> */
@@ -511,7 +511,7 @@ class UserModel
 
         // Assign the appropriate roles defined by this class.
         if (static::definedUserRoles()) {
-            $user = get_user_by_email($userEmail);
+            $user = get_user_by('ID', $result);
             $user->set_role('');
 
             foreach(static::definedUserRoles() as $role) {

@@ -14,11 +14,14 @@ class UserQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var array */
-    protected $queryVars = [];
+    protected $queryVars = ['number' => 0];
     /** @var class-string<UserModel> */
     protected $modelClass;
 
-    /** @param class-string<TModel> $modelClass */
+    /**
+     * @param class-string<TModel> $modelClass
+     * @noinspection PhpUndefinedMethodInspection
+     */
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
@@ -29,7 +32,7 @@ class UserQueryBuilder
     }
 
     /** @return UserCollection<TModel> */
-    protected function get(): UserCollection
+    public function get(): UserCollection
     {
         do_action('offbeatwp/users/query/before_get', $this);
 
@@ -38,7 +41,7 @@ class UserQueryBuilder
         return apply_filters('offbeatwp/users/query/get', new UserCollection($userQuery->get_results()), $this);
     }
 
-    /** @return UserCollection<TModel> */
+    /** @deprecated Use the <b>get</b> method instead. */
     public function all(): UserCollection
     {
         return $this->take(0);
@@ -204,7 +207,7 @@ class UserQueryBuilder
     public function firstDisplayName(): ?string
     {
         $this->queryVars['fields'] = 'display_name';
-        $this->queryVars['numbers'] = 1;
+        $this->queryVars['number'] = 1;
         return $this->runQuery()->get_results()[0] ?? null;
     }
 
