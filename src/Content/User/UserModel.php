@@ -492,4 +492,34 @@ class UserModel
     {
         return new UserQueryBuilder(static::class);
     }
+
+    /**
+     * Inserts a new user into the WordPress database.<br>
+     * This function is used when a new user registers through WordPress’ Login Page.<br>
+     * It requires a valid username and email address but doesn’t allow to choose a password, generating a random one using wp_generate_password().
+     * @param string $userEmail User's email address to send password.
+     * @param string $userLogin User's username for logging in. Default to email if omitted.
+     * @return static|null Returns the registered user if the user was registered successfully.
+     */
+    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModel
+    {
+        $result = register_new_user($userLogin ?: $userEmail, $userEmail);
+
+        if (!is_int($result)) {
+            return null;
+        }
+
+        // Assign the appropriate roles defined by this class.
+        if (static::definedUserRoles()) {
+            $user = get_user_by_email($userEmail);
+            $user->set_role('');
+
+            foreach(static::definedUserRoles() as $role) {
+                $user->add_role($role);
+            }
+        }
+
+
+        return static::find($result);
+    }
 }
