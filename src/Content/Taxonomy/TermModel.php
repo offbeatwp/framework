@@ -200,10 +200,10 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->count;
     }
 
-    /** @return TermsCollection<static> Empty terms <b>will</b> be included by default. */
+    /** @return TermsCollection<static> Empty terms <b>will</b> be included. */
     public static function all(): TermsCollection
     {
-        return static::query()->excludeEmpty(false)->all();
+        return static::query()->excludeEmpty(false)->get();
     }
 
     /**
