@@ -17,6 +17,10 @@ class UserQueryBuilder
     protected $queryVars = ['number' => 0];
     /** @var class-string<UserModel> */
     protected $modelClass;
+    /** @var bool */
+    protected $skipOnLimit = false;
+    /** @var bool */
+    protected $skipOnInclude = false;
 
     /**
      * @param class-string<TModel> $modelClass
@@ -36,9 +40,9 @@ class UserQueryBuilder
     {
         do_action('offbeatwp/users/query/before_get', $this);
 
-        $userQuery = $this->runQuery();
+        $results = $this->getQueryResults();
 
-        return apply_filters('offbeatwp/users/query/get', new UserCollection($userQuery->get_results()), $this);
+        return apply_filters('offbeatwp/users/query/get', new UserCollection($results), $this);
     }
 
     /** @deprecated Use the <b>get</b> method instead. */
@@ -168,7 +172,8 @@ class UserQueryBuilder
      */
     public function whereIdIn($ids): UserQueryBuilder
     {
-        $this->queryVars['include'] = (array)$ids ?: [0];
+        $this->skipOnInclude = !$ids;
+        $this->queryVars['include'] = (array)$ids;
         return $this;
     }
 
@@ -184,16 +189,14 @@ class UserQueryBuilder
     }
 
     /**
-     * @param positive-int $amount
+     * @param int $amount
      * @return $this
      */
     public function limit(int $amount): UserQueryBuilder
     {
-        if ($amount <= 0) {
-            throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
-        }
-
+        $this->skipOnLimit = ($amount <= 0);
         $this->queryVars['number'] = $amount;
+
         return $this;
     }
 
@@ -201,22 +204,26 @@ class UserQueryBuilder
     public function Ids(): array
     {
         $this->queryVars['fields'] = 'ID';
-        return $this->runQuery()->get_results();
+        return $this->getQueryResults();
     }
 
     public function firstDisplayName(): ?string
     {
         $this->queryVars['fields'] = 'display_name';
         $this->queryVars['number'] = 1;
-        return $this->runQuery()->get_results()[0] ?? null;
+        return $this->getQueryResults()[0] ?? null;
     }
 
-    public function runQuery(): WP_User_Query
+    private function getQueryResults(): array
     {
+        if ($this->skipOnLimit || $this->skipOnInclude) {
+            return [];
+        }
+
         $query = new WP_User_Query($this->queryVars);
 
         self::$lastRequest = $query->request;
 
-        return $query;
+        return $query->get_results();
     }
 }
