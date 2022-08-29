@@ -123,6 +123,12 @@ class UserModel
         return $this;
     }
 
+    public function setUrl(string $url): self
+    {
+        $this->wpUser->user_url = $url;
+        return $this;
+    }
+
     /**
      * @param string $key Metadata name.
      * @param mixed $value The new metadata value.
