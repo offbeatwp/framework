@@ -276,6 +276,7 @@ class UserModel
         return get_edit_user_link($this->getId());
     }
 
+    /** @deprecated */
     public function getPhoneNumber(): string
     {
         return $this->getMetaString('phone_number');
@@ -474,6 +475,11 @@ class UserModel
         }
 
         return null;
+    }
+
+    public function isUsingDefaultPassword(): bool
+    {
+        return $this->getMetaBool('default_password_nag');
     }
 
     /**
