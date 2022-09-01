@@ -36,7 +36,7 @@ class UserModel
     }
 
     /** @param WP_User|int|null $user */
-    public function __construct($user = null)
+    final public function __construct($user = null)
     {
         if ($user === null) {
             $user = new WP_User();
@@ -119,6 +119,7 @@ class UserModel
 
     public function setLogin(string $userLogin): self
     {
+        $this->wpUser->user_login = $userLogin;
         $this->newUserLogin = $userLogin;
         return $this;
     }
@@ -230,7 +231,6 @@ class UserModel
         return $this->wpUser->last_name;
     }
 
-    /** @return string The plain-text user password. */
     public function getPassword(): string
     {
         return $this->wpUser->user_pass;
@@ -523,14 +523,15 @@ class UserModel
 
         // Assign the appropriate roles defined by this class.
         if (static::definedUserRoles()) {
-            $user = get_user_by('ID', $result);
-            $user->set_role('');
+            $wpUser = get_user_by('ID', $result);
+            $wpUser->set_role('');
 
             foreach(static::definedUserRoles() as $role) {
-                $user->add_role($role);
+                $wpUser->add_role($role);
             }
-        }
 
+            return new static($wpUser);
+        }
 
         return static::find($result);
     }
