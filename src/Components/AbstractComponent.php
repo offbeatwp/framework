@@ -25,6 +25,8 @@ abstract class AbstractComponent
     /** @var int|null */
     private $renderId = null;
 
+    protected $assetsEnqueued = false;
+
     /** @return Form|null */
     public static function form()
     {
@@ -114,6 +116,8 @@ abstract class AbstractComponent
 
         $filteredSettings = apply_filters('offbeat.component.settings', $settings, $this);
         $defaultValues = self::getForm()->getDefaultValues();
+
+        static::_enqueueAssets();
 
         $output = container()->call([$this, 'render'], [
             'settings' => new ComponentSettings($filteredSettings, $defaultValues)
@@ -248,5 +252,12 @@ abstract class AbstractComponent
         }
 
         return apply_filters('offbeatwp/component/form', $form, static::class);
+    }
+
+    public static function enqueueAssets() {}
+
+    public static function _enqueueAssets()
+    {
+        static::enqueueAssets();
     }
 }
