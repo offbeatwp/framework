@@ -64,7 +64,7 @@ final class WpFile
     /**
      * Create a file in the upload folder with given content.<br>
      * If there is an error, then the key 'error' will exist with the error message.<br>
-     * If success, then the key 'file' will have the unique file path, the 'url' key will have the link to the new file. and the 'error' key will be set to <b>null</b>.<br>
+     * If successful, then the key 'file' will have the unique file path, the 'url' key will have the link to the new file. and the 'error' key will be set to <b>null</b>.<br>
      * This function will not move an uploaded file to the upload folder.<br>
      * It will create a new file with the content in $bits parameter.<br>
      * If you move the upload file, read the content of the uploaded file, and then you can give the filename and content to this function, which will add it to the upload folder.<br>
@@ -80,12 +80,13 @@ final class WpFile
     }
 
     /** @param array{name: string, tmp_name: string} $fileArray Array that represents a `$_FILES` upload array. */
-    public static function uploadFromArray(array $fileArray, int $postId = 0): WpFile
+    public static function uploadFromArray(array $fileArray): WpFile
     {
         return self::uploadBits($fileArray['name'], file_get_contents($fileArray['tmp_name']));
     }
 
     /**
+     * Attempt to download a file from a URL.
      * @param string $url
      * @param string[] $allowedContentTypes Allowed content MIME-types.
      * @return WpFile|null Returns a <i>WpFile</i> on success or <i>null</i> otherwise.
@@ -93,7 +94,7 @@ final class WpFile
      */
     public static function uploadFromUrl(string $url, array $allowedContentTypes): ?WpFile
     {
-        $fileName = pathinfo($url)['filename'];
+        $fileName = pathinfo($url, PATHINFO_FILENAME);
 
         if (!$fileName) {
             throw new Exception('Could not get remote filename.');
