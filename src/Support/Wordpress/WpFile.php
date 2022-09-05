@@ -7,13 +7,9 @@ use OffbeatWP\Exceptions\WpErrorException;
 
 final class WpFile
 {
-    /** @var string */
     private $file;
-    /** @var string */
     private $url;
-    /** @var string */
     private $type;
-    /** @var string|null */
     private $error;
 
     private function __construct(array $result)
@@ -21,7 +17,7 @@ final class WpFile
         $this->file = $result['file'];
         $this->url = $result['url'];
         $this->type = $result['type'];
-        $this->error = ($result['error'] !== false) ? $result['error'] : null;
+        $this->error = is_string($result['error']) ? $result['error'] : null;
     }
 
     public function getFileName(): string
