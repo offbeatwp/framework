@@ -21,7 +21,7 @@ class Http
 
     public function redirectToParentUrl($requestUri = null, int $status = 301): void
     {   
-        if (is_null($requestUri)) {
+        if ($requestUri === null) {
             $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
             $requestUri = $request->getPathInfo();
         } else {
@@ -31,7 +31,7 @@ class Http
         $requestUri = untrailingslashit($requestUri);
 
         // If $requestUri is empty, we are already on the root, so we can't redirect deeper
-        if (empty($requestUri)) {
+        if (!$requestUri) {
             return;
         }
 
