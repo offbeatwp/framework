@@ -41,7 +41,7 @@ class ServiceEnqueueScripts extends AbstractService
     {
         $vars = apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')]);
 
-        if (empty($vars)) {
+        if (!$vars) {
             return;
         }
 

@@ -104,7 +104,7 @@ class App
 
     private function registerServices(): void
     {
-        if (!empty($this->services)) {
+        if ($this->services) {
             foreach ($this->services as $service) {
                 if (is_callable([$service, 'register'])) {
                     $this->container->call([$service, 'register']);

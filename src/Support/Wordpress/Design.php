@@ -75,7 +75,7 @@ class Design
         $rowThemesList = [];
 
         $rowThemes->each(function ($item, $key) use (&$rowThemesList) {
-            if (isset($item['sub_themes']) && !empty($item['sub_themes'])) {
+            if (!empty($item['sub_themes'])) {
                 $subThemes       = collect($item['sub_themes']);
                 $rowSubThemeList = [];
 
