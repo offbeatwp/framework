@@ -119,7 +119,13 @@ class PostTypeBuilder
         return $this;
     }
 
-    public function addAdminTableColumn(string $name, string $label, string $modelFunc): PostTypeBuilder
+    /**
+     * @param string $name
+     * @param string $label
+     * @param non-empty-string|callable $modelFunc
+     * @return $this
+     */
+    public function addAdminTableColumn(string $name, string $label, $modelFunc): PostTypeBuilder
     {
         add_action("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($label, $name) {
             $postColumns[$name] = $label;
@@ -129,7 +135,12 @@ class PostTypeBuilder
         add_action("manage_{$this->postType}_posts_custom_column", function (string $columnName, int $postId) use ($name, $modelFunc) {
             if ($columnName === $name) {
                 $model = new $this->modelClass($postId);
-                echo $model->$modelFunc();
+
+                if (is_string($modelFunc)) {
+                    echo $model->$modelFunc();
+                } else {
+                    echo $modelFunc($model);
+                }
             }
         }, 10, 2);
 
@@ -137,22 +148,30 @@ class PostTypeBuilder
     }
 
     /**
-     * Easily add a sortabke column to the admin table based on a specific meta value
+     * Easily add a sortable column to the admin table based on a specific meta value.
      * @param string $metaName The meta key. Required.
      * @param string $label The label to display in the admin column. Displays meta key name if omitted.
-     * @param string $orderBy How the column should be sorted. Defaults to alphatic. Use 'meta_value_num' for numeric sorting.
+     * @param string $orderBy How the column should be sorted. Defaults to 'meta_value' which is alphabetic. <br>Use 'meta_value_num' for numeric sorting.
+     * @param null|callable $callback Optional. Provide a callback to modify the data before it is rendered. <br><b>The sorting will still happen based on the original meta value.</b>
      * @return $this
      */
-    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value'): PostTypeBuilder
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): PostTypeBuilder
     {
         add_action("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($metaName, $label) {
             $postColumns[$metaName] = $label ?: $metaName;
             return $postColumns;
         });
 
-        add_action("manage_{$this->postType}_posts_custom_column", function (string $columnName, int $postId) use ($metaName) {
+        add_action("manage_{$this->postType}_posts_custom_column", function (string $columnName, int $postId) use ($metaName, $callback) {
             if ($columnName === $metaName) {
-                echo get_post_meta($postId, $metaName, true);
+                $metaValue = get_post_meta($postId, $metaName, true);
+
+                if ($callback) {
+                    $model = new $this->modelClass($postId);
+                    echo $callback($model, $metaValue);
+                } else {
+                    echo $metaValue;
+                }
             }
         }, 10, 2);
 
@@ -166,6 +185,25 @@ class PostTypeBuilder
                 $query->set('orderby', 'meta_value');
                 $query->set('meta_key', $metaName);
             }
+        });
+
+        return $this;
+    }
+
+    public function setAdminTableColumnLabel(string $name, string $newLabel): PostTypeBuilder
+    {
+        add_filter("manage_{$this->postType}_posts_columns", static function (array $columns) use ($name, $newLabel) {
+            $columns[$name] = $newLabel;
+            return $columns;
+        });
+
+        return $this;
+    }
+
+    public function removeAdminTableColumn(string $name): PostTypeBuilder
+    {
+        add_filter("manage_{$this->postType}_posts_columns", static function (array $columns) use ($name) {
+            unset($columns[$name]);
         });
 
         return $this;
