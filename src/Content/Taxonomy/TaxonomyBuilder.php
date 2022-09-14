@@ -199,7 +199,7 @@ class TaxonomyBuilder
 
     private function _hideTermDescriptionWrap(): void
     {
-        echo '<style> .term-description-wrap { display:none; } </style>';
+        echo '<style>.term-description-wrap, th.column-description, td.column-description { display:none; }</style>';
     }
 
     /**
