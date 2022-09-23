@@ -43,6 +43,15 @@ class WpQueryBuilder
         return $this;
     }
 
+    /** @return $this Shows all posts rather than paginating. */
+    public function noPaging()
+    {
+        $this->queryVars['nopaging'] = true;
+        unset($this->queryVars['paged']);
+
+        return $this;
+    }
+
     public function get(): PostsCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
