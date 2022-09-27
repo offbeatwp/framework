@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Traits;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use Exception;
 use Illuminate\Support\Collection;
 use OffbeatWP\Content\Post\PostModel;
@@ -156,13 +157,13 @@ trait GetMetaTrait
      * Retrieve a meta value as a Carbon Date.<br/>
      * If the meta value cannot be parsed to a date then <i>null</i> is returned.
      */
-    public function getMetaCarbon(string $key): ?Carbon
+    public function getMetaCarbon(string $key, ?DateTimeZone $tz = null): ?Carbon
     {
         $value = $this->getMeta($key);
 
         if ($value) {
             try {
-                return Carbon::parse($value);
+                return Carbon::parse($value, $tz);
             } catch (Exception $e) {
                 return null;
             }
