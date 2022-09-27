@@ -45,4 +45,13 @@ class ArrayHelper {
 
         return $array;
     }
+
+    /**
+     * @param scalar|scalar[] $data
+     * @return int[]
+     */
+    public static function toIntArray($data): array
+    {
+        return array_map('intval', (array)$data);
+    }
 }
