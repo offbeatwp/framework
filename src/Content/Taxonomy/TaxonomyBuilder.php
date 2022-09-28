@@ -144,11 +144,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /**
-     * Used to disable the metabox
-     *
-     * __Gutenberg currently does not respect this setting__
-     */
+    /** Used to disable the metabox */
     public function hideMetaBox(): TaxonomyBuilder
     {
         $this->args['meta_box_cb'] = false;
@@ -156,6 +152,7 @@ class TaxonomyBuilder
         return $this;
     }
 
+    /** @deprecated Does not work with Gutenberg editor. */
     public function useCheckboxes(): TaxonomyBuilder
     {
         $this->metaBox('post_categories_meta_box');
@@ -171,11 +168,33 @@ class TaxonomyBuilder
         return $this;
     }
 
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): TaxonomyBuilder
+    {
+        add_filter("manage_edit-{$this->taxonomy}_columns", function ($columns) use ($metaName, $label) {
+            $columns[$metaName] = $label ?: $metaName;
+            return $columns;
+        });
+
+        add_filter("manage_{$this->taxonomy}_custom_column", function ($content, $columnName, $termId) use ($metaName, $callback) {
+            if ($columnName === $metaName) {
+                $content = get_term_meta($termId, $metaName, true);
+
+                if ($callback) {
+                    $content = $callback(new $this->modelClass($termId), $content);
+                }
+            }
+
+            return $content;
+        }, 10, 3);
+
+        return $this;
+    }
+
     /**
      * Used to render a custom metabox
      *
-     * __Gutenberg currently does not respect this setting__
      * @param callable $metaBoxCallback
+     * @deprecated Gutenberg does not respect this setting and the devs indicated that they don't care
      */
     public function metaBox($metaBoxCallback): TaxonomyBuilder
     {
