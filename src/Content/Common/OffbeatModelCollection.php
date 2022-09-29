@@ -54,6 +54,18 @@ abstract class OffbeatModelCollection extends Collection
     }
 
     /**
+     * Run a map using a property on the containing models. This will return a basic Collection.
+     * @param non-empty-string $methodName
+     * @return Collection
+     */
+    public function mapAs(string $methodName): Collection
+    {
+        return $this->toCollection()->map(function ($item) use ($methodName) {
+            return $item->$methodName();
+        });
+    }
+
+    /**
      * Group an associative array by a field or using a callback. This will return a basic Collection.
      * @param array|callable|string $groupBy
      * @param bool $preserveKeys
