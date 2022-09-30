@@ -140,6 +140,11 @@ class TermModel implements TermModelInterface
         });
     }
 
+    public function getChildren(): TermsCollection
+    {
+        return new TermsCollection(get_term_children($this->getId(), $this->getTaxonomy()));
+    }
+
     /** @return array|false|string */
     public function getMetas()
     {
