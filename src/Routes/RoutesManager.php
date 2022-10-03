@@ -20,6 +20,13 @@ class RoutesManager
     protected $routeIterator = 0;
     protected $lastMatchRoute;
 
+    protected array $routes = [];
+    protected bool $routesAdded = false;
+
+    public const PRIORITY_LOW = 'low';
+    public const PRIORITY_HIGH = 'high';
+    public const PRIORITY_FIXED = 'fixed';
+
     public function __construct()
     {
         $this->routeCollection = new RouteCollection();
@@ -31,39 +38,80 @@ class RoutesManager
         return $this->routeCollection;
     }
 
-    /** Callbacks are executed in LiFo order. */
+    public function createCallback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
+    {
+        return $this->createRoute($checkCallback, $actionCallback, $parameters, [], $options);
+    }
+
     public function callback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
-        return $this->addRoute($checkCallback, $actionCallback, $parameters, [], $options);
+        $route = $this->createCallback($checkCallback, $actionCallback, $parameters, $options);
+        $this->addRoute($route);
+        return $route;
+    }
+
+    public function createGet($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
+    {
+        return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['GET']);
     }
 
     public function get($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        return $this->addRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['GET']);
+        $route = $this->createGet($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($route);
+        return $route;
+    }
+
+    public function createPost(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
+    {
+        return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['POST']);
     }
 
     public function post(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
-        return $this->addRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['POST']);
+        $route = $this->createPost($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($route);
+        return $route;
+    }
+
+    public function createPut(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
+    {
+        return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PUT']);
     }
 
     public function put(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
-        return $this->addRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PUT']);
+        $route = $this->createPut($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($route);
+        return $route;
+    }
+
+    public function createPatch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
+    {
+        return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PATCH']);
     }
 
     public function patch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        return $this->addRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PATCH']);
+        $route = $this->createPatch($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($route);
+        return $route;
+    }
+
+    public function createDelete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
+    {
+        return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['DELETE']);
     }
 
     public function delete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        return $this->addRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['DELETE']);
+        $route = $this->createDelete($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($route);
+        return $route;
     }
 
     /** @param string|Closure $target */
-    public function addRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): Route
+    public function createRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): Route
     {
         $name = $this->getNextRouteName();
 
@@ -76,7 +124,7 @@ class RoutesManager
             $defaults = ['_parameterCallback' => $defaults];
         }
 
-        $route = new $routeClass(
+        return new $routeClass(
             $name, //name
             $target, // target
             $actionCallback,
@@ -88,14 +136,74 @@ class RoutesManager
             $methods, // methods
             $condition // condition
         );
+    }
 
-        $this->getRouteCollection()->add($route->getName(), $route);
+    /**
+     * Add a route to the stack based on it's priority.
+     * If no priority is set, the default priority is PRIORITY_HIGH.
+     *
+     * @param Route $route
+     * @param $priority
+     * @return $this
+     */
+    public function addRoute(Route $route, $priority = null): RoutesManager
+    {
+        if (!$this->routes) {
+            $this->routes = [
+                self::PRIORITY_LOW => [],
+                self::PRIORITY_HIGH => [],
+                self::PRIORITY_FIXED => []
+            ];
+        }
+        if ($priority === null) {
+            $priority = self::PRIORITY_HIGH;
+        }
+        if ($priority === self::PRIORITY_HIGH) {
+            $this->routes[self::PRIORITY_HIGH][] = $route;
+        } elseif ($priority === self::PRIORITY_LOW) {
+            $this->routes[self::PRIORITY_LOW][] = $route;
+        } else {
+            $this->routes[self::PRIORITY_FIXED][] = [$priority, $route];
+        }
 
-        return $route;
+        $this->routesAdded = false;
+
+        return $this;
+    }
+
+    protected function addRoutes(): self
+    {
+        if ($this->routesAdded) {
+            return $this;
+        }
+
+        // Symfony will reverse the routes again
+        $routes = array_merge(
+            array_reverse($this->routes[self::PRIORITY_LOW]),
+            $this->routes[self::PRIORITY_HIGH]
+        );
+
+        // adding fixed priority routes
+        foreach ($this->routes[self::PRIORITY_FIXED] as $routeData) {
+            array_splice($routes, $routeData[0], 0, [$routeData[1]]);
+        }
+
+        $this->getRouteCollection()->removeAll();
+
+        foreach ($routes as $priority => $route) {
+            /** @var Route $route */
+            $this->getRouteCollection()->add($route->getName(), $route, $priority);
+        }
+
+        $this->routesAdded = true;
+
+        return $this;
     }
 
     public function findRoute()
     {
+        $this->addRoutes();
+
         $route = $this->findPathRoute();
 
         if (!$route) {
@@ -109,6 +217,8 @@ class RoutesManager
 
     public function findPathRoute()
     {
+        $this->addRoutes();
+
         // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
 
@@ -134,6 +244,8 @@ class RoutesManager
 
     public function findCallbackRoute()
     {
+        $this->addRoutes();
+
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);
 
         /** @var CallbackRoute $callbackRoute */
@@ -149,6 +261,8 @@ class RoutesManager
     /** @param Route $route */
     public function removeRoute($route)
     {
+        $this->addRoutes();
+
         if ($route instanceof Route) {
             $routeName = $route->getName();
 

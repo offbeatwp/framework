@@ -50,7 +50,7 @@ class App
 
         offbeat('hooks')->doAction('offbeat.ready');
 
-        add_filter('wp', [$this, 'findRoute'], 0);
+        add_action('wp', [$this, 'findRoute'], 0);
     }
 
     private function baseBindings(): array
