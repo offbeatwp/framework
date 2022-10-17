@@ -49,9 +49,9 @@ class RoutesManager
 
     public function callback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
-        $route = $this->createCallback($checkCallback, $actionCallback, $parameters, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createCallback($checkCallback, $actionCallback, $parameters, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     public function createGet($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
@@ -61,9 +61,9 @@ class RoutesManager
 
     public function get($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createGet($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createGet($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     public function createPost(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
@@ -73,9 +73,9 @@ class RoutesManager
 
     public function post(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPost($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createPost($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     public function createPut(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
@@ -85,9 +85,9 @@ class RoutesManager
 
     public function put(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPut($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createPut($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     public function createPatch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
@@ -97,9 +97,9 @@ class RoutesManager
 
     public function patch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPatch($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createPatch($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     public function createDelete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
@@ -109,9 +109,9 @@ class RoutesManager
 
     public function delete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createDelete($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createDelete($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     /** @param string|Closure $target */
