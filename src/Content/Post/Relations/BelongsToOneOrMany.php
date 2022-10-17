@@ -16,9 +16,9 @@ class BelongsToOneOrMany extends Relation
         }
     }
 
-    public function dissociate()
+    public function dissociate(int $id)
     {
-        $this->removeRelationship('reverse');
+        $this->removeRelationship($id, 'reverse');
     }
 
     public function dissociateAll()
