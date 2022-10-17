@@ -14,18 +14,22 @@ use Symfony\Component\Routing\RequestContext;
 
 class RoutesManager
 {
+    public const PRIORITY_LOW = 'low';
+    public const PRIORITY_HIGH = 'high';
+    public const PRIORITY_FIXED = 'fixed';
+
     protected $actions;
     protected $routeCollection;
     protected $routesContext;
     protected $routeIterator = 0;
     protected $lastMatchRoute;
 
-    protected array $routes = [];
     protected bool $routesAdded = false;
-
-    public const PRIORITY_LOW = 'low';
-    public const PRIORITY_HIGH = 'high';
-    public const PRIORITY_FIXED = 'fixed';
+    protected array $routes = [
+        self::PRIORITY_LOW => [],
+        self::PRIORITY_HIGH => [],
+        self::PRIORITY_FIXED => []
+    ];
 
     public function __construct()
     {
@@ -141,23 +145,9 @@ class RoutesManager
     /**
      * Add a route to the stack based on it's priority.
      * If no priority is set, the default priority is PRIORITY_HIGH.
-     *
-     * @param Route $route
-     * @param $priority
-     * @return $this
      */
-    public function addRoute(Route $route, $priority = null): RoutesManager
+    public function addRoute(Route $route, string $priority = self::PRIORITY_HIGH): RoutesManager
     {
-        if (!$this->routes) {
-            $this->routes = [
-                self::PRIORITY_LOW => [],
-                self::PRIORITY_HIGH => [],
-                self::PRIORITY_FIXED => []
-            ];
-        }
-        if ($priority === null) {
-            $priority = self::PRIORITY_HIGH;
-        }
         if ($priority === self::PRIORITY_HIGH) {
             $this->routes[self::PRIORITY_HIGH][] = $route;
         } elseif ($priority === self::PRIORITY_LOW) {
@@ -178,10 +168,7 @@ class RoutesManager
         }
 
         // Symfony will reverse the routes again
-        $routes = array_merge(
-            array_reverse($this->routes[self::PRIORITY_LOW]),
-            $this->routes[self::PRIORITY_HIGH]
-        );
+        $routes = array_merge(array_reverse($this->routes[self::PRIORITY_LOW]), $this->routes[self::PRIORITY_HIGH]);
 
         // adding fixed priority routes
         foreach ($this->routes[self::PRIORITY_FIXED] as $routeData) {
