@@ -6,7 +6,7 @@
   "require": {
     "php-di/php-di": "^6.0",
     "illuminate/support": "^v8.83.18",
-    "symfony/routing": "^4.2",
+    "symfony/routing": "^5.4",
     "symfony/http-foundation": "^4.2",
     "symfony/cache": "^5.0",
     "doctrine/cache": "~1.6",
