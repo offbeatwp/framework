@@ -4,6 +4,7 @@ namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
+use Illuminate\Support\Collection;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
@@ -18,10 +19,15 @@ class RoutesManager
     public const PRIORITY_HIGH = 'high';
     public const PRIORITY_FIXED = 'fixed';
 
+    /** @var Collection */
     protected $actions;
+    /** @var RouteCollection */
     protected $routeCollection;
+    /** @var null */
     protected $routesContext;
+    /** @var int */
     protected $routeIterator = 0;
+    /** @var Route|null|false */
     protected $lastMatchRoute;
 
     protected bool $routesAdded = false;
@@ -128,24 +134,10 @@ class RoutesManager
             $defaults = ['_parameterCallback' => $defaults];
         }
 
-        return new $routeClass(
-            $name, //name
-            $target, // target
-            $actionCallback,
-            $defaults, // default values
-            $requirements, // requirements
-            $options, // options
-            $host, // host
-            $schemes, // schemes
-            $methods, // methods
-            $condition // condition
-        );
+        return new $routeClass($name, $target, $actionCallback, $defaults, $requirements, $options, $host, $schemes, $methods, $condition);
     }
 
-    /**
-     * Add a route to the stack based on it's priority.
-     * If no priority is set, the default priority is PRIORITY_HIGH.
-     */
+    /** Add a route to the stack based on it's priority. If no priority is set, the default priority is PRIORITY_HIGH. */
     public function addRoute(Route $route, string $priority = self::PRIORITY_HIGH): RoutesManager
     {
         if ($priority === self::PRIORITY_HIGH) {
@@ -178,7 +170,6 @@ class RoutesManager
         $this->getRouteCollection()->removeAll();
 
         foreach ($routes as $priority => $route) {
-            /** @var Route $route */
             $this->getRouteCollection()->add($route->getName(), $route, $priority);
         }
 
