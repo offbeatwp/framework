@@ -1,14 +1,23 @@
 <?php
 namespace OffbeatWP\Routes;
 
-use Symfony\Component\Routing\RouteCollection as RoutingRouteCollection;
+use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
-class RouteCollection extends RoutingRouteCollection
+class RouteCollection extends SymfonyRouteCollection
 {
     public function __construct (array $routes = []) {
         foreach ($routes as $name => $route) {
             $this->add($name, $route);
         }
+    }
+
+    public function removeAll(): self
+    {
+        foreach ($this->all() as $route) {
+            /** @var Route $route */
+            $this->remove($route->getName());
+        }
+        return $this;
     }
 
     public function findByType(string $type): RouteCollection
