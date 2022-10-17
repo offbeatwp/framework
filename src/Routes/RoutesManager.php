@@ -160,7 +160,10 @@ class RoutesManager
         }
 
         // Symfony will reverse the routes again
-        $routes = array_merge(array_reverse($this->routes[self::PRIORITY_LOW]), $this->routes[self::PRIORITY_HIGH]);
+        $routes = array_merge(
+            array_reverse($this->routes[self::PRIORITY_LOW]),
+            $this->routes[self::PRIORITY_HIGH]
+        );
 
         // adding fixed priority routes
         foreach ($this->routes[self::PRIORITY_FIXED] as $routeData) {
@@ -170,6 +173,7 @@ class RoutesManager
         $this->getRouteCollection()->removeAll();
 
         foreach ($routes as $priority => $route) {
+            /** @var Route $route */
             $this->getRouteCollection()->add($route->getName(), $route, $priority);
         }
 
