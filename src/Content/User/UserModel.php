@@ -13,20 +13,16 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Support\Wordpress\User;
 use UnexpectedValueException;
+use WP_Error;
 use WP_User;
 
 class UserModel
 {
-    /** @var WP_User */
-    protected $wpUser;
-    /** @var null|array */
-    protected $metas = null;
-    /** @var array */
-    protected $metaInput = [];
-    /** @var array */
-    protected $metaToUnset = [];
-    /** @var string */
-    private $newUserLogin = '';
+    protected WP_User $wpUser;
+    protected ?array $metas = null;
+    protected array $metaInput = [];
+    protected array $metaToUnset = [];
+    private string $newUserLogin = '';
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -444,6 +440,13 @@ class UserModel
         }
 
         return false;
+    }
+
+    /** Handles sending a password retrieval email to a user. */
+    public function retrievePassword(): ?WP_Error
+    {
+        $error = retrieve_password($this->getLogin());
+        return ($error instanceof WP_Error) ? $error : null;
     }
 
     /////////////////////
