@@ -4,15 +4,22 @@ namespace OffbeatWP\Content\Taxonomy;
 
 class TaxonomyBuilder
 {
-    /** @var string|null */
+    /** @var non-empty-string|null */
     private $taxonomy = null;
-    /** @var array|string|null */
+    /** @var non-empty-string[]|string|null */
     private $postTypes = null;
-    /** @var array|null */
+    /** @var array */
     private $args = [];
     /** @var class-string|null */
     private $modelClass = null;
 
+    /**
+     * @param non-empty-string $taxonomy
+     * @param non-empty-string|non-empty-string[] $postTypes
+     * @param non-empty-string $pluralName
+     * @param non-empty-string $singularLabel
+     * @return $this
+     */
     public function make($taxonomy, $postTypes, $pluralName, $singularLabel): TaxonomyBuilder
     {
         $this->taxonomy = $taxonomy;
@@ -239,6 +246,19 @@ class TaxonomyBuilder
         add_action('admin_footer-post-new.php', function () {
             $this->_hideTermAddWrap($this->taxonomy);
         });
+
+        return $this;
+    }
+
+    /**
+     * @param string $singleName Must be CamelCase.
+     * @param string $pluralName Must be CamelCase. Defaults to singlename if not omitted.
+     */
+    public function showInGraphQl(string $singleName, string $pluralName = ''): TaxonomyBuilder
+    {
+        $this->args['show_in_graphql'] = true;
+        $this->args['graphql_single_name'] = $singleName;
+        $this->args['graphql_plural_name'] = $pluralName ?: $singleName;
 
         return $this;
     }
