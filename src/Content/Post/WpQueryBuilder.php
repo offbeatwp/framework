@@ -230,23 +230,6 @@ class WpQueryBuilder
     }
 
     /**
-     * @param string $metaKey
-     * @param string $direction
-     * @return $this
-     */
-    public function orderByMeta(string $metaKey, string $direction = '')
-    {
-        $this->queryVars['meta_key'] = $metaKey;
-        $this->queryVars['orderby'] = 'meta_value';
-
-        if ($direction) {
-            $this->queryVars['order'] = $direction;
-        }
-
-        return $this;
-    }
-
-    /**
      * Note: Wordpress Pagination automatically handles offset, so using this method might interfere with that
      * @param int $numberOfItems
      * @return $this
