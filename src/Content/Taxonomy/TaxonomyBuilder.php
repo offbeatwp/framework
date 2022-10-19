@@ -4,9 +4,9 @@ namespace OffbeatWP\Content\Taxonomy;
 
 class TaxonomyBuilder
 {
-    /** @var string|null */
+    /** @var non-empty-string|null */
     private $taxonomy = null;
-    /** @var string[]|string|null */
+    /** @var non-empty-string[]|string|null */
     private $postTypes = null;
     /** @var array */
     private $args = [];
@@ -14,10 +14,10 @@ class TaxonomyBuilder
     private $modelClass = null;
 
     /**
-     * @param string $taxonomy
-     * @param string|string[] $postTypes
-     * @param string $pluralName
-     * @param string $singularLabel
+     * @param non-empty-string $taxonomy
+     * @param non-empty-string|non-empty-string[] $postTypes
+     * @param non-empty-string $pluralName
+     * @param non-empty-string $singularLabel
      * @return $this
      */
     public function make($taxonomy, $postTypes, $pluralName, $singularLabel): TaxonomyBuilder
