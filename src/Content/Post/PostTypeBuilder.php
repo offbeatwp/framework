@@ -305,6 +305,18 @@ class PostTypeBuilder
         return $this;
     }
 
+    /**
+     * @param string $singleName Must be CamelCase.
+     * @param string $pluralName Must be CamelCase. Defaults to singlename if not omitted.
+     * @return void
+     */
+    public function showInGraphQl(string $singleName, string $pluralName = '')
+    {
+        $this->postTypeArgs['show_in_graphql'] = true;
+        $this->postTypeArgs['graphql_single_name'] = $singleName;
+        $this->postTypeArgs['graphql_plural_name'] = $pluralName ?: $singleName;
+    }
+
     public function setArgument(string $key, $value): PostTypeBuilder
     {
         $this->postTypeArgs[$key] = $value;
