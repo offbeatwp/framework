@@ -6,7 +6,7 @@ class TaxonomyBuilder
 {
     /** @var string|null */
     private $taxonomy = null;
-    /** @var string[]|null */
+    /** @var string[]|string|null */
     private $postTypes = null;
     /** @var array */
     private $args = [];
