@@ -306,8 +306,8 @@ class PostTypeBuilder
     }
 
     /**
-     * @param string $singleName Must be CamelCase.
-     * @param string $pluralName Must be CamelCase. Defaults to singlename if not omitted.
+     * @param non-empty-string $singleName Must be CamelCase.
+     * @param string $pluralName Must be CamelCase. Defaults to singlename if omitted.
      */
     public function showInGraphQl(string $singleName, string $pluralName = ''): PostTypeBuilder
     {
