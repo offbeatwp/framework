@@ -81,40 +81,6 @@ trait OffbeatQueryTrait
         return $this;
     }
 
-    /**
-     * @param string $metaKey
-     * @param string $direction
-     * @return $this
-     */
-    public function orderByMeta(string $metaKey, string $direction = '')
-    {
-        $this->queryVars['meta_key'] = $metaKey;
-        $this->queryVars['orderby'] = 'meta_value';
-
-        if ($direction) {
-            $this->queryVars['order'] = $direction;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $metaKey
-     * @param string $direction
-     * @return $this
-     */
-    public function orderByMetaNum(string $metaKey, string $direction = '')
-    {
-        $this->queryVars['meta_key'] = $metaKey;
-        $this->queryVars['orderby'] = 'meta_value_num';
-
-        if ($direction) {
-            $this->queryVars['order'] = $direction;
-        }
-
-        return $this;
-    }
-
     public function firstId(): ?int
     {
         return $this->limit(1)->ids()[0] ?? null;
