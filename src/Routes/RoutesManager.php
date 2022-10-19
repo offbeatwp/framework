@@ -76,18 +76,7 @@ class RoutesManager
             $defaults = ['_parameterCallback' => $defaults];
         }
 
-        $route = new $routeClass(
-            $name, //name
-            $target, // target
-            $actionCallback,
-            $defaults, // default values
-            $requirements, // requirements
-            $options, // options
-            $host, // host
-            $schemes, // schemes
-            $methods, // methods
-            $condition // condition
-        );
+        $route = new $routeClass($name, $target, $actionCallback, $defaults, $requirements, $options, $host, $schemes, $methods, $condition);
 
         $this->getRouteCollection()->add($route->getName(), $route);
 
