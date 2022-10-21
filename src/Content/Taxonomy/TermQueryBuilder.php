@@ -62,6 +62,13 @@ class TermQueryBuilder
         return $this;
     }
 
+    /** True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies. */
+    public function childless(bool $childless = true)
+    {
+        $this->queryVars['childless'] = true;
+        return $this;
+    }
+
     /** @return TermsCollection<TModel> */
     public function get(): TermsCollection
     {
@@ -114,6 +121,19 @@ class TermQueryBuilder
     {
         $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'ids';
+        $this->queryVars['no_found_rows'] = true;
+
+        return $this->runQuery()->get_terms();
+    }
+
+    /**
+     * Returns an associative array of parent term IDs, keyed by term ID
+     * @return int[]
+     */
+    public function parentIds(): array
+    {
+        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
+        $this->queryVars['fields'] = 'id=>parent';
         $this->queryVars['no_found_rows'] = true;
 
         return $this->runQuery()->get_terms();
