@@ -7,6 +7,7 @@ abstract class MetaBuilder
     protected string $metaKey;
     protected string $metaType;
     protected string $subType;
+    protected string $description = '';
     /** @var callable */
     protected $resolver;
 
@@ -24,5 +25,10 @@ abstract class MetaBuilder
     public function setResolver(callable $resolver): void
     {
         $this->resolver = $resolver;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
     }
 }

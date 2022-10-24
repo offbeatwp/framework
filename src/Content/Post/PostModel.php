@@ -29,7 +29,6 @@ class PostModel implements PostModelInterface
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
-    public const POST_TYPE = '';
 
     /** @var WP_Post|object|null */
     public $wpPost;
@@ -853,6 +852,17 @@ class PostModel implements PostModelInterface
         $this->getMetas();
     }
 
+    public static function getModelPostType(): string
+    {
+        $modelClass = static::class;
+
+        if ($modelClass::POST_TYPE) {
+            return (string)$modelClass::POST_TYPE;
+        }
+
+        return '';
+    }
+
     /**
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
@@ -862,7 +872,7 @@ class PostModel implements PostModelInterface
     {
         $modelClass = static::class;
 
-        if (static::POST_TYPE) {
+        if ($modelClass::POST_TYPE) {
             return get_post_type_object($modelClass::POST_TYPE);
         }
 
@@ -1001,6 +1011,6 @@ class PostModel implements PostModelInterface
 
     public static function registerMeta(string $metaKey, string $metaType): PostMetaBuilder
     {
-        return new PostMetaBuilder($metaType, $metaType, static::POST_TYPE);
+        return new PostMetaBuilder($metaType, $metaType, static::getModelPostType());
     }
 }

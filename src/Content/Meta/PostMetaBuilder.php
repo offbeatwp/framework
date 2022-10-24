@@ -14,7 +14,7 @@ class PostMetaBuilder extends MetaBuilder
             add_action('graphql_register_types', function () {
                 register_graphql_field($this->subType, 'cardsAction', [
                     'type' => $this->metaType,
-                    'description' => '',
+                    'description' => $this->description,
                     'resolve' => fn($post) => wp_json_encode(get_field('cards_action', $post->ID) ?: [])
                 ]);
             });
