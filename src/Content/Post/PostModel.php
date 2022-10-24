@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Content\Meta\PostMetaBuilder;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
@@ -28,6 +29,7 @@ class PostModel implements PostModelInterface
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
+    public const POST_TYPE = '';
 
     /** @var WP_Post|object|null */
     public $wpPost;
@@ -860,7 +862,7 @@ class PostModel implements PostModelInterface
     {
         $modelClass = static::class;
 
-        if (defined("{$modelClass}::POST_TYPE")) {
+        if (static::POST_TYPE) {
             return get_post_type_object($modelClass::POST_TYPE);
         }
 
@@ -995,5 +997,10 @@ class PostModel implements PostModelInterface
                 $relation->dissociateAll();
             }
         }
+    }
+
+    public static function registerMeta(string $metaKey, string $metaType): PostMetaBuilder
+    {
+        return new PostMetaBuilder($metaType, $metaType, static::POST_TYPE);
     }
 }
