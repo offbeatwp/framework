@@ -50,7 +50,8 @@ class App
 
         offbeat('hooks')->doAction('offbeat.ready');
 
-        add_action('wp', [$this, 'findRoute'], 0);
+        add_action('wp', [$this, 'addRoutes'], 0);
+        add_action('wp', [$this, 'findRoute'], 1);
     }
 
     private function baseBindings(): array
@@ -163,6 +164,11 @@ class App
             return $this->config->get($config, $default);
         }
         return $this->config;
+    }
+
+    public function addRoutes()
+    {
+        offbeat('routes')->addRoutes();
     }
 
     public function findRoute(): void
