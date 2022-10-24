@@ -4,6 +4,7 @@ namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
@@ -18,7 +19,7 @@ class RoutesManager
     public const PRIORITY_LOW = 'low';
     public const PRIORITY_HIGH = 'high';
     public const PRIORITY_FIXED = 'fixed';
-
+    
     protected $actions;
     protected $routeCollection;
     protected $routeIterator = 0;
