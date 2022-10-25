@@ -50,7 +50,7 @@ class App
 
         offbeat('hooks')->doAction('offbeat.ready');
 
-        add_action('wp', [$this, 'addRoutes'], 0);
+        add_action('init', [$this, 'addRoutes'], PHP_INT_MAX - 1);
         add_action('wp', [$this, 'findRoute'], 1);
     }
 
