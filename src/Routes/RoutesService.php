@@ -15,7 +15,7 @@ class RoutesService extends AbstractService
         $this->loadRoutes();
 
         if (!is_admin()) {
-            add_action('init', [$this, 'urlRoutePreps'], 15);
+            add_action('init', [$this, 'urlRoutePreps'], PHP_INT_MAX);
         }
     }
 
