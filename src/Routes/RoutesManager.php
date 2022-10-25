@@ -168,7 +168,7 @@ class RoutesManager
         return $this;
     }
 
-    protected function addRoutes(): self
+    public function addRoutes(): self
     {
         if ($this->routesAdded) {
             return $this;
