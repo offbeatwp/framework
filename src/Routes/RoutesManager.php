@@ -45,7 +45,6 @@ class RoutesManager
         return $this->routeCollection;
     }
 
-    // TODO: Could be split into two methods: setHighPriorityMode & setLowPriorityMode
     public function setPriorityMode(string $mode): self
     {
         if (!in_array($mode, [self::PRIORITY_LOW, self::PRIORITY_HIGH])) {
