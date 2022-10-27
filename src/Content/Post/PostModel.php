@@ -719,6 +719,11 @@ class PostModel implements PostModelInterface
 
         setup_postdata($this->wpPost);
         $wp_query->in_the_loop = true;
+        
+        // Small workaround for a notice the occurs within WP caching featured images.
+        if (is_null($wp_query->posts)) {
+            $wp_query->posts = [];
+        }
     }
 
     public function end(): void
