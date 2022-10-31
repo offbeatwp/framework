@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Post;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
-use OffbeatWP\Content\Meta\PostMetaBuilder;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
@@ -852,17 +851,6 @@ class PostModel implements PostModelInterface
         $this->getMetas();
     }
 
-    public static function getModelPostType(): string
-    {
-        $modelClass = static::class;
-
-        if ($modelClass::POST_TYPE) {
-            return (string)$modelClass::POST_TYPE;
-        }
-
-        return '';
-    }
-
     /**
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
@@ -872,7 +860,7 @@ class PostModel implements PostModelInterface
     {
         $modelClass = static::class;
 
-        if ($modelClass::POST_TYPE) {
+        if (defined("{$modelClass}::POST_TYPE")) {
             return get_post_type_object($modelClass::POST_TYPE);
         }
 
@@ -991,7 +979,7 @@ class PostModel implements PostModelInterface
 
         return [];
     }
-    
+
     private function updateRelation(string $key): void
     {
         if (($method = $this->getMethodByRelationKey($key)) && ($relation = $this->$method())) {
@@ -1007,10 +995,5 @@ class PostModel implements PostModelInterface
                 $relation->dissociateAll();
             }
         }
-    }
-
-    public static function registerMeta(string $metaKey, string $metaType): PostMetaBuilder
-    {
-        return new PostMetaBuilder($metaType, $metaType, static::getModelPostType());
     }
 }
