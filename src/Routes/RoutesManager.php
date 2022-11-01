@@ -4,6 +4,7 @@ namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
+use InvalidArgumentException;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
@@ -14,20 +15,24 @@ use Symfony\Component\Routing\RequestContext;
 
 class RoutesManager
 {
-    protected $actions;
-    protected $routeCollection;
-    protected $routesContext;
-    protected $routeIterator = 0;
-    protected $lastMatchRoute;
-
-    protected string $priorityMode = '';
-
-    protected array $routes = [];
-    protected bool $routesAdded = false;
-
     public const PRIORITY_LOW = 'low';
     public const PRIORITY_HIGH = 'high';
     public const PRIORITY_FIXED = 'fixed';
+
+    protected $actions;
+    protected $routeCollection;
+    protected $routeIterator = 0;
+    protected $lastMatchRoute;
+    /** @deprecated Unused */
+    protected $routesContext;
+
+    protected string $priorityMode = self::PRIORITY_HIGH;
+    protected bool $routesAdded = false;
+    protected array $routes = [
+        self::PRIORITY_LOW => [],
+        self::PRIORITY_HIGH => [],
+        self::PRIORITY_FIXED => []
+    ];
 
     public function __construct()
     {
@@ -43,82 +48,83 @@ class RoutesManager
     public function setPriorityMode(string $mode): self
     {
         if (!in_array($mode, [self::PRIORITY_LOW, self::PRIORITY_HIGH])) {
-            throw new \InvalidArgumentException("Cannot set priority mode");
+            throw new InvalidArgumentException('Cannot set priority mode');
         }
+
         $this->priorityMode = $mode;
         return $this;
     }
 
-    public function createCallback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
+    public function createCallbackRoute($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
         return $this->createRoute($checkCallback, $actionCallback, $parameters, [], $options);
     }
 
     public function callback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
-        $route = $this->createCallback($checkCallback, $actionCallback, $parameters, $options);
+        $route = $this->createCallbackRoute($checkCallback, $actionCallback, $parameters, $options);
         $this->addRoute($route);
         return $route;
     }
 
-    public function createGet($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
+    public function createGetRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['GET']);
     }
 
     public function get($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createGet($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createGetRoute($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
-    public function createPost(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
+    public function createPostRoute(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['POST']);
     }
 
     public function post(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPost($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createPostRoute($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
-    public function createPut(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
+    public function createPutRoute(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PUT']);
     }
 
     public function put(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPut($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createPutRoute($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
-    public function createPatch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
+    public function createPatchRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PATCH']);
     }
 
     public function patch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPatch($route, $actionCallback, $parameters, $requirements, $options);
+        $route = $this->createPatchRoute($route, $actionCallback, $parameters, $requirements, $options);
         $this->addRoute($route);
         return $route;
     }
 
-    public function createDelete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
+    public function createDeleteRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['DELETE']);
     }
 
     public function delete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createDelete($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createDeleteRoute($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     /** @param string|Closure $target */
@@ -135,44 +141,19 @@ class RoutesManager
             $defaults = ['_parameterCallback' => $defaults];
         }
 
-        return new $routeClass(
-            $name, //name
-            $target, // target
-            $actionCallback,
-            $defaults, // default values
-            $requirements, // requirements
-            $options, // options
-            $host, // host
-            $schemes, // schemes
-            $methods, // methods
-            $condition // condition
-        );
+        return new $routeClass($name, $target, $actionCallback, $defaults, $requirements, $options, $host, $schemes, $methods, $condition);
     }
 
     /**
-     * Add a route to the stack based on it's priority.
-     * If no priority is set, the default priority is PRIORITY_HIGH.
-     *
-     * @param Route $route
-     * @param $priority
-     * @return $this
+     * Add a route to the stack based on it's priority.<br>
+     * If no priority is set, the default priority is the priority set via the priority mode method.
      */
-    public function addRoute(Route $route, $priority = null): RoutesManager
+    public function addRoute(Route $route, string $priority = ''): self
     {
-        if (!$this->routes) {
-            $this->routes = [
-                self::PRIORITY_LOW => [],
-                self::PRIORITY_HIGH => [],
-                self::PRIORITY_FIXED => []
-            ];
+        if (!$priority) {
+            $priority = $this->priorityMode;
         }
-        if ($priority === null) {
-            if ($this->priorityMode) {
-                $priority = $this->priorityMode;
-            } else {
-                $priority = self::PRIORITY_HIGH;
-            }
-        }
+
         if ($priority === self::PRIORITY_HIGH) {
             $this->routes[self::PRIORITY_HIGH][] = $route;
         } elseif ($priority === self::PRIORITY_LOW) {
@@ -194,7 +175,7 @@ class RoutesManager
 
         // Symfony will reverse the routes again
         $routes = array_merge(
-            array_reverse($this->routes[self::PRIORITY_LOW]),
+            $this->routes[self::PRIORITY_LOW],
             $this->routes[self::PRIORITY_HIGH]
         );
 
