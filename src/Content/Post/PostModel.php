@@ -17,6 +17,7 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
+use OffbeatWP\Helpers\DummyHelper;
 use WP_Error;
 use WP_Post;
 use WP_Post_Type;
@@ -257,7 +258,7 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string|WP_Error */
+    /** @return false|string */
     public function getPermalink()
     {
         return get_permalink($this->getId());
@@ -979,21 +980,36 @@ class PostModel implements PostModelInterface
 
         return [];
     }
-    
+
     private function updateRelation(string $key): void
     {
-        if (($method = $this->getMethodByRelationKey($key)) && ($relation = $this->$method())) {
-            $ids = $this->getMetaRelationIds($key);
+        $method = $this->getMethodByRelationKey($key);
+        if ($method) {
+            $relation = $this->$method();
 
-            if ($ids && $relation instanceof HasOneOrMany) {
-                $relation->attach($ids, false);
-            } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
-                $relation->associate($ids, false);
-            } elseif ($relation instanceof HasOneOrMany) {
-                $relation->detachAll();
-            } elseif ($relation instanceof BelongsToOneOrMany) {
-                $relation->dissociateAll();
+            if ($this->$method()) {
+                $ids = $this->getMetaRelationIds($key);
+
+                if ($ids && $relation instanceof HasOneOrMany) {
+                    $relation->attach($ids, false);
+                } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
+                    $relation->associate($ids, false);
+                } elseif ($relation instanceof HasOneOrMany) {
+                    $relation->detachAll();
+                } elseif ($relation instanceof BelongsToOneOrMany) {
+                    $relation->dissociateAll();
+                }
             }
+        }
+    }
+
+    public static function generateFiller(int $amount): void
+    {
+        for ($i = 0; $i < $amount; $i++) {
+            $model = new PostModel();
+            $model->setTitle(DummyHelper::generateSentence());
+            $model->setContent(DummyHelper::generateText(5));
+            $model->saveOrFail();
         }
     }
 }
