@@ -44,7 +44,7 @@ final class DummyHelper
         return random_int(0, PHP_INT_MAX - 1) / PHP_INT_MAX;
     }
 
-    private static function randomValues($arr, $count): array
+    private static function randomValues(array $arr, int $count): array
     {
         $keys = array_rand($arr, $count);
         if($count === 1) {

@@ -18,7 +18,6 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Helpers\DummyHelper;
-use WP_Error;
 use WP_Post;
 use WP_Post_Type;
 use WP_Term;
