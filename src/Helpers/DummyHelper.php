@@ -4,6 +4,7 @@ namespace OffbeatWP\Helpers;
 
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Hooks\Events\BeforeDummyPostSaveEvent;
+use UnexpectedValueException;
 
 final class DummyHelper
 {
@@ -47,16 +48,33 @@ final class DummyHelper
         return self::LOREM[array_rand(self::LOREM)];
     }
 
-    public static function generatePost(string $modelClass)
+    /**
+     * @param string $type
+     * @param positive-int $amount
+     * @return void
+     */
+    public static function generatePosts(string $type, int $amount): void
     {
-        /** @var PostModel $modelClass */
-        $model = new $modelClass();
-        $model->setTitle(self::generateSentence());
-        $model->setContent(self::generateText(10));
+        foreach (get_object_taxonomies($type) as $taxonomy) {
 
-        /** @var BeforeDummyPostSaveEvent $event */
-        $event = apply_filters('offbeatwp/posts/dummy/before_save', new BeforeDummyPostSaveEvent($model));
-        $event->model->saveOrFail();
+        }
+
+        $modelClass = offbeat('post-type')->getModelByPostType($type);
+        if (!$modelClass) {
+            throw new UnexpectedValueException("No model found for '". $type. "'");
+        }
+
+        for ($i = 0; $i < $amount; $i++)
+        {
+            /** @var PostModel $modelClass */
+            $model = new $modelClass();
+            $model->setTitle(self::generateSentence());
+            $model->setContent(self::generateText(10));
+
+            /** @var BeforeDummyPostSaveEvent $event */
+            $event = apply_filters('offbeatwp/posts/dummy/before_save', new BeforeDummyPostSaveEvent($model));
+            $event->model->saveOrFail();
+        }
     }
 
     private static function randomFloat(): float
