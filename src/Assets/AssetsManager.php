@@ -126,8 +126,13 @@ class AssetsManager
         if ($assets) {
             foreach ($assets as $key => $asset) {
                 $asset = ltrim($asset, './');
-                $assetKey = 'css-' . $entry . '-' . ($key > 0 ? $key : '');
-                wp_enqueue_style($assetKey, $this->getAssetsUrl($asset), [], false, false);
+
+                $handle = basename($asset);
+                $handle = substr(basename($asset), 0, strpos($handle, '.'));
+
+                if (!wp_style_is($handle)) {
+                    wp_enqueue_style($handle, $this->getAssetsUrl($asset), [], false, false);
+                }
             }
 
             return;
@@ -144,8 +149,13 @@ class AssetsManager
         if ($assets) {
             foreach ($assets as $key => $asset) {
                 $asset = ltrim($asset, './');
-                $assetKey = 'js-' . $entry . '-' . ($key > 0 ? $key : '');
-                wp_enqueue_script($assetKey, $this->getAssetsUrl($asset), ['jquery'], false, true);
+
+                $handle = basename($asset);
+                $handle = substr(basename($asset), 0, strpos($handle, '.'));
+
+                if (!wp_script_is($handle)) {
+                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), ['jquery'], false, true);
+                }
             }
 
             return;
