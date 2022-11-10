@@ -50,8 +50,8 @@ class AssetsManager
 
     /** @return object|bool|null */
     public function getAssetsManifest() {
-        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json'))) {
-            $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json')));
+        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json', true))) {
+            $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json', true)));
         }
 
         return $this->manifest;
@@ -59,8 +59,8 @@ class AssetsManager
 
     /** @return object|bool|null */
     public function getAssetsEntryPoints() {
-        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json'))) {
-            $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json')));
+        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json', true))) {
+            $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json', true)));
         }
 
         return $this->entrypoints;
@@ -86,10 +86,26 @@ class AssetsManager
      * @param string $path
      * @return string
      */
-    public function getAssetsPath($path = '')
+    public function getAssetsPath($path = '', $forceAssetsPath = false)
     {
         $path = ltrim($path, '/');
         $path = ($path) ? "/{$path}" : '';
+
+        $assetsPath = config('app.assets.path');
+
+        if ($forceAssetsPath) {
+            return $assetsPath . $path;
+        }
+
+        if (config('app.assets.from_site_root')) {
+            if (config('app.assets.root_path')) {
+                $basepath = config('app.assets.root_path');
+            } else {
+                $basepath = defined('ABSPATH') ? ABSPATH : null;
+            }
+
+            return $basepath . $path;
+        }
 
         if ($basepath = config('app.assets.path'))  {
             return $basepath . $path;
@@ -110,6 +126,13 @@ class AssetsManager
 
         $path = ltrim($path, '/');
         $path = ($path) ? "/{$path}" : '';
+
+        if (config('app.assets.from_site_root')) {
+            $url = get_site_url();
+
+            return $url . $path;
+        }
+
 
         if ($url = config('app.assets.url'))  {
             return $url . $path;
