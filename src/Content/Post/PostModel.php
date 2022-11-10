@@ -17,7 +17,6 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
-use WP_Error;
 use WP_Post;
 use WP_Post_Type;
 use WP_Term;
@@ -257,7 +256,6 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string|WP_Error */
     public function getPermalink()
     {
         return get_permalink($this->getId());
@@ -721,7 +719,7 @@ class PostModel implements PostModelInterface
         $wp_query->in_the_loop = true;
         
         // Small workaround for a notice the occurs within WP caching featured images.
-        if (is_null($wp_query->posts)) {
+        if ($wp_query->posts === null) {
             $wp_query->posts = [];
         }
     }
@@ -987,17 +985,23 @@ class PostModel implements PostModelInterface
     
     private function updateRelation(string $key): void
     {
-        if (($method = $this->getMethodByRelationKey($key)) && ($relation = $this->$method())) {
-            $ids = $this->getMetaRelationIds($key);
+        $method = $this->getMethodByRelationKey($key);
 
-            if ($ids && $relation instanceof HasOneOrMany) {
-                $relation->attach($ids, false);
-            } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
-                $relation->associate($ids, false);
-            } elseif ($relation instanceof HasOneOrMany) {
-                $relation->detachAll();
-            } elseif ($relation instanceof BelongsToOneOrMany) {
-                $relation->dissociateAll();
+        if ($method) {
+            $relation = $this->$method();
+
+            if ($relation) {
+                $ids = $this->getMetaRelationIds($key);
+
+                if ($ids && $relation instanceof HasOneOrMany) {
+                    $relation->attach($ids, false);
+                } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
+                    $relation->associate($ids, false);
+                } elseif ($relation instanceof HasOneOrMany) {
+                    $relation->detachAll();
+                } elseif ($relation instanceof BelongsToOneOrMany) {
+                    $relation->dissociateAll();
+                }
             }
         }
     }
