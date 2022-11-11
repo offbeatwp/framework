@@ -86,6 +86,22 @@ final class WpFile
     }
 
     /**
+     * @param array $fileArray Array that represents a `$_FILES` upload array from a multi-upload filed.
+     * @return WpFile[]
+     */
+    public static function uploadFromMultiArray(array $fileArray): array
+    {
+        $files = [];
+
+        $c = count($fileArray['name']);
+        for ($i = 0; $i < $c; $i++) {
+            $files[] = self::uploadBits($fileArray['name'][$i], file_get_contents($fileArray['tmp_name'][$i]));
+        }
+
+        return $files;
+    }
+
+    /**
      * Attempt to download a file from a URL.
      * @param string $url
      * @param string[] $allowedContentTypes Allowed content MIME-types.
