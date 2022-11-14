@@ -179,7 +179,7 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
-                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), [], false, true);
+                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), ['jquery'], false, true);
                 }
             }
 
