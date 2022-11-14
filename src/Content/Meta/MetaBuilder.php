@@ -9,8 +9,9 @@ abstract class MetaBuilder
     protected string $metaKey;
     protected string $subType;
     protected array $args = [];
+    protected $validationCallback = null;
 
-    public function __constructor(string $metaKey, string $subType)
+    public function __constructor(string $metaKey, string $subType): void
     {
         $this->metaKey = $metaKey;
         $this->subType = $subType;
@@ -111,6 +112,23 @@ abstract class MetaBuilder
 
         $this->args['show_in_rest'] = $showInRest;
         return $this;
+    }
+
+    /**
+     * Define a callback to validate the meta before setting it.<br>
+     * This callback receives the metakey and value as arguments and should return a MetaChangeResult.
+     * @param callable $validationCallback
+     * @return $this
+     */
+    public function setValidationCallback(callable $validationCallback): self
+    {
+        $this->validationCallback = $validationCallback;
+        return $this;
+    }
+
+    public function getValidationCallback(): ?callable
+    {
+        return $this->validationCallback;
     }
 
     private function areDefaultValueAndTypeCompatible(): bool
