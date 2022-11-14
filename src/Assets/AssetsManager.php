@@ -152,7 +152,8 @@ class AssetsManager
 
                 $handle = basename($asset);
                 $handle = substr(basename($asset), 0, strpos($handle, '.'));
-
+                $handle = 'owp-' . $handle;
+                
                 if (!wp_style_is($handle)) {
                     wp_enqueue_style($handle, $this->getAssetsUrl($asset), [], false, false);
                 }
@@ -175,9 +176,10 @@ class AssetsManager
 
                 $handle = basename($asset);
                 $handle = substr(basename($asset), 0, strpos($handle, '.'));
+                $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
-                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), ['jquery'], false, true);
+                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), [], false, true);
                 }
             }
 
