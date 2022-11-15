@@ -48,10 +48,17 @@ class ArrayHelper {
 
     /**
      * @param scalar|scalar[] $data
+     * @param bool $deleteNonNumericValues When true, any non-numeric values found in the array are deleted.
      * @return int[]
      */
-    public static function toIntArray($data): array
+    public static function toIntArray($data, bool $deleteNonNumericValues = false): array
     {
-        return array_map('intval', (array)$data);
+        $data = (array)$data;
+
+        if ($deleteNonNumericValues) {
+            $data = array_filter($data, 'is_numeric');
+        }
+
+        return array_map('intval', $data);
     }
 }
