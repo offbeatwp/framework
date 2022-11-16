@@ -37,7 +37,7 @@ class PostModel implements PostModelInterface
     /** @var array|false|string */
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
-    protected $termsToSet = [];
+    protected array $termsToSet = [];
 
     use BaseModelTrait;
     use SetMetaTrait;
@@ -818,7 +818,7 @@ class PostModel implements PostModelInterface
         return $updatedPostId;
     }
 
-    private function attachTerms(int $id)
+    private function attachTerms(int $id): void
     {
         foreach ($this->termsToSet as $term) {
             wp_set_post_terms($id, $term['termIds'], $term['taxonomy'], $term['append']);
