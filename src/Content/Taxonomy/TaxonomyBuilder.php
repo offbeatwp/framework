@@ -47,7 +47,38 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @param string[] $labels */
+    /**
+     * <b>name</b> – General name for the taxonomy, usually plural. The same as and overridden by $tax->label. Default 'Tags'/'Categories'.<br>
+     * <b>singular_name</b> – Name for one object of this taxonomy. Default 'Tag'/'Category'.<br>
+     * <b>search_items</b> – Default 'Search Tags'/'Search Categories'.<br>
+     * <b>popular_items</b> – This label is only used for non-hierarchical taxonomies. Default 'Popular Tags'.<br>
+     * <b>all_items</b> –  Default 'All Tags'/'All Categories'.<br>
+     * <b>parent_item</b> – This label is only used for hierarchical taxonomies. Default 'Parent Category'.<br>
+     * <b>parent_item_colon</b> – The same as parent_item, but with colon : in the end.<br>
+     * <b>name_field_description</b> – Description for the Name field on Edit Tags screen. Default 'The name is how it appears on your site'.<br>
+     * <b>slug_field_description</b> – Description for the Slug field on Edit Tags screen. Default 'The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens'.<br>
+     * <b>parent_field_description</b> – Description for the Parent field on Edit Tags screen. Default 'Assign a parent term to create a hierarchy.The term Jazz, for example, would be the parent of Bebop and Big Band'.<br>
+     * <b>desc_field_description</b> – Description for the Description field on Edit Tags screen. Default 'The description is not prominent by default; however, some themes may show it'.<br>
+     * <b>edit_item</b> – Default 'Edit Tag'/'Edit Category'.<br>
+     * <b>view_item</b> – Default 'View Tag'/'View Category'.<br>
+     * <b>update_item</b> – Default 'Update Tag'/'Update Category'.<br>
+     * <b>add_new_item</b> – Default 'Add New Tag'/'Add New Category'.<br>
+     * <b>new_item_name</b> – Default 'New Tag Name'/'New Category Name'.<br>
+     * <b>separate_items_with_commas</b> – This label is only used for non-hierarchical taxonomies. Default 'Separate tags with commas', used in the meta box.<br>
+     * <b>add_or_remove_items</b> – This label is only used for non-hierarchical taxonomies. Default 'Add or remove tags', used in the meta box when JavaScript is disabled.<br>
+     * <b>choose_from_most_used</b> – This label is only used on non-hierarchical taxonomies. Default 'Choose from the most used tags', used in the meta box.<br>
+     * <b>not_found</b> – Default 'No tags found'/'No categories found', used in the meta box and taxonomy list table.<br>
+     * <b>no_terms</b> – Default 'No tags'/'No categories', used in the posts and media list tables.<br>
+     * <b>filter_by_item</b> – This label is only used for hierarchical taxonomies. Default 'Filter by category', used in the posts list table.<br>
+     * <b>items_list_navigation</b> – Label for the table pagination hidden heading.<br>
+     * <b>items_list</b> – Label for the table hidden heading.<br>
+     * <b>most_used</b> – Title for the Most Used tab. Default 'Most Used'.<br>
+     * <b>back_to_items</b> – Label displayed after a term has been updated.<br>
+     * <b>item_link</b> – Used in the block editor. Title for a navigation link block variation.Default 'Tag Link'/'Category Link'.<br>
+     * <b>item_link_description</b> – Used in the block editor. Description for a navigation link block variation. Default 'A link to a tag'/'A link to a category'.<br>
+     * @param array{name: string, singular_name: string, search_items: string, popular_items: string, all_items: string, parent_item: string, parent_item_colon: string, name_field_description: string, slug_field_description: string, parent_field_description: string, desc_field_description: string, edit_item: string, view_item: string, update_item: string, add_new_item: string, new_item_name: string, separate_items_with_commas: string, add_or_remove_items: string, choose_from_most_used: string, not_found: string, no_terms: string, filter_by_item: string, items_list_navigation: string, items_list: string, most_used: string, back_to_items: string, item_link: string, item_link_description: string} $labels
+     * @return TaxonomyBuilder
+     */
     public function labels(array $labels): TaxonomyBuilder
     {
         if (!isset($this->args['labels'])) {
