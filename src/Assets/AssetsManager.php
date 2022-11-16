@@ -142,9 +142,16 @@ class AssetsManager
     }
 
     /** @param string $entry */
-    public function enqueueStyles($entry): void
+    public function enqueueStyles($entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
+
+        if (!is_array($dependencies)) {
+            $dependencies = [];
+        }
+
+        $dependencies[] = 'jquery';
+        $dependencies = array_unique($dependencies);
 
         if ($assets) {
             foreach ($assets as $key => $asset) {
@@ -166,9 +173,16 @@ class AssetsManager
     }
 
     /** @param string $entry */
-    public function enqueueScripts($entry): void
+    public function enqueueScripts($entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
+
+        if (!is_array($dependencies)) {
+            $dependencies = [];
+        }
+
+        $dependencies[] = 'jquery';
+        $dependencies = array_unique($dependencies);
 
         if ($assets) {
             foreach ($assets as $key => $asset) {
@@ -179,13 +193,13 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
-                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), ['jquery'], false, true);
+                    wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
                 }
             }
 
             return;
         }
 
-        wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), ['jquery'], false, true);
+        wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), $dependencies, false, true);
     }
 }
