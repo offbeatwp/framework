@@ -21,10 +21,10 @@ class TermModel implements TermModelInterface
 
     public $wpTerm;
     public $id;
-    protected $metaInput = [];
-    protected $metaToUnset = [];
+    protected array $metaInput = [];
+    protected array $metaToUnset = [];
 
-    /** @param WP_Term|int|null */
+    /** @param WP_Term|int|null $term */
     public function __construct($term)
     {
         if ($term instanceof WP_Term) {

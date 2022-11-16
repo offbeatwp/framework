@@ -17,7 +17,6 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
-use WP_Error;
 use WP_Post;
 use WP_Post_Type;
 use WP_Term;
@@ -38,7 +37,7 @@ class PostModel implements PostModelInterface
     /** @var array|false|string */
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
-    protected $termsToSet = [];
+    protected array $termsToSet = [];
 
     use BaseModelTrait;
     use SetMetaTrait;
@@ -257,7 +256,6 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string|WP_Error */
     public function getPermalink()
     {
         return get_permalink($this->getId());
@@ -721,7 +719,7 @@ class PostModel implements PostModelInterface
         $wp_query->in_the_loop = true;
         
         // Small workaround for a notice the occurs within WP caching featured images.
-        if (is_null($wp_query->posts)) {
+        if ($wp_query->posts === null) {
             $wp_query->posts = [];
         }
     }
@@ -820,7 +818,7 @@ class PostModel implements PostModelInterface
         return $updatedPostId;
     }
 
-    private function attachTerms(int $id)
+    private function attachTerms(int $id): void
     {
         foreach ($this->termsToSet as $term) {
             wp_set_post_terms($id, $term['termIds'], $term['taxonomy'], $term['append']);
