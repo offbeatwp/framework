@@ -68,4 +68,17 @@ class TermsCollection extends OffbeatModelCollection
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a TermModel.');
     }
+
+    /**
+     * Deletes <b>all</b> the terms in this collection from the database.
+     * @param bool $force
+     */
+    public function deleteAll(bool $force)
+    {
+        $this->each(function (TermModel $model) {
+            $model->delete();
+        });
+
+        $this->items = [];
+    }
 }
