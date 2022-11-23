@@ -17,7 +17,6 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
-use OffbeatWP\Helpers\DummyHelper;
 use WP_Post;
 use WP_Post_Type;
 use WP_Term;
@@ -38,7 +37,7 @@ class PostModel implements PostModelInterface
     /** @var array|false|string */
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
-    protected $termsToSet = [];
+    protected array $termsToSet = [];
 
     use BaseModelTrait;
     use SetMetaTrait;
@@ -257,7 +256,6 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string */
     public function getPermalink()
     {
         return get_permalink($this->getId());
@@ -719,6 +717,11 @@ class PostModel implements PostModelInterface
 
         setup_postdata($this->wpPost);
         $wp_query->in_the_loop = true;
+        
+        // Small workaround for a notice the occurs within WP caching featured images.
+        if ($wp_query->posts === null) {
+            $wp_query->posts = [];
+        }
     }
 
     public function end(): void
@@ -815,7 +818,7 @@ class PostModel implements PostModelInterface
         return $updatedPostId;
     }
 
-    private function attachTerms(int $id)
+    private function attachTerms(int $id): void
     {
         foreach ($this->termsToSet as $term) {
             wp_set_post_terms($id, $term['termIds'], $term['taxonomy'], $term['append']);
@@ -979,14 +982,15 @@ class PostModel implements PostModelInterface
 
         return [];
     }
-
+    
     private function updateRelation(string $key): void
     {
         $method = $this->getMethodByRelationKey($key);
+
         if ($method) {
             $relation = $this->$method();
 
-            if ($this->$method()) {
+            if ($relation) {
                 $ids = $this->getMetaRelationIds($key);
 
                 if ($ids && $relation instanceof HasOneOrMany) {
@@ -999,16 +1003,6 @@ class PostModel implements PostModelInterface
                     $relation->dissociateAll();
                 }
             }
-        }
-    }
-
-    public static function generateFiller(int $amount): void
-    {
-        for ($i = 0; $i < $amount; $i++) {
-            $model = new PostModel();
-            $model->setTitle(DummyHelper::generateSentence());
-            $model->setContent(DummyHelper::generateText(5));
-            $model->saveOrFail();
         }
     }
 }

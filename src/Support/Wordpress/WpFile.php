@@ -7,10 +7,10 @@ use OffbeatWP\Exceptions\WpErrorException;
 
 final class WpFile
 {
-    private $file;
-    private $url;
-    private $type;
-    private $error;
+    private string $file;
+    private string $url;
+    private string $type;
+    private ?string $error;
 
     private function __construct(array $result)
     {
@@ -79,10 +79,26 @@ final class WpFile
         return new WpFile(wp_upload_bits($filename, null, $fileContent, $time));
     }
 
-    /** @param array{name: string, tmp_name: string} $fileArray Array that represents a `$_FILES` upload array. */
+    /** @param array $fileArray Array that represents a `$_FILES` upload array.<br>This array must have a <i>name</i> and a <i>tmp_name</i> key. */
     public static function uploadFromArray(array $fileArray): WpFile
     {
         return self::uploadBits($fileArray['name'], file_get_contents($fileArray['tmp_name']));
+    }
+
+    /**
+     * @param array $fileArray Array that represents a `$_FILES` upload array from a multi-upload filed.
+     * @return WpFile[]
+     */
+    public static function uploadFromMultiArray(array $fileArray): array
+    {
+        $files = [];
+
+        $c = count($fileArray['name']);
+        for ($i = 0; $i < $c; $i++) {
+            $files[] = self::uploadBits($fileArray['name'][$i], file_get_contents($fileArray['tmp_name'][$i]));
+        }
+
+        return $files;
     }
 
     /**

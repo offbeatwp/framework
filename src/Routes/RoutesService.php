@@ -12,20 +12,24 @@ class RoutesService extends AbstractService
 
     public function register()
     {
-        add_action('init', [$this, 'loadRoutes'], 10);
-        
+        $this->loadRoutes();
+
         if (!is_admin()) {
-            add_action('init', [$this, 'urlRoutePreps'], 15);
+            add_action('init', [$this, 'urlRoutePreps'], PHP_INT_MAX);
         }
     }
 
     public function loadRoutes()
     {
+        offbeat('routes')->setPriorityMode(RoutesManager::PRIORITY_LOW);
+
         $routeFiles = glob($this->app->routesPath() . '/*.php');
 
         foreach ($routeFiles as $routeFile) {
             require $routeFile;
         }
+
+        offbeat('routes')->setPriorityMode(RoutesManager::PRIORITY_HIGH);
     }
 
     public function urlRoutePreps()
@@ -36,11 +40,11 @@ class RoutesService extends AbstractService
 
         add_filter('user_trailingslashit', static function ($url) {
             $urlUnTrailingSlashed = untrailingslashit($url);
-            
+
             if (preg_match('/\.json$/', $urlUnTrailingSlashed)) {
                 return $urlUnTrailingSlashed;
             }
-            
+
             return $url;
         }, 20, 1);
 
