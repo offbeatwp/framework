@@ -61,4 +61,38 @@ class ArrayHelper {
 
         return array_map('intval', $data);
     }
+
+    /**
+     * Retrieve a single random value from an array.
+     * @template T
+     * @param T[] $array
+     * @return T|null
+     */
+    public static function randomValue(array $array)
+    {
+        $randKey = array_rand($array);
+        return $array[$randKey];
+    }
+
+    /**
+     * Retrieve several random values from an array.
+     * @template T
+     * @param T $array
+     * @param positive-int $minAmount
+     * @param int $maxAmount
+     * @return T
+     */
+    public static function randomValues(array $array, int $minAmount, int $maxAmount = 0): array
+    {
+        $amount = ($maxAmount > $minAmount) ? mt_rand($minAmount, $maxAmount) : $minAmount;
+
+        $output = [];
+        $randKeys = array_rand($array, $amount);
+
+        foreach ($randKeys as $randKey) {
+            $output[] = $array[$randKey];
+        }
+
+        return $output;
+    }
 }
