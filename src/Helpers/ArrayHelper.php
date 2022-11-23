@@ -77,10 +77,10 @@ class ArrayHelper {
     /**
      * Retrieve several random values from an array.
      * @template T
-     * @param T $array
+     * @param T[] $array
      * @param positive-int $minAmount
      * @param int $maxAmount
-     * @return T
+     * @return T[]
      */
     public static function randomValues(array $array, int $minAmount, int $maxAmount = 0): array
     {
