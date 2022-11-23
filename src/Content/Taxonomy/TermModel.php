@@ -181,6 +181,17 @@ class TermModel implements TermModelInterface
     }
 
     /**
+     * Removes a term from the database.<br>
+     * If the term is a parent of other terms, then the children will be updated to that term's parent.<br>
+     * Metadata associated with the term will be deleted.
+     * @return bool Whetever the term was deleted.
+     */
+    public function delete(): bool
+    {
+        return wp_delete_term($this->getId(), $this->getTaxonomy()) === true;
+    }
+
+    /**
      * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
      * @return static|null
      */
