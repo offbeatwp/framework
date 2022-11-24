@@ -54,6 +54,11 @@ class WpQueryBuilder
 
     public function get(): PostsCollection
     {
+        if (!isset($this->queryVars['no_found_rows'])) {
+            $isPaged = (bool)($this->queryVars['paged'] ?? false);
+            $this->queryVars['no_found_rows'] = !$isPaged;
+        }
+
         $query = $this->runQuery();
 
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
@@ -150,10 +155,6 @@ class WpQueryBuilder
     /** @return WP_Query|IWpQuerySubstitute */
     private function runQuery()
     {
-        if (!isset($this->queryVars['no_found_rows'])) {
-            $this->queryVars['no_found_rows'] = empty($this->queryVars['paged']);
-        }
-
         do_action('offbeatwp/posts/query/before_get', $this);
         $query = new $this->wpQueryClass($this->queryVars);
         do_action('offbeatwp/posts/query/after_get', $this);
@@ -180,8 +181,9 @@ class WpQueryBuilder
     /** @return int[] */
     public function ids(): array
     {
-        $this->queryVars['fields'] = 'ids';
         $this->queryVars['posts_per_page'] = $this->queryVars['posts_per_page'] ?? -1;
+        $this->queryVars['fields'] = 'ids';
+        $this->queryVars['no_found_rows'] = true;
 
         return $this->runQuery()->posts;
     }
