@@ -20,7 +20,7 @@ class Route extends SymfonyRoute
     /**
      * @param string $name
      * @param string $path
-     * @param callable $actionCallback
+     * @param string[]|Closure $actionCallback
      * @param array $defaults
      * @param array $requirements
      * @param array $options
@@ -70,7 +70,7 @@ class Route extends SymfonyRoute
 
     public function hasValidActionCallback(): bool
     {
-        return is_callable($this->actionCallback);
+        return is_callable($this->actionCallback) || (is_array($this->actionCallback) && method_exists($this->actionCallback[0], $this->actionCallback[1]));
     }
 
     public function getParameters()
