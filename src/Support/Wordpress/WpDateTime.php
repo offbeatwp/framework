@@ -7,7 +7,6 @@ use DateTimeInterface;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
-use TypeError;
 
 /**
  * An extension of the DateTime class.<br>
@@ -131,10 +130,6 @@ final class WpDateTime extends DateTime
      */
     public function setMonth(int $month): self
     {
-        if ($month < 1 || $month > 12) {
-            throw new TypeError('SetMonth expects an integer in the 1 ~ 12 range.');
-        }
-
         $this->setDate($this->getYear(), $month, $this->getDay());
         return $this;
     }
@@ -145,10 +140,6 @@ final class WpDateTime extends DateTime
      */
     public function setDay(int $day): self
     {
-        if ($day < 1 || $day > 31) {
-            throw new TypeError('SetDay expects an integer in the 1 ~ 31 range.');
-        }
-
         $this->setDate($this->getYear(), $this->getMonth(), $day);
         return $this;
     }
@@ -159,10 +150,6 @@ final class WpDateTime extends DateTime
      */
     public function setHour(int $hour): self
     {
-        if ($hour < 0 || $hour > 23) {
-            throw new TypeError('setHour expects an integer in the 0 ~ 23 range.');
-        }
-
         $this->setTime($hour, $this->getMinute(), $this->getSecond(), $this->getMicro());
         return $this;
     }
@@ -173,10 +160,6 @@ final class WpDateTime extends DateTime
      */
     public function setMinute(int $minute): self
     {
-        if ($minute < 0 || $minute > 59) {
-            throw new TypeError('setMinute expects an integer in the 0 ~ 59 range.');
-        }
-
         $this->setTime($this->getHour(), $minute, $this->getSecond(), $this->getMicro());
         return $this;
     }
@@ -187,10 +170,6 @@ final class WpDateTime extends DateTime
      */
     public function setSecond(int $second): self
     {
-        if ($second < 0 || $second > 59) {
-            throw new TypeError('setSecond expects an integer in the 0 ~ 59 range.');
-        }
-
         $this->setTime($this->getHour(), $this->getMinute(), $second, $this->getMicro());
         return $this;
     }
@@ -201,10 +180,6 @@ final class WpDateTime extends DateTime
      */
     public function setMicro(int $micro): self
     {
-        if ($micro < 0 || $micro > 999999) {
-            throw new TypeError('setMicro expects an integer in the 0 ~ 999999 range.');
-        }
-
         $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
         return $this;
     }
