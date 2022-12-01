@@ -112,7 +112,7 @@ trait GetMetaTrait
 
     /**
      * Retrieve a meta value as a WpDateTime object.
-     * @param string $key Meta key.
+     * @param non-empty-string $key Meta key.
      * @return WpDateTime
      */
     public function getMetaDateTime(string $key): WpDateTime
