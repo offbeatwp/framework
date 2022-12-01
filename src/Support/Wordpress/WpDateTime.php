@@ -9,6 +9,10 @@ use Exception;
 use InvalidArgumentException;
 use TypeError;
 
+/**
+ * An extension of the DateTime class.<br>
+ * When instantiated, it will default to using the format and timezone defined by the WordPress blog.<br>
+ */
 final class WpDateTime extends DateTime
 {
     public function __construct(string $datetime = 'now', ?DateTimeZone $timezone = null)
@@ -16,9 +20,9 @@ final class WpDateTime extends DateTime
         parent::__construct($datetime, $timezone ?: wp_timezone());
     }
 
-    public static function now(): WpDateTime
+    public static function now(?DateTimeZone $timezone = null): WpDateTime
     {
-        return new WpDateTime();
+        return new WpDateTime('now', $timezone);
     }
 
     /**
