@@ -113,9 +113,9 @@ trait GetMetaTrait
     /**
      * Retrieve a meta value as a WpDateTime object.
      * @param non-empty-string $key Meta key.
-     * @return WpDateTime
+     * @return WpDateTime|null
      */
-    public function getMetaDateTime(string $key): WpDateTime
+    public function getMetaDateTime(string $key): ?WpDateTime
     {
         return WpDateTime::make($this->getMetaString($key));
     }
