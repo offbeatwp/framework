@@ -431,7 +431,10 @@ class PostModel implements PostModelInterface
         return get_edit_post_link($this->getId());
     }
 
-    /** @throws OffbeatInvalidModelException */
+    /**
+     * @deprecated
+     * @throws OffbeatInvalidModelException
+     */
     public function getCreatedAt(): Carbon
     {
         $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
@@ -443,7 +446,10 @@ class PostModel implements PostModelInterface
         return Carbon::parse($creationDate);
     }
 
-    /** @throws OffbeatInvalidModelException */
+    /**
+     * @deprecated
+     * @throws OffbeatInvalidModelException
+     */
     public function getUpdatedAt(): Carbon
     {
         $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
