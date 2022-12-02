@@ -7,6 +7,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
+use TypeError;
 
 /**
  * An extension of the DateTime class.<br>
@@ -31,19 +32,23 @@ final class WpDateTime extends DateTime
      */
     public static function make($datetime, ?DateTimeZone $timezone = null): ?WpDateTime
     {
-        if (is_int($datetime)) {
-            $datetime = '@' . $datetime;
+        if (is_string($datetime)) {
+            $str = $datetime;
+        } elseif (is_int($datetime)) {
+            $str = '@' . $datetime;
         } elseif ($datetime instanceof DateTimeInterface) {
             $ts = $datetime->getTimestamp();
             if ($ts === false) {
                 return null;
             }
 
-            $datetime = '@' . $ts;
+            $str = '@' . $ts;
+        } else {
+            throw new TypeError('WpDateTime::make received unexpected value. Only string, int and DateTimeInterface are acceptable arguments.');
         }
 
         try {
-            return new WpDateTime($datetime, $timezone);
+            return new WpDateTime($str, $timezone);
         } catch (Exception $e) {
             return null;
         }
