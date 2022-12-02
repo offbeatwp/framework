@@ -190,6 +190,39 @@ final class WpDateTime extends DateTime
         return (int)$this->format('t');
     }
 
+    /** @return int<0, 365> The day of the year starting from zero. 0 through 365 */
+    public function getDayOfYear(): int
+    {
+        return (int)$this->format('z');
+    }
+
+    /** @return int<1, 53> ISO 8601 week number of year, weeks starting on Monday. 1 through 53 */
+    public function getWeekOfYear(): int
+    {
+        return (int)$this->format('W');
+    }
+
+    public function isLeapYear(): bool
+    {
+        return (bool)$this->format('L');
+    }
+
+    public function isToday(): bool
+    {
+        $today = WpDateTime::now();
+        return ($today->getYear() === $this->getYear() && $today->getDayOfYear() === $this->getDayOfYear());
+    }
+
+    public function isPast(): bool
+    {
+        return $this < WpDateTime::now();
+    }
+
+    public function isFuture(): bool
+    {
+        return $this > WpDateTime::now();
+    }
+
     /**
      * Alter the timestamp of a DateTime object by incrementing or decrementing in a format accepted by strtotime().
      * <br><br><b>Beware:</b> Unlike DateTime's implementation, modify will throw an <i>InvalidArgumentException</i> if an invalid modifier value is given.
@@ -206,5 +239,10 @@ final class WpDateTime extends DateTime
         }
 
         return $result;
+    }
+
+    public function __toString(): string
+    {
+        return $this->format('Y-m-d H:i:s');
     }
 }
