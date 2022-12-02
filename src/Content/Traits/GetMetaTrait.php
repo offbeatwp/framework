@@ -117,7 +117,8 @@ trait GetMetaTrait
      */
     public function getMetaDateTime(string $key): ?WpDateTime
     {
-        return WpDateTime::make($this->getMetaString($key));
+        $str = $this->getMetaString($key);
+        return ($str) ? WpDateTime::make($this->getMetaString($key)) : null;
     }
 
     /**
