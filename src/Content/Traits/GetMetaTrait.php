@@ -165,6 +165,7 @@ trait GetMetaTrait
     }
 
     /**
+     * @deprecated Does not respect WordPress site settings. The getMetaDateTime method does.
      * Retrieve a meta value as a Carbon Date.<br/>
      * If the meta value cannot be parsed to a date then <i>null</i> is returned.
      */
