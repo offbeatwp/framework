@@ -26,6 +26,8 @@ final class WpDateTime extends DateTime
     }
 
     /**
+     * Will attempt to create a WpDateTime object from the passed variable and will return <i>null</i> on failure.<br>
+     * If an integer is passed as first argument then it will be treated as a UNIX Timestamp.
      * @param string|int|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
      * @return WpDateTime|null
