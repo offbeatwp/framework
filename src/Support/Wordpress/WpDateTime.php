@@ -28,13 +28,13 @@ final class WpDateTime extends DateTime
     /**
      * Will attempt to create a WpDateTime object from the passed variable and will return <i>null</i> on failure.<br>
      * If an integer is passed as first argument then it will be treated as a UNIX Timestamp.
-     * @param string|int|DateTimeInterface $datetime
+     * @param non-empty-string|int|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
      * @return WpDateTime|null
      */
     public static function make($datetime, ?DateTimeZone $timezone = null): ?WpDateTime
     {
-        if (is_string($datetime)) {
+        if (is_string($datetime) && $datetime) {
             $str = $datetime;
         } elseif (is_int($datetime)) {
             $str = '@' . $datetime;
@@ -46,7 +46,7 @@ final class WpDateTime extends DateTime
 
             $str = '@' . $ts;
         } else {
-            throw new TypeError('WpDateTime::make received unexpected value. Only string, int and DateTimeInterface are acceptable arguments.');
+            throw new TypeError('WpDateTime::make received unexpected value. Only a non-empty-string, int and DateTimeInterface are acceptable arguments.');
         }
 
         try {
