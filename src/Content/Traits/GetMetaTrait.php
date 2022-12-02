@@ -36,8 +36,8 @@ trait GetMetaTrait
     }
 
     /**
-     * Returns the metaInput value if one with the given key exists.<br/>
-     * If not, returns the meta value with the given key from the database.<br/>
+     * Returns the metaInput value if one with the given key exists.<br>
+     * If not, returns the meta value with the given key from the database.<br>
      * If the value isn't in metaInput or the database, <i>null</i> is returned.
      * @param non-empty-string $key
      * @return mixed
@@ -66,7 +66,7 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as a string.<br/>
+     * Retrieve a meta value as a string.<br>
      * If the meta value does not exist then an <b>empty string</b> is returned.
      */
     public function getMetaString(string $key): string
@@ -75,7 +75,7 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as an integer.<br/>
+     * Retrieve a meta value as an integer.<br>
      * If the meta value does not exist then <b>0</b> is returned.
      */
     public function getMetaInt(string $key): int
@@ -84,7 +84,7 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as a floating point number.<br/>
+     * Retrieve a meta value as a floating point number.<br>
      * If the meta value does not exist then <b>0</b> is returned.
      */
     public function getMetaFloat(string $key): float
@@ -111,18 +111,22 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as a WpDateTime object.
+     * Attempt to retrieve a meta value as a WpDateTime object.<br>
+     * If no meta exists or if conversion fails, <i>null</i> will be returned.
      * @param non-empty-string $key Meta key.
      * @return WpDateTime|null
      */
     public function getMetaDateTime(string $key): ?WpDateTime
     {
-        $str = $this->getMetaString($key);
-        return ($str) ? WpDateTime::make($this->getMetaString($key)) : null;
+        try {
+            return WpDateTime::make($this->getMetaString($key));
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
-     * Retrieve a meta value as a boolean.<br/>
+     * Retrieve a meta value as a boolean.<br>
      * If the meta value does not exist then <b>false</b> is returned.
      */
     public function getMetaBool(string $key): bool
@@ -131,7 +135,7 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as an array.<br/>
+     * Retrieve a meta value as an array.<br>
      * If the meta value does not exist then <b>an empty array</b> is returned.
      */
     public function getMetaArray(string $key): array
@@ -159,7 +163,7 @@ trait GetMetaTrait
         return $models;
     }
 
-    /** Retrieve a meta value as a collection.<br/> */
+    /** Retrieve a meta value as a collection.<br> */
     public function getMetaCollection(string $key): Collection
     {
         return collect($this->getMetaArray($key));
@@ -167,7 +171,7 @@ trait GetMetaTrait
 
     /**
      * @deprecated Does not respect WordPress site settings. The getMetaDateTime method does.
-     * Retrieve a meta value as a Carbon Date.<br/>
+     * Retrieve a meta value as a Carbon Date.<br>
      * If the meta value cannot be parsed to a date then <i>null</i> is returned.
      */
     public function getMetaCarbon(string $key, ?DateTimeZone $tz = null): ?Carbon
