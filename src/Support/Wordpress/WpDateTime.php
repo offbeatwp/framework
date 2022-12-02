@@ -35,6 +35,10 @@ final class WpDateTime extends DateTime
     public static function make($datetime, ?DateTimeZone $timezone = null): ?WpDateTime
     {
         if (is_string($datetime)) {
+            if (!$datetime) {
+                return null;
+            }
+
             $str = $datetime;
         } elseif (is_int($datetime)) {
             $str = '@' . $datetime;
@@ -46,7 +50,7 @@ final class WpDateTime extends DateTime
 
             $str = '@' . $ts;
         } else {
-            throw new TypeError('WpDateTime::make received unexpected value. Only string, int and DateTimeInterface are acceptable arguments.');
+            throw new TypeError('WpDateTime::make received unexpected value. Only a string, int and DateTimeInterface are acceptable arguments.');
         }
 
         try {
