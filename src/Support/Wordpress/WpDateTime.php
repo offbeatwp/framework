@@ -5,7 +5,6 @@ namespace OffbeatWP\Support\Wordpress;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
-use Exception;
 use InvalidArgumentException;
 use TypeError;
 
@@ -26,38 +25,22 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * Will attempt to create a WpDateTime object from the passed variable and will return <i>null</i> on failure.<br>
-     * If an integer is passed as first argument then it will be treated as a UNIX Timestamp.
-     * @param string|int|DateTimeInterface $datetime
+     * Will attempt create a WpDateTime object from the passed variable.
+     * @param non-empty-string|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
      * @return WpDateTime|null
      */
     public static function make($datetime, ?DateTimeZone $timezone = null): ?WpDateTime
     {
-        if (is_string($datetime)) {
-            if (!$datetime) {
-                return null;
+        if ($datetime) {
+            if (is_string($datetime)) {
+                return new WpDateTime($datetime, $timezone);
             }
 
-            $str = $datetime;
-        } elseif (is_int($datetime)) {
-            $str = '@' . $datetime;
-        } elseif ($datetime instanceof DateTimeInterface) {
-            $ts = $datetime->getTimestamp();
-            if ($ts === false) {
-                return null;
-            }
-
-            $str = '@' . $ts;
-        } else {
-            throw new TypeError('WpDateTime::make received unexpected value. Only a string, int and DateTimeInterface are acceptable arguments.');
+            return new WpDateTime($datetime->format('Y-m-d H:i:s.u'), $datetime->getTimezone());
         }
 
-        try {
-            return new WpDateTime($str, $timezone);
-        } catch (Exception $e) {
-            return null;
-        }
+        throw new TypeError('WpDateTime::make expects a non-empty-string or DateTimeInterface as argument.');
     }
 
     /**
