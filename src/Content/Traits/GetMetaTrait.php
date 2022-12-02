@@ -7,6 +7,7 @@ use DateTimeZone;
 use Exception;
 use Illuminate\Support\Collection;
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Support\Wordpress\WpDateTime;
 
 trait GetMetaTrait
 {
@@ -107,6 +108,16 @@ trait GetMetaTrait
         }
 
         return '';
+    }
+
+    /**
+     * Retrieve a meta value as a WpDateTime object.
+     * @param non-empty-string $key Meta key.
+     * @return WpDateTime|null
+     */
+    public function getMetaDateTime(string $key): ?WpDateTime
+    {
+        return WpDateTime::make($this->getMetaString($key));
     }
 
     /**
