@@ -112,70 +112,63 @@ final class WpDateTime extends DateTime
         return (int)$this->format('u');
     }
 
-    public function setYear(int $year): self
+    public function setYear(int $year): WpDateTime
     {
-        $this->setDate($year, $this->getMonth(), $this->getDay());
-        return $this;
+        return $this->setDate($year, $this->getMonth(), $this->getDay());
     }
 
     /**
      * @param int<1, 12> $month Numeric representation of a month from 1 through 12.
      * @return $this
      */
-    public function setMonth(int $month): self
+    public function setMonth(int $month): WpDateTime
     {
-        $this->setDate($this->getYear(), $month, $this->getDay());
-        return $this;
+        return $this->setDate($this->getYear(), $month, $this->getDay());
     }
 
     /**
      * @param int<1, 31> $day Numeric representation of a day from 1 through 31.
      * @return $this
      */
-    public function setDay(int $day): self
+    public function setDay(int $day): WpDateTime
     {
-        $this->setDate($this->getYear(), $this->getMonth(), $day);
-        return $this;
+        return $this->setDate($this->getYear(), $this->getMonth(), $day);
     }
 
     /**
      * @param int<0, 23> $hour 24-hour format of an hour. 0 through 23.
      * @return $this
      */
-    public function setHour(int $hour): self
+    public function setHour(int $hour): WpDateTime
     {
-        $this->setTime($hour, $this->getMinute(), $this->getSecond(), $this->getMicro());
-        return $this;
+        return $this->setTime($hour, $this->getMinute(), $this->getSecond(), $this->getMicro());
     }
 
     /**
      * @param int<0, 59> $minute 0 through 59.
      * @return $this
      */
-    public function setMinute(int $minute): self
+    public function setMinute(int $minute): WpDateTime
     {
-        $this->setTime($this->getHour(), $minute, $this->getSecond(), $this->getMicro());
-        return $this;
+        return $this->setTime($this->getHour(), $minute, $this->getSecond(), $this->getMicro());
     }
 
     /**
      * @param int<0, 59> $second 0 through 59.
      * @return $this
      */
-    public function setSecond(int $second): self
+    public function setSecond(int $second): WpDateTime
     {
-        $this->setTime($this->getHour(), $this->getMinute(), $second, $this->getMicro());
-        return $this;
+        return $this->setTime($this->getHour(), $this->getMinute(), $second, $this->getMicro());
     }
 
     /**
      * @param int<0, 999999> $micro
      * @return $this
      */
-    public function setMicro(int $micro): self
+    public function setMicro(int $micro): WpDateTime
     {
-        $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
-        return $this;
+        return $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
     }
 
     /** @return int<28, 31> The number of days in the given month. 28 through 31 */
