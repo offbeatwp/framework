@@ -45,6 +45,7 @@ final class WpDateTime extends DateTime
 
     /**
      * Retrieves the date, in localized format. Defaults to the format defined in the blog settings.
+     * <br>Note that utilises the wp_date method. As such, the output is affected by the <b>wp_date</b> filter but NOT the <b>date_i18n</b> filter.
      * @param string $format Format in which to retrieve the date.
      * @return string
      */
