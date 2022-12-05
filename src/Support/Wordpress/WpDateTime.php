@@ -28,9 +28,9 @@ final class WpDateTime extends DateTime
      * Will attempt create a WpDateTime object from the passed variable.
      * @param non-empty-string|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
-     * @return WpDateTime|null
+     * @return WpDateTime
      */
-    public static function make($datetime, ?DateTimeZone $timezone = null): ?WpDateTime
+    public static function make($datetime, ?DateTimeZone $timezone = null): WpDateTime
     {
         if ($datetime) {
             if (is_string($datetime)) {
