@@ -118,7 +118,7 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * @param int<1, 12> $month Numeric representation of a month from 1 through 12.
+     * @param int $month Numeric representation of a month from 1 through 12.
      * @return $this
      */
     public function setMonth(int $month): WpDateTime
@@ -127,7 +127,7 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * @param int<1, 31> $day Numeric representation of a day from 1 through 31.
+     * @param int $day Numeric representation of a day from 1 through 31.
      * @return $this
      */
     public function setDay(int $day): WpDateTime
@@ -136,7 +136,7 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * @param int<0, 23> $hour 24-hour format of an hour. 0 through 23.
+     * @param int $hour 24-hour format of an hour. 0 through 23.
      * @return $this
      */
     public function setHour(int $hour): WpDateTime
@@ -145,7 +145,7 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * @param int<0, 59> $minute 0 through 59.
+     * @param int $minute 0 through 59.
      * @return $this
      */
     public function setMinute(int $minute): WpDateTime
@@ -154,7 +154,7 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * @param int<0, 59> $second 0 through 59.
+     * @param int $second 0 through 59.
      * @return $this
      */
     public function setSecond(int $second): WpDateTime
@@ -163,7 +163,7 @@ final class WpDateTime extends DateTime
     }
 
     /**
-     * @param int<0, 999999> $micro
+     * @param int $micro
      * @return $this
      */
     public function setMicro(int $micro): WpDateTime
