@@ -6,6 +6,7 @@ use Iterator;
 
 class WpPostsIterator implements Iterator
 {
+    /** @var PostModel[] */
     protected $items;
 
     public function __construct(array $items)
@@ -23,12 +24,13 @@ class WpPostsIterator implements Iterator
         return current($this->items);
     }
 
+    /** @return array-key|null */
     public function key()
     {
         return key($this->items);
     }
 
-    public function next()
+    public function next(): void
     {
         next($this->items);
     }
@@ -36,10 +38,13 @@ class WpPostsIterator implements Iterator
     public function valid(): bool
     {
         if (key($this->items) !== null) {
-            $item = current($this->items);
+            $originalPost = $GLOBALS['post'];
 
-            $GLOBALS['post'] = $item = $item->wpPost;
+            $item = current($this->items)->wpPost;
+            $GLOBALS['post'] = $item;
             setup_postdata($item);
+
+            $GLOBALS['post'] = $originalPost;
 
             return true;
         }
