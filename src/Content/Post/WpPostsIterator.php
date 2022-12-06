@@ -7,7 +7,7 @@ use Iterator;
 class WpPostsIterator implements Iterator
 {
     /** @var PostModel[] */
-    protected $items;
+    protected array $items;
 
     public function __construct(array $items)
     {
@@ -24,7 +24,6 @@ class WpPostsIterator implements Iterator
         return current($this->items);
     }
 
-    /** @return array-key|null */
     public function key()
     {
         return key($this->items);
