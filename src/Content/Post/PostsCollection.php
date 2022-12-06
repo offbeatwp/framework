@@ -93,7 +93,7 @@ class PostsCollection extends OffbeatModelCollection
      * Retrieves a paginated navigation to next/previous set of posts, when applicable.
      * @see paginate_links().
      */
-    public function getPagination(array $rawArgs = []): string
+    public function getPagination(array $rawArgs = [], string $slug = ''): string
     {
         if ($this->hasPagination()) {
             $args = wp_parse_args($rawArgs, [
@@ -104,6 +104,13 @@ class PostsCollection extends OffbeatModelCollection
                 'aria_label'            => __('Posts'),
                 'class'                 => 'pagination'
             ]);
+
+            if ($slug) {
+                $args['base'] = str_replace('999999999', '%#%', esc_url(get_pagenum_link(999999999)));
+                $args['total'] = $this->foundPosts();
+                $args['current'] = max(1, (int)($_GET[$slug] ?? 1));
+                $args['format']  = '?' . $slug . '=%#%';
+            }
 
             // Make sure the nav element has an aria-label attribute: fallback to the screen reader text.
             if ($args['screen_reader_text'] && !$args['aria_label']) {
