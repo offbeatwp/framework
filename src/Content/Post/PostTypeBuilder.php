@@ -204,6 +204,7 @@ class PostTypeBuilder
     {
         add_filter("manage_{$this->postType}_posts_columns", static function (array $columns) use ($name) {
             unset($columns[$name]);
+            return $columns;
         });
 
         return $this;
