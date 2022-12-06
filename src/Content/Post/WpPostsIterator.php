@@ -3,11 +3,15 @@
 namespace OffbeatWP\Content\Post;
 
 use Iterator;
+use WP_Post;
 
 class WpPostsIterator implements Iterator
 {
     /** @var PostModel[] */
     protected array $items;
+    /** @var WP_Post|null */
+    private $originalPost = null;
+    private bool $globalPostWasChanged = false;
 
     public function __construct(array $items)
     {
@@ -37,15 +41,20 @@ class WpPostsIterator implements Iterator
     public function valid(): bool
     {
         if (key($this->items) !== null) {
-            $originalPost = $GLOBALS['post'];
+            $this->originalPost = $GLOBALS['post'];
+            $this->globalPostWasChanged = true;
 
             $item = current($this->items)->wpPost;
             $GLOBALS['post'] = $item;
             setup_postdata($item);
 
-            $GLOBALS['post'] = $originalPost;
-
             return true;
+        }
+
+        if ($this->globalPostWasChanged) {
+            $GLOBALS['post'] = $this->originalPost;
+            $this->originalPost = null;
+            $this->globalPostWasChanged = false;
         }
 
         wp_reset_query();
