@@ -106,8 +106,8 @@ class PostsCollection extends OffbeatModelCollection
             ]);
 
             if ($slug) {
-                $args['base'] = str_replace('999999999', '%#%', esc_url(get_pagenum_link(999999999)));
-                $args['total'] = $this->foundPosts();
+                $args['base'] = '%_%';
+                $args['total'] = $this->getMaxPages();
                 $args['current'] = max(1, (int)($_GET[$slug] ?? 1));
                 $args['format']  = '?' . $slug . '=%#%';
             }
