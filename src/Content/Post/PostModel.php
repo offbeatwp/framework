@@ -17,6 +17,7 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
+use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use WP_Post;
 use WP_Post_Type;
 use WP_Term;
@@ -429,6 +430,16 @@ class PostModel implements PostModelInterface
     public function getEditLink(): ?string
     {
         return get_edit_post_link($this->getId());
+    }
+
+    public function getPostDateTime(): WpDateTimeImmutable
+    {
+        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'post', 'gmt'));
+    }
+
+    public function getModifiedDateTime(): WpDateTimeImmutable
+    {
+        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'modified', 'gmt'));
     }
 
     /**

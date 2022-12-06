@@ -2,15 +2,15 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
 
 /**
- * An extension of the DateTime class.<br>
+ * An extension of the DateTimeImmutable class.<br>
  * When instantiated, it will default to using the format and timezone defined by the WordPress blog.<br>
  */
-final class WpDateTime extends DateTime
+final class WpDateTimeImmutable extends DateTimeImmutable
 {
     use WpDateTimeTrait;
 
