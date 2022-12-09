@@ -4,7 +4,6 @@ namespace OffbeatWP\Support\Traits;
 
 use DateTimeInterface;
 use DateTimeZone;
-use InvalidArgumentException;
 use TypeError;
 
 trait WpDateTimeTrait
@@ -101,24 +100,6 @@ trait WpDateTimeTrait
     public function setMicro(int $micro): self
     {
         return $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
-    }
-
-    /**
-     * Alter the timestamp of a DateTime object by incrementing or decrementing in a format accepted by strtotime().
-     * <br><br><b>Beware:</b> Unlike DateTime's implementation, modify will throw an <i>InvalidArgumentException</i> if an invalid modifier value is given.
-     * @param string $modifier A date/time string. Valid formats are explained in <a href="https://secure.php.net/manual/en/datetime.formats.php">Date and Time Formats</a>.
-     * @return self Returns the DateTime object for method chaining or FALSE on failure.
-     * @throws InvalidArgumentException
-     * @link https://php.net/manual/en/datetime.modify.php
-     */
-    public function modify($modifier)
-    {
-        $result = parent::modify($modifier);
-        if (!$result) {
-            throw new InvalidArgumentException('Invalid DateTime modifier: ' . $modifier);
-        }
-
-        return $result;
     }
 
     /**
