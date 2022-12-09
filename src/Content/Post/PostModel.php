@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
@@ -434,12 +435,16 @@ class PostModel implements PostModelInterface
 
     public function getPostDateTime(): WpDateTimeImmutable
     {
-        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'post', 'gmt'));
+        if (!$this->getId()) {
+            return WpDateTimeImmutable::now();
+        }
+
+        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'post', 'gmt'), new DateTimeZone('UTC'));
     }
 
     public function getModifiedDateTime(): WpDateTimeImmutable
     {
-        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'modified', 'gmt'));
+        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'modified', 'gmt'), new DateTimeZone('UTC'));
     }
 
     /**
