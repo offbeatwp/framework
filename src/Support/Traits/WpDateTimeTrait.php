@@ -94,12 +94,24 @@ trait WpDateTimeTrait
     }
 
     /**
-     * @param int $micro
+     * @param int $micro 0 through 999999.
      * @return $this
      */
     public function setMicro(int $micro): self
     {
         return $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
+    }
+
+    /** Set the time to the start of the day. (00:00:00) */
+    public function startOfDay(): self
+    {
+        return $this->setTime(0, 0);
+    }
+
+    /** Set the time to the end of the day. (23:59:59) */
+    public function endOfDay(): self
+    {
+        return $this->setTime(23, 59, 59, 999999);
     }
 
     /**
