@@ -54,6 +54,12 @@ class UserModel
         }
 
         $this->wpUser = $user;
+        $this->init();
+    }
+
+    protected function init(): void
+    {
+        // Does nothing unless overriden by parent
     }
 
     /**
