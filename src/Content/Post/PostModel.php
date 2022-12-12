@@ -433,18 +433,30 @@ class PostModel implements PostModelInterface
         return get_edit_post_link($this->getId());
     }
 
-    public function getPostDateTime(): WpDateTimeImmutable
+    public function getPostDateTime(): ?WpDateTimeImmutable
     {
-        if (!$this->getId()) {
-            return WpDateTimeImmutable::now();
+        if ($this->getId()) {
+            $gmt = get_post_datetime($this->getId(), 'date', 'gmt');
+
+            if ($gmt) {
+                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
+            }
         }
 
-        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'post', 'gmt'), new DateTimeZone('UTC'));
+        return null;
     }
 
-    public function getModifiedDateTime(): WpDateTimeImmutable
+    public function getModifiedDateTime(): ?WpDateTimeImmutable
     {
-        return WpDateTimeImmutable::make(get_post_datetime($this->getId(), 'modified', 'gmt'), new DateTimeZone('UTC'));
+        if ($this->getId()) {
+            $gmt = get_post_datetime($this->getId(), 'modified', 'gmt');
+
+            if ($gmt) {
+                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
+            }
+        }
+
+        return null;
     }
 
     /**
