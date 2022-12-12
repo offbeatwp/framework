@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use Carbon\Carbon;
+use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
@@ -17,6 +18,7 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
+use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use WP_Post;
 use WP_Post_Type;
 use WP_Term;
@@ -429,6 +431,32 @@ class PostModel implements PostModelInterface
     public function getEditLink(): ?string
     {
         return get_edit_post_link($this->getId());
+    }
+
+    public function getPostDateTime(): ?WpDateTimeImmutable
+    {
+        if ($this->getId()) {
+            $gmt = get_post_datetime($this->getId(), 'date', 'gmt');
+
+            if ($gmt) {
+                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
+            }
+        }
+
+        return null;
+    }
+
+    public function getModifiedDateTime(): ?WpDateTimeImmutable
+    {
+        if ($this->getId()) {
+            $gmt = get_post_datetime($this->getId(), 'modified', 'gmt');
+
+            if ($gmt) {
+                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
+            }
+        }
+
+        return null;
     }
 
     /**
