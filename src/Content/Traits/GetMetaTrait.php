@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
+use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
 trait GetMetaTrait
 {
@@ -125,6 +126,26 @@ trait GetMetaTrait
 
         try {
             return WpDateTime::make($datetime);
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Attempt to retrieve a meta value as a WpDateTimeImmuteable object.<br>
+     * If no meta exists or if conversion fails, <i>null</i> will be returned.
+     * @param non-empty-string $key Meta key.
+     * @return WpDateTimeImmutable|null
+     */
+    public function getMetaDateTimeImmuteable(string $key): ?WpDateTime
+    {
+        $datetime = $this->getMetaString($key);
+        if (!$datetime) {
+            return null;
+        }
+
+        try {
+            return WpDateTimeImmutable::make($datetime);
         } catch (Exception $e) {
             return null;
         }
