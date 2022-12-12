@@ -43,7 +43,7 @@ class WpPostsIterator implements Iterator
 
             if (!$this->globalPostWasChanged) {
                 $this->globalPostWasChanged = true;
-                $this->originalPost = $GLOBALS['post'];
+                $this->originalPost = $GLOBALS['post'] ?? null;
             }
 
             $GLOBALS['post'] = $item;
@@ -58,8 +58,6 @@ class WpPostsIterator implements Iterator
         }
 
         wp_reset_query();
-        wp_reset_postdata();
-
         return false;
     }
 }
