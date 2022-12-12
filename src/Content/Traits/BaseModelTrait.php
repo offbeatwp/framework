@@ -12,6 +12,12 @@ trait BaseModelTrait
         return ($id) ? static::query()->findById($id) : null;
     }
 
+    /** @return static|null */
+    public static function first()
+    {
+        return static::query()->first();
+    }
+
     /** @return static */
     public static function findOrNew(?int $id)
     {
