@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
-use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -12,6 +11,7 @@ use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Support\Wordpress\User;
+use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use UnexpectedValueException;
 use WP_Error;
 use WP_User;
@@ -278,10 +278,10 @@ class UserModel
         return $this->getMetaString('phone_number');
     }
 
-    /** @return Carbon Date the user registered as a Carbon Date. */
-    public function getRegistrationDate(): Carbon
+    /** @return WpDateTimeImmutable Date the user registered as a Carbon Date. */
+    public function getRegistrationDate(): WpDateTimeImmutable
     {
-        return Carbon::parse($this->wpUser->user_registered);
+        return new WpDateTimeImmutable($this->wpUser->user_registered);
     }
 
     /** @return bool Whether the user has the rich-editor enabled for writing. */
@@ -415,7 +415,7 @@ class UserModel
     }
 
     /** @return positive-int */
-    public function saveOrFail(): int
+    final public function saveOrFail(): int
     {
         $result = $this->save();
 
