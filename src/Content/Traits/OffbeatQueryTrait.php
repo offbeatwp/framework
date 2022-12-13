@@ -62,7 +62,7 @@ trait OffbeatQueryTrait
      * @return static
      */
     public function order($orderBy = null, ?string $order = null) {
-        if (preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
+        if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
             $this->queryVars['orderby'] = 'meta_value';
 
