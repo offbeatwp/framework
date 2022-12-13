@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use UnexpectedValueException;
 use WP_User_Query;
 
 /** @template TModel of UserModel */
@@ -13,14 +14,11 @@ class UserQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var array */
-    protected $queryVars = ['number' => 0];
     /** @var class-string<UserModel> */
-    protected $modelClass;
-    /** @var bool */
-    protected $skipOnLimit = false;
-    /** @var bool */
-    protected $skipOnInclude = false;
+    protected string $modelClass;
+    protected array $queryVars = ['number' => 0];
+    protected bool $skipOnLimit = false;
+    protected bool $skipOnInclude = false;
 
     /**
      * @param class-string<TModel> $modelClass
@@ -201,9 +199,23 @@ class UserQueryBuilder
     }
 
     /** @return int[] */
-    public function Ids(): array
+    public function ids(): array
     {
         $this->queryVars['fields'] = 'ID';
+        return $this->getQueryResults();
+    }
+
+    /**
+     * @param string $fieldName Allowed values: display_name, login, nicename, email, url
+     * @return string[]
+     */
+    public function fields(string $fieldName): array
+    {
+        if (!in_array($fieldName, ['display_name', 'login', 'nicename', 'email', 'url'], true)) {
+            throw new UnexpectedValueException('Illegal value for fields: ' . $fieldName);
+        }
+
+        $this->queryVars['fields'] = $fieldName;
         return $this->getQueryResults();
     }
 
