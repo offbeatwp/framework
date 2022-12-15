@@ -251,7 +251,7 @@ class UserModel
         return $this->wpUser->user_url;
     }
 
-    /** @return string|null The URL of the avatar on success, null on failure. */
+    /** @return non-empty-string|null The URL of the avatar on success, null on failure. */
     public function getAvatarUrl(): ?string
     {
         return get_avatar_url($this->getId()) ?: null;
