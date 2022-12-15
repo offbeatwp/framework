@@ -286,10 +286,10 @@ class UserModel
         return $this->getMetaString('phone_number');
     }
 
-    /** @return WpDateTimeImmutable Date the user registered as a Carbon Date. */
-    public function getRegistrationDate(): WpDateTimeImmutable
+    /** @return WpDateTimeImmutable|null Date the user registered as a Carbon Date. */
+    public function getRegistrationDate(): ?WpDateTimeImmutable
     {
-        return new WpDateTimeImmutable($this->wpUser->user_registered);
+        return ($this->wpUser->user_registered) ? new WpDateTimeImmutable($this->wpUser->user_registered) : null;
     }
 
     /** @return bool Whether the user has the rich-editor enabled for writing. */
