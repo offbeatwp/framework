@@ -23,6 +23,7 @@ class UserModel
     protected array $metaInput = [];
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
+    private bool $isInitialised = false;
 
     use BaseModelTrait;
     use GetMetaTrait;
@@ -55,6 +56,7 @@ class UserModel
 
         $this->wpUser = $user;
         $this->init();
+        $this->isInitialised = true;
     }
 
     protected function init(): void
@@ -249,7 +251,7 @@ class UserModel
         return $this->wpUser->user_url;
     }
 
-    /** @return string The URL of the avatar on success, null on failure. */
+    /** @return non-empty-string|null The URL of the avatar on success, null on failure. */
     public function getAvatarUrl(): ?string
     {
         return get_avatar_url($this->getId()) ?: null;
@@ -373,6 +375,10 @@ class UserModel
     ///////////////////////
     public function save(): int
     {
+        if (!$this->isInitialised) {
+            throw new BadMethodCallException('The save method cannot be called before a model is initialised.');
+        }
+
         if (!$this->wpUser->user_email) {
             throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
         }
