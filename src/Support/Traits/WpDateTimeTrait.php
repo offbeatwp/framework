@@ -8,9 +8,10 @@ use TypeError;
 
 trait WpDateTimeTrait
 {
-    public static function now(?DateTimeZone $timezone = null): self
+    /** @return static */
+    public static function now(?DateTimeZone $timezone = null)
     {
-        return new self('now', $timezone);
+        return new static('now', $timezone);
     }
 
     /**
@@ -19,14 +20,14 @@ trait WpDateTimeTrait
      * @param DateTimeZone|null $timezone
      * @return self
      */
-    public static function make($datetime, ?DateTimeZone $timezone = null): self
+    public static function make($datetime, ?DateTimeZone $timezone = null)
     {
         if ($datetime) {
             if (is_string($datetime)) {
-                return new self($datetime, $timezone);
+                return new static($datetime, $timezone);
             }
 
-            return new self($datetime->format('Y-m-d H:i:s.u'), $datetime->getTimezone());
+            return new static($datetime->format('Y-m-d H:i:s.u'), $datetime->getTimezone());
         }
 
         throw new TypeError('WpDateTime::make expects a non-empty-string or DateTimeInterface as argument.');
@@ -43,73 +44,77 @@ trait WpDateTimeTrait
         return wp_date($format ?: $this->getWpDateFormat(), $this->getTimestamp());
     }
 
-    public function setYear(int $year): self
+    /**
+     * @param int $year The year.
+     * @return static
+     */
+    public function setYear(int $year)
     {
         return $this->setDate($year, $this->getMonth(), $this->getDay());
     }
 
     /**
      * @param int $month Numeric representation of a month from 1 through 12.
-     * @return $this
+     * @return static
      */
-    public function setMonth(int $month): self
+    public function setMonth(int $month)
     {
         return $this->setDate($this->getYear(), $month, $this->getDay());
     }
 
     /**
      * @param int $day Numeric representation of a day from 1 through 31.
-     * @return $this
+     * @return static
      */
-    public function setDay(int $day): self
+    public function setDay(int $day)
     {
         return $this->setDate($this->getYear(), $this->getMonth(), $day);
     }
 
     /**
      * @param int $hour 24-hour format of an hour. 0 through 23.
-     * @return $this
+     * @return static
      */
-    public function setHour(int $hour): self
+    public function setHour(int $hour)
     {
         return $this->setTime($hour, $this->getMinute(), $this->getSecond(), $this->getMicro());
     }
 
     /**
      * @param int $minute 0 through 59.
-     * @return $this
+     * @return static
      */
-    public function setMinute(int $minute): self
+    public function setMinute(int $minute)
     {
         return $this->setTime($this->getHour(), $minute, $this->getSecond(), $this->getMicro());
     }
 
     /**
      * @param int $second 0 through 59.
-     * @return $this
+     * @return static
      */
-    public function setSecond(int $second): self
+    public function setSecond(int $second)
     {
         return $this->setTime($this->getHour(), $this->getMinute(), $second, $this->getMicro());
     }
 
     /**
      * @param int $micro 0 through 999999.
-     * @return $this
+     * @return static
      */
-    public function setMicro(int $micro): self
+    public function setMicro(int $micro)
     {
         return $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
     }
 
     /** Set the time to the start of the day. (00:00:00) */
-    public function startOfDay(): self
+    public function startOfDay()
     {
         return $this->setTime(0, 0);
     }
 
     /** Set the time to the end of the day. (23:59:59) */
-    public function endOfDay(): self
+    public function endOfDay()
     {
         return $this->setTime(23, 59, 59, 999999);
     }
@@ -210,6 +215,24 @@ trait WpDateTimeTrait
     public function isFuture(): bool
     {
         return $this > self::now();
+    }
+
+    /**
+     * Set the timezone to UTC.
+     * @return static
+     */
+    public function utc()
+    {
+        return $this->setTimezone(new DateTimeZone('UTC'));
+    }
+
+    /**
+     * Set the timezone to the value of wp_timezone().
+     * @return static
+     */
+    public function wpTimezone()
+    {
+        return $this->setTimezone(wp_timezone());
     }
 
     public function __toString(): string
