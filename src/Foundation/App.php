@@ -202,7 +202,7 @@ class App
             }
 
             if ($output instanceof WP_Error) {
-                throw new WpErrorException($output->get_error_message());
+                throw new WpErrorException($output->get_error_message(), 404);
             }
 
             $output = apply_filters('route_render_output', $output); //Legacy
