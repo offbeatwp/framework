@@ -69,7 +69,7 @@ final class WpFile
      * It will create a new file with the content in $bits parameter.<br>
      * If you move the upload file, read the content of the uploaded file, and then you can give the filename and content to this function, which will add it to the upload folder.<br>
      * The permissions will be set on the new file automatically by this function.
-     * @param string $filename Name of the file to upload.
+     * @param string $filename Name of the file to upload. <b>Must include a file extension.</b>
      * @param string $fileContent Content of the file.
      * @param string|null $time Optional. Time formatted in <i>yyyy/mm</i>.
      * @return WpFile
