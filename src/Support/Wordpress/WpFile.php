@@ -20,6 +20,12 @@ final class WpFile
         $this->error = is_string($result['error']) ? $result['error'] : null;
     }
 
+    public function getFile(): self
+    {
+        return $this->file;
+    }
+
+    /** @deprecated */
     public function getFileName(): string
     {
         return $this->file;
