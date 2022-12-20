@@ -46,7 +46,7 @@ final class WpFile
         return $this->error;
     }
 
-    /** @return positive-int|null */
+    /** @return int<0, max>|null */
     public function getFileSize(): ?int
     {
         return filesize($this->file) ?: null;
