@@ -46,10 +46,10 @@ final class WpFile
         return $this->error;
     }
 
-    /** @return int<0, max> */
-    public function getSize(): int
+    /** @return int<0, max>|null */
+    public function getFileSize(): ?int
     {
-        return wp_filesize($this->file);
+        return filesize($this->file) ?: null;
     }
 
     /** @return int|null Returns the ID of the inserted attachment or <i>null</i> if the insert action failed. */
