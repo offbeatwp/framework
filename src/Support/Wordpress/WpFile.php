@@ -140,4 +140,9 @@ final class WpFile
 
         return self::uploadBits($fileName, file_get_contents($downloadUrl));
     }
+
+    public function unlink(): bool
+    {
+        return unlink($this->file);
+    }
 }
