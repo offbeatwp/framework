@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Carbon\Carbon;
+use BadMethodCallException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
@@ -11,23 +11,33 @@ use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
-use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use WP_Post;
-use WP_User;
 
-class PostModel extends AbstractOffbeatModel implements PostModelInterface
+class PostModel extends AbstractOffbeatModel
 {
+    public const POST_TYPE = [];
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
     public ?WP_Post $wpPost;
-    public ?array $relationKeyMethods = null;
+    public array $relationKeyMethods = [];
 
     use Macroable {
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
+    }
+
+    /**
+     * Expected to return an array of post-types that this model represents.<br>
+     * If not set, will use the value of the POST_TYPE constant on this class.
+     * @return non-empty-string[]
+     */
+    public static function postType(): array
+    {
+        return static::POST_TYPE;
     }
 
     /** @param WP_Post|int|null $post */
@@ -65,7 +75,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
      * @param array $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (static::hasMacro($method)) {
             return $this->macroCall($method, $parameters);
@@ -75,23 +85,14 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-
-        if (method_exists(WpQueryBuilderModel::class, $method)) {
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
+        throw new BadMethodCallException('Call to undefined method: ' . class_basename($this::class) . ':' . $method);
     }
 
     /**
      * @param non-empty-string $name
      * @return null
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
@@ -99,14 +100,14 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
             return $this->$methodName();
         }
 
-        return null;
+        throw new BadMethodCallException('Call to undefined method: ' . class_basename($this::class) . ':' . $name);
     }
 
     /**
      * @param non-empty-string $name
      * @return bool
      */
-    public function __isset($name): bool
+    public function __isset(string $name): bool
     {
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
@@ -120,7 +121,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         // Now clone the wpPost reference
         $this->wpPost = clone $this->wpPost;
         // Set ID to null
-        $this->setId(null);
+        $this->disconnect();
         // Since the new post is unsaved, we'll have to add all meta values
         $this->refreshMetaInput();
     }
@@ -128,7 +129,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     protected function refreshMetaInput(): void
     {
         foreach ($this->getMetaValues() as $key => $value) {
-            if (!array_key_exists($key, $this->metaInput)) {
+            if (!array_key_exists($key, $this->metaToSet)) {
                 $this->setMeta($key, $value);
             }
         }
@@ -186,9 +187,9 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     }
 
     /** @return static */
-    public function setId(?int $id)
+    protected function disconnect()
     {
-        $this->wpPost->ID = $id;
+        $this->wpPost->ID = null;
         $this->metaData = [];
         return $this;
     }
@@ -289,16 +290,9 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $excerpt;
     }
 
-    /** @deprecated Consider using getAuthorModel instead */
-    public function getAuthor(): ?WP_User
+    public function getAuthor(): ?UserModel
     {
-        $authorId = $this->getAuthorId();
-
-        if (!$authorId) {
-            return null;
-        }
-
-        return get_userdata($authorId);
+        return UserModel::find($this->getId() ?: 0);
     }
 
     public function getAuthorId(): ?int
@@ -333,30 +327,6 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         }
 
         return $values;
-    }
-
-    /** @throws OffbeatInvalidModelException */
-    public function getCreatedAt(): Carbon
-    {
-        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$creationDate) {
-            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID ?? '?');
-        }
-
-        return Carbon::parse($creationDate);
-    }
-
-    /** @throws OffbeatInvalidModelException */
-    public function getUpdatedAt(): Carbon
-    {
-        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$updateDate) {
-            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID ?? '?');
-        }
-
-        return Carbon::parse($updateDate);
     }
 
     /** @throws PostMetaNotFoundException */
@@ -484,22 +454,6 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
     }
 
-    /**
-     * @deprecated Use getChildren instead
-     * @see getChildren
-     */
-    public function getChilds(): PostsCollection
-    {
-        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
-        return $this->getChildren();
-    }
-
-    /** @return PostsCollection Retrieves the children of this post. */
-    public function getChildren()
-    {
-        return static::query()->where(['post_parent' => $this->getId()])->all();
-    }
-
     /** @return int[] Retrieves the IDs of the ancestors of a post. */
     public function getAncestorIds(): array
     {
@@ -523,43 +477,24 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $ancestors;
     }
 
-    /**
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param string $taxonomy
-     * @return PostModel|null
-     */
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?PostModel
+    public function getPreviousPost(string $taxonomy = '', string $excludedTerms = ''): ?PostModel
     {
-        return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
+        return $this->getAdjacentPost($taxonomy, $excludedTerms, true);
     }
 
-    /**
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param string $taxonomy
-     * @return PostModel|null
-     */
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?PostModel
+    public function getNextPost(string $taxonomy = '', string $excludedTerms = ''): ?PostModel
     {
-        return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
+        return $this->getAdjacentPost($taxonomy, $excludedTerms, false);
     }
 
-    /**
-     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param bool $previous
-     * @param string $taxonomy
-     * @return PostModel|null
-     */
-    private function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?PostModel
+    /** @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>. */
+    private function getAdjacentPost(string $taxonomy, string $excludedTerms, bool $previous): ?PostModel
     {
         $currentPost = $GLOBALS['post'];
 
         $GLOBALS['post'] = $this->wpPost;
 
-        $adjacentPost = get_adjacent_post($inSameTerm, $excludedTerms, $previous, $taxonomy) ?: null;
+        $adjacentPost = get_adjacent_post((bool)$taxonomy, $excludedTerms, $previous, $taxonomy);
 
         $GLOBALS['post'] = $currentPost;
 
@@ -581,7 +516,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return get_the_password_form($this->wpPost);
     }
 
-    /** @return string The page template slug used by this post or <i>null</i> if it is not found. */
+    /** The page template slug used by this post or <i>null</i> if it is not found. */
     public function getPageTemplate(): ?string
     {
         return get_page_template_slug($this->wpPost) ?: null;
@@ -612,42 +547,35 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
      * When the post and page is permanently deleted, everything that is tied to it is deleted also.
      * This includes comments, post meta fields, and terms associated with the post.
      * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
-     * @var bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
-     * @return WP_Post|null
+     * @var bool $force Whether to bypass Trash and force deletion. <i>Default true</i>.
      */
     public function delete(bool $force = true): ?WP_Post
     {
         return wp_delete_post($this->getId(), $force) ?: null;
     }
 
-    /**
-     * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
-     * @return false|WP_Post|null
-     */
+    /** Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted. */
     public function trash(): ?WP_Post
     {
         return wp_trash_post($this->getId()) ?: null;
     }
 
-    /**
-     * Restores a post from the Trash.
-     * @return false|WP_Post|null
-     */
+    /** Restores a post from the Trash. */
     public function untrash(): ?WP_Post
     {
         return wp_untrash_post($this->getId()) ?: null;
     }
 
-    /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
-    public function replicate()
+    /** Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
+    public function replicate(): static
     {
         return clone $this;
     }
 
     public function save(): int
     {
-        if ($this->metaInput) {
-            $this->wpPost->meta_input = $this->metaInput;
+        if ($this->metaToSet) {
+            $this->wpPost->meta_input = $this->metaToSet;
         }
 
         // Insert the post if ID is null
@@ -676,10 +604,10 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return $updatedPostId;
     }
 
-    /** @return string[]|null */
-    protected function getRelationKeyMethods(): ?array
+    /** @return string[] */
+    protected function getRelationKeyMethods(): array
     {
-        return $this->relationKeyMethods ?? null;
+        return $this->relationKeyMethods;
     }
 
     public function refreshMetas(): void
@@ -693,11 +621,7 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
     /////////////////////
     public function getMethodByRelationKey(string $key): ?string
     {
-        $methodName = $key;
-
-        if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
-            $methodName = $this->relationKeyMethods[$key];
-        }
+        $methodName = $this->relationKeyMethods[$key] ?? $key;
 
         if (method_exists($this, $methodName)) {
             return $methodName;
@@ -726,18 +650,15 @@ class PostModel extends AbstractOffbeatModel implements PostModelInterface
         return new BelongsToMany($this, $key);
     }
 
-    /**
-     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
-     * @return static|null
-     */
-    public static function current()
+    /** Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on. */
+    public static function current(): ?static
     {
         $post = offbeat('post')->get();
         return ($post instanceof static) ? $post : null;
     }
 
-    public static function query(): WpQueryBuilderModel
+    public static function query(): PostQueryBuilder
     {
-        return new WpQueryBuilderModel(static::class);
+        return new PostQueryBuilder(static::class);
     }
 }

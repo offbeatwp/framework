@@ -18,33 +18,19 @@ use WP_Query;
  */
 class PostsCollection extends OffbeatModelCollection
 {
-    protected $query = null;
+    protected WP_Query $query;
 
-    /** @var int[]|WP_Post[]|WP_Query $items */
-    public function __construct($items = []) {
+    public function __construct(WP_Query $query) {
+        $this->query = $query;
         $postItems = [];
 
-        if ($items instanceof WP_Query) {
-            $this->query = $items;
-
-            if (!empty($items->posts)) {
-                foreach ($items->posts as $post) {
-                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
-                }
-            }
-        } elseif (is_iterable($items)) {
-            foreach ($items as $key => $item) {
-                $postModel = $this->convertToModel($item);
-                if ($postModel) {
-                    $postItems[$key] = $postModel;
-                }
-            }
+        foreach ($query->get_posts() as $post) {
+            $postItems[] = offbeat('post')->convertWpPostToModel($post);
         }
 
         parent::__construct($postItems);
     }
 
-    /** @return WpPostsIterator|PostModel[] */
     public function getIterator(): WpPostsIterator {
         return new WpPostsIterator($this->items);
     }

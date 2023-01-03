@@ -1,23 +1,36 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use WP_Post;
 use WP_Query;
 
-/** @deprecated */
-class WpQueryBuilder
+final class PostQueryBuilder
 {
-    use OffbeatQueryTrait;
+    protected string $modelClass;
+    protected array $queryArgs = ['nopaging' => true, 'no_found_rows' => true];
 
-    protected $queryVars = [];
+    /** @param class-string<PostModel> $modelClass */
+    public function __construct(string $modelClass) {
+        $this->modelClass = $modelClass;
 
-    public function all(): PostsCollection
-    {
-        return $this->take(-1);
+        if ($modelClass && $modelClass::postType()) {
+            $this->wherePostType($modelClass::postType());
+        }
     }
 
-    public function postToModel($post)
+    /** @deprecated */
+    public function all(): PostsCollection
+    {
+        return $this->get();
+    }
+
+    public function each(callable $callback): PostsCollection
+    {
+        return $this->get()->each($callback);
+    }
+
+    public function postToModel(WP_Post $post): PostModel
     {
         return offbeat('post')->convertWpPostToModel($post);
     }
@@ -27,26 +40,24 @@ class WpQueryBuilder
     {
         do_action('offbeatwp/posts/query/before_get', $this);
 
-        $posts = new WP_Query($this->queryVars);
+        $posts = new WP_Query($this->queryArgs);
 
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($posts), $this);
     }
 
-    public function getQueryVars(): array
+    public function getQueryArgs(): array
     {
-        return $this->queryVars;
+        return $this->queryArgs;
     }
 
-    public function getQueryVar(string $var)
+    public function getQueryArg(string $var): array|bool|string|float|int|null
     {
-        $queryVars = $this->getQueryVars();
-
-        return $queryVars[$var] ?? null;
+        return $this->queryArgs[$var] ?? null;
     }
 
     public function take(int $numberOfItems): PostsCollection
     {
-        $this->queryVars['posts_per_page'] = $numberOfItems;
+        $this->queryArgs['posts_per_page'] = $numberOfItems;
 
         return $this->get();
     }
@@ -68,13 +79,13 @@ class WpQueryBuilder
         return $result;
     }
 
-    public function findById(int $id): ?PostModel
+    public function findById(?int $id): ?PostModel
     {
         if ($id <= 0) {
             return null;
         }
 
-        $this->queryVars['p'] = $id;
+        $this->queryArgs['p'] = $id;
 
         return $this->first();
     }
@@ -93,7 +104,7 @@ class WpQueryBuilder
 
     public function findByName(string $name): ?PostModel
     {
-        $this->queryVars['name'] = $name;
+        $this->queryArgs['name'] = $name;
 
         return $this->first();
     }
@@ -110,39 +121,29 @@ class WpQueryBuilder
         return $result;
     }
 
-    public function orderByMeta(string $metaKey, string $direction = ''): WpQueryBuilder
+    public function orderByMeta(string $metaKey, string $direction = ''): static
     {
-        $this->queryVars['meta_key'] = $metaKey;
-        $this->queryVars['orderby'] = 'meta_value';
+        $this->queryArgs['meta_key'] = $metaKey;
+        $this->queryArgs['orderby'] = 'meta_value';
 
         if ($direction) {
-            $this->queryVars['order'] = $direction;
+            $this->queryArgs['order'] = $direction;
         }
 
         return $this;
     }
 
     /** Wordpress Pagination automatically handles offset, so using this method might interfere with that */
-    public function offset(int $numberOfItems): WpQueryBuilder
+    public function offset(int $numberOfItems): static
     {
-        $this->queryVars['offset'] = $numberOfItems;
-
+        $this->queryArgs['offset'] = $numberOfItems;
         return $this;
     }
 
-    /** @param string|string[] $postTypes */
-    public function wherePostType($postTypes): WpQueryBuilder
+    /** @param string[] $postTypes */
+    public function wherePostType(array $postTypes): static
     {
-        if (!isset($this->queryVars['post_type'])) {
-            $this->queryVars['post_type'] = [];
-        }
-
-        if (is_string($postTypes)) {
-            $postTypes = [$postTypes];
-        }
-
-        $this->queryVars['post_type'] = array_merge($this->queryVars['post_type'], $postTypes);
-
+        $this->queryArgs['post_type'] = $postTypes;
         return $this;
     }
 
@@ -153,7 +154,7 @@ class WpQueryBuilder
      * @param string|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
      * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
      */
-    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): WpQueryBuilder
+    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): static
     {
         if ($field === null) {
             $field = 'slug';
@@ -167,8 +168,8 @@ class WpQueryBuilder
             $operator = 'IN';
         }
 
-        if (!isset($this->queryVars['tax_query'])) {
-            $this->queryVars['tax_query'] = [];
+        if (!isset($this->queryArgs['tax_query'])) {
+            $this->queryArgs['tax_query'] = [];
         }
 
         $parameters = [
@@ -179,7 +180,7 @@ class WpQueryBuilder
             'include_children' => $includeChildren,
         ];
 
-        $this->queryVars['tax_query'][] = $parameters;
+        $this->queryArgs['tax_query'][] = $parameters;
 
         return $this;
     }
@@ -188,13 +189,13 @@ class WpQueryBuilder
      * @param int[]|string[] $args
      * @return $this
      */
-    public function whereDate(array $args): WpQueryBuilder
+    public function whereDate(array $args): static
     {
-        if (!isset($this->queryVars['date_query'])) {
-            $this->queryVars['date_query'] = [];
+        if (!isset($this->queryArgs['date_query'])) {
+            $this->queryArgs['date_query'] = [];
         }
 
-        $this->queryVars['date_query'][] = $args;
+        $this->queryArgs['date_query'][] = $args;
 
         return $this;
     }
@@ -214,11 +215,11 @@ class WpQueryBuilder
      * <b>trash</b> – post is in trashbin<br/>
      * <b>any</b> – retrieves any status except for <i>inherit</i>, <i>trash</i> and <i>auto-draft</i>. Custom post statuses with <i>exclude_from_search</i> set to true are also excluded
      * @param string[] $postStatus Array containing the post statuses to include
-     * @return WpQueryBuilder
+     * @return static
      */
-    public function wherePostStatus(array $postStatus): WpQueryBuilder
+    public function wherePostStatus(array $postStatus): static
     {
-        $this->queryVars['post_status'] = $postStatus;
+        $this->queryArgs['post_status'] = $postStatus;
         return $this;
     }
 
@@ -228,10 +229,10 @@ class WpQueryBuilder
      * @param string $compare
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '='): WpQueryBuilder
+    public function whereMeta($key, $value = '', string $compare = '='): static
     {
-        if (!isset($this->queryVars['meta_query'])) {
-            $this->queryVars['meta_query'] = [];
+        if (!isset($this->queryArgs['meta_query'])) {
+            $this->queryArgs['meta_query'] = [];
         }
 
         if (is_array($key)) {
@@ -244,36 +245,36 @@ class WpQueryBuilder
             ];
         }
 
-        $this->queryVars['meta_query'][] = $parameters;
+        $this->queryArgs['meta_query'][] = $parameters;
 
         return $this;
     }
 
     /** @param int[]|int $ids */
-    public function whereIdNotIn($ids): WpQueryBuilder
+    public function whereIdNotIn($ids): static
     {
         if (!is_array($ids)) {
             $ids = [$ids];
         }
 
-        $this->queryVars['post__not_in'] = $ids;
+        $this->queryArgs['post__not_in'] = $ids;
 
         return $this;
     }
 
     /** @param int[]|int $ids */
-    public function whereIdIn($ids): WpQueryBuilder
+    public function whereIdIn($ids): static
     {
         if (!is_array($ids)) {
             $ids = [$ids];
         }
 
-        $this->queryVars['post__in'] = $ids;
+        $this->queryArgs['post__in'] = $ids;
 
         return $this;
     }
 
-    public function paginated(bool $paginated = true): WpQueryBuilder
+    public function paginated(bool $paginated = true): static
     {
         if ($paginated) {
             $paged = $paginated;
@@ -282,17 +283,17 @@ class WpQueryBuilder
                 $paged = get_query_var('paged') ?: 1;
             }
 
-            $this->queryVars['paged'] = $paged;
+            $this->queryArgs['paged'] = $paged;
         } else {
-            unset($this->queryVars['paged']);
+            unset($this->queryArgs['paged']);
         }
 
         return $this;
     }
 
-    public function suppressFilters(bool $suppress = true): WpQueryBuilder
+    public function suppressFilters(bool $suppress = true): static
     {
-        $this->queryVars['suppress_filters'] = $suppress;
+        $this->queryArgs['suppress_filters'] = $suppress;
 
         return $this;
     }
@@ -303,9 +304,9 @@ class WpQueryBuilder
      * @param string|null $direction
      * @return $this
      */
-    public function hasRelationshipWith($model, $key, ?string $direction = null): WpQueryBuilder
+    public function hasRelationshipWith($model, $key, ?string $direction = null): static
     {
-        $this->queryVars['relationships'] = [
+        $this->queryArgs['relationships'] = [
             'id' => $model->getId(),
             'key' => $key,
             'direction' => $direction,

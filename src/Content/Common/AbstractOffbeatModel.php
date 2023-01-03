@@ -2,73 +2,44 @@
 
 namespace OffbeatWP\Content\Common;
 
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Collection;
-use InvalidArgumentException;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 
 abstract class AbstractOffbeatModel
 {
     protected ?array $metaData = null;
-    protected array $metaInput = [];
+    protected array $metaToSet = [];
     protected array $metaToUnset = [];
 
     abstract public function getId(): ?int;
     abstract public function getMetaData(): array;
 
+    /** @return scalar[]|null[]|array[] */
     public function getMetaValues(): array
     {
         $values = [];
 
         foreach ($this->getMetaData() as $key => $value) {
-            if ($key[0] !== '_') {
-                $values[$key] = reset($value);
-            }
+            $values[$key] = reset($value);
         }
 
         return $values;
     }
 
-    /** @return static */
-    public function setMeta(string $key, $value)
+    public function setMeta(string $key, string|int|float|bool|array|null $value): static
     {
-        $this->metaInput[$key] = $value;
-
+        $this->metaToSet[$key] = $value;
         unset($this->metaToUnset[$key]);
 
         return $this;
     }
 
-    /**
-     * @param non-empty-string $key Metadata name.
-     * @return static
-     */
-    public function unsetMeta(string $key)
+    /** @param non-empty-string $key Metadata name. */
+    public function unsetMeta(string $key): static
     {
         $this->metaToUnset[$key] = ''; // An empty string acts as a value wildcard when unsetting meta.
-
-        unset($this->metaInput[$key]);
-
-        return $this;
-    }
-
-    /**
-     * Unset a meta-key with a specific value.
-     * @param non-empty-string $key Metadata name.
-     * @param true|float|int|non-empty-string|array|object $value Rows will only be removed that match the value. Must be serializable if non-scalar and cannot be false, null or an empty string.
-     * @return static
-     */
-    public function unsetMetaWithValue(string $key, $value)
-    {
-        if ($value === '' || $value === null || $value === false) {
-            throw new InvalidArgumentException('Cannot check for empty string, false or null values with unsetMetaWithValue.');
-        }
-
-        $this->metaToUnset[$key] = $value;
-
-        unset($this->metaInput[$key]);
+        unset($this->metaToSet[$key]);
 
         return $this;
     }
@@ -81,7 +52,7 @@ abstract class AbstractOffbeatModel
         $result = $this->save();
 
         if ($result <= 0) {
-            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
+            throw new OffbeatInvalidModelException('Failed to save ' . class_basename($this::class));
         }
 
         return $result;
@@ -102,8 +73,8 @@ abstract class AbstractOffbeatModel
             return $defaultValue;
         }
 
-        if (array_key_exists($key, $this->metaInput)) {
-            return $this->metaInput[$key];
+        if (array_key_exists($key, $this->metaToSet)) {
+            return $this->metaToSet[$key];
         }
 
         $dbMetas = $this->getMetaData();
@@ -136,7 +107,7 @@ abstract class AbstractOffbeatModel
             return false;
         }
 
-        if (array_key_exists($key, $this->metaInput)) {
+        if (array_key_exists($key, $this->metaToSet)) {
             return true;
         }
 
@@ -199,41 +170,20 @@ abstract class AbstractOffbeatModel
         return collect($this->getMetaArray($key));
     }
 
-    /**
-     * Retrieve a meta value as a Carbon Date.<br/>
-     * If the meta value is falsy, does not exist, or cannot be parsed by carbon then <b>null</b> is returned.
-     */
-    public function getMetaCarbon(string $key): ?Carbon
-    {
-        $value = $this->getRawMetaValue($key, null);
-        if (!$value) {
-            return null;
-        }
-
-        try {
-            return Carbon::parse($value);
-        } catch (Exception $e) {
-            return null;
-        }
-    }
-
     /////////////////////////////
     /// Static helper methods ///
     /////////////////////////////
-    /** @return static|null */
-    public static function find(?int $id)
+    public static function find(?int $id): ?static
     {
-        return ($id) ? static::query()->findById($id) : null;
+        return ($id > 0) ? static::query()->findById($id) : null;
     }
 
-    /** @return static */
-    public static function findOrNew(?int $id)
+    public static function findOrNew(int $id): ?static
     {
         return static::find($id) ?: static::create();
     }
 
-    /** @return static */
-    public static function findOrFail(int $id)
+    public static function findOrFail(int $id): static
     {
         $item = static::find($id);
         if (!$item) {
@@ -243,23 +193,8 @@ abstract class AbstractOffbeatModel
         return $item;
     }
 
-    /** @return static[] */
-    public static function allAsArray()
+    public static function create(): static
     {
-        return static::query()->all()->toArray();
-    }
-
-    /** @return static */
-    public static function create()
-    {
-        return new static(null);
-    }
-
-    ////////////////
-    /// Internal ///
-    ////////////////
-    private function getBaseClassName(): string
-    {
-        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
+        return new static();
     }
 }

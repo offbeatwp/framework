@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Post;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use WP_Post;
 
+/** @deprecated */
 class WpQueryBuilderModel extends WpQueryBuilder
 {
     protected $model;
