@@ -11,6 +11,11 @@
     "symfony/cache": "^5.0",
     "doctrine/cache": "~1.6"
   },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phpstan/phpstan": "^1.9.6",
+    "szepeviktor/phpstan-wordpress": "^v1.1.6"
+  },
   "autoload": {
     "files": [
       "src/Foundation/helpers.php"

@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "analyse": "php vendor/bin/phpstan analyse src --level=9 --memory-limit=3G"
+  }
+}
