@@ -13,8 +13,8 @@ class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    protected array $queryVars = [];
-    private string $wpQueryClass = WP_Query::class;
+    protected $queryVars = [];
+    private $wpQueryClass = WP_Query::class;
 
     public function all(): PostsCollection
     {
@@ -468,17 +468,6 @@ class WpQueryBuilder
             'direction' => $direction,
         ];
 
-        return $this;
-    }
-
-    /**
-     * @param string $key
-     * @param scalar|array|null $value
-     * @return $this
-     */
-    final public function setQueryVar(string $key, $value)
-    {
-        $this->queryVars[$key] = $value;
         return $this;
     }
 }
