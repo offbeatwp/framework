@@ -10,12 +10,10 @@ class PostTypeBuilder
 {
     use Macroable;
 
-    /** @var null|string */
-    private $postType = null;
-    /** @var array */
-    private $postTypeArgs = [];
     /** @var null|class-string<PostModel> */
     private $modelClass = null;
+    private ?string $postType = null;
+    private array $postTypeArgs = [];
 
     public function make(string $postType, string $pluralLabel, string $singularLabel): PostTypeBuilder
     {
@@ -123,9 +121,10 @@ class PostTypeBuilder
      * @param string $name
      * @param string $label
      * @param non-empty-string|callable $modelFunc
+     * @param string $metaKeyForSorting
      * @return $this
      */
-    public function addAdminTableColumn(string $name, string $label, $modelFunc): PostTypeBuilder
+    public function addAdminTableColumn(string $name, string $label, $modelFunc, string $metaKeyForSorting = ''): PostTypeBuilder
     {
         add_action("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($label, $name) {
             $postColumns[$name] = $label;
@@ -143,6 +142,20 @@ class PostTypeBuilder
                 }
             }
         }, 10, 2);
+
+        if ($metaKeyForSorting) {
+            add_filter("manage_edit-{$this->postType}_sortable_columns", function (array $columns) use ($name, $metaKeyForSorting) {
+                $columns[$name] = $metaKeyForSorting;
+                return $columns;
+            });
+
+            add_action('pre_get_posts', function (WP_Query $query) use ($name, $metaKeyForSorting) {
+                if (is_admin() && $query->is_main_query() && $query->get('orderby') === $name) {
+                    $query->set('orderby', 'meta_value');
+                    $query->set('meta_key', $metaKeyForSorting);
+                }
+            });
+        }
 
         return $this;
     }
