@@ -11,7 +11,7 @@ class PostTypeBuilder
     use Macroable;
 
     /** @var null|class-string<PostModel> */
-    private $modelClass = null;
+    private ?string $modelClass = null;
     private ?string $postType = null;
     private array $postTypeArgs = [];
 
