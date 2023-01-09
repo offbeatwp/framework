@@ -136,4 +136,13 @@ class UserCollection extends OffbeatModelCollection
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');
     }
+
+    public function deleteAll(?int $reassign = null)
+    {
+        $this->each(function (UserModel $user) use ($reassign) {
+            $user->delete($reassign);
+        });
+
+        $this->items = [];
+    }
 }
