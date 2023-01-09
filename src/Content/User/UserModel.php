@@ -551,10 +551,10 @@ class UserModel
         return static::find($result);
     }
 
-    final public function delete(int $reassign = 0): bool
+    final public function delete(?int $reassign = null): bool
     {
         if ($this->getId()) {
-            return wp_delete_user($this->getId(), $reassign ?: null);
+            return wp_delete_user($this->getId(), $reassign);
         }
 
         return false;
