@@ -14,7 +14,7 @@ trait GetMetaTrait
 {
     /**
      * @param string $key
-     * @param mixed $defaultValue
+     * @param scalar|array|null $defaultValue
      * @param bool $single
      * @return mixed
      * @internal
