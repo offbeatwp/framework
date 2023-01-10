@@ -138,7 +138,7 @@ trait GetMetaTrait
      * @param non-empty-string $key Meta key.
      * @return WpDateTimeImmutable|null
      */
-    public function getMetaDateTimeImmuteable(string $key): ?WpDateTime
+    public function getMetaDateTimeImmuteable(string $key): ?WpDateTimeImmutable
     {
         $datetime = $this->getMetaString($key);
         if (!$datetime) {
