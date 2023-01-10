@@ -119,6 +119,18 @@ trait WpDateTimeTrait
         return $this->setTime(23, 59, 59, 999999);
     }
 
+    /** Set the date and time to the start of the month. */
+    public function startOfMonth()
+    {
+        return $this->setDay(1)->startOfDay();
+    }
+
+    /** Set the date and time to the end of the month. */
+    public function endOfMonth()
+    {
+        return $this->setDay($this->getDaysInMonth())->endOfDay();
+    }
+
     /**
      * Returns date formatted according to given format.<br>
      * Unlike the DateTime format method, the $format parameter can be omitted to use the format specified by the <b>date_format</b> blog setting.
