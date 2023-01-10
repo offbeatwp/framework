@@ -13,12 +13,13 @@ use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 trait GetMetaTrait
 {
     /**
-     * @internal
      * @param string $key
      * @param mixed $defaultValue
+     * @param bool $single
      * @return mixed
+     * @internal
      */
-    private function getRawMetaValue(string $key, $defaultValue)
+    private function getRawMetaValue(string $key, $defaultValue, bool $single = true)
     {
         if (array_key_exists($key, $this->metaToUnset)) {
             return $defaultValue;
@@ -30,7 +31,7 @@ trait GetMetaTrait
 
         $metas = $this->getMetas();
         if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
-            return reset($metas[$key]);
+            return ($single) ? reset($metas[$key]) : $metas[$key];
         }
 
         return $defaultValue;
@@ -164,10 +165,14 @@ trait GetMetaTrait
      * Retrieve a meta value as an array.<br>
      * If the meta value does not exist then <b>an empty array</b> is returned.
      */
-    public function getMetaArray(string $key): array
+    public function getMetaArray(string $key, bool $single = true): array
     {
         $value = $this->getRawMetaValue($key, []);
-        $value = is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value;
+
+        if ($single) {
+            $value = is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value;
+        }
+
         return (array)$value;
     }
 
