@@ -118,6 +118,40 @@ class PostTypeBuilder
     }
 
     /**
+     * Adds a new filter dropdown to the admin table.
+     * @param string $metaKey The metakey that should be filtered on.
+     * @param iterable $choices An array of choices to choose from, keyed by their meta value. Falsy values will be treated as an 'all' option.
+     * @return $this
+     */
+    public function addAdminTableFilter(string $metaKey, iterable $choices): PostTypeBuilder
+    {
+        add_action('restrict_manage_posts', function () use ($metaKey, $choices) {
+            $screen = get_current_screen();
+            if ($screen && $screen->base === 'edit' && $screen->post_type === $this->postType) {
+                $selected = filter_input(INPUT_GET, $metaKey, FILTER_SANITIZE_STRING);
+
+                echo '<select name="' . $metaKey . '">';
+                foreach ($choices as $key => $value) {
+                    echo '<option value="' . $key . '" ' . (($selected === $key) ? 'selected="selected"' : '') . '>' . $value . '</option>';
+                }
+                echo '</select>';
+            }
+        });
+
+        add_action('pre_get_posts', function (WP_Query $query) use ($metaKey) {
+            if (is_admin() && $query->is_main_query()) {
+                $screen = get_current_screen();
+
+                if ($screen && $screen->base === 'edit' && $screen->post_type === $this->postType && !empty($_GET[$metaKey])) {
+                    $query->set('meta_query', [['key' => $metaKey, 'value' => $_GET[$metaKey]]]);
+                }
+            }
+        });
+
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @param string $label
      * @param non-empty-string|callable $modelFunc
