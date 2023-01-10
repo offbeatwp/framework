@@ -168,12 +168,7 @@ trait GetMetaTrait
     public function getMetaArray(string $key, bool $single = true): array
     {
         $value = $this->getRawMetaValue($key, []);
-
-        if ($single) {
-            $value = is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value;
-        }
-
-        return (array)$value;
+        return ($single && is_serialized($value)) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
     }
 
     /** @return PostModel[] */
