@@ -17,8 +17,14 @@ abstract class AbstractServicePageBuilder extends AbstractService {
     {
         $componentClass = $component['class'];
 
-        if(!$componentClass::supports('pagebuilder')) return null;
+        if(!$componentClass::supports('pagebuilder')) {
+            return;
+        }
 
-        $this->onRegisterComponent($component['name'], $componentClass);
+        if (method_exists($this, 'onRegisterComponent')) {
+            $this->onRegisterComponent($component['name'], $componentClass);
+        } else {
+            trigger_error('Class extending AbstractServicePageBuilder does not implement onRegisterComponent.');
+        }
     }
 }
