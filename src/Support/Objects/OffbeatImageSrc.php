@@ -40,8 +40,8 @@ final class OffbeatImageSrc implements IteratorAggregate
         return $this->resized;
     }
 
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
-        return new ArrayIterator($this);
+        return new ArrayIterator([$this->url, $this->width, $this->height, $this->resized]);
     }
 }
