@@ -144,8 +144,11 @@ class Wordpress
     }
 
     /**
+     * Gets an HTML img element representing an image attachment.<br>
+     * While $size will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
+     * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
      * @param int[]|string[]|string $attachmentID
-     * @param int[]|string $size
+     * @param array{0: int, 1: int}|string $size
      * @param string[] $classes
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid']): string
@@ -153,17 +156,24 @@ class Wordpress
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }
 
-    public function getAttachmentImageSrcSet($attachmentId, $sizes = ['thumbnail']): string
+    /**
+     * @param int $attachmentId
+     * @param int[][]|string[] $sizes
+     * @return string
+     */
+    public function getAttachmentImageSrcSet(int $attachmentId, $sizes = ['thumbnail']): string
     {
-        $srcset = [];
+        $srcSet = [];
 
         foreach ($sizes as $size) {
             $imageSrc = $this->getAttachmentImageSrc($attachmentId, $size);
-            
-            $srcset[] = $imageSrc->getUrl() . ' ' . $imageSrc->getWidth() . 'w';
+
+            if ($imageSrc) {
+                $srcSet[] = $imageSrc->getUrl() . ' ' . $imageSrc->getWidth() . 'w';
+            }
         }
 
-        return implode(', ', $srcset);
+        return implode(', ', $srcSet);
     }
 
     public function formatDate(?string $format, $date, bool $strtotime = false): string
@@ -175,7 +185,7 @@ class Wordpress
         return date_i18n($format, $date);
     }
 
-    public function resetPostdata()
+    public function resetPostdata(): void
     {
         wp_reset_postdata();
     }
