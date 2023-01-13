@@ -236,8 +236,8 @@ class Wordpress
      * Gets an HTML img element representing an image attachment.<br>
      * While <b>$size/b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
-     * @param int[]|string[]|string $attachmentID
-     * @param array{0: int, 1: int}|string $size
+     * @param int $attachmentID
+     * @param int[]|string $size
      * @param string[] $classes
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid']): string
