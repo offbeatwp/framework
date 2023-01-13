@@ -7,9 +7,9 @@ use OffbeatWP\Content\User\UserModel;
 class UserRole
 {
     /** @var class-string<UserModel>[] */
-    private static $userModels = [];
+    private static array $userModels = [];
     /** @var class-string<UserModel> */
-    private static $defaultUserModel = UserModel::class;
+    private static string $defaultUserModel = UserModel::class;
 
     /**
      * @param string $userType

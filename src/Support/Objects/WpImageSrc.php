@@ -5,7 +5,7 @@ namespace OffbeatWP\Support\Objects;
 use ArrayIterator;
 use IteratorAggregate;
 
-final class OffbeatImageSrc implements IteratorAggregate
+final class WpImageSrc implements IteratorAggregate
 {
     private $url;
     private $width;
@@ -40,7 +40,7 @@ final class OffbeatImageSrc implements IteratorAggregate
         return $this->resized;
     }
 
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this);
     }

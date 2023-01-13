@@ -2,24 +2,24 @@
 
 namespace OffbeatWP\Views;
 
-use OffbeatWP\Support\Objects\OffbeatImageSrc;
+use OffbeatWP\Support\Objects\WpImageSrc;
 use WP_Post;
 use WP_Site;
 
-class Wordpress
+final class Wordpress
 {
-    public function head()
+    public function head(): ?string
     {
         ob_start();
         wp_head();
-        return ob_get_clean();
+        return ob_get_clean() ?: null;
     }
 
-    public function footer()
+    public function footer(): ?string
     {
         ob_start();
         wp_footer();
-        return ob_get_clean();
+        return ob_get_clean() ?: null;
     }
 
     public function title(): ?string
@@ -27,21 +27,20 @@ class Wordpress
         return wp_title('&raquo;', false);
     }
 
-    public function languageAttributes()
+    public function languageAttributes(): string
     {
         return get_language_attributes();
     }
 
-    public function archiveUrl(?string $postType = 'post')
+    public function archiveUrl(string $postType): ?string
     {
-        return get_post_type_archive_link($postType);
+        return get_post_type_archive_link($postType) ?: null;
     }
 
-    public function navMenu(?array $args = [])
+    public function navMenu(array $args = []): ?string
     {
         $args['echo'] = false;
-
-        return wp_nav_menu($args);
+        return wp_nav_menu($args) ?: null;
     }
 
     public function homeUrl(): string
@@ -74,30 +73,50 @@ class Wordpress
         return get_blog_details($id) ?: null;
     }
 
-    public function bodyClass($class = '')
+    /**
+     * Echo's the class names for the body element.
+     * @param string|array $class
+     * @return void
+     */
+    public function bodyClass(string|array $class = ''): void
     {
         body_class($class);
     }
 
-    public function action(?string $action, $args = [])
+    /**
+     * Retrieve the output of an action as string.
+     * @param string $actionHookName
+     * @param mixed[] $args
+     * @return string|null
+     */
+    public function action(string $actionHookName, $args = []): ?string
     {
         ob_start();
-        do_action($action, $args);
-        return ob_get_clean();
+        do_action($actionHookName, $args);
+        return ob_get_clean() ?: null;
     }
 
-    public function shortcode(?string $code): string
+    /**
+     * Searches content for shortcodes and filter shortcodes through their hooks.
+     * If there are no shortcode tags defined, then the content will be returned without any filtering.<br>
+     * This might cause issues when plugins are disabled but the shortcode will still show up in the post or content.<br>
+     * @param string $code
+     * @param bool $ignoreHtml
+     * @return string
+     */
+    public function shortcode(string $code, bool $ignoreHtml = false): string
     {
-        return do_shortcode($code);
+        return do_shortcode($code, $ignoreHtml);
     }
 
-    public function sidebar($name)
+    public function sidebar(int|string $name): ?string
     {
         ob_start();
         dynamic_sidebar($name);
-        return ob_get_clean();
+        return ob_get_clean() ?: null;
     }
 
+    /** @deprecated */
     public function getAllPostMeta(?int $postId = null)
     {
         if ($postId) {
@@ -106,35 +125,25 @@ class Wordpress
 
         /** @global WP_Post $post */
         global $post;
-
-        if (!$post) {
-            return false;
-        }
-
-        return get_post_meta($post->ID);
+        return ($post) ? get_post_meta($post->ID) : null;
     }
 
     /**
      * @param int $attachmentId Image attachment ID.
      * @param string|int[] $size Optional. Image size. Accepts any registered image size name, or an array of width and height values in pixels (in that order). Default 'thumbnail'.
      * @param bool $icon Optional. Whether the image should fall back to a mime type icon. Default false.
-     * @return OffbeatImageSrc|null
+     * @return WpImageSrc|null
      */
-    public function getAttachmentImageSrc(int $attachmentId, $size = 'thumbnail', bool $icon = false): ?OffbeatImageSrc
+    public function getAttachmentImageSrc(int $attachmentId, string|array $size = 'thumbnail', bool $icon = false): ?WpImageSrc
     {
         $attachment = wp_get_attachment_image_src($attachmentId, $size, $icon);
-        return ($attachment) ? new OffbeatImageSrc($attachment) : null;
+        return ($attachment) ? new WpImageSrc($attachment) : null;
     }
 
-    public function attachmentUrl(?int $attachmentID, $size = 'full')
+    public function attachmentUrl(int $attachmentID, string|array $size = 'full'): ?string
     {
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
-
-        if (!$attachment) {
-            return false;
-        }
-
-        return $attachment[0];
+        return ($attachment) ? $attachment[0] : null;
     }
 
     /**
@@ -147,29 +156,40 @@ class Wordpress
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }
 
-    public function getAttachmentImageSrcSet($attachmentId, $sizes = ['thumbnail']): string
+    public function getAttachmentImageSrcSet(int $attachmentId, array $sizes = ['thumbnail']): string
     {
-        $srcset = [];
+        $srcSet = [];
 
         foreach ($sizes as $size) {
             $imageSrc = $this->getAttachmentImageSrc($attachmentId, $size);
-            
-            $srcset[] = $imageSrc->getUrl() . ' ' . $imageSrc->getWidth() . 'w';
+
+            if ($imageSrc) {
+                $srcSet[] = $imageSrc->getUrl() . ' ' . $imageSrc->getWidth() . 'w';
+            }
         }
 
-        return implode(', ', $srcset);
+        return implode(', ', $srcSet);
     }
 
+    /**
+     * @deprecated
+     * @param string|null $format
+     * @param string|int $date
+     * @param bool $strtotime
+     * @return string
+     */
     public function formatDate(?string $format, $date, bool $strtotime = false): string
     {
-        if ($strtotime) {
-            $date = strtotime($date);
+        $unixTimestamp = ($strtotime) ? strtotime($date) : $date;
+
+        if (is_string($unixTimestamp)) {
+            $unixTimestamp = is_numeric($unixTimestamp) ? (int)$unixTimestamp : false;
         }
 
-        return date_i18n($format, $date);
+        return date_i18n($format, $unixTimestamp);
     }
 
-    public function resetPostdata()
+    public function resetPostdata(): void
     {
         wp_reset_postdata();
     }

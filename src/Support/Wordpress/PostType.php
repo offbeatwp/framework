@@ -9,7 +9,7 @@ class PostType
     public const DEFAULT_POST_MODEL = PostModel::class;
 
     /** @var class-string<PostModel>[] */
-    private $postTypeModels = [];
+    private array $postTypeModels = [];
 
     public static function make(string $name, string $pluralName, string $singleName): PostTypeBuilder
     {
@@ -26,7 +26,7 @@ class PostType
     }
 
     /** @return class-string<PostModel> */
-    public function getModelByPostType(string $postType): ?string
+    public function getModelByPostType(string $postType): string
     {
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
