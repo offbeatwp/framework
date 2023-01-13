@@ -106,8 +106,8 @@ class PageTypesService extends AbstractService
         } else {
             $term = get_term_by('slug', $pageType, $taxonomy);
 
-            if ($term && !is_wp_error($term)) {
-                wp_set_object_terms($postId, $term->term_id, $taxonomy, false);
+            if ($term) {
+                wp_set_object_terms($postId, $term->term_id, $taxonomy);
             }
         }
 
