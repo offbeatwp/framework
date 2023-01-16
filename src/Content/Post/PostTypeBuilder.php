@@ -160,7 +160,7 @@ class PostTypeBuilder
      */
     public function addAdminTableColumn(string $name, string $label, $modelFunc, string $metaKeyForSorting = ''): PostTypeBuilder
     {
-        add_action("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($label, $name) {
+        add_filter("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($label, $name) {
             $postColumns[$name] = $label;
             return $postColumns;
         });
@@ -204,7 +204,7 @@ class PostTypeBuilder
      */
     public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): PostTypeBuilder
     {
-        add_action("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($metaName, $label) {
+        add_filter("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($metaName, $label) {
             $postColumns[$metaName] = $label ?: $metaName;
             return $postColumns;
         });

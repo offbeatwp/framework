@@ -61,17 +61,17 @@ class RoutesService extends AbstractService
 
         add_filter('posts_pre_query', static function ($posts, WP_Query $q) {
             if ($q->is_home() && $q->is_main_query()) {
-                $posts          = [];
+                $posts = [];
                 $q->found_posts = 0;
             }
             return $posts;
         }, 10, 2);
 
-        add_action('pre_handle_404', static function ($preHandle404, $query) {
+        add_filter('pre_handle_404', static function ($preHandle404, $query) {
             global $wp_the_query;
 
             $wp_the_query->is_singular = false;
-            $wp_the_query->is_home     = false;
+            $wp_the_query->is_home = false;
 
             return true;
         }, 10, 2);

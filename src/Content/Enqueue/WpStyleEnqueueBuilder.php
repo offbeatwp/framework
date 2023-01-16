@@ -4,7 +4,7 @@ namespace OffbeatWP\Content\Enqueue;
 
 final class WpStyleEnqueueBuilder extends AbstractEnqueueBuilder
 {
-    protected $media = 'all';
+    protected string $media = 'all';
 
     /**
      * The media for which this stylesheet has been defined. Default 'all'. Accepts media types like 'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)'

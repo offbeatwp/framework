@@ -52,7 +52,7 @@ class PageTypesService extends AbstractService
         }
     }
 
-    /** @var WP_Query $query */
+    /** @param WP_Query $query */
     public function tsm_convert_id_to_term_in_query($query)
     {
         global $pagenow;

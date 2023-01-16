@@ -468,7 +468,7 @@ class PostModel implements PostModelInterface
         $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
 
         if (!$creationDate) {
-            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID ?? '?');
+            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID);
         }
 
         return Carbon::parse($creationDate);
@@ -483,7 +483,7 @@ class PostModel implements PostModelInterface
         $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
 
         if (!$updateDate) {
-            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID ?? '?');
+            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID);
         }
 
         return Carbon::parse($updateDate);

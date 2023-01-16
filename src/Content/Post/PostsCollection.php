@@ -29,7 +29,7 @@ class PostsCollection extends OffbeatModelCollection
 {
     protected $query = null;
 
-    /** @var int[]|WP_Post[]|WP_Query $items */
+    /** @param  int[]|WP_Post[]|WP_Query $items */
     public function __construct($items = [])
     {
         $postItems = [];

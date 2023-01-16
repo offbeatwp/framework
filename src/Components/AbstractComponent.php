@@ -134,9 +134,7 @@ abstract class AbstractComponent
             // Add extra classes from the Gutenberg block extra-classes option
             if (isset($settings->block['className'])) {
                 $additions = explode(' ', $settings->block['className']);
-                if ($additions) {
-                    $this->addCssClass(...$additions);
-                }
+                $this->addCssClass(...$additions);
             }
 
             // Add extra classes passed through the extraClasses setting
