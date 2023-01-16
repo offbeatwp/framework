@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Form\FieldsCollections;
 
-use OffbeatWp\Form\Fields\FieldInterface;
+use OffbeatWP\Form\Fields\FieldInterface;
 use Illuminate\Support\Collection;
 
 class AbstractFieldsCollection extends Collection implements FieldsCollectionInterface {
