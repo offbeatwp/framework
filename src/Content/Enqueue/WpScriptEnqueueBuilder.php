@@ -7,7 +7,7 @@ use InvalidArgumentException;
 /** This class requires Wordpress 4.5 or higher. */
 final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
 {
-    /** @var array{value: string, inFooter: bool}[] */
+    /** @var array{value: string, inFooter: bool, position: string}[] */
     protected array $bindingsToPass = [];
     protected array $l10nData = [];
     protected string $l10nName = '';
