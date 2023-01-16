@@ -7,12 +7,12 @@ use InvalidArgumentException;
 /** This class requires Wordpress 4.5 or higher. */
 final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
 {
-    /** @var array{value: string, inFooter: bool} */
-    protected $bindingsToPass = [];
-    protected $l10nData = [];
-    protected $l10nName = '';
-    protected $inFooter = false;
-    protected static $vars = [];
+    /** @var array{value: string, inFooter: bool}[] */
+    protected array $bindingsToPass = [];
+    protected array $l10nData = [];
+    protected string $l10nName = '';
+    protected bool $inFooter = false;
+    protected static array $vars = [];
 
     /**
      * Pass a variable to the enqueued script. This variable will be globally available.

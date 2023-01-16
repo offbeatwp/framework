@@ -4,10 +4,9 @@ namespace OffbeatWP\Content\Enqueue;
 
 abstract class AbstractEnqueueBuilder
 {
-    /** @var string */
-    protected $src = '';
+    protected string $src = '';
     /** @var string[] */
-    protected $deps = [];
+    protected array $deps = [];
     /** @var null|false|string */
     protected $version = null;
 
