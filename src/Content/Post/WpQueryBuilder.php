@@ -165,7 +165,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param positive-int $amount
+     * @param int $amount
      * @return $this
      */
     public function limit(int $amount)
@@ -457,7 +457,7 @@ class WpQueryBuilder
     /**
      * @param PostModel|PostsCollection $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $key The relation key.
-     * @param null $direction Pass <b>'reverse'</b> to reverse the relation.
+     * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
      * @return $this
      */
     public function hasRelationshipWith($postModelOrCollection, $key, $direction = null)

@@ -103,7 +103,7 @@ class TermQueryBuilder
     }
 
     /**
-     * @param positive-int $amount
+     * @param int $amount
      * @return $this
      */
     public function limit(int $amount)

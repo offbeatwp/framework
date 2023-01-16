@@ -12,7 +12,7 @@ class Route extends SymfonyRoute
 {
     /** @var string */
     protected $name;
-    /** @var callable */
+    /** @var array|Closure|string */
     private $actionCallback;
     /** @var class-string<IMiddleware>[] */
     private $middleware = [];
