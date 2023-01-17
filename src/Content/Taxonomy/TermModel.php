@@ -19,8 +19,8 @@ class TermModel implements TermModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    public $wpTerm;
-    public $id;
+    public WP_Term $wpTerm;
+    public int $id;
     protected array $metaInput = [];
     protected array $metaToUnset = [];
 
@@ -235,5 +235,15 @@ class TermModel implements TermModelInterface
     public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function __set(string $name, $value)
+    {
+        trigger_error("Cannot add new property {$name} to instance of " . __CLASS__, E_USER_DEPRECATED);
     }
 }

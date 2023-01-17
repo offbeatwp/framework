@@ -1039,4 +1039,14 @@ class PostModel implements PostModelInterface
             }
         }
     }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function __set(string $name, $value)
+    {
+        trigger_error("Cannot add new property {$name} to instance of " . __CLASS__, E_USER_DEPRECATED);
+    }
 }
