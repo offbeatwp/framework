@@ -12,6 +12,11 @@
     "doctrine/cache": "~1.6",
     "ext-dom": "*"
   },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phpstan/phpstan": "^1.9.11",
+    "szepeviktor/phpstan-wordpress": "^v1.1.6"
+  },
   "autoload": {
     "files": [
       "src/Foundation/helpers.php"
@@ -19,8 +24,5 @@
     "psr-4": {
       "OffbeatWP\\": "src"
     }
-  },
-  "require-dev": {
-    "roave/security-advisories": "dev-latest"
   }
 }

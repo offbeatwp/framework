@@ -1,0 +1,10 @@
+# phpstan.neon
+parameters:
+    phpVersion: 74000
+    treatPhpDocTypesAsCertain: false
+    excludePaths:
+        - 'vendor/*'
+        - 'templates/*'
+        - 'src/Support/Wordpress/Console.php'
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
