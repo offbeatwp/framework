@@ -40,6 +40,8 @@ class PostModel implements PostModelInterface
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
+    /** @var string[]|null */
+    public $relationKeyMethods = null;
 
     use BaseModelTrait;
     use SetMetaTrait;
@@ -876,7 +878,10 @@ class PostModel implements PostModelInterface
         return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
     }
 
-    /** @return string[]|null */
+    /**
+     * @deprecated
+     * @return string[]|null
+     */
     protected function getRelationKeyMethods(): ?array
     {
         return $this->relationKeyMethods ?? null;
@@ -909,13 +914,13 @@ class PostModel implements PostModelInterface
     /////////////////////
     /**
      * @param string $key
-     * @return mixed
+     * @return null|string
      */
     public function getMethodByRelationKey($key)
     {
         $method = $key;
 
-        if (isset($this->relationKeyMethods) && is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
+        if (is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
             $method = $this->relationKeyMethods[$key];
         }
 
