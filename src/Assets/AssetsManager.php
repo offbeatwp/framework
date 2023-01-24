@@ -3,9 +3,9 @@ namespace OffbeatWP\Assets;
 
 class AssetsManager
 {
-    public $actions = [];
-    public $manifest = null;
-    public $entrypoints = null;
+    public array $actions = [];
+    public ?array $manifest = null;
+    public ?array $entrypoints = null;
 
     /**
      * @param string $filename
@@ -48,21 +48,21 @@ class AssetsManager
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
-    /** @return object|bool|null */
-    public function getAssetsManifest()
+    public function getAssetsManifest(): array
     {
         if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json', true))) {
-            $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json', true)));
+            $file = $this->getAssetsPath('manifest.json', true);
+            $this->manifest = json_decode(file_get_contents($file), false, 512, JSON_THROW_ON_ERROR);
         }
 
         return $this->manifest;
     }
 
-    /** @return object|bool|null */
-    public function getAssetsEntryPoints()
+    public function getAssetsEntryPoints(): array
     {
         if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json', true))) {
-            $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json', true)));
+            $file = file_get_contents($this->getAssetsPath('entrypoints.json', true));
+            $this->entrypoints = json_decode($file, false, 512, JSON_THROW_ON_ERROR);
         }
 
         return $this->entrypoints;
@@ -160,7 +160,7 @@ class AssetsManager
             return;
         }
 
-        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
     }
 
     public function enqueueScripts(string $entry, array $dependencies = []): void
