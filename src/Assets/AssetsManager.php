@@ -48,21 +48,34 @@ class AssetsManager
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
-    /** @return object|bool|null */
-    public function getAssetsManifest()
+    private function getJsonObjectFromFile(string $fileName): ?object
     {
-        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json', true))) {
-            $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json', true)));
+        $assetPath = $this->getAssetsPath($fileName, true);
+
+        if (file_exists($assetPath)) {
+            $item = json_decode(file_get_contents($assetPath), false);
+
+            if (is_object($item)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    public function getAssetsManifest(): ?object
+    {
+        if (!$this->manifest) {
+            $this->manifest = $this->getJsonObjectFromFile('manifest.json');
         }
 
         return $this->manifest;
     }
 
-    /** @return object|bool|null */
-    public function getAssetsEntryPoints()
+    public function getAssetsEntryPoints(): ?object
     {
-        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json', true))) {
-            $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json', true)));
+        if (!$this->entrypoints) {
+            $this->entrypoints = $this->getJsonObjectFromFile('entrypoints.json');
         }
 
         return $this->entrypoints;
@@ -160,7 +173,7 @@ class AssetsManager
             return;
         }
 
-        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
     }
 
     public function enqueueScripts(string $entry, array $dependencies = []): void
