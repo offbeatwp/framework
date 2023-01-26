@@ -4,6 +4,7 @@ namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
@@ -13,15 +14,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 
-class RoutesManager
+final class RoutesManager
 {
     public const PRIORITY_LOW = 'low';
     public const PRIORITY_HIGH = 'high';
     public const PRIORITY_FIXED = 'fixed';
 
-    protected $actions;
-    protected $routeCollection;
-    protected $routeIterator = 0;
+    protected Collection $actions;
+    protected RouteCollection $routeCollection;
+    protected int $routeIterator = 0;
     protected $lastMatchRoute;
     /** @deprecated Unused */
     protected $routesContext;
@@ -212,7 +213,7 @@ class RoutesManager
     public function findPathRoute()
     {
         // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
-        $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
+        $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'] ?? 'GET', $_REQUEST, $_COOKIE, [], $_SERVER);
 
         $context = new RequestContext();
         $context->fromRequest($request);
