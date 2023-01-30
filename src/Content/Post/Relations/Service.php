@@ -41,7 +41,7 @@ class Service extends AbstractService
             }
         }
 
-        if (is_array($query->query_vars['relationships']['id'])) {
+        if (is_array($query->query_vars['relationships']['id'] ?? null)) {
             $clauses['distinct'] = 'DISTINCT';
         }
 
