@@ -22,6 +22,8 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "php-stubs/wp-cli-stubs": "^2.7"
+    "php-stubs/wp-cli-stubs": "^2.7",
+    "phpstan/phpstan": "1.9.14",
+    "szepeviktor/phpstan-wordpress": "^1.1"
   }
 }
