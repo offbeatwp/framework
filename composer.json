@@ -24,6 +24,7 @@
     "roave/security-advisories": "dev-latest",
     "php-stubs/wp-cli-stubs": "^2.7",
     "phpstan/phpstan": "1.9.14",
-    "szepeviktor/phpstan-wordpress": "^1.1"
+    "szepeviktor/phpstan-wordpress": "^1.1",
+    "phpstan/phpstan-deprecation-rules": "^1.1"
   }
 }
