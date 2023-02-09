@@ -20,12 +20,11 @@ class TermModel implements TermModelInterface
     }
 
     public $wpTerm;
-    public $id;
     protected array $metaInput = [];
     protected array $metaToUnset = [];
 
     /** @param WP_Term|int|null $term */
-    public function __construct($term)
+    final public function __construct($term)
     {
         if ($term instanceof WP_Term) {
             $this->wpTerm = $term;
@@ -39,6 +38,13 @@ class TermModel implements TermModelInterface
         if (isset($this->wpTerm)) {
             $this->id = $this->wpTerm->term_id;
         }
+
+        $this->init();
+    }
+
+    protected function init()
+    {
+        // This method only exists to be overridden.
     }
 
     public static function __callStatic($method, $parameters)
