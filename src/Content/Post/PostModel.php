@@ -51,11 +51,8 @@ class PostModel implements PostModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    /**
-     * @final
-     * @param WP_Post|int|null $post
-     */
-    public function __construct($post = null)
+    /** @param WP_Post|int|null $post */
+    final public function __construct($post = null)
     {
         if ($post === null) {
             $this->wpPost = (object)[];
@@ -68,6 +65,13 @@ class PostModel implements PostModelInterface
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
         }
+
+        $this->init();
+    }
+
+    protected function init()
+    {
+        // This method only exists to be overridden.
     }
 
     /**
