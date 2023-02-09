@@ -265,13 +265,12 @@ class PostModel implements PostModelInterface
         return get_permalink($this->getId());
     }
 
-    /** @return false|string */
-    public function getPostTypeLabel()
+    public function getPostTypeLabel(): ?string
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
         if (!$postType || !$postType->label) {
-            return false;
+            return null;
         }
 
         return $postType->label;
@@ -330,22 +329,20 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $format
-     * @return false|string
+     * @return int|string|null
      */
     public function getPostDate(string $format = '')
     {
-        return get_the_date($format, $this->wpPost);
+        $date = get_the_date($format, $this->wpPost);
+        return ($date === false) ? null : $date;
     }
 
     public function getModifiedDate(string $format = ''): ?string
     {
         return get_the_modified_date($format, $this->wpPost) ?: null;
     }
-    /**
-     * @param bool $formatted
-     * @return false|string
-     */
-    public function getExcerpt(bool $formatted = true)
+
+    public function getExcerpt(bool $formatted = true): ?string
     {
         if (!$formatted) {
             return get_the_excerpt($this->wpPost);
@@ -357,7 +354,7 @@ class PostModel implements PostModelInterface
 
         ob_start();
         the_excerpt();
-        $excerpt = ob_get_clean();
+        $excerpt = ob_get_clean() ?: null;
 
         $GLOBALS['post'] = $currentPost;
 
@@ -379,16 +376,15 @@ class PostModel implements PostModelInterface
         return get_userdata($authorId);
     }
 
-    /** @return false|int|numeric-string */
-    public function getAuthorId()
+    public function getAuthorId(): ?int
     {
         $authorId = $this->wpPost->post_author;
 
         if (!$authorId) {
-            return false;
+            return null;
         }
 
-        return $authorId;
+        return (int)$authorId;
     }
 
     /** @return false|array|string */
@@ -403,7 +399,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
-     * @return array An array of all values whose key is not prefixed with <i>_</i>
+     * @return array
      */
     public function getMetaValues(bool $ignoreLowDashPrefix = true): array
     {
@@ -565,17 +561,17 @@ class PostModel implements PostModelInterface
 
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
+     * @return null|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
-    public function getFeaturedImageUrl($size = 'thumbnail')
+    public function getFeaturedImageUrl($size = 'thumbnail'): ?string
     {
-        return get_the_post_thumbnail_url($this->wpPost, $size);
+        return get_the_post_thumbnail_url($this->wpPost, $size) ?: null;
     }
 
-    /** @return false|int */
-    public function getFeaturedImageId()
+    /** @return null|positive-int */
+    public function getFeaturedImageId(): ?int
     {
-        return get_post_thumbnail_id($this->wpPost) ?: false;
+        return get_post_thumbnail_id($this->wpPost) ?: null;
     }
 
     /** @return static */
@@ -627,16 +623,6 @@ class PostModel implements PostModelInterface
         $ancestors = $this->getAncestors();
         $this->getAncestors()->last();
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
-    }
-
-    /**
-     * @deprecated Use getChildren instead
-     * @see getChildren
-     */
-    public function getChilds(): PostsCollection
-    {
-        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
-        return $this->getChildren();
     }
 
     /** @return PostsCollection Retrieves the children of this post. */
@@ -698,7 +684,7 @@ class PostModel implements PostModelInterface
      * @param string $taxonomy
      * @return static|null
      */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
+    protected function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
     {
         $currentPost = $GLOBALS['post'] ?? null;
 
@@ -775,29 +761,29 @@ class PostModel implements PostModelInterface
      * This includes comments, post meta fields, and terms associated with the post.
      * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
      * @var bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
-     * @return false|WP_Post|null
+     * @return WP_Post|null
      */
-    public function delete(bool $force = true)
+    public function delete(bool $force = true): ?WP_Post
     {
-        return wp_delete_post($this->getId(), $force);
+        return wp_delete_post($this->getId(), $force) ?: null;
     }
 
     /**
      * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
-     * @return false|WP_Post|null
+     * @return WP_Post|null
      */
-    public function trash()
+    public function trash(): ?WP_Post
     {
-        return wp_trash_post($this->getId());
+        return wp_trash_post($this->getId()) ?: null;
     }
 
     /**
      * Restores a post from the Trash.
-     * @return false|WP_Post|null
+     * @return WP_Post|null
      */
     public function untrash()
     {
-        return wp_untrash_post($this->getId());
+        return wp_untrash_post($this->getId()) ?: null;
     }
 
     /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */

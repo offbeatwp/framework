@@ -140,10 +140,10 @@ class TermModel implements TermModelInterface
         });
     }
 
-    /** @return array|false|string */
-    public function getMetas()
+    public function getMetas(): ?array
     {
-        return get_term_meta($this->getId());
+        $result = get_term_meta($this->getId());
+        return is_array($result) ? $result : null;
     }
 
     /**
