@@ -29,7 +29,8 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
 
     public function getType()
     {
-        return static::TYPE;
+        $modelClass = static::class;
+        return "{$modelClass}::TYPE" ? static::TYPE : '';
     }
 
     public function getId()

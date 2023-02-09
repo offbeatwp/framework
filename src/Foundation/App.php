@@ -18,7 +18,7 @@ use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
-class App
+final class App
 {
     private static $instance;
     public $container;
