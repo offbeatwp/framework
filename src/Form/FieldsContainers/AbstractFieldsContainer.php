@@ -3,7 +3,7 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 use OffbeatWP\Form\HierarchicalFormElement;
 
-abstract class AbstractFormContainer extends HierarchicalFormElement
+abstract class AbstractFieldsContainer extends HierarchicalFormElement
 {
     protected string $id;
     protected string $label;

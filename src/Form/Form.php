@@ -4,7 +4,7 @@ namespace OffbeatWP\Form;
 use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
-use OffbeatWP\Form\FieldsContainers\AbstractFormContainer;
+use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
@@ -21,15 +21,11 @@ final class Form extends HierarchicalFormElement
         $this->activeItem = $this;
     }
 
-    /**
-     * @param AbstractField|AbstractFormContainer|AbstractFieldsCollection|Form $item
-     * @param bool $prepend
-     * @return Form
-     */
+    /** @param AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item */
     public function add($item, bool $prepend = false): self
     {
         // If item is Tab and active item is Section move back to parent
-        if ($this->getActiveItem() !== $this && $item instanceof AbstractFormContainer) {
+        if ($this->getActiveItem() !== $this && $item instanceof AbstractFieldsContainer) {
             while ($item->getLevel() < $this->getActiveItem()->getLevel()) {
                 $this->closeField();
             }
@@ -49,7 +45,7 @@ final class Form extends HierarchicalFormElement
                 $this->push($item);
             }
 
-            if ($item instanceof AbstractFormContainer) {
+            if ($item instanceof Form) {
                 $this->setActiveItem($item);
                 $this->setParent($item);
             }
@@ -61,7 +57,7 @@ final class Form extends HierarchicalFormElement
         $this->getActiveItem()->add($item);
 
         // If item is instance of Fields Container, change the active item.
-        if ($item instanceof HierarchicalFormElement) {
+        if ($item instanceof AbstractFieldsContainer) {
             $this->setActiveItem($item);
             $this->setParent($item);
         }
@@ -106,6 +102,7 @@ final class Form extends HierarchicalFormElement
         return $this;
     }
 
+    /** @param AbstractField[] $fields */
     public function addFields(iterable $fields): self
     {
         foreach ($fields as $field) {
@@ -175,7 +172,7 @@ final class Form extends HierarchicalFormElement
         $values = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof AbstractField || $item instanceof AbstractFormContainer) {
+            if ($item instanceof AbstractField || $item instanceof AbstractFieldsContainer) {
                 $values[$item->getId()] = $item->getAttribute('default');
             }
         }
