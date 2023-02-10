@@ -3,15 +3,14 @@ namespace OffbeatWP\Form\Fields;
 
 class NavMenu extends Select {
 
-    public function __construct()
+    public function init(): void
     {        
         $this->addOptions([$this, 'getNavMenus']);
     }
 
-    public function getNavMenus () {
-        $options = [
-            '' => __('None', 'offbeatwp'),
-        ];
+    public function getNavMenus(): array
+    {
+        $options = ['' => __('None', 'offbeatwp')];
         $menus = wp_get_nav_menus();
 
         foreach ($menus as $menu) {
