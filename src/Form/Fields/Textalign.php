@@ -12,4 +12,9 @@ class Textalign extends Select {
             'right'         => __('Right', 'offbeatwp'),
         ]);
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }

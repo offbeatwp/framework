@@ -12,5 +12,4 @@ class VerticalAlign extends Select {
             'bottom'        => __('Bottom', 'offbeatwp'),
         ]);
     }
-
 }

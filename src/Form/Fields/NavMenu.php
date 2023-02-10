@@ -19,4 +19,9 @@ class NavMenu extends Select {
 
         return $options;
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }
