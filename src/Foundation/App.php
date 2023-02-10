@@ -21,7 +21,7 @@ use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
-class App
+final class App
 {
     private static ?App $instance = null;
 
@@ -41,7 +41,7 @@ class App
         return static::$instance;
     }
 
-    final private function __construct() {
+    private function __construct() {
         // App is a singleton and must instantiated via the App::singleton() method.
     }
 
