@@ -4,7 +4,7 @@ namespace OffbeatWP\Form;
 use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
-use OffbeatWP\Form\FieldsContainers\AbstractFormContainer;
+use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
@@ -22,14 +22,14 @@ final class Form extends FormParentItem
     }
 
     /**
-     * @param AbstractField|AbstractFormContainer|AbstractFieldsCollection|Form $item
+     * @param AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item
      * @param bool $prepend
      * @return Form
      */
     public function add($item, bool $prepend = false): self
     {
         // If item is Tab and active item is Section move back to parent
-        if ($this->getActiveItem() !== $this && $item instanceof AbstractFormContainer) {
+        if ($this->getActiveItem() !== $this && $item instanceof AbstractFieldsContainer) {
             while ($item->getLevel() < $this->getActiveItem()->getLevel()) {
                 $this->closeField();
             }
@@ -49,7 +49,7 @@ final class Form extends FormParentItem
                 $this->push($item);
             }
 
-            if ($item instanceof AbstractFormContainer) {
+            if ($item instanceof AbstractFieldsContainer) {
                 $this->setActiveItem($item);
                 $this->setParent($item);
             }
@@ -175,7 +175,7 @@ final class Form extends FormParentItem
         $values = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof AbstractField || $item instanceof AbstractFormContainer) {
+            if ($item instanceof AbstractField || $item instanceof AbstractFieldsContainer) {
                 $values[$item->getId()] = $item->getAttribute('default');
             }
         }

@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Form\FieldsContainers;
 
-final class Repeater extends AbstractFormContainer
+final class Repeater extends AbstractFieldsContainer
 {
     public const TYPE = 'repeater';
     public const LEVEL = 30;

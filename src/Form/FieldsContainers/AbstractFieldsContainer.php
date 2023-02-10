@@ -3,7 +3,7 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 use OffbeatWP\Form\FormParentItem;
 
-abstract class AbstractFormContainer extends FormParentItem
+abstract class AbstractFieldsContainer extends FormParentItem
 {
     protected string $id;
     protected string $label;
