@@ -5,17 +5,17 @@ namespace OffbeatWP\Form;
 use Illuminate\Support\Collection;
 
 /** For elements that extend this class can (optionally) have a parent and be used as a parent. */
-abstract class FormParentItem extends Collection
+abstract class HierarchicalFormElement extends Collection
 {
-    protected ?FormParentItem $parent = null;
+    protected ?HierarchicalFormElement $parent = null;
 
-    public function setParent(?FormParentItem $item): self
+    public function setParent(?HierarchicalFormElement $item): self
     {
         $this->parent = $item;
         return $this;
     }
 
-    public function getParent(): ?FormParentItem
+    public function getParent(): ?HierarchicalFormElement
     {
         return $this->parent;
     }

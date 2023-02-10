@@ -9,9 +9,9 @@ use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 
-final class Form extends FormParentItem
+final class Form extends HierarchicalFormElement
 {
-    private FormParentItem $activeItem;
+    private HierarchicalFormElement $activeItem;
     private array $fieldKeys = [];
     private string $fieldPrefix = '';
 
@@ -61,7 +61,7 @@ final class Form extends FormParentItem
         $this->getActiveItem()->add($item);
 
         // If item is instance of Fields Container, change the active item.
-        if ($item instanceof FormParentItem) {
+        if ($item instanceof HierarchicalFormElement) {
             $this->setActiveItem($item);
             $this->setParent($item);
         }
@@ -69,12 +69,12 @@ final class Form extends FormParentItem
         return $this;
     }
 
-    public function getActiveItem(): FormParentItem
+    public function getActiveItem(): HierarchicalFormElement
     {
         return $this->activeItem;
     }
 
-    public function setActiveItem(FormParentItem $item): self
+    public function setActiveItem(HierarchicalFormElement $item): self
     {
         $this->activeItem = $item;
         return $this;

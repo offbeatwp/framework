@@ -1,9 +1,9 @@
 <?php
 namespace OffbeatWP\Form\FieldsContainers;
 
-use OffbeatWP\Form\FormParentItem;
+use OffbeatWP\Form\HierarchicalFormElement;
 
-abstract class AbstractFormContainer extends FormParentItem
+abstract class AbstractFormContainer extends HierarchicalFormElement
 {
     protected string $id;
     protected string $label;
