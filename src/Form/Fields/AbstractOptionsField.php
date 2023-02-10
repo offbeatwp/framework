@@ -10,35 +10,32 @@ abstract class AbstractOptionsField extends AbstractField
     /**
      * @deprecated Misleading name as this method actually REPLACES all options
      * @param scalar[]|callable $options
-     * @return $this
      */
-    final public function addOptions($options = []) {
+    public function addOptions($options = []) {
         $this->options = $options;
         return $this;
     }
 
     /** @param scalar[] $options */
-    final public function setOptions(array $options): self
+    public function setOptions(array $options): self
     {
         $this->options = $options;
         return $this;
     }
 
-    /** @param scalar $value */
-    final public function setOption(string $key, $value): self {
-        $this->options[$key] = $value;
-        return $this;
-    }
-
     /**
-     * @deprecated Use setOption instead.
-     * @param string $key
+     * @deprecated Use setOption instead
      * @param scalar $value
-     * @return $this
      */
-    final public function addOption(string $key, $value): self
+    public function addOption(string $key, $value): self
     {
         return $this->setOption($key, $value);
+    }
+
+    /** @param scalar $value */
+    public function setOption(string $key, $value): self {
+        $this->options[$key] = $value;
+        return $this;
     }
 
     /** @return scalar[] */
