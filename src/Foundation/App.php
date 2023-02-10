@@ -18,15 +18,15 @@ use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
-class App
+final class App
 {
-    private static $instance;
+    private static ?App $instance;
     public $container;
     private $services = [];
     protected $config = null;
     protected $route;
 
-    public static function singleton()
+    public static function singleton(): App
     {
         if (!isset(static::$instance)) {
             static::$instance = new static();
@@ -69,7 +69,7 @@ class App
         }
     }
 
-    private function initiateServices($containerBuilder): void
+    private function initiateServices(ContainerBuilder $containerBuilder): void
     {
         $services = config('services');
 
@@ -80,7 +80,7 @@ class App
         }
     }
 
-    private function initiateService($serviceClass, $containerBuilder): void
+    private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
     {
         if ($this->isServiceInitiated($serviceClass)) {
             $this->getService($serviceClass);
@@ -115,7 +115,7 @@ class App
 
     }
 
-    public function getService($serviceClass)
+    public function getService(string $serviceClass)
     {
         if ($this->isServiceInitiated($serviceClass)) {
             return $this->services[$serviceClass];
@@ -124,12 +124,12 @@ class App
         return false;
     }
 
-    public function isServiceInitiated($serviceClass): bool
+    public function isServiceInitiated(string $serviceClass): bool
     {
         return (isset($this->services[$serviceClass]));
     }
 
-    public function markServiceAsInitiated($service): void
+    public function markServiceAsInitiated(object $service): void
     {
         $this->services[get_class($service)] = $service;
     }
@@ -166,7 +166,7 @@ class App
         return $this->config;
     }
 
-    public function addRoutes()
+    public function addRoutes(): void
     {
         offbeat('routes')->addRoutes();
     }
