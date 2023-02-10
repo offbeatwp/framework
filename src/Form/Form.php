@@ -13,8 +13,7 @@ use OffbeatWP\Form\Fields\FieldInterface;
 
 class Form extends FormElementCollection
 {
-    /** @var Form|FieldsContainerInterface */
-    private $activeItem;
+    private FormElementCollection $activeItem;
     private array $fieldKeys = [];
     private string $fieldPrefix = '';
 
@@ -52,8 +51,9 @@ class Form extends FormElementCollection
                 $this->push($item);
             }
 
-            if ($item instanceof FieldsContainerInterface) {
-                $this->setActiveItem($item, true);
+            if ($item instanceof AbstractFieldsContainer) {
+                $this->setActiveItem($item);
+                $this->setParent($item);
             }
 
             return $this;
@@ -63,32 +63,23 @@ class Form extends FormElementCollection
         $this->getActiveItem()->add($item);
 
         // If item is instance of Fields Container, change the active item.
-        if ($item instanceof FieldsContainerInterface) {
-            $this->setActiveItem($item, true);
+        if ($item instanceof AbstractFieldsContainer) {
+            $this->setActiveItem($item);
+            $this->setParent($item);
         }
 
         return $this;
     }
 
-    public function getActiveItem()
+    public function getActiveItem(): FormElementCollection
     {
         return $this->activeItem;
     }
 
-    /**
-     * @param FieldsContainerInterface|Form $item
-     * @param bool $setParent
-     * @return FieldsContainerInterface|Form
-     */
-    public function setActiveItem($item, $setParent = false)
+    public function setActiveItem(FormElementCollection $item): self
     {
-        if ($setParent) {
-            $item->setParent($this->getActiveItem());
-        }
-
         $this->activeItem = $item;
-
-        return $this->activeItem;
+        return $this;
     }
 
     public function addTab(string $id, string $label)
@@ -98,17 +89,15 @@ class Form extends FormElementCollection
         return $this;
     }
 
-    public function addSection(string $id, string $label)
+    public function addSection(string $id, string $label): self
     {
         $this->add(new Section($id, $label));
-
         return $this;
     }
 
-    public function addRepeater(string $id, string $label)
+    public function addRepeater(string $id, string $label): self
     {
         $this->add(new Repeater($id, $label));
-
         return $this;
     }
 
@@ -120,7 +109,7 @@ class Form extends FormElementCollection
         return $this;
     }
 
-    public function addFields(FieldsCollectionInterface $fieldsCollection): self
+    public function addFields(FormElementCollection $fieldsCollection): self
     {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);

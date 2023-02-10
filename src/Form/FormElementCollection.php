@@ -6,15 +6,15 @@ use Illuminate\Support\Collection;
 
 abstract class FormElementCollection extends Collection
 {
-    protected $parent = null;
+    protected ?FormElementCollection $parent = null;
 
-    public function setParent($item): self
+    public function setParent(?FormElementCollection $item): self
     {
         $this->parent = $item;
         return $this;
     }
 
-    public function getParent()
+    public function getParent(): ?FormElementCollection
     {
         return $this->parent;
     }
