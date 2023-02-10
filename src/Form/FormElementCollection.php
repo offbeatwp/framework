@@ -18,4 +18,9 @@ abstract class FormElementCollection extends Collection
     {
         return $this->parent;
     }
+
+    public function getLevel(): int
+    {
+        return 0;
+    }
 }

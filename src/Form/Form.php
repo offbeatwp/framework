@@ -5,7 +5,6 @@ use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
-use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
@@ -24,15 +23,15 @@ class Form extends FormElementCollection
     }
 
     /**
-     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface|Form $item
+     * @param FieldInterface|AbstractFieldsContainer|FieldsCollectionInterface|Form $item
      * @param bool $prepend
      * @return Form
      */
     public function add($item, bool $prepend = false): self
     {
-        // If item is Tab and active itme is Section move back to parent
-        if ($this->getActiveItem() !== $this && $item instanceof FieldsContainerInterface) {
-            while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
+        // If item is Tab and active item is Section move back to parent
+        if ($this->getActiveItem() !== $this && $item instanceof AbstractFieldsContainer) {
+            while ($item->getLevel() < $this->getActiveItem()->getLevel()) {
                 $this->closeField();
             }
         }

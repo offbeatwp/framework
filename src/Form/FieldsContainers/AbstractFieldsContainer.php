@@ -3,7 +3,7 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 use OffbeatWP\Form\FormElementCollection;
 
-abstract class AbstractFieldsContainer extends FormElementCollection implements FieldsContainerInterface
+abstract class AbstractFieldsContainer extends FormElementCollection
 {
     protected string $id;
     protected string $label;
