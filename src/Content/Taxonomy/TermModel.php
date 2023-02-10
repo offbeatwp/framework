@@ -35,10 +35,6 @@ class TermModel implements TermModelInterface
             }
         }
 
-        if (isset($this->wpTerm)) {
-            $this->id = $this->wpTerm->term_id;
-        }
-
         $this->init();
     }
 
