@@ -24,8 +24,6 @@ final class RoutesManager
     protected RouteCollection $routeCollection;
     protected int $routeIterator = 0;
     protected $lastMatchRoute;
-    /** @deprecated Unused */
-    protected $routesContext;
 
     protected string $priorityMode = self::PRIORITY_HIGH;
     protected bool $routesAdded = false;
