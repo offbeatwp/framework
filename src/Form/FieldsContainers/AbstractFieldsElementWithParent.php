@@ -2,12 +2,13 @@
 namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Form\IFormElementWithParent;
 
-abstract class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
+abstract class AbstractFieldsElementWithParent extends Collection implements FieldsContainerInterface, IFormElementWithParent
 {
     protected string $id;
     protected string $label;
-    protected ?object $parent = null;
+    protected $parent = null;
     protected array $attributes = [];
 
     public function __construct(string $id, string $label)
@@ -46,13 +47,13 @@ abstract class AbstractFieldsContainer extends Collection implements FieldsConta
         return $this->label;
     }
 
-    final public function setParent(object $item): self
+    final public function setParent($item): self
     {
         $this->parent = $item;
         return $this;
     }
 
-    final public function getParent(): ?object
+    final public function getParent()
     {
         return $this->parent;
     }
