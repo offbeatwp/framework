@@ -162,14 +162,14 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
                 
                 if (!wp_style_is($handle)) {
-                    wp_enqueue_style($handle, $this->getAssetsUrl($asset), [], false, false);
+                    wp_enqueue_style($handle, $this->getAssetsUrl($asset), []);
                 }
             }
 
             return;
         }
 
-        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), [], false);
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), []);
     }
 
     /** @param string $entry */
