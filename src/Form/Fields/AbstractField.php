@@ -4,10 +4,9 @@ namespace OffbeatWP\Form\Fields;
 
 abstract class AbstractField
 {
-    protected array $attributes = [];
     protected string $id;
     protected string $label;
-    protected bool $required = false;
+    protected array $attributes = [];
 
     final public function __construct(string $id, string $label)
     {
@@ -32,33 +31,34 @@ abstract class AbstractField
     }
 
     /* Basic Setters */
-    public function setId(string $id): void
+    public function setId(string $id): self
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setLabel(string $label): void
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+        return $this;
     }
 
-    /** @internal Use required instead */
-    public function setRequired(bool $required = true): void
+    public function setRequired(bool $required = true): self
     {
-        $this->required = $required;
         $this->setAttribute('required', $required);
+        return $this;
     }
 
-    /** @internal Use attribute instead */
-    public function setAttribute($key, $value = null): void
+    public function setAttribute(string $key, $value = null): self
     {
         $this->attributes[$key] = $value;
+        return $this;
     }
 
-    /** @internal Use attributes instead */
-    public function setAttributes(array $attributes): void
+    public function setAttributes(array $attributes): self
     {
         $this->attributes = array_merge($this->attributes, $attributes);
+        return $this;
     }
 
     /* Basic Getters */
@@ -81,7 +81,7 @@ abstract class AbstractField
 
     public function getRequired(): bool
     {
-        return $this->required;
+        return (bool)$this->getAttribute('required');
     }
 
     public function getAttributes(): array
