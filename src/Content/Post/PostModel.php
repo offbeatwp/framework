@@ -774,7 +774,7 @@ class PostModel implements PostModelInterface
      * When the post and page is permanently deleted, everything that is tied to it is deleted also.
      * This includes comments, post meta fields, and terms associated with the post.
      * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
-     * @var bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
+     * @param bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
      * @return false|WP_Post|null
      */
     public function delete(bool $force = true)
