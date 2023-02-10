@@ -1,10 +1,9 @@
 <?php
 namespace OffbeatWP\Form\FieldsContainers;
 
-use Illuminate\Support\Collection;
-use OffbeatWP\Form\IFormElementWithParent;
+use OffbeatWP\Form\FormElementCollection;
 
-abstract class AbstractFieldsElementWithParent extends Collection implements FieldsContainerInterface, IFormElementWithParent
+abstract class AbstractFieldsContainer extends FormElementCollection implements FieldsContainerInterface
 {
     protected string $id;
     protected string $label;

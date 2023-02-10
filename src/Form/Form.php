@@ -1,18 +1,17 @@
 <?php
 namespace OffbeatWP\Form;
 
-use Illuminate\Support\Collection;
 use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
-use OffbeatWP\Form\FieldsContainers\AbstractFieldsElementWithParent;
+use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
 use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 use OffbeatWP\Form\Fields\FieldInterface;
 
-class Form extends Collection implements IFormElementWithParent
+class Form extends FormElementCollection
 {
     /** @var Form|FieldsContainerInterface */
     private $activeItem;
@@ -202,7 +201,7 @@ class Form extends Collection implements IFormElementWithParent
         $values = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof AbstractField || $item instanceof AbstractFieldsElementWithParent) {
+            if ($item instanceof AbstractField || $item instanceof AbstractFieldsContainer) {
                 $values[$item->getId()] = $item->getAttribute('default');
             }
         }
