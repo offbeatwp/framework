@@ -226,6 +226,7 @@ final class RoutesManager
                 throw new InvalidRouteException('Route does not match (override)');
             }
 
+            /** @var PathRoute|null $route */
             $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
 
@@ -235,6 +236,7 @@ final class RoutesManager
         }
     }
 
+    /** @return CallbackRoute|false */
     public function findCallbackRoute()
     {
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);

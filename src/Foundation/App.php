@@ -11,6 +11,8 @@ use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
+use OffbeatWP\Routes\Routes\CallbackRoute;
+use OffbeatWP\Routes\Routes\PathRoute;
 use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Services\AbstractService;
@@ -27,6 +29,7 @@ class App
     private array $services = [];
     public ?Container $container = null;
     protected ?Config $config = null;
+    /** @var CallbackRoute|PathRoute|false|null */
     protected $route;
 
     public static function singleton(): App
