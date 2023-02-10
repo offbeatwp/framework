@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Foundation;
 
+use DI\Container;
 use DI\ContainerBuilder;
 use Exception;
 use OffbeatWP\Assets\AssetsManager;
@@ -25,7 +26,7 @@ final class App
 
     /** @var AbstractService[] */
     private array $services = [];
-    public $container;
+    public ?Container $container = null;
     protected ?Config $config = null;
     protected $route;
 
@@ -195,7 +196,9 @@ final class App
 
         try {
             // Remove route from collection so if there is a second run it skips this route
-            offbeat('routes')->removeRoute($route);
+            if ($route) {
+                offbeat('routes')->removeRoute($route);
+            }
 
             $output = $this->runRoute($route);
 
