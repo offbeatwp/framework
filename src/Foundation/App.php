@@ -1,8 +1,8 @@
 <?php
 namespace OffbeatWP\Foundation;
 
+use DI\Container;
 use DI\ContainerBuilder;
-use Exception;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
@@ -13,6 +13,7 @@ use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
+use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
 use WP_Error;
 use function DI\autowire;
@@ -20,22 +21,27 @@ use function DI\create;
 
 class App
 {
-    private static $instance;
-    public $container;
-    private $services = [];
-    protected $config = null;
+    private static ?App $instance = null;
+
+    /** @var AbstractService[] */
+    private array $services = [];
+    public ?Container $container = null;
+    protected ?Config $config = null;
     protected $route;
 
-    public static function singleton()
+    public static function singleton(): App
     {
-        if (!isset(static::$instance)) {
+        if (!static::$instance) {
             static::$instance = new static();
         }
 
         return static::$instance;
     }
 
-    /** @throws Exception */
+    final private function __construct() {
+        // App is a singleton and must instantiated via the App::singleton() method.
+    }
+
     public function bootstrap(): void
     {
         $containerBuilder = new ContainerBuilder();
@@ -62,14 +68,14 @@ class App
         ];
     }
 
-    private function initiateBaseServices($containerBuilder): void
+    private function initiateBaseServices(ContainerBuilder $containerBuilder): void
     {
         foreach ([WordpressService::class, RoutesService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
             $this->initiateService($service, $containerBuilder);
         }
     }
 
-    private function initiateServices($containerBuilder): void
+    private function initiateServices(ContainerBuilder $containerBuilder): void
     {
         $services = config('services');
 
@@ -80,7 +86,7 @@ class App
         }
     }
 
-    private function initiateService($serviceClass, $containerBuilder): void
+    private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
     {
         if ($this->isServiceInitiated($serviceClass)) {
             $this->getService($serviceClass);
@@ -105,17 +111,15 @@ class App
 
     private function registerServices(): void
     {
-        if ($this->services) {
-            foreach ($this->services as $service) {
-                if (is_callable([$service, 'register'])) {
-                    $this->container->call([$service, 'register']);
-                }
+        foreach ($this->services as $service) {
+            if (is_callable([$service, 'register'])) {
+                $this->container->call([$service, 'register']);
             }
         }
-
     }
 
-    public function getService($serviceClass)
+    /** @return null|false|AbstractService */
+    public function getService(string $serviceClass)
     {
         if ($this->isServiceInitiated($serviceClass)) {
             return $this->services[$serviceClass];
@@ -124,12 +128,12 @@ class App
         return false;
     }
 
-    public function isServiceInitiated($serviceClass): bool
+    public function isServiceInitiated(string $serviceClass): bool
     {
         return (isset($this->services[$serviceClass]));
     }
 
-    public function markServiceAsInitiated($service): void
+    public function markServiceAsInitiated(object $service): void
     {
         $this->services[get_class($service)] = $service;
     }
@@ -163,10 +167,11 @@ class App
         if ($config !== null) {
             return $this->config->get($config, $default);
         }
+
         return $this->config;
     }
 
-    public function addRoutes()
+    public function addRoutes(): void
     {
         offbeat('routes')->addRoutes();
     }
@@ -193,7 +198,9 @@ class App
 
         try {
             // Remove route from collection so if there is a second run it skips this route
-            offbeat('routes')->removeRoute($route);
+            if ($route) {
+                offbeat('routes')->removeRoute($route);
+            }
 
             $output = $this->runRoute($route);
 
