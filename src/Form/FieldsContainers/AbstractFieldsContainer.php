@@ -61,12 +61,6 @@ abstract class AbstractFieldsContainer extends FieldsContainer
         return $this->getAttributes()[$key] ?? null;
     }
 
-    public function add($item)
-    {
-        $this->push($item);
-        return $item;
-    }
-
     public function toArray(): array
     {
         $items = $this->map(function ($item) {

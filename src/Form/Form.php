@@ -81,10 +81,9 @@ class Form extends FieldsContainer
         return $this;
     }
 
-    public function addTab(string $id, string $label)
+    public function addTab(string $id, string $label): self
     {
         $this->add(new Tab($id, $label));
-
         return $this;
     }
 
