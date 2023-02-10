@@ -3,49 +3,53 @@ namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
 
-class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
+abstract class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
-    public $id;
-    public $label;
+    public string $id;
+    public string $label;
     public $parent;
-    public $attributes = [];
+    public array $attributes = [];
 
-    public function __construct($id, $label)
+    public function __construct(string $id, string $label)
     {
         parent::__construct();
-        $this->setLabel($label);
-        $this->setId($id);
-    }
-
-    public function setId($id)
-    {
         $this->id = $id;
-    }
-
-    public function setLabel($label)
-    {
         $this->label = $label;
     }
 
-    public function getType()
+    public function getLevel(): int
     {
-        $modelClass = static::class;
-        return "{$modelClass}::TYPE" ? static::TYPE : '';
+        return 1;
     }
 
-    public function getId()
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
+        return $this;
+    }
+
+    abstract public function getType(): string;
+
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function setParent($item)
+    public function setParent($item): self
     {
         $this->parent = $item;
+        return $this;
     }
 
     public function getParent()
@@ -53,29 +57,29 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
         return $this->parent;
     }
 
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes): self
     {
         $this->attributes = array_merge($this->attributes, $attributes);
+        return $this;
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
-        return $this->getAttributes()[$key] ?? false;
+        return $this->getAttributes()[$key] ?? null;
     }
 
     public function add($item)
     {
         $this->push($item);
-
         return $item;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $items = $this->map(function ($item) {
             return $item->toArray();
