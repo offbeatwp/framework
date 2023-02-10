@@ -18,17 +18,18 @@ use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
-class App
+final class App
 {
-    private static $instance;
+    private static ?App $instance = null;
+
     public $container;
     private $services = [];
     protected $config = null;
     protected $route;
 
-    public static function singleton()
+    public static function singleton(): App
     {
-        if (!isset(static::$instance)) {
+        if (!static::$instance) {
             static::$instance = new static();
         }
 

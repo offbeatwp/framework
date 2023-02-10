@@ -13,7 +13,7 @@ class Link extends AbstractFieldsCollection {
 
         $linkTargetField = Select::make('link_target', __('Link target', 'offbeatwp'));
         $linkTargetField
-            ->addOptions([
+            ->setOptions([
                 '_self' => __('Self', 'offbeatwp'),
                 '_blank' => __('Blank', 'offbeatwp'),
                 '_parent' => __('Parent', 'offbeatwp'),
