@@ -22,7 +22,7 @@ use WP_User;
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var UserModel|TModel[] */
+    /** @var UserModel[]|TModel[] */
     protected $items = [];
 
     /** @param int[]|WP_User[]|UserModel[] $items */
@@ -85,7 +85,7 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * @template T
-     * @param class-string<T|UserModel> $className
+     * @param class-string<T> $className
      * @return UserCollection<T>
      */
     public function as(string $className): UserCollection
