@@ -10,9 +10,9 @@ use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 use OffbeatWP\Form\Fields\FieldInterface;
 
-class Form extends FormElementCollection
+class Form extends FieldsContainer
 {
-    private FormElementCollection $activeItem;
+    private FieldsContainer $activeItem;
     private array $fieldKeys = [];
     private string $fieldPrefix = '';
 
@@ -70,12 +70,12 @@ class Form extends FormElementCollection
         return $this;
     }
 
-    public function getActiveItem(): FormElementCollection
+    public function getActiveItem(): FieldsContainer
     {
         return $this->activeItem;
     }
 
-    public function setActiveItem(FormElementCollection $item): self
+    public function setActiveItem(FieldsContainer $item): self
     {
         $this->activeItem = $item;
         return $this;
@@ -103,18 +103,7 @@ class Form extends FormElementCollection
     public function addField(FieldInterface $field): self
     {
         $this->fieldKeys[] = $field->getId();
-        $this->add($field);
-
-        return $this;
-    }
-
-    public function addFields(FormElementCollection $fieldsCollection): self
-    {
-        $fieldsCollection->each(function ($field) {
-            $this->addField($field);
-        });
-
-        return $this;
+        return parent::addField($field);
     }
 
     public function closeField(): self

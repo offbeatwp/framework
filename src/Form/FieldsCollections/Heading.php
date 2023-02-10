@@ -4,7 +4,7 @@ namespace OffbeatWP\Form\FieldsCollections;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Form\Fields\Text;
 
-class Heading extends AbstractFieldsCollection {
+class Heading extends FieldsCollection {
     public function __construct(string $defaultHeading = 'h3', bool $includeLead = false)
     {
         parent::__construct();
