@@ -67,10 +67,7 @@ abstract class AbstractField implements FieldInterface
         return 'field';
     }
 
-    public function getFieldType(): string
-    {
-        return static::FIELD_TYPE;
-    }
+    abstract public function getFieldType(): string;
 
     public function getId(): string
     {
