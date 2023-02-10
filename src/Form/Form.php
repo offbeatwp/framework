@@ -17,7 +17,6 @@ class Form extends FormElementCollection
     private $activeItem;
     private array $fieldKeys = [];
     private string $fieldPrefix = '';
-    protected $parent;
 
     public function __construct()
     {
@@ -183,17 +182,6 @@ class Form extends FormElementCollection
         $this->setActiveItem($activeItem);
 
         return $this;
-    }
-
-    public function setParent($item): self
-    {
-        $this->parent = $item;
-        return $this;
-    }
-
-    public function getParent()
-    {
-        return $this->parent;
     }
 
     public function getDefaultValues(): array

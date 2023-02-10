@@ -7,7 +7,6 @@ abstract class AbstractFieldsContainer extends FormElementCollection implements 
 {
     protected string $id;
     protected string $label;
-    protected $parent = null;
     protected array $attributes = [];
 
     public function __construct(string $id, string $label)
@@ -44,17 +43,6 @@ abstract class AbstractFieldsContainer extends FormElementCollection implements 
     public function getLabel(): string
     {
         return $this->label;
-    }
-
-    final public function setParent($item): self
-    {
-        $this->parent = $item;
-        return $this;
-    }
-
-    final public function getParent()
-    {
-        return $this->parent;
     }
 
     public function setAttributes(array $attributes): self
