@@ -2,6 +2,7 @@
 namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\FieldsContainers\AbstractFieldsElementWithParent;
@@ -11,13 +12,13 @@ use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 use OffbeatWP\Form\Fields\FieldInterface;
 
-final class Form extends Collection implements IFormElementWithParent
+class Form extends Collection implements IFormElementWithParent
 {
     /** @var Form|FieldsContainerInterface */
     private $activeItem;
-    private $fieldKeys = [];
-    private $fieldPrefix = '';
-    public $parent;
+    private array $fieldKeys = [];
+    private string $fieldPrefix = '';
+    protected $parent;
 
     public function __construct()
     {
@@ -28,8 +29,9 @@ final class Form extends Collection implements IFormElementWithParent
     /**
      * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface|Form $item
      * @param bool $prepend
+     * @return Form
      */
-    public function add($item, $prepend = false)
+    public function add($item, bool $prepend = false): self
     {
         // If item is Tab and active itme is Section move back to parent
         if ($this->getActiveItem() !== $this && $item instanceof FieldsContainerInterface) {
@@ -91,28 +93,28 @@ final class Form extends Collection implements IFormElementWithParent
         return $this->activeItem;
     }
 
-    public function addTab($id, $label)
+    public function addTab(string $id, string $label)
     {
         $this->add(new Tab($id, $label));
 
         return $this;
     }
 
-    public function addSection($id, $label)
+    public function addSection(string $id, string $label)
     {
         $this->add(new Section($id, $label));
 
         return $this;
     }
 
-    public function addRepeater($id, $label)
+    public function addRepeater(string $id, string $label)
     {
         $this->add(new Repeater($id, $label));
 
         return $this;
     }
 
-    public function addField(FieldInterface $field)
+    public function addField(FieldInterface $field): self
     {
         $this->fieldKeys[] = $field->getId();
         $this->add($field);
@@ -120,7 +122,7 @@ final class Form extends Collection implements IFormElementWithParent
         return $this;
     }
 
-    public function addFields(FieldsCollectionInterface $fieldsCollection)
+    public function addFields(FieldsCollectionInterface $fieldsCollection): self
     {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
@@ -129,7 +131,7 @@ final class Form extends Collection implements IFormElementWithParent
         return $this;
     }
 
-    public function closeField()
+    public function closeField(): self
     {
         $parentField = $this->getActiveItem()->getParent();
 
@@ -140,22 +142,23 @@ final class Form extends Collection implements IFormElementWithParent
         return $this;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return 'form';
     }
 
-    public function getFieldPrefix() 
+    public function getFieldPrefix(): string
     {
         return $this->fieldPrefix;
     }
 
-    public function setFieldPrefix($fieldPrefix) 
+    public function setFieldPrefix(string $fieldPrefix): self
     {
         $this->fieldPrefix = $fieldPrefix;
+        return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         $items = $this->map(function ($item) {
             return $item->toArray();
@@ -164,33 +167,32 @@ final class Form extends Collection implements IFormElementWithParent
         return $items->toArray();
     }
 
-    public function getFieldKeys()
+    /** @return string[] */
+    public function getFieldKeys(): array
     {
         return $this->fieldKeys;
     }
 
-    public function addComponentForm($component, $fieldPrefix) {
+    public function addComponentForm(AbstractComponent $component, string $fieldPrefix): self
+    {
         $activeItem = $this->getActiveItem();
 
-        if (!is_object($componentForm = $component::getForm())) {
-            return;
-        }
-
-        $form = clone $componentForm;
+        $form = clone $component::getForm();
         $form->setFieldPrefix($fieldPrefix);
 
         $this->addSection($fieldPrefix, $component::getName())->add($form);
-
         $this->setActiveItem($activeItem);
+
+        return $this;
     }
 
-    final public function setParent($item): self
+    public function setParent($item): self
     {
         $this->parent = $item;
         return $this;
     }
 
-    final public function getParent()
+    public function getParent()
     {
         return $this->parent;
     }
@@ -208,8 +210,8 @@ final class Form extends Collection implements IFormElementWithParent
         return $values;
     }
 
-    public static function create()
+    public static function create(): self
     {
-        return new static();
+        return new self();
     }
 }
