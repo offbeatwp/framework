@@ -5,10 +5,10 @@ use Illuminate\Support\Collection;
 
 abstract class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
-    public string $id;
-    public string $label;
-    public $parent;
-    public array $attributes = [];
+    protected string $id;
+    protected string $label;
+    protected ?object $parent = null;
+    protected array $attributes = [];
 
     public function __construct(string $id, string $label)
     {
@@ -46,13 +46,13 @@ abstract class AbstractFieldsContainer extends Collection implements FieldsConta
         return $this->label;
     }
 
-    public function setParent($item): self
+    final public function setParent(object $item): self
     {
         $this->parent = $item;
         return $this;
     }
 
-    public function getParent()
+    final public function getParent(): ?object
     {
         return $this->parent;
     }
