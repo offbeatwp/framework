@@ -3,7 +3,6 @@ namespace OffbeatWP\Foundation;
 
 use DI\Container;
 use DI\ContainerBuilder;
-use Exception;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
@@ -20,9 +19,9 @@ use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
-final class App
+class App
 {
-    private static ?App $instance;
+    private static ?App $instance = null;
 
     /** @var AbstractService[] */
     private array $services = [];
@@ -32,14 +31,17 @@ final class App
 
     public static function singleton(): App
     {
-        if (!isset(static::$instance)) {
+        if (!static::$instance) {
             static::$instance = new static();
         }
 
         return static::$instance;
     }
 
-    /** @throws Exception */
+    final private function __construct() {
+        // App is a singleton and must instantiated via the App::singleton() method.
+    }
+
     public function bootstrap(): void
     {
         $containerBuilder = new ContainerBuilder();
@@ -66,7 +68,7 @@ final class App
         ];
     }
 
-    private function initiateBaseServices($containerBuilder): void
+    private function initiateBaseServices(ContainerBuilder $containerBuilder): void
     {
         foreach ([WordpressService::class, RoutesService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
             $this->initiateService($service, $containerBuilder);
