@@ -8,7 +8,7 @@ class Post extends AbstractField {
      * @param string|string[] $postTypes
      * @return $this
      */
-    public function fromPostTypes($postTypes = []): self
+    public function fromPostTypes($postTypes): self
     {
         $this->setAttribute('post_types', $postTypes);
         return $this;

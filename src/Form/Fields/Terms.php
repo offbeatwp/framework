@@ -8,7 +8,7 @@ class Terms extends AbstractField {
      * @param string|string[] $taxonomy
      * @return $this
      */
-    public function fromTaxonomy($taxonomy = []): self
+    public function fromTaxonomy($taxonomy): self
     {
         $this->setAttribute('taxonomy', $taxonomy);
         return $this;
