@@ -13,6 +13,15 @@ abstract class AbstractField implements FieldInterface
     /** @var string[]|bool[] */
     public $attributes = [];
 
+    public function __construct() {
+        $this->init();
+    }
+
+    protected function init(): void
+    {
+        // Only exists to be overriden
+    }
+
     /**
      * @param non-empty-string $id
      * @param string $label
