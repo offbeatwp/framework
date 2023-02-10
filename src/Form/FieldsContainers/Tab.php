@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Form\FieldsContainers;
 
-class Tab extends AbstractFieldsContainer
+class Tab extends AbstractFormContainer
 {
     public const TYPE = 'tab';
     public const LEVEL = 10;

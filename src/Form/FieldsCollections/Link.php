@@ -4,7 +4,7 @@ namespace OffbeatWP\Form\FieldsCollections;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Form\Fields\Text;
 
-class Link extends FieldsCollection {
+class Link extends AbstractFieldsCollection {
     public function __construct()
     {
         parent::__construct();

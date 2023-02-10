@@ -3,16 +3,15 @@ namespace OffbeatWP\Form;
 
 use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
-use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
-use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
+use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
+use OffbeatWP\Form\FieldsContainers\AbstractFormContainer;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
-use OffbeatWP\Form\Fields\FieldInterface;
 
-class Form extends FieldsContainer
+final class Form extends FormParentItem
 {
-    private FieldsContainer $activeItem;
+    private FormParentItem $activeItem;
     private array $fieldKeys = [];
     private string $fieldPrefix = '';
 
@@ -23,14 +22,14 @@ class Form extends FieldsContainer
     }
 
     /**
-     * @param FieldInterface|AbstractFieldsContainer|FieldsCollectionInterface|Form $item
+     * @param AbstractField|AbstractFormContainer|AbstractFieldsCollection|Form $item
      * @param bool $prepend
      * @return Form
      */
     public function add($item, bool $prepend = false): self
     {
         // If item is Tab and active item is Section move back to parent
-        if ($this->getActiveItem() !== $this && $item instanceof AbstractFieldsContainer) {
+        if ($this->getActiveItem() !== $this && $item instanceof AbstractFormContainer) {
             while ($item->getLevel() < $this->getActiveItem()->getLevel()) {
                 $this->closeField();
             }
@@ -50,7 +49,7 @@ class Form extends FieldsContainer
                 $this->push($item);
             }
 
-            if ($item instanceof AbstractFieldsContainer) {
+            if ($item instanceof AbstractFormContainer) {
                 $this->setActiveItem($item);
                 $this->setParent($item);
             }
@@ -62,7 +61,7 @@ class Form extends FieldsContainer
         $this->getActiveItem()->add($item);
 
         // If item is instance of Fields Container, change the active item.
-        if ($item instanceof AbstractFieldsContainer) {
+        if ($item instanceof FormParentItem) {
             $this->setActiveItem($item);
             $this->setParent($item);
         }
@@ -70,12 +69,12 @@ class Form extends FieldsContainer
         return $this;
     }
 
-    public function getActiveItem(): FieldsContainer
+    public function getActiveItem(): FormParentItem
     {
         return $this->activeItem;
     }
 
-    public function setActiveItem(FieldsContainer $item): self
+    public function setActiveItem(FormParentItem $item): self
     {
         $this->activeItem = $item;
         return $this;
@@ -99,10 +98,21 @@ class Form extends FieldsContainer
         return $this;
     }
 
-    public function addField(FieldInterface $field): self
+    public function addField(AbstractField $field): self
     {
         $this->fieldKeys[] = $field->getId();
-        return parent::addField($field);
+        $this->push($field);
+
+        return $this;
+    }
+
+    public function addFields(iterable $fields): self
+    {
+        foreach ($fields as $field) {
+            $this->addField($field);
+        }
+
+        return $this;
     }
 
     public function closeField(): self
@@ -165,7 +175,7 @@ class Form extends FieldsContainer
         $values = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof AbstractField || $item instanceof AbstractFieldsContainer) {
+            if ($item instanceof AbstractField || $item instanceof AbstractFormContainer) {
                 $values[$item->getId()] = $item->getAttribute('default');
             }
         }

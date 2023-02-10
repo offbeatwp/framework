@@ -1,9 +1,9 @@
 <?php
 namespace OffbeatWP\Form\FieldsContainers;
 
-use OffbeatWP\Form\FieldsContainer;
+use OffbeatWP\Form\FormParentItem;
 
-abstract class AbstractFieldsContainer extends FieldsContainer
+abstract class AbstractFormContainer extends FormParentItem
 {
     protected string $id;
     protected string $label;
