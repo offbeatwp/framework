@@ -137,6 +137,12 @@ abstract class AbstractField
         return $this;
     }
 
+    public function conditionalLogic(array $conditionalLogic): self
+    {
+        $this->setAttribute('conditional_logic', $conditionalLogic);
+        return $this;
+    }
+
     /* Functions */
     public function toArray(): array
     {
