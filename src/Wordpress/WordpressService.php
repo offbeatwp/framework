@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Wordpress;
 
+use Illuminate\Support\Collection;
 use OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder;
 use OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder;
 use OffbeatWP\Support\Wordpress\AdminPage;
@@ -46,7 +47,7 @@ class WordpressService
     {
         $menus = config('menus');
 
-        if (is_object($menus) && $menus->isNotEmpty()) {
+        if ($menus instanceof Collection && $menus->isNotEmpty()) {
             register_nav_menus($menus->toArray());
         }
     }

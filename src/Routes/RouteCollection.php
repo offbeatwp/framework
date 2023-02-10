@@ -1,12 +1,17 @@
 <?php
 namespace OffbeatWP\Routes;
 
-use Symfony\Component\Routing\Route as SymfonyRoute;
+use IteratorAggregate;
+use OffbeatWP\Routes\Routes\Route;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
+/**
+ * @implements IteratorAggregate<string, Route>
+ * @method Route[] all
+ */
 class RouteCollection extends SymfonyRouteCollection
 {
-    /** @param SymfonyRoute[] $routes */
+    /** @param Route[] $routes */
     public function __construct (array $routes = [])
     {
         foreach ($routes as $name => $route) {
