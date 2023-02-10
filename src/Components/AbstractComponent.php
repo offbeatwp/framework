@@ -49,7 +49,7 @@ abstract class AbstractComponent
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
      * @return string[]|string[][]|Form[]
      */
-    abstract static function settings();
+    abstract public static function settings();
 
     public function __construct(View $view, ContextInterface $context = null)
     {
