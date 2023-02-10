@@ -8,7 +8,7 @@ class Terms extends AbstractField {
      * @param string|string[] $taxonomy
      * @return $this
      */
-    public function fromTaxonomy($taxonomy = [])
+    public function fromTaxonomy($taxonomy = []): self
     {
         $this->setAttribute('taxonomy', $taxonomy);
         return $this;
@@ -18,5 +18,10 @@ class Terms extends AbstractField {
     {
         $this->setAttribute('field_type', 'multi_select');
         return $this;
+    }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
     }
 }
