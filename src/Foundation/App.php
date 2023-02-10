@@ -13,6 +13,7 @@ use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\Routes\Route;
 use OffbeatWP\Routes\RoutesService;
+use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
 use WP_Error;
 use function DI\autowire;
@@ -21,8 +22,10 @@ use function DI\create;
 final class App
 {
     private static ?App $instance;
+
+    /** @var AbstractService[] */
+    private array $services = [];
     public $container;
-    private $services = [];
     protected $config = null;
     protected $route;
 
@@ -105,16 +108,14 @@ final class App
 
     private function registerServices(): void
     {
-        if ($this->services) {
-            foreach ($this->services as $service) {
-                if (is_callable([$service, 'register'])) {
-                    $this->container->call([$service, 'register']);
-                }
+        foreach ($this->services as $service) {
+            if (is_callable([$service, 'register'])) {
+                $this->container->call([$service, 'register']);
             }
         }
-
     }
 
+    /** @return null|false|AbstractService */
     public function getService(string $serviceClass)
     {
         if ($this->isServiceInitiated($serviceClass)) {
