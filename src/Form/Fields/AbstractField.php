@@ -62,7 +62,7 @@ abstract class AbstractField
     }
 
     /* Basic Getters */
-    public function getType(): string
+    final public function getType(): string
     {
         return 'field';
     }
