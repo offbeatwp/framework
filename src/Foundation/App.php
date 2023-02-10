@@ -26,7 +26,7 @@ final class App
     /** @var AbstractService[] */
     private array $services = [];
     public $container;
-    protected $config = null;
+    protected ?Config $config = null;
     protected $route;
 
     public static function singleton(): App
@@ -164,6 +164,7 @@ final class App
         if ($config !== null) {
             return $this->config->get($config, $default);
         }
+
         return $this->config;
     }
 
