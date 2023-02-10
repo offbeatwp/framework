@@ -49,7 +49,7 @@ abstract class AbstractField
         return $this;
     }
 
-    public function setAttribute(string $key, $value = null): self
+    public function setAttribute(string $key, $value): self
     {
         $this->attributes[$key] = $value;
         return $this;
