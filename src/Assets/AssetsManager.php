@@ -56,21 +56,21 @@ class AssetsManager
             $path = $this->getAssetsPath('manifest.json', true);
 
             if (file_exists($path)) {
-                $this->manifest = json_decode($path);
+                $this->manifest = json_decode($path, false);
             }
         }
 
         return $this->manifest;
     }
 
-    /** @return object|bool|null */
+    /** @return object|false|null */
     public function getAssetsEntryPoints()
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
 
             if (file_exists($path)) {
-                $this->entrypoints = json_decode($path);
+                $this->entrypoints = json_decode($path, false);
             }
         }
 
