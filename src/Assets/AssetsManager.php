@@ -8,15 +8,12 @@ class AssetsManager
     public $manifest = null;
     public $entrypoints = null;
 
-    /**
-     * @param string $filename
-     * @return false|string
-     */
-    public function getUrl($filename)
+    /** @return false|string */
+    public function getUrl(string $filename)
     {
-        if ($this->getEntryFromAssetsManifest($filename) !== false) {
-            $path = $this->getEntryFromAssetsManifest($filename);
+        $path = $this->getEntryFromAssetsManifest($filename);
 
+        if ($path !== false) {
             if (strpos($path, 'http') === 0) {
                 return $path;
             }
@@ -27,24 +24,20 @@ class AssetsManager
         return false;
     }
 
-    /**
-     * @param string $filename
-     * @return false|string
-     */
-    public function getPath($filename)
+    /** @return false|string */
+    public function getPath(string $filename)
     {
-        if ($this->getEntryFromAssetsManifest($filename) !== false) {
-            return $this->getAssetsPath($this->getEntryFromAssetsManifest($filename));
+        $path = $this->getEntryFromAssetsManifest($filename);
+
+        if ($path !== false) {
+            return $this->getAssetsPath($path);
         }
 
         return false;
     }
 
-    /**
-     * @param non-empty-string $filename
-     * @return string|false
-     */
-    public function getEntryFromAssetsManifest($filename)
+    /** @return string|false */
+    public function getEntryFromAssetsManifest(string $filename)
     {
         return $this->getAssetsManifest()->$filename ?? false;
     }
