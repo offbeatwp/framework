@@ -66,12 +66,8 @@ class AssetsManager
         return $this->entrypoints;
     }
 
-    /**
-     * @param string $entry
-     * @param string $key
-     * @return array|false
-     */
-    public function getAssetsByEntryPoint($entry, $key)
+    /** @return array|false */
+    public function getAssetsByEntryPoint(string $entry, string $key)
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
@@ -148,7 +144,7 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueStyles($entry, $dependencies = []): void
+    public function enqueueStyles(string $entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
@@ -181,7 +177,7 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueScripts($entry, $dependencies = []): void
+    public function enqueueScripts(string $entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
 
