@@ -78,11 +78,7 @@ class AssetsManager
         return $entrypoints->entrypoints->$entry->$key;
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    public function getAssetsPath($path = '', $forceAssetsPath = false)
+    public function getAssetsPath(string $path = '', bool $forceAssetsPath = false): string
     {
         $path = ltrim($path, '/');
         $path = ($path) ? "/{$path}" : '';
@@ -111,11 +107,7 @@ class AssetsManager
         return get_template_directory() . '/assets' . $path; 
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    public function getAssetsUrl($path = '')
+    public function getAssetsUrl(string $path = ''): string
     {
         if (strpos($path, 'http') === 0) {
             return $path;
