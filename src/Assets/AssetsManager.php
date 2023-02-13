@@ -52,8 +52,12 @@ class AssetsManager
     /** @return object|bool|null */
     public function getAssetsManifest()
     {
-        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json', true))) {
-            $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json', true)));
+        if ($this->manifest === null) {
+            $path = $this->getAssetsPath('manifest.json', true);
+
+            if (file_exists($path)) {
+                $this->manifest = json_decode($path);
+            }
         }
 
         return $this->manifest;
@@ -62,8 +66,12 @@ class AssetsManager
     /** @return object|bool|null */
     public function getAssetsEntryPoints()
     {
-        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json', true))) {
-            $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json', true)));
+        if ($this->entrypoints === null) {
+            $path = $this->getAssetsPath('entrypoints.json', true);
+
+            if (file_exists($path)) {
+                $this->entrypoints = json_decode($path);
+            }
         }
 
         return $this->entrypoints;
