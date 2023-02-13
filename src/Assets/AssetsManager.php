@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Assets;
 
 class AssetsManager
@@ -49,7 +50,8 @@ class AssetsManager
     }
 
     /** @return object|bool|null */
-    public function getAssetsManifest() {
+    public function getAssetsManifest()
+    {
         if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json', true))) {
             $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json', true)));
         }
@@ -58,7 +60,8 @@ class AssetsManager
     }
 
     /** @return object|bool|null */
-    public function getAssetsEntryPoints() {
+    public function getAssetsEntryPoints()
+    {
         if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json', true))) {
             $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json', true)));
         }
@@ -100,11 +103,11 @@ class AssetsManager
         }
 
         $basepath = config('app.assets.path');
-        if ($basepath)  {
+        if ($basepath) {
             return $basepath . $path;
         }
 
-        return get_template_directory() . '/assets' . $path; 
+        return get_template_directory() . '/assets' . $path;
     }
 
     public function getAssetsUrl(string $path = ''): string
@@ -124,11 +127,11 @@ class AssetsManager
 
 
         $url = config('app.assets.url');
-        if ($url)  {
+        if ($url) {
             return $url . $path;
         }
 
-        return get_template_directory_uri() . '/assets' . $path; 
+        return get_template_directory_uri() . '/assets' . $path;
     }
 
     /**
@@ -152,7 +155,7 @@ class AssetsManager
                 $baseName = basename($asset);
                 $handle = substr($baseName, 0, strpos($baseName, '.'));
                 $handle = 'owp-' . $handle;
-                
+
                 if (!wp_style_is($handle)) {
                     wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
                 }
