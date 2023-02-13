@@ -154,11 +154,10 @@ class AssetsManager
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
-            foreach ($assets as $key => $asset) {
+            foreach ($assets as $asset) {
                 $asset = ltrim($asset, './');
-
-                $handle = basename($asset);
-                $handle = substr(basename($asset), 0, strpos($handle, '.'));
+                $baseName = basename($asset);
+                $handle = substr($baseName, 0, strpos($baseName, '.'));
                 $handle = 'owp-' . $handle;
                 
                 if (!wp_style_is($handle)) {
