@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Assets;
 
 class AssetsManager
@@ -49,29 +50,35 @@ class AssetsManager
     }
 
     /** @return object|bool|null */
-    public function getAssetsManifest() {
-        if ($this->manifest === null && file_exists($this->getAssetsPath('manifest.json', true))) {
-            $this->manifest = json_decode(file_get_contents($this->getAssetsPath('manifest.json', true)));
+    public function getAssetsManifest()
+    {
+        if ($this->manifest === null) {
+            $path = $this->getAssetsPath('manifest.json', true);
+
+            if (file_exists($path)) {
+                $this->manifest = json_decode($path, false);
+            }
         }
 
         return $this->manifest;
     }
 
-    /** @return object|bool|null */
-    public function getAssetsEntryPoints() {
-        if ($this->entrypoints === null && file_exists($this->getAssetsPath('entrypoints.json', true))) {
-            $this->entrypoints = json_decode(file_get_contents($this->getAssetsPath('entrypoints.json', true)));
+    /** @return object|false|null */
+    public function getAssetsEntryPoints()
+    {
+        if ($this->entrypoints === null) {
+            $path = $this->getAssetsPath('entrypoints.json', true);
+
+            if (file_exists($path)) {
+                $this->entrypoints = json_decode($path, false);
+            }
         }
 
         return $this->entrypoints;
     }
 
-    /**
-     * @param string $entry
-     * @param string $key
-     * @return array|false
-     */
-    public function getAssetsByEntryPoint($entry, $key)
+    /** @return array|false */
+    public function getAssetsByEntryPoint(string $entry, string $key)
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
@@ -82,11 +89,7 @@ class AssetsManager
         return $entrypoints->entrypoints->$entry->$key;
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    public function getAssetsPath($path = '', $forceAssetsPath = false)
+    public function getAssetsPath(string $path = '', bool $forceAssetsPath = false): string
     {
         $path = ltrim($path, '/');
         $path = ($path) ? "/{$path}" : '';
@@ -108,18 +111,14 @@ class AssetsManager
         }
 
         $basepath = config('app.assets.path');
-        if ($basepath)  {
+        if ($basepath) {
             return $basepath . $path;
         }
 
-        return get_template_directory() . '/assets' . $path; 
+        return get_template_directory() . '/assets' . $path;
     }
 
-    /**
-     * @param string $path
-     * @return string
-     */
-    public function getAssetsUrl($path = '')
+    public function getAssetsUrl(string $path = ''): string
     {
         if (strpos($path, 'http') === 0) {
             return $path;
@@ -136,11 +135,11 @@ class AssetsManager
 
 
         $url = config('app.assets.url');
-        if ($url)  {
+        if ($url) {
             return $url . $path;
         }
 
-        return get_template_directory_uri() . '/assets' . $path; 
+        return get_template_directory_uri() . '/assets' . $path;
     }
 
     /**
@@ -148,7 +147,7 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueStyles($entry, $dependencies = []): void
+    public function enqueueStyles(string $entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
@@ -164,7 +163,7 @@ class AssetsManager
                 $baseName = basename($asset);
                 $handle = substr($baseName, 0, strpos($baseName, '.'));
                 $handle = 'owp-' . $handle;
-                
+
                 if (!wp_style_is($handle)) {
                     wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
                 }
@@ -181,7 +180,7 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueScripts($entry, $dependencies = []): void
+    public function enqueueScripts(string $entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
 
