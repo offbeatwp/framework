@@ -8,15 +8,12 @@ class AssetsManager
     public $manifest = null;
     public $entrypoints = null;
 
-    /**
-     * @param string $filename
-     * @return false|string
-     */
-    public function getUrl($filename)
+    /** @return false|string */
+    public function getUrl(string $filename)
     {
-        if ($this->getEntryFromAssetsManifest($filename) !== false) {
-            $path = $this->getEntryFromAssetsManifest($filename);
+        $path = $this->getEntryFromAssetsManifest($filename);
 
+        if ($path !== false) {
             if (strpos($path, 'http') === 0) {
                 return $path;
             }
@@ -27,29 +24,25 @@ class AssetsManager
         return false;
     }
 
-    /**
-     * @param string $filename
-     * @return false|string
-     */
-    public function getPath($filename)
+    /** @return false|string */
+    public function getPath(string $filename)
     {
-        if ($this->getEntryFromAssetsManifest($filename) !== false) {
-            return $this->getAssetsPath($this->getEntryFromAssetsManifest($filename));
+        $path = $this->getEntryFromAssetsManifest($filename);
+
+        if ($path !== false) {
+            return $this->getAssetsPath($path);
         }
 
         return false;
     }
 
-    /**
-     * @param non-empty-string $filename
-     * @return string|false
-     */
-    public function getEntryFromAssetsManifest($filename)
+    /** @return string|false */
+    public function getEntryFromAssetsManifest(string $filename)
     {
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
-    /** @return object|bool|null */
+    /** @return object|false|null */
     public function getAssetsManifest()
     {
         if ($this->manifest === null) {
@@ -147,14 +140,9 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueStyles(string $entry, $dependencies = []): void
+    public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
-
-        if (!is_array($dependencies)) {
-            $dependencies = [];
-        }
-
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
@@ -180,13 +168,9 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueScripts(string $entry, $dependencies = []): void
+    public function enqueueScripts(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
-
-        if (!is_array($dependencies)) {
-            $dependencies = [];
-        }
 
         $dependencies[] = 'jquery';
         $dependencies = array_unique($dependencies);
