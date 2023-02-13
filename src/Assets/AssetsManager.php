@@ -42,7 +42,7 @@ class AssetsManager
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
-    /** @return object|bool|null */
+    /** @return object|false|null */
     public function getAssetsManifest()
     {
         if ($this->manifest === null) {
@@ -140,14 +140,9 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueStyles(string $entry, $dependencies = []): void
+    public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
-
-        if (!is_array($dependencies)) {
-            $dependencies = [];
-        }
-
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
@@ -173,13 +168,9 @@ class AssetsManager
      * @param string[] $dependencies
      * @return void
      */
-    public function enqueueScripts(string $entry, $dependencies = []): void
+    public function enqueueScripts(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
-
-        if (!is_array($dependencies)) {
-            $dependencies = [];
-        }
 
         $dependencies[] = 'jquery';
         $dependencies = array_unique($dependencies);
