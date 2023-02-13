@@ -49,7 +49,7 @@ class AssetsManager
             $path = $this->getAssetsPath('manifest.json', true);
 
             if (file_exists($path)) {
-                $this->manifest = json_decode($path, false);
+                $this->manifest = json_decode(file_get_contents($path), false);
             }
         }
 
@@ -63,7 +63,7 @@ class AssetsManager
             $path = $this->getAssetsPath('entrypoints.json', true);
 
             if (file_exists($path)) {
-                $this->entrypoints = json_decode($path, false);
+                $this->entrypoints = json_decode(file_get_contents($path), false);
             }
         }
 
