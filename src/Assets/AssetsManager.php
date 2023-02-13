@@ -69,7 +69,7 @@ class AssetsManager
     /**
      * @param string $entry
      * @param string $key
-     * @return mixed|false
+     * @return array|false
      */
     public function getAssetsByEntryPoint($entry, $key)
     {
@@ -107,7 +107,8 @@ class AssetsManager
             return $basepath . $path;
         }
 
-        if ($basepath = config('app.assets.path'))  {
+        $basepath = config('app.assets.path');
+        if ($basepath)  {
             return $basepath . $path;
         }
 
@@ -134,14 +135,19 @@ class AssetsManager
         }
 
 
-        if ($url = config('app.assets.url'))  {
+        $url = config('app.assets.url');
+        if ($url)  {
             return $url . $path;
         }
 
         return get_template_directory_uri() . '/assets' . $path; 
     }
 
-    /** @param string $entry */
+    /**
+     * @param string $entry
+     * @param string[] $dependencies
+     * @return void
+     */
     public function enqueueStyles($entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
@@ -150,29 +156,31 @@ class AssetsManager
             $dependencies = [];
         }
 
-        $dependencies[] = 'jquery';
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
-            foreach ($assets as $key => $asset) {
+            foreach ($assets as $asset) {
                 $asset = ltrim($asset, './');
-
-                $handle = basename($asset);
-                $handle = substr(basename($asset), 0, strpos($handle, '.'));
+                $baseName = basename($asset);
+                $handle = substr($baseName, 0, strpos($baseName, '.'));
                 $handle = 'owp-' . $handle;
                 
                 if (!wp_style_is($handle)) {
-                    wp_enqueue_style($handle, $this->getAssetsUrl($asset), []);
+                    wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
                 }
             }
 
             return;
         }
 
-        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), []);
+        wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
     }
 
-    /** @param string $entry */
+    /**
+     * @param string $entry
+     * @param string[] $dependencies
+     * @return void
+     */
     public function enqueueScripts($entry, $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
@@ -185,11 +193,10 @@ class AssetsManager
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
-            foreach ($assets as $key => $asset) {
+            foreach ($assets as $asset) {
                 $asset = ltrim($asset, './');
-
-                $handle = basename($asset);
-                $handle = substr(basename($asset), 0, strpos($handle, '.'));
+                $baseName = basename($asset);
+                $handle = substr($baseName, 0, strpos($baseName, '.'));
                 $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
