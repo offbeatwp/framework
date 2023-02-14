@@ -16,7 +16,7 @@ trait WpDateTimeTrait
 
     /**
      * Will attempt create a WpDateTime object from the passed variable.
-     * @param non-empty-string|DateTimeInterface $datetime
+     * @param string|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
      * @return self
      */

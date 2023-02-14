@@ -20,7 +20,7 @@ trait OffbeatQueryTrait
 
     /**
      * Get objects where the meta value is NOT equal to the given value.
-     * @param non-empty-string $metaKey
+     * @param string $metaKey
      * @param scalar|null $value
      * @return static
      */

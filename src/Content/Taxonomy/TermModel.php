@@ -147,7 +147,7 @@ class TermModel implements TermModelInterface
     }
 
     /**
-     * @param non-empty-string $key
+     * @param string $key
      * @param bool $single
      * @return mixed
      */
@@ -158,7 +158,7 @@ class TermModel implements TermModelInterface
 
     /**
      * <b>This will immideatly update the term meta, even is save() is not called!</b>
-     * @param non-empty-string $key
+     * @param string $key
      * @param mixed $value
      * @return bool|int|WP_Error
      */

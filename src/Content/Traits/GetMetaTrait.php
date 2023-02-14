@@ -41,7 +41,7 @@ trait GetMetaTrait
      * Returns the metaInput value if one with the given key exists.<br>
      * If not, returns the meta value with the given key from the database.<br>
      * If the value isn't in metaInput or the database, <i>null</i> is returned.
-     * @param non-empty-string $key
+     * @param string $key
      * @return mixed
      */
     public function getMetaValue(string $key)
@@ -115,7 +115,7 @@ trait GetMetaTrait
     /**
      * Attempt to retrieve a meta value as a WpDateTime object.<br>
      * If no meta exists or if conversion fails, <i>null</i> will be returned.
-     * @param non-empty-string $key Meta key.
+     * @param string $key Meta key.
      * @return WpDateTime|null
      */
     public function getMetaDateTime(string $key): ?WpDateTime
@@ -135,7 +135,7 @@ trait GetMetaTrait
     /**
      * Attempt to retrieve a meta value as a WpDateTimeImmuteable object.<br>
      * If no meta exists or if conversion fails, <i>null</i> will be returned.
-     * @param non-empty-string $key Meta key.
+     * @param string $key Meta key.
      * @return WpDateTimeImmutable|null
      */
     public function getMetaDateTimeImmuteable(string $key): ?WpDateTimeImmutable

@@ -78,7 +78,7 @@ class ArrayHelper {
      * Retrieve several random values from an array.
      * @template T
      * @param T[] $array
-     * @param positive-int $minAmount
+     * @param int $minAmount
      * @param int $maxAmount
      * @return T[]
      */
