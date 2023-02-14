@@ -4,28 +4,25 @@ namespace OffbeatWP\Content\Taxonomy;
 
 class TaxonomyBuilder
 {
-    /** @var non-empty-string|null */
-    private $taxonomy = null;
-    /** @var non-empty-string[]|string|null */
-    private $postTypes = null;
-    /** @var array */
-    private $args = [];
-    /** @var class-string|null */
-    private $modelClass = null;
+    private string $taxonomy;
+    /** @var string[] */
+    private array $postTypes;
+    private array $args = [];
+    /** @var class-string<TermModel>|null */
+    private ?string $modelClass = null;
 
     /**
-     * @param non-empty-string $taxonomy
-     * @param non-empty-string|non-empty-string[] $postTypes
-     * @param non-empty-string $pluralName
-     * @param non-empty-string $singularLabel
-     * @return $this
+     * @param string $taxonomy
+     * @param string|string[] $postTypes
+     * @param string $pluralName
+     * @param string $singularLabel
      */
-    public function make($taxonomy, $postTypes, $pluralName, $singularLabel): TaxonomyBuilder
+    public function make(string $taxonomy, $postTypes, $pluralName, $singularLabel = ''): TaxonomyBuilder
     {
         $this->taxonomy = $taxonomy;
-        $this->postTypes = $postTypes;
+        $this->postTypes = (array)$postTypes;
         $this->args = [
-            'labels' => ['name' => $pluralName, 'singular_name' => $singularLabel],
+            'labels' => ['name' => $pluralName, 'singular_name' => $singularLabel ?: $pluralName],
         ];
 
         return $this;
@@ -112,10 +109,13 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function model($modelClass): TaxonomyBuilder
+    /**
+     * @param class-string<TermModel> $modelClass
+     * @return TaxonomyBuilder
+     */
+    public function model(string $modelClass): TaxonomyBuilder
     {
         $this->modelClass = $modelClass;
-
         return $this;
     }
 
