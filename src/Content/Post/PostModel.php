@@ -210,29 +210,20 @@ class PostModel implements PostModelInterface
         return apply_filters('the_content', $content);
     }
 
-    /** @return static */
-    public function setId(?int $id)
+    public function setId(?int $id): self
     {
         $this->wpPost->ID = $id;
         return $this;
     }
 
-    /**
-     * Set the (unfiltered) post content.
-     * @param string $content
-     * @return static
-     */
-    public function setContent(string $content)
+    /** Set the (unfiltered) post content. */
+    public function setContent(string $content): self
     {
         $this->wpPost->post_content = $content;
         return $this;
     }
 
-    /**
-     * @param int $authorId
-     * @return static
-     */
-    public function setAuthor(int $authorId)
+    public function setAuthor(int $authorId): self
     {
         $this->wpPost->post_author = $authorId;
         return $this;
@@ -242,9 +233,9 @@ class PostModel implements PostModelInterface
      * @param string|string[]|int[]|WP_Term[] $terms An array of terms to set for the post, or a string of term slugs separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
      * @param string $taxonomy Taxonomy name of the term(s) to set.
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
-     * @return static
+     * @return self
      */
-    public function setTerms($terms, string $taxonomy, bool $append = false)
+    public function setTerms($terms, string $taxonomy, bool $append = false): self
     {
         $this->termsToSet[] = ['termIds' => $terms, 'taxonomy' => $taxonomy, 'append' => $append];
         return $this;
@@ -312,12 +303,8 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_status;
     }
 
-    /**
-     * @see PostStatus
-     * @param string $newStatus
-     * @return static
-     */
-    public function setPostStatus(string $newStatus)
+    /** @see PostStatus */
+    public function setPostStatus(string $newStatus): self
     {
         $this->wpPost->post_status = $newStatus;
         return $this;
@@ -503,8 +490,7 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    /** @return static */
-    public function setMetas(iterable $metadata)
+    public function setMetas(iterable $metadata): self
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
@@ -515,8 +501,8 @@ class PostModel implements PostModelInterface
 
     /**
      * Moves a meta value from one key to another.
-     * @param non-empty-string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
-     * @param non-empty-string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
+     * @param string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
+     * @param string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
      */
     public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
     {
@@ -578,22 +564,19 @@ class PostModel implements PostModelInterface
         return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
-    /** @return static */
-    public function setExcerpt(string $excerpt)
+    public function setExcerpt(string $excerpt): self
     {
         $this->wpPost->post_excerpt = $excerpt;
         return $this;
     }
 
-    /** @return static */
-    public function setTitle(string $title)
+    public function setTitle(string $title): self
     {
         $this->wpPost->post_title = $title;
         return $this;
     }
 
-    /** @return static */
-    public function setPostName(string $postName)
+    public function setPostName(string $postName): self
     {
         $this->wpPost->post_name = $postName;
         return $this;
@@ -668,37 +651,18 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
-    /**
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param string $taxonomy
-     * @return static|null
-     */
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?self
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    /**
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param string $taxonomy
-     * @return static|null
-     */
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?self
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-    /**
-     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
-     * @param bool $inSameTerm
-     * @param string $excludedTerms
-     * @param bool $previous
-     * @param string $taxonomy
-     * @return static|null
-     */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
+    /** @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>. */
+    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?self
     {
         $currentPost = $GLOBALS['post'] ?? null;
 
@@ -800,8 +764,8 @@ class PostModel implements PostModelInterface
         return wp_untrash_post($this->getId());
     }
 
-    /** @return static Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
-    public function replicate()
+    /** Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
+    public function replicate(): self
     {
         $copy = clone $this;
 
