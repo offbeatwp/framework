@@ -55,7 +55,7 @@ abstract class OffbeatModelCollection extends Collection
 
     /**
      * Run a map using a property on the containing models. This will return a basic Collection.
-     * @param non-empty-string $methodName
+     * @param string $methodName
      * @return Collection
      */
     public function mapAs(string $methodName): Collection

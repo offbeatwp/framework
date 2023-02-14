@@ -23,7 +23,7 @@ abstract class AbstractField implements FieldInterface
     }
 
     /**
-     * @param non-empty-string $id
+     * @param string $id
      * @param string $label
      * @return static
      */

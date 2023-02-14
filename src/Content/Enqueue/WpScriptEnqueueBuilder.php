@@ -20,9 +20,8 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
      * @param string $varName Must be alphanumeric.
      * @param scalar|array|object|null $varValue Will be encoded with json_encode.
      * @param bool $includeAfter When true, the variable will included after the script.
-     * @return static
      */
-    public function addVariable(string $varName, $varValue, bool $includeAfter = false)
+    public function addVariable(string $varName, $varValue, bool $includeAfter = false): self
     {
         if (!ctype_alnum($varName)) {
             throw new InvalidArgumentException('AddBinding requires a alphanumeric variable name.');
@@ -37,22 +36,18 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
     }
 
     /**
-     * Localize a script.
+     * Localize a script.<br>
      * Works only if the script has already been registered.
-     * @param string[] $l10n Accepts an associative array $l10n and creates a JavaScript object.
-     * @return static
      */
-    public function localize(array $l10n, string $objectName = 'tl') {
+    public function localize(array $l10n, string $objectName = 'tl'): self
+    {
         $this->l10nData = $l10n;
         $this->l10nName = $objectName;
         return $this;
     }
 
-    /**
-     * @param bool $value Whether to enqueue the script before BODY instead of in the HEAD.
-     * @return static
-     */
-    public function setInFooter(bool $value = true)
+    /** Whether to enqueue the script before BODY instead of in the HEAD. */
+    public function setInFooter(bool $value = true): self
     {
         $this->inFooter = $value;
         return $this;
@@ -78,8 +73,8 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
         }
     }
 
-    /** @return WpScriptHolder|null Returns a WpScript instance if script was registered successfully or null if it was not. */
-    public function register(string $handle)
+    /** Returns a WpScript instance if script was registered successfully or null if it was not. */
+    public function register(string $handle): ?WpScriptHolder
     {
         if (wp_register_script($handle, $this->src, $this->deps, $this->version, $this->inFooter)) {
             return new WpScriptHolder($handle);

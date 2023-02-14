@@ -71,7 +71,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param non-empty-string $method
+     * @param string $method
      * @param array $parameters
      * @return mixed
      */
@@ -85,7 +85,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param non-empty-string $method
+     * @param string $method
      * @param array $parameters
      * @return mixed
      */
@@ -112,7 +112,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param non-empty-string $name
+     * @param string $name
      * @return null
      */
     public function __get($name)
@@ -127,7 +127,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param non-empty-string $name
+     * @param string $name
      * @return bool
      */
     public function __isset($name): bool
@@ -279,7 +279,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param non-empty-string $metaKey The ID stored in this meta-field will be used to retrieve the attachment.
+     * @param string $metaKey The ID stored in this meta-field will be used to retrieve the attachment.
      * @return string|null The attachment url or <i>null</i> if the attachment could not be found.
      */
     public function getAttachmentUrl(string $metaKey): ?string

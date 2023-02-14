@@ -149,7 +149,7 @@ class UserModel
     }
 
     /**
-     * @param non-empty-string $key Metadata name.
+     * @param string $key Metadata name.
      * @return $this
      */
     public function unsetMeta(string $key): self

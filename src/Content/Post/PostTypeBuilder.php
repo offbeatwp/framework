@@ -160,7 +160,7 @@ class PostTypeBuilder
     /**
      * @param string $name
      * @param string $label
-     * @param non-empty-string|callable $modelFunc
+     * @param string|callable $modelFunc
      * @param string $metaKeyForSorting
      * @return $this
      */
