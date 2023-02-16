@@ -1,12 +1,16 @@
 <?php
 namespace OffbeatWP\Config;
 
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
 class Config {
+    /** @var App */
     private $app;
+    /** @var mixed[]|null */
     protected $config = null;
 
+    /** @param App $app */
     public function __construct($app) {
         $this->app = $app;
 
@@ -15,7 +19,8 @@ class Config {
         }
     }
 
-    private function loadConfig() {
+    private function loadConfig(): void
+    {
         $configFiles = glob($this->app->configPath() . '/*.php');
 
         foreach ($configFiles as $configFile) {
@@ -28,7 +33,7 @@ class Config {
         $this->loadConfigEnv();
     }
 
-    protected function loadConfigEnvFile()
+    protected function loadConfigEnvFile(): void
     {
         $env = get_template_directory() . '/env.php';
         if (file_exists($env)) {
@@ -42,7 +47,8 @@ class Config {
         }
     }
 
-    protected function loadConfigEnv() {
+    protected function loadConfigEnv(): void
+    {
         if (is_array($this->all())) {
             foreach ($this->all() as $configKey => $configSet) {
                 if (!ArrayHelper::isAssoc($configSet)) {
@@ -79,7 +85,8 @@ class Config {
         }
     }
 
-    public function get(string $key, $default = null) {
+    public function get(string $key, $default = null)
+    {
         $config = $this->config;
         $return = ArrayHelper::getValueFromDottedKey($key, $config);
 
@@ -90,13 +97,19 @@ class Config {
         return $return;
     }
 
+    /**
+     * @param array-key $key
+     * @param mixed $value
+     * @return mixed
+     */
     public function set($key, $value) {
         $this->config[$key] = $value;
 
         return $value;
     }
 
-    public function all() {
+    public function all()
+    {
         return $this->config;
     }
 }
