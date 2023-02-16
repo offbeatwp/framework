@@ -4,7 +4,7 @@ use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
 if (!function_exists('offbeat')) {
-    function offbeat($service = null) {
+    function offbeat(?string $service = null) {
         if ($service !== null) {
             return container($service);
         }
@@ -20,7 +20,7 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('container')) {
-    function container($definition = null) {
+    function container(?string $definition = null) {
         if ($definition !== null) {
             return offbeat()->container->get($definition);
         }
@@ -30,7 +30,7 @@ if (!function_exists('container')) {
 }
 
 if (!function_exists('assetUrl')) {
-    function assetUrl($file) {
+    function assetUrl(string $file) {
         return offbeat('assets')->getUrl($file);
     }
 }
