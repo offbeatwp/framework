@@ -14,7 +14,7 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('config')) {
-    function config($config = null, $default = null) {
+    function config(?string $config = null, $default = null) {
         return offbeat()->config($config, $default);
     }
 }

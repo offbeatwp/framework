@@ -161,7 +161,7 @@ final class App
         return get_template_directory() . '/components';
     }
 
-    public function config($config, $default)
+    public function config(?string $config, $default)
     {
         if ($this->config === null) {
             $this->config = new Config($this);

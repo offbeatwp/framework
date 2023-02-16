@@ -79,9 +79,8 @@ class Config {
         }
     }
 
-    public function get($key, $default = null) {
+    public function get(string $key, $default = null) {
         $config = $this->config;
-
         $return = ArrayHelper::getValueFromDottedKey($key, $config);
 
         if (is_array($return)) {
