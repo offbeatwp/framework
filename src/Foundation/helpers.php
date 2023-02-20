@@ -4,6 +4,11 @@ use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
 if (!function_exists('offbeat')) {
+    /**
+     * @template T
+     * @param class-string<T>|null $service
+     * @return T|App
+     */
     function offbeat(?string $service = null) {
         if ($service !== null) {
             return container($service);
@@ -20,6 +25,11 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('container')) {
+    /**
+     * @template T
+     * @param class-string<T>|null $definition
+     * @return T
+     */
     function container(?string $definition = null) {
         if ($definition !== null) {
             return offbeat()->container->get($definition);
