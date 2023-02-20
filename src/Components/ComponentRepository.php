@@ -7,28 +7,20 @@ use OffbeatWP\Layout\ContextInterface;
 
 class ComponentRepository
 {
-    /** @var ContextInterface|null */
-    protected $layoutContext;
     /** @var class-string<AbstractComponent>[] */
-    protected $components = [];
-    /** @var int */
-    protected $renderedComponents = 0;
+    protected array $components = [];
+    protected ?ContextInterface $layoutContext = null;
+    protected int $renderedComponents = 0;
 
     public function getLayoutContext(): ?ContextInterface
     {
         return $this->layoutContext;
     }
 
-    /**
-     * Set the context to be distributed when rendering components.
-     *
-     * @param ContextInterface|null $context
-     * @return $this
-     */
-    public function setLayoutContext(ContextInterface $context = null): ComponentRepository
+    /** Set the context to be distributed when rendering components. */
+    public function setLayoutContext(?ContextInterface $context = null): ComponentRepository
     {
         $this->layoutContext = $context;
-
         return $this;
     }
 
