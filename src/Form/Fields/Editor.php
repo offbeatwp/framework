@@ -26,4 +26,9 @@ class Editor extends AbstractField {
         $this->attribute('media_upload', (int)$showMediaUploadButtons);
         return $this;
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }

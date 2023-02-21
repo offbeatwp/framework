@@ -9,4 +9,9 @@ class Posts extends AbstractField {
 
         return $this;
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }

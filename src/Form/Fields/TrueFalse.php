@@ -9,4 +9,9 @@ class TrueFalse extends AbstractField {
         $this->setAttribute('ui', (int)$useStylisedUI);
         return $this;
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }

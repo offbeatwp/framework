@@ -6,7 +6,11 @@ class Term extends AbstractField {
 
     public function fromTaxonomies($taxonomies = []) {
         $this->setAttribute('taxonomies', $taxonomies);
-
         return $this;
+    }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
     }
 }

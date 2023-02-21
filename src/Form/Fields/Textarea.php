@@ -7,4 +7,9 @@ class Textarea extends AbstractField {
     public function __construct () {
         $this->setAttribute('new_lines', 'br');
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }

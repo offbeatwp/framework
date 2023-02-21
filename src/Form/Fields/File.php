@@ -7,7 +7,11 @@ class File extends AbstractField {
     public function allowedFileTypes(string $allowedFileTypes): File
     {
         $this->setAttribute('allowed_file_types', $allowedFileTypes);
-
         return $this;
+    }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
     }
 }
