@@ -985,7 +985,7 @@ class PostModel implements PostModelInterface
 
         return [];
     }
-    
+
     private function updateRelation(string $key): void
     {
         $method = $this->getMethodByRelationKey($key);
