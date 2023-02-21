@@ -1,5 +1,6 @@
 # phpstan.neon
 parameters:
+    phpVersion: 80200
     treatPhpDocTypesAsCertain: false
     scanFiles:
           - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php

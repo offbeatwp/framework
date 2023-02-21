@@ -7,14 +7,16 @@ use WP_REST_Server;
 
 class RestEndpointBuilder
 {
-    public $namespace;
-    public $route;
+    public string $namespace;
+    public string $route;
+    /** @var callable */
     public $callback;
-    public $method = WP_REST_Server::READABLE;
-    public $args = [];
+    public string $method = WP_REST_Server::READABLE;
+    public array $args = [];
+    /** @var callable */
     public $permissionCallback = '__return_true';
 
-    public function __construct(string $namespace, string $route, callable $callback)
+    final public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
         $this->route = $route;
@@ -24,7 +26,6 @@ class RestEndpointBuilder
     public function method(string $method): RestEndpointBuilder
     {
         $this->method = $method;
-
         return $this;
     }
 
@@ -51,7 +52,6 @@ class RestEndpointBuilder
     public function permission(Closure $callback): RestEndpointBuilder
     {
         $this->permissionCallback = $callback;
-
         return $this;
     }
 
@@ -69,17 +69,17 @@ class RestEndpointBuilder
         });
     }
 
-    public static function get(string $namespace, string $route, callable $callback)
+    final public static function get(string $namespace, string $route, callable $callback): RestEndpointBuilder
     {
         return new static($namespace, $route, $callback);
     }
 
-    public static function post(string $namespace, string $route, callable $callback)
+    final public static function post(string $namespace, string $route, callable $callback): RestEndpointBuilder
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
 
-    public static function delete(string $namespace, string $route, callable $callback)
+    final public static function delete(string $namespace, string $route, callable $callback): RestEndpointBuilder
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
     }

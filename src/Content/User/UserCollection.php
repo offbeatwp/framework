@@ -78,7 +78,7 @@ class UserCollection extends OffbeatModelCollection
      * @param array-key $key
      * @param int|WP_User|UserModel $value
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         parent::offsetSet($key, $this->createValidUserModel($value));
     }
