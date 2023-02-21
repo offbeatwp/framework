@@ -12,7 +12,7 @@ abstract class AbstractCommand {
      * @param string[] $argsNamed
      * @return mixed
      */
-    abstract public function execute($args, $argsNamed);
+    abstract public function execute(array $args, array $argsNamed);
 
     /**
      * @param Exception|string|Throwable|WP_Error $message
@@ -27,7 +27,7 @@ abstract class AbstractCommand {
      * @param string $message
      * @return void
      */
-    public function log($message)
+    public function log(string $message)
     {
         WP_CLI::log($message);
     }
@@ -36,7 +36,7 @@ abstract class AbstractCommand {
      * @param string $message
      * @return void
      */
-    public function success($message)
+    public function success(string $message)
     {
         WP_CLI::success($message);
     }
