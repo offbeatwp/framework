@@ -167,6 +167,10 @@ class Wordpress
      */
     public function shortcode(?string $code): ?string
     {
+        if ($code === null) {
+            trigger_error('Wordpress::shortcode expects a string as parameter but received NULL.', E_USER_DEPRECATED);
+        }
+
         return do_shortcode($code);
     }
 
@@ -223,8 +227,11 @@ class Wordpress
      */
     public function attachmentUrl(?int $attachmentID, $size = 'full')
     {
-        $attachment = wp_get_attachment_image_src($attachmentID, $size);
+        if ($attachmentID === null) {
+            trigger_error('Wordpress::attachmentUrl expects an integer as parameter, but received NULL.', E_USER_DEPRECATED);
+        }
 
+        $attachment = wp_get_attachment_image_src($attachmentID, $size);
         if (!$attachment) {
             return false;
         }
@@ -242,6 +249,10 @@ class Wordpress
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid']): string
     {
+        if (!is_int($attachmentID)) {
+            trigger_error('Wordpress::getAttachmentImage expects an integer as parameter.', E_USER_DEPRECATED);
+        }
+
         return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
     }
 
