@@ -24,4 +24,9 @@ class Radio extends AbstractField {
         }
         return $this->options;
     }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }
