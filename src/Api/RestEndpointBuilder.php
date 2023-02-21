@@ -5,7 +5,7 @@ namespace OffbeatWP\Api;
 use Closure;
 use WP_REST_Server;
 
-final class RestEndpointBuilder
+class RestEndpointBuilder
 {
     public string $namespace;
     public string $route;
@@ -16,7 +16,7 @@ final class RestEndpointBuilder
     /** @var callable */
     public $permissionCallback = '__return_true';
 
-    public function __construct(string $namespace, string $route, callable $callback)
+    final public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
         $this->route = $route;
