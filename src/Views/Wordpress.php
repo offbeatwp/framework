@@ -165,7 +165,7 @@ class Wordpress
      * @param string|null $code
      * @return string
      */
-    public function shortcode(?string $code): string
+    public function shortcode(?string $code): ?string
     {
         return do_shortcode($code);
     }
