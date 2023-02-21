@@ -2,16 +2,23 @@
 
 namespace OffbeatWP\Form\Fields;
 
-abstract class AbstractField implements FieldInterface
+abstract class AbstractField
 {
-    /** @var string */
-    public $id;
-    /** @var string */
-    public $label;
-    /** @var bool */
-    public $required;
-    /** @var string[]|bool[] */
-    public $attributes = [];
+    protected string $id;
+    protected string $label;
+    protected array $attributes = [];
+
+    final public function __construct(string $id, string $label)
+    {
+        $this->id = $id;
+        $this->label = $label;
+        $this->init();
+    }
+
+    protected function init(): void
+    {
+        // Only exists to be overriden
+    }
 
     public function __construct() {
         $this->init();
@@ -29,67 +36,50 @@ abstract class AbstractField implements FieldInterface
      */
     public static function make(string $id, string $label)
     {
-        $field = new static();
-
-        $field->setId($id);
-        $field->setLabel($label);
-
-        return $field;
+        return new static($id, $label);
     }
 
     /* Basic Setters */
-    public function setId(string $id): void
+    public function setId(string $id): self
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setLabel(string $label): void
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+        return $this;
     }
 
-    /** @internal Use required instead */
-    public function setRequired(bool $required = true): void
+    public function setRequired(bool $required = true): self
     {
-        $this->required = $required;
         $this->setAttribute('required', $required);
+        return $this;
     }
 
-    /** @internal Use attribute instead */
-    public function setAttribute($key, $value = null): void
+    public function setAttribute(string $key, $value): self
     {
         $this->attributes[$key] = $value;
+        return $this;
     }
 
-    /** @internal Use attributes instead */
-    public function setAttributes(array $attributes): void
+    public function setAttributes(array $attributes): self
     {
         $this->attributes = array_merge($this->attributes, $attributes);
+        return $this;
     }
 
     /* Basic Getters */
-    public function getType(): string
+    final public function getType(): string
     {
         return 'field';
     }
 
-    public function getFieldType(): string
-    {
-        return static::FIELD_TYPE;
-    }
+    abstract public function getFieldType(): string;
 
     public function getId(): string
     {
-        if (!$this->id) {
-            $label = $this->getLabel();
-            $label = iconv('utf-8', 'ascii//TRANSLIT', $label);
-            $label = preg_replace('/[^A-Za-z0-9_-]/', '', $label);
-            $label = str_replace(' ', '', $label);
-            $label = strtolower($label);
-
-            return $label;
-        }
-
         return $this->id;
     }
 
@@ -100,7 +90,7 @@ abstract class AbstractField implements FieldInterface
 
     public function getRequired(): bool
     {
-        return $this->required;
+        return (bool)$this->getAttribute('required');
     }
 
     public function getAttributes(): array
@@ -108,58 +98,57 @@ abstract class AbstractField implements FieldInterface
         return $this->attributes;
     }
 
-    public function getAttribute($key)
+    public function getAttribute(string $key)
     {
         return $this->getAttributes()[$key] ?? null;
     }
 
     /* Chain setters */
-    public function description(string $description): AbstractField
+    public function description(string $description): self
     {
         $this->setAttribute('description', $description);
-
         return $this;
     }
 
-    public function default($value): AbstractField
+    public function default($value): self
     {
         $this->setAttribute('default', $value);
-
         return $this;
     }
 
-    public function attributes(array $attributes): AbstractField
+    public function attributes(array $attributes): self
     {
         $this->setAttributes($attributes);
-
         return $this;
     }
 
-    public function required(bool $required = true): AbstractField
+    public function required(bool $required = true): self
     {
         $this->setRequired($required);
-
         return $this;
     }
 
-    public function allowNull(bool $allowNull = true): AbstractField
+    public function allowNull(bool $allowNull = true): self
     {
         $this->setAttribute('allow_null', ($allowNull) ? 1 : 0);
-
         return $this;
     }
 
-    public function attribute(string $key, $value): AbstractField
+    public function attribute(string $key, $value): self
     {
         $this->setAttribute($key, $value);
-
         return $this;
     }
 
-    public function width(int $percent): AbstractField
+    public function width(int $percent): self
     {
         $this->setAttribute('width', $percent);
+        return $this;
+    }
 
+    public function conditionalLogic(array $conditionalLogic): self
+    {
+        $this->setAttribute('conditional_logic', $conditionalLogic);
         return $this;
     }
 

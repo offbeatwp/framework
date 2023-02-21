@@ -2,10 +2,9 @@
 namespace OffbeatWP\Form\Fields;
 
 class Textalign extends Select {
-
-    public function __construct()
+    public function init(): void
     {        
-        $this->addOptions([
+        $this->setOptions([
             ''              => __('Default', 'offbeatwp'),
             'left'          => __('Left', 'offbeatwp'),
             'center'        => __('Center', 'offbeatwp'),
@@ -13,4 +12,8 @@ class Textalign extends Select {
         ]);
     }
 
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
+    }
 }

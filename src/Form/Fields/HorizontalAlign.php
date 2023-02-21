@@ -2,14 +2,18 @@
 namespace OffbeatWP\Form\Fields;
 
 class HorizontalAlign extends Select {
-
-    public function __construct()
+    public function init(): void
     {        
-        $this->addOptions([
+        $this->setOptions([
             ''              => __('Default', 'offbeatwp'),
             'left'          => __('Left', 'offbeatwp'),
             'center'        => __('Center', 'offbeatwp'),
             'right'         => __('Right', 'offbeatwp'),
         ]);
+    }
+
+    public function getFieldType(): string
+    {
+        return self::FIELD_TYPE;
     }
 }

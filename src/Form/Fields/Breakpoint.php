@@ -3,9 +3,9 @@ namespace OffbeatWP\Form\Fields;
 
 class Breakpoint extends Select {
 
-    public function __construct()
+    public function init(): void
     {        
-        $this->addOptions([
+        $this->setOptions([
             '0px'    => __('Extra Small (Mobile)', 'offbeatwp'),
             '576px'  => __('Small (Mobile)', 'offbeatwp'),
             '768px'  => __('Medium (Tablet)', 'offbeatwp'),
@@ -13,5 +13,4 @@ class Breakpoint extends Select {
             '1200px' => __('Extra Large (Desktop)', 'offbeatwp')
         ]);
     }
-
 }
