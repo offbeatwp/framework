@@ -6,7 +6,7 @@ use OffbeatWP\Foundation\App;
 if (!function_exists('offbeat')) {
     /**
      * @template T
-     * @param class-string<T>|null $service
+     * @param class-string<T>|string|null $service
      * @return T|App
      */
     function offbeat(?string $service = null) {
@@ -27,7 +27,7 @@ if (!function_exists('config')) {
 if (!function_exists('container')) {
     /**
      * @template T
-     * @param class-string<T>|null $definition
+     * @param class-string<T>|string|null $definition
      * @return T
      */
     function container(?string $definition = null) {
@@ -46,6 +46,7 @@ if (!function_exists('assetUrl')) {
 }
 
 if (!function_exists('setting')) {
+    /** @param string $key */
     function setting($key) {
         return offbeat(SiteSettings::class)->get($key);
     }
