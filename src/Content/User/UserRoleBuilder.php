@@ -76,9 +76,14 @@ final class UserRoleBuilder
         return $this;
     }
 
-    public static function make(string $roleName, string $roleDisplayName): UserRoleBuilder
+    public static function create(string $roleName, string $roleDisplayName = ''): UserRoleBuilder
     {
-        return new static($roleName, $roleDisplayName);
+        return self::make($roleName, $roleDisplayName);
+    }
+
+    public static function make(string $roleName, string $roleDisplayName = ''): UserRoleBuilder
+    {
+        return new static($roleName, $roleDisplayName ?: $roleName);
     }
 
     public function set(): void

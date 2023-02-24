@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+/** @final */
 class TaxonomyBuilder
 {
     private string $taxonomy;
@@ -12,10 +13,21 @@ class TaxonomyBuilder
     private ?string $modelClass = null;
 
     /**
+     * @param string $taxonomyName Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long
+     * @param string[] $objectTypes Array of object types with which the taxonomy should be associated.
+     * @return TaxonomyBuilder
+     */
+    public static function create(string $taxonomyName, array $objectTypes = []): TaxonomyBuilder
+    {
+        return (new TaxonomyBuilder())->make($taxonomyName, $objectTypes ?: null, $taxonomyName);
+    }
+
+    /**
      * @param string $taxonomy
      * @param string|string[] $postTypes
      * @param string $pluralName
      * @param string $singularLabel
+     * @return TaxonomyBuilder
      */
     public function make(string $taxonomy, $postTypes, $pluralName, $singularLabel = ''): TaxonomyBuilder
     {
@@ -32,7 +44,6 @@ class TaxonomyBuilder
     public function capabilities(array $capabilities = []): TaxonomyBuilder
     {
         $this->args['capabilities'] = $capabilities;
-
         return $this;
     }
 
@@ -40,7 +51,6 @@ class TaxonomyBuilder
     public function rewrite($rewrite): TaxonomyBuilder
     {
         $this->args['rewrite'] = $rewrite;
-
         return $this;
     }
 
@@ -105,7 +115,6 @@ class TaxonomyBuilder
     public function hierarchical(bool $hierarchical = false): TaxonomyBuilder
     {
         $this->args['hierarchical'] = $hierarchical;
-
         return $this;
     }
 
@@ -122,7 +131,6 @@ class TaxonomyBuilder
     public function notPubliclyQueryable(): TaxonomyBuilder
     {
         $this->args['publicly_queryable'] = false;
-
         return $this;
     }
 
@@ -130,7 +138,6 @@ class TaxonomyBuilder
     public function public(bool $public = true): TaxonomyBuilder
     {
         $this->args['public'] = $public;
-
         return $this;
     }
 
@@ -138,7 +145,6 @@ class TaxonomyBuilder
     public function showUi(bool $showUi = true): TaxonomyBuilder
     {
         $this->args['show_ui'] = $showUi;
-
         return $this;
     }
 
@@ -146,7 +152,6 @@ class TaxonomyBuilder
     public function showNavMenus(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_in_nav_menus'] = $show;
-
         return $this;
     }
 
@@ -154,7 +159,6 @@ class TaxonomyBuilder
     public function showTagCloud(bool $show = true): TaxonomyBuilder
     {
         $this->args['show_tagcloud'] = $show;
-
         return $this;
     }
 
@@ -162,7 +166,6 @@ class TaxonomyBuilder
     public function inMenu(bool $menu): TaxonomyBuilder
     {
         $this->args['show_in_menu'] = $menu;
-
         return $this;
     }
 
@@ -170,7 +173,6 @@ class TaxonomyBuilder
     public function inRest(bool $rest = true): TaxonomyBuilder
     {
         $this->args['show_in_rest'] = $rest;
-
         return $this;
     }
 
@@ -178,7 +180,6 @@ class TaxonomyBuilder
     public function showAdminColumn(bool $showAdminColumn = true): TaxonomyBuilder
     {
         $this->args['show_admin_column'] = $showAdminColumn;
-
         return $this;
     }
 
@@ -186,7 +187,6 @@ class TaxonomyBuilder
     public function hideMetaBox(): TaxonomyBuilder
     {
         $this->args['meta_box_cb'] = false;
-
         return $this;
     }
 
