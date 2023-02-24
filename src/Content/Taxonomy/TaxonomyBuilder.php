@@ -13,16 +13,6 @@ class TaxonomyBuilder
     private ?string $modelClass = null;
 
     /**
-     * @param string $taxonomyName Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long
-     * @param string[] $objectTypes Array of object types with which the taxonomy should be associated.
-     * @return TaxonomyBuilder
-     */
-    public static function create(string $taxonomyName, array $objectTypes = []): TaxonomyBuilder
-    {
-        return (new TaxonomyBuilder())->make($taxonomyName, $objectTypes ?: null, $taxonomyName);
-    }
-
-    /**
      * @param string $taxonomy
      * @param string|string[] $postTypes
      * @param string $pluralName

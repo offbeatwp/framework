@@ -15,15 +15,15 @@ class Taxonomy
     private array $taxonomyModels = [];
 
     /**
-     * @param string $name
-     * @param string|string[] $postTypes
-     * @param string $pluralName
-     * @param string $singleName
+     * @param string $name Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long.
+     * @param string|string[] $postTypes Object types with which the taxonomy should be associated.
+     * @param string $pluralName Optional. Can also be set through the labels method.
+     * @param string $singleName Optional. Can also be set through the labels method.
      * @return TaxonomyBuilder
      */
-    public static function make(string $name, $postTypes, string $pluralName, string $singleName): TaxonomyBuilder
+    public static function make(string $name, $postTypes, string $pluralName = '', string $singleName = ''): TaxonomyBuilder
     {
-        return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName, $singleName);
+        return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }
 
     /**

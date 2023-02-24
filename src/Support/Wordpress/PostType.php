@@ -9,11 +9,18 @@ class PostType
     public const DEFAULT_POST_MODEL = PostModel::class;
 
     /** @var class-string<PostModel>[] */
-    private $postTypeModels = [];
+    private array $postTypeModels = [];
 
-    public static function make(string $name, string $pluralName, string $singleName): PostTypeBuilder
+    /**
+     * @param string $name Must not exceed 20 characters and may only contain lowercase alphanumeric characters, dashes, and underscores.
+     * @param string $pluralName Optional. Can also be set through the labels method.
+     * @param string $singleName Optional. Can also be set through the labels method.
+     * @return PostTypeBuilder
+     * @see sanitize_key()
+     */
+    public static function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
     {
-        return (new PostTypeBuilder())->make($name, $pluralName, $singleName);
+        return (new PostTypeBuilder())->make($name, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }
 
     /**

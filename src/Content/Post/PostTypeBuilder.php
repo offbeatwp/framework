@@ -16,16 +16,6 @@ class PostTypeBuilder
     private ?string $postType = null;
     private array $postTypeArgs = [];
 
-    /**
-     * @param string $postTypeKey Must not exceed 20 characters and may only contain lowercase alphanumeric characters, dashes, and underscores.
-     * @see sanitize_key()
-     * @return PostTypeBuilder
-     */
-    public static function create(string $postTypeKey): PostTypeBuilder
-    {
-        return (new PostTypeBuilder())->make($postTypeKey, $postTypeKey);
-    }
-
     public function make(string $postType, string $pluralLabel, string $singularLabel = ''): PostTypeBuilder
     {
         $this->postType = $postType;
