@@ -4,6 +4,7 @@ namespace OffbeatWP\Support\Traits;
 
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 use TypeError;
 
 trait WpDateTimeTrait
@@ -15,19 +16,43 @@ trait WpDateTimeTrait
     }
 
     /**
+     * Attempts to create a DateTime object from a string or DateTimeInterface object.<br>
+     * Will return <i>null</i> on failure.<br>
+     * Timezone will default to UTC.
+     * @param string|DateTimeInterface $datetime
+     * @param DateTimeZone|null $timezone Timezone defaults to <b>UTC.</b> Ignored if passed datetime already specifies a timezone.
+     */
+    public static function create($datetime, ?DateTimeZone $timezone = null): ?self
+    {
+        if ($datetime instanceof DateTimeInterface) {
+            $timezone = $datetime->getTimezone() ?: $timezone;
+            $datetime = $datetime->format('Y-m-d H:i:s.u');
+        }
+
+        if (!is_string($datetime)) {
+            throw new TypeError('WpDateTime::create expects a string or DateTimeInterface as argument.');
+        }
+
+        try {
+            return new self($datetime, $timezone);
+        } catch (Exception $exception) {
+            return null;
+        }
+    }
+
+    /**
      * Will attempt create a WpDateTime object from the passed variable.
      * @param string|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
-     * @return self
      */
-    public static function make($datetime, ?DateTimeZone $timezone = null)
+    public static function make($datetime, ?DateTimeZone $timezone = null): self
     {
         if ($datetime) {
             if (is_string($datetime)) {
-                return new static($datetime, $timezone);
+                return new self($datetime, $timezone);
             }
 
-            return new static($datetime->format('Y-m-d H:i:s.u'), $datetime->getTimezone());
+            return new self($datetime->format('Y-m-d H:i:s.u'), $datetime->getTimezone());
         }
 
         throw new TypeError('WpDateTime::make expects a non-empty-string or DateTimeInterface as argument.');
