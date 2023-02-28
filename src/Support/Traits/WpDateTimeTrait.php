@@ -34,7 +34,7 @@ trait WpDateTimeTrait
         }
 
         try {
-            return new self($datetime, $timezone);
+            return new self($datetime, $timezone ?: new DateTimeZone('UTC'));
         } catch (Exception $exception) {
             return null;
         }
