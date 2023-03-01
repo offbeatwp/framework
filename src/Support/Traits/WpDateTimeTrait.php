@@ -275,8 +275,8 @@ trait WpDateTimeTrait
     }
 
     /** @interal */
-    private static function getLastDateException(): Exception
+    private static function getLastDateException(string $prefix = ''): Exception
     {
-        return new Exception(reset(static::getLastErrors()['errors']));
+        return new Exception($prefix . reset(static::getLastErrors()['errors']));
     }
 }

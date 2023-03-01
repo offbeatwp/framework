@@ -34,7 +34,7 @@ final class WpDateTime extends DateTime
     {
         $object = parent::createFromFormat($format, $datetime, $timezone);
         if (!$object) {
-            throw static::getLastDateException();
+            throw static::getLastDateException('Could not create DateTime from format: ');
         }
 
         return self::createFromInterface($object);
