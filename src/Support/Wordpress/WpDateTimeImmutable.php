@@ -5,6 +5,7 @@ namespace OffbeatWP\Support\Wordpress;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
 
@@ -25,6 +26,20 @@ final class WpDateTimeImmutable extends DateTimeImmutable
     public static function createFromInterface(DateTimeInterface $object): WpDateTimeImmutable
     {
         return new static($object->format('Y-m-d H:i:s.u'), $object->getTimezone() ?: null);
+    }
+
+    /**
+     * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
+     * Throws exception is no date object can be created.
+     */
+    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): WpDateTimeImmutable
+    {
+        $object = parent::createFromFormat($format, $datetime, $timezone);
+        if (!$object) {
+            throw new Exception(reset(parent::getLastErrors()['errors']));
+        }
+
+        return self::createFromInterface($object);
     }
 
     /**
