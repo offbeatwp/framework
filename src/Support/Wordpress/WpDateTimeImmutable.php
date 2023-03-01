@@ -3,14 +3,15 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
-use Exception;
 use InvalidArgumentException;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
 
 /**
  * An extension of the DateTimeImmutable class.<br>
  * When instantiated, it will default to using the format and timezone defined by the WordPress blog.<br>
+ * Additionally, the methods called by this class will throw exceptions when invalid data is provided rather than returning false.
  */
 final class WpDateTimeImmutable extends DateTimeImmutable
 {
@@ -21,18 +22,9 @@ final class WpDateTimeImmutable extends DateTimeImmutable
         parent::__construct($datetime, $timezone ?: wp_timezone());
     }
 
-    /**
-     * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
-     * Throws exception is no date object can be created.
-     */
-    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): WpDateTimeImmutable
+    public static function createFromInterface(DateTimeInterface $object): WpDateTimeImmutable
     {
-        $output = DateTimeImmutable::createFromFormat($format, $datetime, $timezone);
-        if (!$output) {
-            throw new Exception(reset(WpDateTimeImmutable::getLastErrors()['errors']));
-        }
-
-        return new WpDateTimeImmutable($output->format('Y-m-d H:i:s.u'), $output->getTimezone());
+        return new static($object->format('Y-m-d H:i:s.u'), $object->getTimezone() ?: null);
     }
 
     /**
