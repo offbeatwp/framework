@@ -4,6 +4,7 @@ namespace OffbeatWP\Support\Traits;
 
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 use TypeError;
 
 trait WpDateTimeTrait
@@ -271,5 +272,11 @@ trait WpDateTimeTrait
     public function getTimezone(): DateTimeZone
     {
         return parent::getTimezone();
+    }
+
+    /** @interal */
+    private static function getLastDateException(): Exception
+    {
+        return new Exception(reset(static::getLastErrors()['errors']));
     }
 }
