@@ -5,8 +5,6 @@ namespace OffbeatWP\Support\Wordpress;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
-use Exception;
-use InvalidArgumentException;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
 
 /**
@@ -36,7 +34,7 @@ final class WpDateTime extends DateTime
     {
         $object = parent::createFromFormat($format, $datetime, $timezone);
         if (!$object) {
-            throw new Exception(reset(parent::getLastErrors()['errors']));
+            throw static::getLastDateException('Could not create DateTime from format: ');
         }
 
         return self::createFromInterface($object);
@@ -53,7 +51,7 @@ final class WpDateTime extends DateTime
     {
         $result = parent::modify($modifier);
         if (!$result) {
-            throw new InvalidArgumentException('Invalid DateTime modifier: ' . $modifier);
+            throw static::getLastDateException();
         }
 
         return $result;
