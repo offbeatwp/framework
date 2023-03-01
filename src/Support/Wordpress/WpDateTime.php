@@ -4,6 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use DateTime;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
 
@@ -18,6 +19,16 @@ final class WpDateTime extends DateTime
     public function __construct(string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
         parent::__construct($datetime, $timezone ?: wp_timezone());
+    }
+
+    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): WpDateTime
+    {
+        $output = DateTime::createFromFormat($format, $datetime, $timezone);
+        if (!$output) {
+            throw new Exception(reset(DateTime::getLastErrors()['errors']));
+        }
+
+        return new WpDateTime($output->format('Y-m-d H:i:s.u'));
     }
 
     /**
