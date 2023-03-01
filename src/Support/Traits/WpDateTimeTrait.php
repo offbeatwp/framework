@@ -4,7 +4,6 @@ namespace OffbeatWP\Support\Traits;
 
 use DateTimeInterface;
 use DateTimeZone;
-use Exception;
 use TypeError;
 
 trait WpDateTimeTrait
@@ -16,21 +15,6 @@ trait WpDateTimeTrait
     public static function now(?DateTimeZone $timezone = null)
     {
         return new static('now', $timezone);
-    }
-
-    /**
-     * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
-     * Throws exception is no date object can be created.
-     * @return static
-     */
-    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null)
-    {
-        $object = parent::createFromFormat($format, $datetime, $timezone);
-        if (!$object) {
-            throw new Exception(reset(parent::getLastErrors()['errors']));
-        }
-
-        return self::createFromInterface($object);
     }
 
     /**
