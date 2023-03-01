@@ -110,25 +110,37 @@ trait WpDateTimeTrait
         return $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
     }
 
-    /** Set the time to the start of the day. (00:00:00) */
+    /**
+     * Set the time to the start of the day. (00:00:00)
+     * @return static
+     */
     public function startOfDay()
     {
         return $this->setTime(0, 0);
     }
 
-    /** Set the time to the end of the day. (23:59:59) */
+    /**
+     * Set the time to the end of the day. (23:59:59)
+     * @return static
+     */
     public function endOfDay()
     {
         return $this->setTime(23, 59, 59, 999999);
     }
 
-    /** Set the date and time to the start of the month. */
+    /**
+     * Set the date and time to the start of the month.
+     * @return static
+     */
     public function startOfMonth()
     {
         return $this->setDay(1)->startOfDay();
     }
 
-    /** Set the date and time to the end of the month. */
+    /**
+     * Set the date and time to the end of the month.
+     * @return static
+     */
     public function endOfMonth()
     {
         return $this->setDay($this->getDaysInMonth())->endOfDay();
