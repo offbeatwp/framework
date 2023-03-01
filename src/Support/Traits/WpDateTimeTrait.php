@@ -4,21 +4,40 @@ namespace OffbeatWP\Support\Traits;
 
 use DateTimeInterface;
 use DateTimeZone;
+use Exception;
 use TypeError;
 
 trait WpDateTimeTrait
 {
-    /** @return static */
+    /**
+     * Return the current DateTime.
+     * @return static
+     */
     public static function now(?DateTimeZone $timezone = null)
     {
         return new static('now', $timezone);
     }
 
     /**
+     * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
+     * Throws exception is no date object can be created.
+     * @return static
+     */
+    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null)
+    {
+        $object = parent::createFromFormat($format, $datetime, $timezone);
+        if (!$object) {
+            throw new Exception(reset(parent::getLastErrors()['errors']));
+        }
+
+        return self::createFromInterface($object);
+    }
+
+    /**
      * Will attempt create a WpDateTime object from the passed variable.
      * @param string|DateTimeInterface $datetime
      * @param DateTimeZone|null $timezone
-     * @return self
+     * @return static
      */
     public static function make($datetime, ?DateTimeZone $timezone = null)
     {
@@ -27,7 +46,7 @@ trait WpDateTimeTrait
                 return new static($datetime, $timezone);
             }
 
-            return new static($datetime->format('Y-m-d H:i:s.u'), $datetime->getTimezone());
+            return static::createFromInterface($datetime);
         }
 
         throw new TypeError('WpDateTime::make expects a non-empty-string or DateTimeInterface as argument.');
@@ -250,5 +269,11 @@ trait WpDateTimeTrait
     public function __toString(): string
     {
         return $this->format('Y-m-d H:i:s');
+    }
+
+    /** @inheritDoc */
+    public function getTimezone(): DateTimeZone
+    {
+        return parent::getTimezone();
     }
 }

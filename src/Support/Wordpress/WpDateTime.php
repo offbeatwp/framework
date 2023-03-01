@@ -3,6 +3,7 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
@@ -10,6 +11,7 @@ use OffbeatWP\Support\Traits\WpDateTimeTrait;
 /**
  * An extension of the DateTime class.<br>
  * When instantiated, it will default to using the format and timezone defined by the WordPress blog.<br>
+ * Additionally, the methods called by this class will throw exceptions when invalid data is provided rather than returning false.
  */
 final class WpDateTime extends DateTime
 {
@@ -18,6 +20,11 @@ final class WpDateTime extends DateTime
     public function __construct(string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
         parent::__construct($datetime, $timezone ?: wp_timezone());
+    }
+
+    public static function createFromInterface(DateTimeInterface $object): WpDateTime
+    {
+        return new static($object->format('Y-m-d H:i:s.u'), $object->getTimezone() ?: null);
     }
 
     /**
