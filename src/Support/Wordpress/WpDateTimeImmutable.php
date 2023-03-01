@@ -21,6 +21,10 @@ final class WpDateTimeImmutable extends DateTimeImmutable
         parent::__construct($datetime, $timezone ?: wp_timezone());
     }
 
+    /**
+     * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
+     * Throws exception is no date object can be created.
+     */
     public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): WpDateTimeImmutable
     {
         $output = DateTimeImmutable::createFromFormat($format, $datetime, $timezone);
