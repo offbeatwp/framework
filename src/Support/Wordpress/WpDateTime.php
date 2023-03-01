@@ -21,6 +21,10 @@ final class WpDateTime extends DateTime
         parent::__construct($datetime, $timezone ?: wp_timezone());
     }
 
+    /**
+     * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
+     * Throws exception is no date object can be created.
+     */
     public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): WpDateTime
     {
         $output = DateTime::createFromFormat($format, $datetime, $timezone);
@@ -28,7 +32,7 @@ final class WpDateTime extends DateTime
             throw new Exception(reset(DateTime::getLastErrors()['errors']));
         }
 
-        return new WpDateTime($output->format('Y-m-d H:i:s.u'));
+        return new WpDateTime($output->format('Y-m-d H:i:s.u'), $output->getTimezone());
     }
 
     /**

@@ -32,7 +32,7 @@ final class WpDateTimeImmutable extends DateTimeImmutable
             throw new Exception(reset(WpDateTimeImmutable::getLastErrors()['errors']));
         }
 
-        return new WpDateTimeImmutable($output->format('Y-m-d H:i:s.u'));
+        return new WpDateTimeImmutable($output->format('Y-m-d H:i:s.u'), $output->getTimezone());
     }
 
     /**
