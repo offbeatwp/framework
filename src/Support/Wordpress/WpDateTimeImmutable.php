@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use OffbeatWP\Support\Traits\WpDateTimeTrait;
+use TypeError;
 
 /**
  * An extension of the DateTimeImmutable class.<br>
@@ -29,9 +30,15 @@ final class WpDateTimeImmutable extends DateTimeImmutable
     /**
      * Returns new WpDateTimeImmutable object formatted according to the specified format.<br>
      * Throws exception is no date object can be created.
+     * @param string $format
+     * @param string $datetime
      */
-    public static function createFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): WpDateTimeImmutable
+    public static function createFromFormat($format, $datetime, ?DateTimeZone $timezone = null): WpDateTimeImmutable
     {
+        if (!is_string($format) || !is_string($datetime)) {
+            throw new TypeError('WpDateTimeImmutable::createFromFormat expects the $format and $datetime arguments to be strings.');
+        }
+
         $object = parent::createFromFormat($format, $datetime, $timezone);
         if (!$object) {
             throw static::getLastDateException('Could not create DateTime from format: ');
