@@ -2,16 +2,16 @@
 namespace OffbeatWP\Routes;
 
 use IteratorAggregate;
-use OffbeatWP\Routes\Routes\Route;
+use OffbeatWP\Routes\Routes\Route as OffbeatRoute;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
 /**
- * @implements IteratorAggregate<string, Route>
- * @method Route[] all
+ * @implements IteratorAggregate<string, OffbeatRoute>
+ * @method OffbeatRoute[] all()
  */
 class RouteCollection extends SymfonyRouteCollection
 {
-    /** @param Route[] $routes */
+    /** @param OffbeatRoute[] $routes */
     public function __construct (array $routes = [])
     {
         foreach ($routes as $name => $route) {
