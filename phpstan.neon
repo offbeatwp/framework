@@ -4,6 +4,8 @@ parameters:
     treatPhpDocTypesAsCertain: false
     scanFiles:
           - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+    ignoreErrors:
+        - '/Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects \$this/'
 includes:
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
