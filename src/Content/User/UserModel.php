@@ -66,7 +66,7 @@ class UserModel
 
     /**
      * @param string $method
-     * @param array $parameters
+     * @param mixed[] $parameters
      * @return mixed|void
      */
     public function __call($method, $parameters)
@@ -79,7 +79,7 @@ class UserModel
             return $this->wpUser->$method;
         }
 
-        throw new BadMethodCallException('Call to undefined method ' . $method);
+        throw new BadMethodCallException('Call to undefined UserModel method: ' . $method);
     }
 
     public function __clone()
@@ -144,16 +144,11 @@ class UserModel
     public function setMeta(string $key, $value): self
     {
         $this->metaInput[$key] = $value;
-
         unset($this->metaToUnset[$key]);
 
         return $this;
     }
 
-    /**
-     * @param string $key Metadata name.
-     * @return $this
-     */
     public function unsetMeta(string $key): self
     {
         $this->metaToUnset[$key] = '';
@@ -203,25 +198,25 @@ class UserModel
         return null;
     }
 
-    /** @return string The user's login username. */
+    /** The user's login username. */
     public function getLogin(): string
     {
         return $this->newUserLogin ?: $this->wpUser->user_login;
     }
 
-    /** @return string The URL-friendly user name. Defaults to first name + last name. */
+    /** The URL-friendly user name. Defaults to first name + last name. */
     public function getDisplayName(): string
     {
         return $this->wpUser->display_name;
     }
 
-    /** @return string The user's nickname. Default is the user's username. */
+    /** The user's nickname. Default is the user's username. */
     public function getNickname(): string
     {
         return $this->wpUser->nickname;
     }
 
-    /** @return string The user's display name. Default is the user's username. */
+    /** The user's display name. Default is the user's username. */
     public function getNiceName(): string
     {
         return $this->wpUser->user_nicename;
@@ -242,7 +237,7 @@ class UserModel
         return $this->wpUser->user_pass;
     }
 
-    /** @return string Password reset key. Default empty. */
+    /** Password reset key. Default empty. */
     public function getActivationKey(): string
     {
         return $this->wpUser->user_activation_key;
@@ -253,25 +248,26 @@ class UserModel
         return $this->wpUser->user_url;
     }
 
-    /** @return non-empty-string|null The URL of the avatar on success, null on failure. */
+    /** The URL of the avatar on success, null on failure. */
     public function getAvatarUrl(): ?string
     {
-        return get_avatar_url($this->getId()) ?: null;
+        $url = get_avatar_url($this->getId());
+        return ($url !== false) ? $url : null;
     }
 
-    /** @return string The user's email. */
+    /** The user's email. */
     public function getEmail(): string
     {
         return $this->wpUser->user_email;
     }
 
-    /** @return string The user's biographical description. */
+    /** The user's biographical description. */
     public function getDescription(): string
     {
         return $this->wpUser->description;
     }
 
-    /** @return string User's locale. Default empty. */
+    /** User's locale. Default empty. */
     public function getLocale(): string
     {
         return $this->wpUser->locale;
@@ -288,31 +284,31 @@ class UserModel
         return $this->getMetaString('phone_number');
     }
 
-    /** @return WpDateTimeImmutable|null Date the user registered as a Carbon Date. */
+    /** Date the user registered as a Carbon Date. */
     public function getRegistrationDate(): ?WpDateTimeImmutable
     {
         return ($this->wpUser->user_registered) ? new WpDateTimeImmutable($this->wpUser->user_registered) : null;
     }
 
-    /** @return bool Whether the user has the rich-editor enabled for writing. */
+    /** Whether the user has the rich-editor enabled for writing. */
     public function isRichEditingEnabled(): bool
     {
         return $this->wpUser->rich_editing === 'true';
     }
 
-    /** @return bool Whether the user has syntax highlighting enabled when editing code. */
+    /** Whether the user has syntax highlighting enabled when editing code. */
     public function isSyntaxHighlightingEnabled(): bool
     {
         return $this->wpUser->syntax_highlighting === 'true';
     }
 
-    /** @return bool Whether the user is marked as spam. Multisite only. Default false. */
+    /** Whether the user is marked as spam. Multisite only. Default false. */
     public function isSpam(): bool
     {
         return (bool)$this->wpUser->spam;
     }
 
-    /** @return bool Whether this user is the currently logged in user. */
+    /** Whether this user is the currently logged in user. */
     public function isCurrentUser(): bool
     {
         return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
