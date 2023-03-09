@@ -123,8 +123,10 @@ class UserModel
 
     public function setLogin(string $userLogin): self
     {
-        $this->wpUser->user_login = $userLogin;
-        $this->newUserLogin = $userLogin;
+        if ($this->wpUser->user_login !== $userLogin) {
+            $this->newUserLogin = $userLogin;
+        }
+
         return $this;
     }
 
@@ -398,7 +400,7 @@ class UserModel
             $userId = wp_update_user($userData);
 
             // Surprise, wp_update_user ignores updates to user_login!
-            if (is_int($userId) && $this->newUserLogin && $this->wpUser->user_login !== $this->newUserLogin) {
+            if (is_int($userId) && $this->newUserLogin) {
                 global $wpdb;
                 $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
                 $this->newUserLogin = '';
