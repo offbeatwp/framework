@@ -113,7 +113,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $name
-     * @return null
+     * @return mixed
      */
     public function __get($name)
     {
@@ -448,10 +448,7 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @deprecated
-     * @throws OffbeatInvalidModelException
-     */
+    /** @deprecated Use getPostDateTime instead. */
     public function getCreatedAt(): Carbon
     {
         $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
@@ -463,10 +460,7 @@ class PostModel implements PostModelInterface
         return Carbon::parse($creationDate);
     }
 
-    /**
-     * @deprecated
-     * @throws OffbeatInvalidModelException
-     */
+    /** @deprecated Use getModifiedDateTime instead. */
     public function getUpdatedAt(): Carbon
     {
         $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
