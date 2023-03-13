@@ -114,52 +114,45 @@ abstract class AbstractField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description(string $description): AbstractField
+    public function description(string $description): self
     {
         $this->setAttribute('description', $description);
-
         return $this;
     }
 
-    public function default($value): AbstractField
+    public function default($value): self
     {
         $this->setAttribute('default', $value);
-
         return $this;
     }
 
-    public function attributes(array $attributes): AbstractField
+    public function attributes(array $attributes): self
     {
         $this->setAttributes($attributes);
-
         return $this;
     }
 
-    public function required(bool $required = true): AbstractField
+    public function required(bool $required = true): self
     {
         $this->setRequired($required);
-
         return $this;
     }
 
-    public function allowNull(bool $allowNull = true): AbstractField
+    public function allowNull(bool $allowNull = true): self
     {
         $this->setAttribute('allow_null', ($allowNull) ? 1 : 0);
-
         return $this;
     }
 
-    public function attribute(string $key, $value): AbstractField
+    public function attribute(string $key, $value): self
     {
         $this->setAttribute($key, $value);
-
         return $this;
     }
 
-    public function width(int $percent): AbstractField
+    public function width(int $percent): self
     {
         $this->setAttribute('width', $percent);
-
         return $this;
     }
 
