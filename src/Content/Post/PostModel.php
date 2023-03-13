@@ -123,6 +123,8 @@ class PostModel implements PostModelInterface
             return $this->$methodName();
         }
 
+        $className = class_basename($this);
+        trigger_error("Attempted to access non-existent method {$className}::{$methodName} through magic.", E_USER_WARNING);
         return null;
     }
 
