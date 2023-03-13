@@ -99,15 +99,19 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
+        $className = class_basename($this);
         $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
         if ($hookValue !== null) {
+            trigger_error("{$className}::{$method} was accessed through magic");
             return $hookValue;
         }
 
         if (method_exists(WpQueryBuilderModel::class, $method)) {
+            trigger_error("{$className}::{$method} was accessed through magic");
             return static::query()->$method(...$parameters);
         }
 
+        trigger_error("Attempted to access non-existent method {$className}::{$method} through magic", E_USER_WARNING);
         return false;
     }
 
@@ -123,6 +127,8 @@ class PostModel implements PostModelInterface
             return $this->$methodName();
         }
 
+        $className = class_basename($this);
+        trigger_error("Attempted to access non-existent property {$className}::{$methodName} through magic.", E_USER_WARNING);
         return null;
     }
 
