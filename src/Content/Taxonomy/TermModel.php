@@ -60,7 +60,6 @@ class TermModel implements TermModelInterface
             return $this->wpPost->$method;
         }
 
-        $className = class_basename($this);
         $hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this);
         if ($hookValue !== null) {
             return $hookValue;
@@ -70,7 +69,6 @@ class TermModel implements TermModelInterface
             return static::query()->$method(...$parameters);
         }
 
-        trigger_error("Attempted to access non-existent method {$className}::{$method} through magic", E_USER_WARNING);
         return false;
     }
 

@@ -99,7 +99,6 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        $className = class_basename($this);
         $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
         if ($hookValue !== null) {
             return $hookValue;
@@ -109,7 +108,6 @@ class PostModel implements PostModelInterface
             return static::query()->$method(...$parameters);
         }
 
-        trigger_error("Attempted to access non-existent method {$className}::{$method} through magic");
         return false;
     }
 
