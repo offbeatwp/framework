@@ -102,16 +102,14 @@ class PostModel implements PostModelInterface
         $className = class_basename($this);
         $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
         if ($hookValue !== null) {
-            trigger_error("{$className}::{$method} was accessed through magic");
             return $hookValue;
         }
 
         if (method_exists(WpQueryBuilderModel::class, $method)) {
-            trigger_error("{$className}::{$method} was accessed through magic");
             return static::query()->$method(...$parameters);
         }
 
-        trigger_error("Attempted to access non-existent method {$className}::{$method} through magic", E_USER_WARNING);
+        trigger_error("Attempted to access non-existent method {$className}::{$method} through magic");
         return false;
     }
 
