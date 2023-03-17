@@ -71,15 +71,19 @@ class UserModel
      */
     public function __call($method, $parameters)
     {
+        $className = class_basename($this);
+
         if (static::hasMacro($method)) {
+            trigger_error("Attempted to call non-existent method {$className}::{$method} through magic.", E_USER_WARNING);
             return $this->macroCall($method, $parameters);
         }
 
         if (isset($this->wpUser->$method)) {
+            trigger_error("Attempted to call non-existent method {$className}::{$method} through magic.", E_USER_WARNING);
             return $this->wpUser->$method;
         }
 
-        throw new BadMethodCallException('Call to undefined UserModel method: ' . $method);
+        throw new BadMethodCallException("Call to undefined UserModel method {$className}::{$method}");
     }
 
     public function __clone()
