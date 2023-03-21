@@ -105,6 +105,7 @@ class PostModel implements PostModelInterface
         }
 
         if (method_exists(WpQueryBuilderModel::class, $method)) {
+            trigger_error('Called a QueryBuilder method on a model instance through magic.');
             return static::query()->$method(...$parameters);
         }
 
@@ -123,8 +124,6 @@ class PostModel implements PostModelInterface
             return $this->$methodName();
         }
 
-        //$className = class_basename($this);
-        //trigger_error("Attempted to access non-existent property {$className}::{$methodName} through magic.");
         return null;
     }
 
