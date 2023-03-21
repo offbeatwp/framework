@@ -74,12 +74,12 @@ class UserModel
         $className = class_basename($this);
 
         if (static::hasMacro($method)) {
-            trigger_error("Attempted to call non-existent method {$className}::{$method} through magic.", E_USER_WARNING);
+            trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);
             return $this->macroCall($method, $parameters);
         }
 
         if (isset($this->wpUser->$method)) {
-            trigger_error("Attempted to call non-existent method {$className}::{$method} through magic.", E_USER_WARNING);
+            trigger_error("{$className}::{$method} accessed a WP_User method.", E_USER_DEPRECATED);
             return $this->wpUser->$method;
         }
 

@@ -66,6 +66,7 @@ class TermModel implements TermModelInterface
         }
         
         if (method_exists(TermQueryBuilder::class, $method)) {
+            trigger_error('Called a QueryBuilder method on a model instance through magic.');
             return static::query()->$method(...$parameters);
         }
 
