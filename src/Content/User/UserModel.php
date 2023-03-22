@@ -59,6 +59,7 @@ class UserModel
         $this->isInitialised = true;
     }
 
+    /** This method is called at the end of the UserModel constructor */
     protected function init(): void
     {
         // Does nothing unless overriden by parent

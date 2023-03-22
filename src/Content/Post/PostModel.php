@@ -68,6 +68,14 @@ class PostModel implements PostModelInterface
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
         }
+
+        $this->init();
+    }
+
+    /** This method is called at the end of the PostModel constructor */
+    protected function init(): void
+    {
+        // Does nothing unless overriden by parent
     }
 
     /**
