@@ -430,7 +430,7 @@ class UserModel
         return $userId;
     }
 
-    public function save(): int
+    final public function save(): int
     {
         $result = $this->_save();
         return is_int($result) ? $result : 0;
