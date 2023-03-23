@@ -96,37 +96,37 @@ class UserModel
     /// Setters ///
     ///////////////
     /** The user's email address. <b>Setting this is required.</b> */
-    public function setEmail(string $email): self
+    final public function setEmail(string $email): self
     {
         $this->wpUser->user_email = $email;
         return $this;
     }
 
-    public function setNickname(string $nickname): self
+    final public function setNickname(string $nickname): self
     {
         $this->wpUser->nickname = $nickname;
         return $this;
     }
 
-    public function setDisplayName(string $displayName): self
+    final public function setDisplayName(string $displayName): self
     {
         $this->wpUser->display_name = $displayName;
         return $this;
     }
 
-    public function setFirstName(string $firstName): self
+    final public function setFirstName(string $firstName): self
     {
         $this->wpUser->first_name = $firstName;
         return $this;
     }
 
-    public function setLastName(string $lastName): self
+    final public function setLastName(string $lastName): self
     {
         $this->wpUser->last_name = $lastName;
         return $this;
     }
 
-    public function setLogin(string $userLogin): self
+    final public function setLogin(string $userLogin): self
     {
         if ($this->wpUser->user_login !== $userLogin) {
             $this->newUserLogin = $userLogin;
@@ -135,7 +135,7 @@ class UserModel
         return $this;
     }
 
-    public function setUrl(string $url): self
+    final public function setUrl(string $url): self
     {
         $this->wpUser->user_url = $url;
         return $this;
@@ -146,7 +146,7 @@ class UserModel
      * @param mixed $value The new metadata value.
      * @return $this
      */
-    public function setMeta(string $key, $value): self
+    final public function setMeta(string $key, $value): self
     {
         $this->metaInput[$key] = $value;
         unset($this->metaToUnset[$key]);
@@ -154,7 +154,7 @@ class UserModel
         return $this;
     }
 
-    public function unsetMeta(string $key): self
+    final public function unsetMeta(string $key): self
     {
         $this->metaToUnset[$key] = '';
 
@@ -166,12 +166,12 @@ class UserModel
     ///////////////
     /// Getters ///
     ///////////////
-    public function getWpUser(): WP_User
+    final public function getWpUser(): WP_User
     {
         return $this->wpUser;
     }
 
-    public function getId(): int
+    final public function getId(): int
     {
         return $this->wpUser->ID;
     }
@@ -204,51 +204,51 @@ class UserModel
     }
 
     /** The user's login username. */
-    public function getLogin(): string
+    final public function getLogin(): string
     {
         return $this->newUserLogin ?: $this->wpUser->user_login;
     }
 
     /** The URL-friendly user name. Defaults to first name + last name. */
-    public function getDisplayName(): string
+    final public function getDisplayName(): string
     {
         return $this->wpUser->display_name;
     }
 
     /** The user's nickname. Default is the user's username. */
-    public function getNickname(): string
+    final public function getNickname(): string
     {
         return $this->wpUser->nickname;
     }
 
     /** The user's display name. Default is the user's username. */
-    public function getNiceName(): string
+    final public function getNiceName(): string
     {
         return $this->wpUser->user_nicename;
     }
 
-    public function getFirstName(): string
+    final public function getFirstName(): string
     {
         return $this->wpUser->first_name;
     }
 
-    public function getLastName(): string
+    final public function getLastName(): string
     {
         return $this->wpUser->last_name;
     }
 
-    public function getPassword(): string
+    final public function getPassword(): string
     {
         return $this->wpUser->user_pass;
     }
 
     /** Password reset key. Default empty. */
-    public function getActivationKey(): string
+    final public function getActivationKey(): string
     {
         return $this->wpUser->user_activation_key;
     }
 
-    public function getUrl(): string
+    final public function getUrl(): string
     {
         return $this->wpUser->user_url;
     }
@@ -261,24 +261,24 @@ class UserModel
     }
 
     /** The user's email. */
-    public function getEmail(): string
+    final public function getEmail(): string
     {
         return $this->wpUser->user_email;
     }
 
     /** The user's biographical description. */
-    public function getDescription(): string
+    final public function getDescription(): string
     {
         return $this->wpUser->description;
     }
 
     /** User's locale. Default empty. */
-    public function getLocale(): string
+    final public function getLocale(): string
     {
         return $this->wpUser->locale;
     }
 
-    public function getEditLink(): string
+    final public function getEditLink(): string
     {
         return get_edit_user_link($this->getId());
     }
@@ -290,13 +290,13 @@ class UserModel
     }
 
     /** Date the user registered as a Carbon Date. */
-    public function getRegistrationDate(): ?WpDateTimeImmutable
+    final public function getRegistrationDate(): ?WpDateTimeImmutable
     {
         return ($this->wpUser->user_registered) ? new WpDateTimeImmutable($this->wpUser->user_registered) : null;
     }
 
     /** Whether the user has the rich-editor enabled for writing. */
-    public function isRichEditingEnabled(): bool
+    final public function isRichEditingEnabled(): bool
     {
         return $this->wpUser->rich_editing === 'true';
     }
@@ -308,13 +308,13 @@ class UserModel
     }
 
     /** Whether the user is marked as spam. Multisite only. Default false. */
-    public function isSpam(): bool
+    final public function isSpam(): bool
     {
         return (bool)$this->wpUser->spam;
     }
 
     /** Whether this user is the currently logged in user. */
-    public function isCurrentUser(): bool
+    final public function isCurrentUser(): bool
     {
         return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
     }
@@ -376,7 +376,8 @@ class UserModel
     ///////////////////////
     /// Special Methods ///
     ///////////////////////
-    public function save(): int
+    /** @return int|WP_Error */
+    private function _save()
     {
         if (!$this->isInitialised) {
             throw new BadMethodCallException('The save method cannot be called before a model is initialised.');
@@ -411,7 +412,7 @@ class UserModel
         }
 
         if (!is_int($userId)) {
-            return 0;
+            return $userId;
         }
 
         $wpUser = get_user_by('id', $userId);
@@ -429,13 +430,19 @@ class UserModel
         return $userId;
     }
 
+    final public function save(): int
+    {
+        $result = $this->_save();
+        return is_int($result) ? $result : 0;
+    }
+
     /** @return positive-int */
     final public function saveOrFail(): int
     {
-        $result = $this->save();
+        $result = $this->_save();
 
-        if ($result <= 0) {
-            throw new OffbeatInvalidModelException('Failed to save UserModel.');
+        if (!is_int($result)) {
+            throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
         }
 
         return $result;
