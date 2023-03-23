@@ -376,7 +376,8 @@ class UserModel
     ///////////////////////
     /// Special Methods ///
     ///////////////////////
-    public function save(): int
+    /** @return int|WP_Error */
+    private function _save()
     {
         if (!$this->isInitialised) {
             throw new BadMethodCallException('The save method cannot be called before a model is initialised.');
@@ -411,7 +412,7 @@ class UserModel
         }
 
         if (!is_int($userId)) {
-            return 0;
+            return $userId;
         }
 
         $wpUser = get_user_by('id', $userId);
@@ -429,13 +430,19 @@ class UserModel
         return $userId;
     }
 
+    public function save(): int
+    {
+        $result = $this->_save();
+        return is_int($result) ? $result : 0;
+    }
+
     /** @return positive-int */
     final public function saveOrFail(): int
     {
-        $result = $this->save();
+        $result = $this->_save();
 
-        if ($result <= 0) {
-            throw new OffbeatInvalidModelException('Failed to save UserModel.');
+        if (!is_int($result)) {
+            throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
         }
 
         return $result;
