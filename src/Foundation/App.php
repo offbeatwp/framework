@@ -254,6 +254,6 @@ final class App
 
         trigger_error('No route matched on URI: ' . filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL));
         echo offbeat('http')->abort(404);
-        exit(404);
+        exit;
     }
 }
