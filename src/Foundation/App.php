@@ -252,6 +252,8 @@ final class App
             return $actionReturn;
         }
 
-        return new WP_Error('broke', sprintf(__('No route matched on URI: %s', 'offbeatwp'), $_SERVER['REQUEST_URI'] ?? '???'));
+        trigger_error('No route matched on URI: ' . filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL));
+        echo offbeat('http')->abort(404);
+        exit;
     }
 }
