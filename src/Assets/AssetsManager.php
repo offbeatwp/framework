@@ -153,18 +153,26 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_style_is($handle)) {
-                    add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
+                    if (!did_action('wp_enqueue_scripts') && current_action() != 'wp_enqueue_scripts') {
+                        add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
+                            wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
+                        });
+                    } else {
                         wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
-                    });
+                    }
                 }
             }
 
             return;
         }
 
-        add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
+        if (!did_action('wp_enqueue_scripts') && current_action() != 'wp_enqueue_scripts') {
+            add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
+                wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
+            });
+        } else {
             wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
-        });
+        }
     }
 
     /**
@@ -189,17 +197,25 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
-                    add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
+                    if (!did_action('wp_enqueue_scripts') && current_action() != 'wp_enqueue_scripts') {
+                        add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
+                            wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
+                        });
+                    } else {
                         wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
-                    });
+                    }
                 }
             }
 
             return;
         }
 
-        add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
+        if (!did_action('wp_enqueue_scripts') && current_action() != 'wp_enqueue_scripts') {
+            add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
+                wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), $dependencies, false, true);
+            });
+        } else {
             wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), $dependencies, false, true);
-        });
+        }
     }
 }
