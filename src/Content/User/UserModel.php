@@ -32,7 +32,7 @@ class UserModel
         Macroable::__callStatic as macroCallStatic;
     }
 
-    /** @param WP_User|int|null $user */
+    /** @param WP_User|null $user */
     final public function __construct($user = null)
     {
         if ($user === null) {
@@ -40,7 +40,9 @@ class UserModel
             $this->metas = [];
         }
 
+        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         if (is_int($user)) {
+            trigger_error('Constructed UserModel with integer. Use UserModel::find instead.', E_USER_DEPRECATED);
             $userData = get_userdata($user);
 
             if (!$userData) {
