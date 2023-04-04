@@ -2,15 +2,21 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
+use OffbeatWP\Content\Post\PostModel;
+
 class Relation
 {
     protected $model;
-    protected $key;
+    protected $relationKey;
 
-    public function __construct($model, $key)
+    /**
+     * @param PostModel $model
+     * @param string $relationKey
+     */
+    public function __construct($model, $relationKey)
     {
         $this->model = $model;
-        $this->key = $key;
+        $this->relationKey = $relationKey;
     }
 
     /** @return int|false */
@@ -27,7 +33,7 @@ class Relation
         }
 
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column1} = %d AND {$column2} = %d";
-        $params = [$this->key, $this->model->getId(), $id];
+        $params = [$this->relationKey, $this->model->getId(), $id];
 
         return $wpdb->query($wpdb->prepare($query, $params));
     }
@@ -44,7 +50,7 @@ class Relation
         }
 
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column} = %d";
-        $params = [$this->key, $this->model->getId()];
+        $params = [$this->relationKey, $this->model->getId()];
 
         return $wpdb->query($wpdb->prepare($query, $params));
     }
@@ -64,7 +70,7 @@ class Relation
 
         return $wpdb->insert(
             $wpdb->prefix . 'post_relationships',
-            ['key' => $this->key, $column1 => $this->model->getId(), $column2 => $id],
+            ['key' => $this->relationKey, $column1 => $this->model->getId(), $column2 => $id],
             ['%s', '%d', '%d']
         );
     }

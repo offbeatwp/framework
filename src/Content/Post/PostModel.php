@@ -780,7 +780,7 @@ class PostModel implements PostModelInterface
         return $copy;
     }
 
-    /** @return int The ID of the inserted/updated model. Returns <b>0</b> on failure. */
+    /** Returns the ID of the inserted/updated model, or <b>0</b> on failure */
     public function save(): int
     {
         if ($this->metaInput) {
@@ -828,7 +828,6 @@ class PostModel implements PostModelInterface
         }
     }
 
-    /** @return positive-int */
     public function saveOrFail(): int
     {
         $result = $this->save();
@@ -880,15 +879,15 @@ class PostModel implements PostModelInterface
     /// Query Methods ///
     /////////////////////
     /**
-     * @param string $key
+     * @param string $relationKey
      * @return null|string
      */
-    public function getMethodByRelationKey($key)
+    public function getMethodByRelationKey($relationKey)
     {
-        $method = $key;
+        $method = $relationKey;
 
-        if (is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$key])) {
-            $method = $this->relationKeyMethods[$key];
+        if (is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$relationKey])) {
+            $method = $this->relationKeyMethods[$relationKey];
         }
 
         if (method_exists($this, $method)) {
@@ -899,39 +898,39 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param string $key
+     * @param string $relationKey
      * @return HasMany
      */
-    public function hasMany($key): HasMany
+    public function hasMany($relationKey): HasMany
     {
-        return new HasMany($this, $key);
+        return new HasMany($this, $relationKey);
     }
 
     /**
-     * @param string $key
+     * @param string $relationKey
      * @return HasOne
      */
-    public function hasOne($key): HasOne
+    public function hasOne($relationKey): HasOne
     {
-        return new HasOne($this, $key);
+        return new HasOne($this, $relationKey);
     }
 
     /**
-     * @param string $key
+     * @param string $relationKey
      * @return BelongsTo
      */
-    public function belongsTo($key): BelongsTo
+    public function belongsTo($relationKey): BelongsTo
     {
-        return new BelongsTo($this, $key);
+        return new BelongsTo($this, $relationKey);
     }
 
     /**
-     * @param string $key
+     * @param string $relationKey
      * @return BelongsToMany
      */
-    public function belongsToMany($key): BelongsToMany
+    public function belongsToMany($relationKey): BelongsToMany
     {
-        return new BelongsToMany($this, $key);
+        return new BelongsToMany($this, $relationKey);
     }
 
     /**
