@@ -12,7 +12,7 @@ class Service extends AbstractService
     public function register() {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
-        if(offbeat('console')->isConsole()) {
+        if(offbeat('console')::isConsole()) {
             offbeat('console')->register(Install::class);
         }
 
