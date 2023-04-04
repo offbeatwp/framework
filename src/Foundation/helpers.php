@@ -7,7 +7,7 @@ if (!function_exists('offbeat')) {
     /**
      * @template T
      * @param class-string<T>|string|null $service
-     * @return T|App
+     * @return T
      */
     function offbeat(?string $service = null) {
         if ($service !== null) {
@@ -20,7 +20,9 @@ if (!function_exists('offbeat')) {
 
 if (!function_exists('config')) {
     function config(?string $config = null, $default = null) {
-        return offbeat()->config($config, $default);
+        /** @var App $app */
+        $app = offbeat();
+        return $app->config($config, $default);
     }
 }
 
@@ -31,11 +33,14 @@ if (!function_exists('container')) {
      * @return T
      */
     function container(?string $definition = null) {
+        /** @var App $app */
+        $app = offbeat();
+
         if ($definition !== null) {
-            return offbeat()->container->get($definition);
+            return $app->container->get($definition);
         }
 
-        return offbeat()->container;
+        return $app->container;
     }
 }
 
