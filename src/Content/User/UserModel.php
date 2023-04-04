@@ -438,7 +438,6 @@ class UserModel
         return is_int($result) ? $result : 0;
     }
 
-    /** @return positive-int */
     final public function saveOrFail(): int
     {
         $result = $this->_save();
@@ -496,6 +495,7 @@ class UserModel
         if ($wpUser) {
             $user = User::convertWpUserToModel($wpUser);
 
+            /** @noinspection PhpConditionAlreadyCheckedInspection */
             if ($user instanceof static) {
                 return $user;
             }

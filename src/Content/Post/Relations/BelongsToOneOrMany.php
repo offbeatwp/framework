@@ -3,6 +3,11 @@ namespace OffbeatWP\Content\Post\Relations;
 
 class BelongsToOneOrMany extends Relation
 {
+    /**
+     * @param int|int[] $ids
+     * @param bool $append
+     * @return void
+     */
     public function associate($ids, $append = true)
     {
         if (!$append) {
