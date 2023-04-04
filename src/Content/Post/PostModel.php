@@ -40,7 +40,13 @@ class PostModel implements PostModelInterface
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
-    /** @var string[]|null */
+    /**
+     * @var string[]|null
+     * This should be a string array that is indexed with strings<br>
+     * The index should represent the metaKey of the field that contains the relation ID(s)<br>
+     * The value should the <b>method name</b> of the method on this model that returns a relation object
+     * @see Relation
+     */
     public $relationKeyMethods = null;
 
     use BaseModelTrait;

@@ -4,12 +4,14 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\PostModel;
 
+/** @abstract */
 class Relation
 {
     protected $model;
     protected $relationKey;
 
     /**
+     * @final
      * @param PostModel $model
      * @param string $relationKey
      */
