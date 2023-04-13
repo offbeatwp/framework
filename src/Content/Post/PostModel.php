@@ -204,6 +204,7 @@ class PostModel implements PostModelInterface
         // it adds another filter that prevents wpautop to be executed.
         // In this case we manually run a series of filters
         if (has_filter('the_content', '_restore_wpautop_hook')) {
+            $content = do_blocks($content);
             $content = wptexturize($content);
             $content = wpautop($content);
             $content = shortcode_unautop($content);
