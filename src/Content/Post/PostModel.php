@@ -202,28 +202,25 @@ class PostModel implements PostModelInterface
 
         // When the_content filter is already running with Gutenberg content
         // it adds another filter that prevents wpautop to be executed.
-        // In this case we manually run a series of filters
-        if (has_filter('the_content', '_restore_wpautop_hook')) {
-            $content = do_blocks($content);
-            $content = wptexturize($content);
-            $content = wpautop($content);
-            $content = shortcode_unautop($content);
-            $content = prepend_attachment($content);
+        // do some magic to restore the wpautop and restore the restoreautop afterwards.
 
-            // wp_make_content_images_responsive is deprecated, but we want to maintain some pre-5.5 compat
-            if (function_exists('wp_filter_content_tags')) {
-                $content = wp_filter_content_tags($content);
-            } elseif (function_exists('wp_make_content_images_responsive')) {
-                /** @noinspection PhpDeprecationInspection This method is deprecated but kept for WP <5.5 support */
-                $content = wp_make_content_images_responsive($content);
-            }
+        $hasRestoreWpautopHook = has_filter('the_content', '_restore_wpautop_hook');
+        $didManualRestoreWpAutopHook = false;
+        if ($hasRestoreWpautopHook) {
+            _restore_wpautop_hook(null);
 
-            $content = do_shortcode($content);
-
-            return $content;
+            $didManualRestoreWpAutopHook = true;
         }
 
-        return apply_filters('the_content', $content);
+        $content =  apply_filters('the_content', $content);
+
+        if ($didManualRestoreWpAutopHook) {
+            $priority = has_filter( 'the_content', 'wpautop' );
+            remove_filter( 'the_content', 'wpautop', $priority );
+            add_filter( 'the_content', '_restore_wpautop_hook', $priority + 1 );
+        }
+        
+        return $content;
     }
 
     public function setId(?int $id): self
