@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTimeZone;
 use Exception;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -187,6 +188,47 @@ trait GetMetaTrait
         }
 
         return $models;
+    }
+
+    final private function getMetaWithType(string $key, string $type)
+    {
+        switch ($type) {
+            case 'string':
+                return $this->getMetaString($key);
+            case 'int':
+            case 'integer':
+                return $this->getMetaInt($key);
+            case 'float':
+            case 'double':
+                return $this->getMetaFloat($key);
+            case 'bool':
+            case 'boolean':
+                return $this->getMetaBool($key);
+            case 'null':
+                return null;
+            default:
+                throw new InvalidArgumentException('Value of type is not valid.');
+        }
+    }
+
+    /**
+     * @param string $key
+     * @param scalar[] $shape
+     * @return scalar[][]|null[][]
+     * @see settype
+     */
+    public function getMetaRepeater(string $key, array $shape): array
+    {
+        $result = [];
+        $count = $this->getMetaInt($key);
+
+        for ($i = 0; $i < $count; $i++) {
+            foreach ($shape as $subKey => $type) {
+                $result[$i][$type] = $this->getMetaWithType("{$key}_{$i}_{$subKey}", $type);
+            }
+        }
+
+        return $result;
     }
 
     /** Retrieve a meta value as a collection.<br> */
