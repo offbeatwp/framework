@@ -21,12 +21,14 @@ class WpPostsIterator implements Iterator
         reset($this->items);
     }
 
+    /** @return PostModel|false */
     #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->items);
     }
 
+    /** @return int|string|null */
     #[\ReturnTypeWillChange]
     public function key()
     {
