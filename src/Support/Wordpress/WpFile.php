@@ -130,7 +130,7 @@ final class WpFile
 
         $headers = get_headers($url, 1);
 
-        if (!$headers || isset($headers['Content-Type'])) {
+        if (!$headers || !isset($headers['Content-Type'])) {
             throw new Exception('Could not determine content type of file.');
         }
 
