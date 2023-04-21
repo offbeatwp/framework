@@ -21,11 +21,13 @@ class WpPostsIterator implements Iterator
         reset($this->items);
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->items);
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->items);
