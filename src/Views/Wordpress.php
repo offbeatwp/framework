@@ -240,6 +240,18 @@ class Wordpress
     }
 
     /**
+     * Retrieves the URL for an attachment
+     * @param int $attachmentID Attachment ID
+     * @return string|null Attachment URL or <i>NULL</i> if not found
+     * @see wp_get_attachment_url()
+     */
+    public function attachmentFileUrl(int $attachmentID): ?string
+    {
+        $url = wp_get_attachment_url($attachmentID);
+        return ($url !== false) ? $url : null;
+    }
+
+    /**
      * Gets an HTML img element representing an image attachment.<br>
      * While <b>$size/b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
