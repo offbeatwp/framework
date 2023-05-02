@@ -145,7 +145,9 @@ abstract class AbstractField implements FieldInterface
     }
 
     /**
-     * @param array{field: string, operator: string, value?: string}[] $logic
+     * Expects a multi-dimensional array as argument.
+     * Arrays should have a <b>field</b>, <b>operator</b> and optionally a <b>value</b> key
+     * @param array{field: string, operator: string, value?: string}[][] $logic
      * @return $this
      */
     public function conditionalLogic(array $logic): self
