@@ -144,6 +144,16 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param array{field: string, operator: string, value?: string}[] $logic
+     * @return $this
+     */
+    public function conditionalLogic(array $logic): self
+    {
+        $this->setAttribute('conditional_logic', $logic);
+        return $this;
+    }
+
     public function attribute(string $key, $value): self
     {
         $this->setAttribute($key, $value);
