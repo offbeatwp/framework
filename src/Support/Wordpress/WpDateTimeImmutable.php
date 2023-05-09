@@ -19,7 +19,11 @@ final class WpDateTimeImmutable extends DateTimeImmutable
 
     public function __construct(string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
-        parent::__construct($datetime, $timezone ?: wp_timezone());
+        if (!$timezone && apply_filters('offbeatwp/date/wpdatetime_defaults_to_wp_timezone', true)) {
+            $timezone = wp_timezone();
+        }
+
+        parent::__construct($datetime, $timezone);
     }
 
     public static function createFromInterface(DateTimeInterface $object): WpDateTimeImmutable
@@ -49,16 +53,14 @@ final class WpDateTimeImmutable extends DateTimeImmutable
 
     /**
      * Alters the timestamp
-     * @link https://secure.php.net/manual/en/datetimeimmutable.modify.php
      * @param string $modifier <p>A date/time string. Valid formats are explained in
-     * {@link https://secure.php.net/manual/en/datetime.formats.php Date and Time Formats}.</p>
-     * @return static Returns the newly created object. Throws InvalidArgumentException on failure.
-     * Returns the {@link https://secure.php.net/manual/en/class.datetimeimmutable.php DateTimeImmutable} object for method chaining or <b>FALSE</b> on failure.
+     * @return static Returns the newly created object. Throws Exception on failure.
+     * @link https://secure.php.net/manual/en/datetime.formats.php
      */
     public function modify($modifier): WpDateTimeImmutable
     {
         $result = parent::modify($modifier);
-        if (!$result) {
+        if ($result === false) {
             throw static::getLastDateException();
         }
 
