@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
+use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -61,6 +62,16 @@ final class WpDateTimeImmutable extends DateTimeImmutable
     {
         $result = parent::modify($modifier);
         if ($result === false) {
+            throw static::getLastDateException();
+        }
+
+        return $result;
+    }
+
+    public function sub(DateInterval $interval): WpDateTimeImmutable
+    {
+        $result = parent::sub($interval);
+        if (!$result) {
             throw static::getLastDateException();
         }
 
