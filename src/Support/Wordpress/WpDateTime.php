@@ -19,7 +19,11 @@ final class WpDateTime extends DateTime
 
     public function __construct(string $datetime = 'now', ?DateTimeZone $timezone = null)
     {
-        parent::__construct($datetime, $timezone ?: wp_timezone());
+        if (!$timezone && apply_filters('offbeatwp/date/wpdatetime_defaults_to_wp_timezone', true)) {
+            $timezone = wp_timezone();
+        }
+
+        parent::__construct($datetime, $timezone);
     }
 
     public static function createFromInterface(DateTimeInterface $object): WpDateTime
@@ -51,13 +55,13 @@ final class WpDateTime extends DateTime
      * Alter the timestamp of a DateTime object by incrementing or decrementing
      * in a format accepted by strtotime().
      * @param string $modifier A date/time string. Valid formats are explained in <a href="https://secure.php.net/manual/en/datetime.formats.php">Date and Time Formats</a>.
-     * @return static Returns the DateTime object for method chaining. Throws InvalidArgumentException on failure.
+     * @return static Returns the DateTime object for method chaining. Throws Exception on failure.
      * @link https://php.net/manual/en/datetime.modify.php
      */
     public function modify($modifier): WpDateTime
     {
         $result = parent::modify($modifier);
-        if (!$result) {
+        if ($result === false) {
             throw static::getLastDateException();
         }
 
