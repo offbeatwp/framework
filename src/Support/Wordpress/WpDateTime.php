@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -69,13 +68,13 @@ final class WpDateTime extends DateTime
         return $result;
     }
 
-    public function sub(DateInterval $interval): WpDateTime
-    {
-        $result = parent::sub($interval);
-        if (!$result) {
-            throw static::getLastDateException();
-        }
-
-        return $result;
-    }
+//    public function sub(DateInterval $interval): WpDateTime
+//    {
+//        $result = parent::sub($interval);
+//        if (!$result) {
+//            throw static::getLastDateException();
+//        }
+//
+//        return $result;
+//    }
 }
