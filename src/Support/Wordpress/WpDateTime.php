@@ -69,13 +69,13 @@ final class WpDateTime extends DateTime
         return $result;
     }
 
-    public function sub(DateInterval $interval): WpDateTime
-    {
-        $result = parent::sub($interval);
-        if (!$result) {
-            throw static::getLastDateException();
-        }
-
-        return $result;
-    }
+//    public function sub(DateInterval $interval): WpDateTime
+//    {
+//        $result = parent::sub($interval);
+//        if (!$result) {
+//            throw static::getLastDateException();
+//        }
+//
+//        return $result;
+//    }
 }
