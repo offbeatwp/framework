@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
