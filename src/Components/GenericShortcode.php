@@ -22,6 +22,6 @@ class GenericShortcode
             $atts['content'] = $content;
         }
 
-        return $this->render((object)$atts);
+        return $this->render(new ComponentSettings((object)$atts));
     }
 }
