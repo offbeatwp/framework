@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Components;
 
+#[\AllowDynamicProperties]
 final class ComponentSettings
 {
     private $defaultValues;
@@ -43,10 +44,10 @@ final class ComponentSettings
      * Return the value form a url param.
      * If the url param does not exist, the component setting value is returned instead.
      * @param string $index
-     * @return mixed
+     * @return scalar|array|null
      */
     public function getUrlParam(string $index)
     {
-        return $_GET[$index] ?? $this->get($index);
+        return filter_input(INPUT_GET, $index) ?? $this->get($index);
     }
 }
