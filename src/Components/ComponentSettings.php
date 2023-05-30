@@ -5,8 +5,12 @@ namespace OffbeatWP\Components;
 #[\AllowDynamicProperties]
 final class ComponentSettings
 {
-    private $defaultValues;
+    private array $defaultValues;
 
+    /**
+     * @param object $args
+     * @param array $defaultValues
+     */
     public function __construct($args, array $defaultValues = [])
     {
         foreach (get_object_vars($args) as $key => $value) {
