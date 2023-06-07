@@ -135,7 +135,7 @@ class PostTypeBuilder
         add_action('restrict_manage_posts', function () use ($metaKey, $choices) {
             $screen = get_current_screen();
             if ($screen && $screen->base === 'edit' && $screen->post_type === $this->postType) {
-                $selected = filter_input(INPUT_GET, $metaKey, FILTER_SANITIZE_STRING);
+                $selected = htmlspecialchars((string)filter_input(INPUT_GET, $metaKey));
 
                 echo '<select name="' . $metaKey . '">';
                 foreach ($choices as $key => $value) {

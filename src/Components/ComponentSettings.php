@@ -52,6 +52,6 @@ final class ComponentSettings
      */
     public function getUrlParam(string $index)
     {
-        return filter_input(INPUT_GET, $index) ?? $this->get($index);
+        return $_GET[$index] ?? $this->get($index);
     }
 }
