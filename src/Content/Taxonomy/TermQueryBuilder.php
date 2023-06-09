@@ -45,25 +45,28 @@ class TermQueryBuilder
     }
 
     /** @param int[] $ids Array of term IDs to include. */
-    public function include(array $ids) {
+    public function include(array $ids): self
+    {
         $this->queryVars['include'] = $ids ?: [0];
         return $this;
     }
 
     /** @param int[] $ids Array of term IDs to exclude. */
-    public function exclude(array $ids) {
+    public function exclude(array $ids): self
+    {
         $this->queryVars['exclude'] = $ids;
         return $this;
     }
 
     /** @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored */
-    public function excludeTree(array $ids) {
+    public function excludeTree(array $ids): self
+    {
         $this->queryVars['exclude_tree'] = $ids;
         return $this;
     }
 
     /** True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies. */
-    public function childless(bool $childless = true)
+    public function childless(bool $childless = true): self
     {
         $this->queryVars['childless'] = true;
         return $this;
@@ -98,7 +101,6 @@ class TermQueryBuilder
     public function take(int $numberOfItems): TermsCollection
     {
         $this->queryVars['number'] = $numberOfItems;
-
         return $this->get();
     }
 
@@ -134,6 +136,15 @@ class TermQueryBuilder
     {
         $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'id=>parent';
+        $this->queryVars['no_found_rows'] = true;
+
+        return $this->runQuery()->get_terms();
+    }
+
+    public function count(): int
+    {
+        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
+        $this->queryVars['fields'] = 'count';
         $this->queryVars['no_found_rows'] = true;
 
         return $this->runQuery()->get_terms();
@@ -209,11 +220,7 @@ class TermQueryBuilder
     /** @return TModel|null */
     public function findById(?int $id): ?TermModel
     {
-        if ($id <= 0) {
-            return null;
-        }
-
-        return $this->findBy('id', $id);
+        return ($id > 0) ? $this->findBy('id', $id) : null;
     }
 
     /** @return TModel */
@@ -275,22 +282,16 @@ class TermQueryBuilder
     }
 
     /** @param string[] $slugs Array of slugs to return term(s) for. */
-    public function whereSlugIn(array $slugs)
+    public function whereSlugIn(array $slugs): self
     {
         $this->queryVars['slug'] = $slugs;
-
         return $this;
     }
 
     // Chainable methods
-    /**
-     * @param int $parentId
-     * @return $this
-     */
-    public function whereParent(int $parentId): TermQueryBuilder
+    public function whereParent(int $parentId): self
     {
         $this->queryVars['parent'] = $parentId;
-
         return $this;
     }
 
@@ -300,7 +301,7 @@ class TermQueryBuilder
      * @param string $compare
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '='): TermQueryBuilder
+    public function whereMeta($key, $value = '', string $compare = '='): self
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -325,21 +326,15 @@ class TermQueryBuilder
      * @param int|int[]|null $postIds
      * @return $this
      */
-    public function whereRelatedToPost($postIds): TermQueryBuilder
+    public function whereRelatedToPost($postIds): self
     {
         $this->queryVars['object_ids'] = $postIds ?: [0];
-
         return $this;
     }
 
-    /**
-     * @param bool $hideEmpty
-     * @return $this
-     */
-    public function excludeEmpty(bool $hideEmpty = true): TermQueryBuilder
+    public function excludeEmpty(bool $hideEmpty = true): self
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
-
         return $this;
     }
 
