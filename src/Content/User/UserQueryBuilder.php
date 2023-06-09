@@ -24,7 +24,7 @@ class UserQueryBuilder
      * @param class-string<TModel> $modelClass
      * @noinspection PhpUndefinedMethodInspection
      */
-    public function __construct(string $modelClass)
+    final public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
 
@@ -49,14 +49,9 @@ class UserQueryBuilder
         return $this->take(0);
     }
 
-    /**
-     * @param int $numberOfUsers
-     * @return UserCollection
-     */
     public function take(int $numberOfUsers): UserCollection
     {
         $this->queryVars['number'] = $numberOfUsers;
-
         return $this->get();
     }
 
@@ -94,7 +89,7 @@ class UserQueryBuilder
      * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
      * @return $this
      */
-    public function orderBy($properties, string $direction = ''): UserQueryBuilder
+    public function orderBy($properties, string $direction = ''): self
     {
         $this->queryVars['orderby'] = $properties;
 
@@ -111,7 +106,7 @@ class UserQueryBuilder
      * @param string $email Must be a valid email address, or an exception will be thrown.
      * @return $this
      */
-    public function whereEmail(string $email)
+    public function whereEmail(string $email): self
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException('whereEmail only accepts valid email strings.');
@@ -127,7 +122,7 @@ class UserQueryBuilder
      * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
      * @return $this
      */
-    public function withRoles(array $roles): UserQueryBuilder
+    public function withRoles(array $roles): self
     {
         $this->queryVars['role'] = $roles;
         return $this;
@@ -137,7 +132,7 @@ class UserQueryBuilder
      * @param string[] $roles An array of role names. Matched users must have at least one of these roles.
      * @return $this
      */
-    public function whereRoleIn(array $roles): UserQueryBuilder
+    public function whereRoleIn(array $roles): self
     {
         $this->queryVars['role__in'] = $roles;
         return $this;
@@ -153,7 +148,7 @@ class UserQueryBuilder
         return $this;
     }
 
-    public function whereMeta(array $metaQueryArray): UserQueryBuilder
+    public function whereMeta(array $metaQueryArray): self
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -168,7 +163,7 @@ class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdIn($ids): UserQueryBuilder
+    public function whereIdIn($ids): self
     {
         $this->skipOnInclude = !$ids;
         $this->queryVars['include'] = (array)$ids;
@@ -179,18 +174,14 @@ class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdNotIn($ids): UserQueryBuilder
+    public function whereIdNotIn($ids): self
     {
         $this->queryVars['exclude'] = (array)$ids;
 
         return $this;
     }
 
-    /**
-     * @param int $amount
-     * @return $this
-     */
-    public function limit(int $amount): UserQueryBuilder
+    public function limit(int $amount): self
     {
         $this->skipOnLimit = ($amount <= 0);
         $this->queryVars['number'] = $amount;
