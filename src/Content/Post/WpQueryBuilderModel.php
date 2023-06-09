@@ -4,10 +4,7 @@ namespace OffbeatWP\Content\Post;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use WP_Post;
 
-/**
- * @final
- * @template TModel of PostModel
- */
+/** @template TModel of PostModel */
 class WpQueryBuilderModel extends WpQueryBuilder
 {
     /** @var class-string<TModel> */

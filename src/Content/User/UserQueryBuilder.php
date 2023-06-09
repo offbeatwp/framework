@@ -10,7 +10,7 @@ use UnexpectedValueException;
 use WP_User_Query;
 
 /** @template TModel of UserModel */
-final class UserQueryBuilder
+class UserQueryBuilder
 {
     use OffbeatQueryTrait;
 
@@ -24,7 +24,7 @@ final class UserQueryBuilder
      * @param class-string<TModel> $modelClass
      * @noinspection PhpUndefinedMethodInspection
      */
-    public function __construct(string $modelClass)
+    final public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
 
