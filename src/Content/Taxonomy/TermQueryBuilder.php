@@ -7,7 +7,10 @@ use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
-/** @template TModel of TermModel */
+/**
+ * @final
+ * @template TModel of TermModel
+ */
 class TermQueryBuilder
 {
     use OffbeatQueryTrait;
