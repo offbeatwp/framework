@@ -24,7 +24,7 @@ class UserCollection extends OffbeatModelCollection
 {
     /** @var TModel[] */
     protected $items = [];
-    /** @var class-string<UserModel> */
+    /** @var class-string<TModel> */
     private string $modelClass;
 
     /**
@@ -37,7 +37,7 @@ class UserCollection extends OffbeatModelCollection
 
         foreach ($items as $item) {
             $userModel = $this->createValidUserModel($item);
-            if (is_a($userModel, $modelClass)) {
+            if (is_a($userModel, $this->modelClass)) {
                 $users[] = $userModel;
             }
         }
