@@ -44,28 +44,48 @@ final class ComponentSettings
         return $this->defaultValues[$index] ?? null;
     }
 
-    /** Returns the value of the component setting and parses it to a boolean. */
+    /**
+     * Returns the value of the component setting and casts it to a boolean.
+     * @param string $index The index of the value to retrieve.
+     * @param bool $default Value to return if the value does not exist or is non-scalar.
+     * @return bool
+     */
     public function getBool(string $index, bool $default = false): bool
     {
         $value = $this->get($index);
         return is_scalar($value) ? (bool)$value : $default;
     }
 
-    /** Returns the value of the component setting and parses it to a string. */
+    /**
+     * Returns the value of the component setting and casts it to a string.
+     * @param string $index
+     * @param string $default Value to return if the value does not exist or is non-scalar.
+     * @return string
+     */
     public function getString(string $index, string $default = ''): string
     {
         $value = $this->get($index);
         return is_scalar($value) ? (string)$value : $default;
     }
 
-    /** Returns the value of the component setting and parses it to a float. */
+    /**
+     * Returns the value of the component setting and casts it to a float.
+     * @param string $index
+     * @param float $default Value to return if the value does not exist or is non-numeric.
+     * @return float
+     */
     public function getFloat(string $index, float $default = 0): float
     {
         $value = $this->get($index);
         return is_numeric($value) ? (float)$value : $default;
     }
 
-    /** Returns the value of the component setting and parses it to an int. */
+    /**
+     * Returns the value of the component setting and casts it to an int.
+     * @param string $index
+     * @param int $default Value to return if the value does not exist or is non-numeric.
+     * @return int
+     */
     public function getInt(string $index, int $default = 0): int
     {
         $value = $this->get($index);
