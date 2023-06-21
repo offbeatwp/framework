@@ -9,8 +9,7 @@ class User
 {
     /**
      * Convert a user to the <b>first</b> matching UserModel which also matches/extends the preferred model
-     * <b>Beware:</b> It is possible that this method will NOT return a class that extends the prefferred class.<br>
-     * It will return the
+     * <b>Beware:</b> It is possible that this method will NOT always return a class that extends the prefferred class, as it can return the default User Model.
      * @param WP_User $user
      * @param class-string<UserModel> $preferredModel
      * @return UserModel
