@@ -37,7 +37,7 @@ class UserQueryBuilder
 
         $results = $this->getQueryResults();
 
-        return apply_filters('offbeatwp/users/query/get', new UserCollection($results), $this);
+        return apply_filters('offbeatwp/users/query/get', new UserCollection($results, $this->modelClass), $this);
     }
 
     /** @deprecated Use the <b>get</b> method instead. */

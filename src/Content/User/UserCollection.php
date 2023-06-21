@@ -10,7 +10,7 @@ use TypeError;
 use WP_User;
 
 /**
- * @template TModel
+ * @template TModel extends UserModel
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
  * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
@@ -22,14 +22,14 @@ use WP_User;
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var UserModel[]|TModel[] */
+    /** @var TModel[] */
     protected $items = [];
-    /** @var class-string<UserModel>|'' */
+    /** @var class-string<UserModel> */
     private string $modelClass;
 
     /**
      * @param int[]|WP_User[]|UserModel[] $items
-     * @param class-string<UserModel>|'' $modelClass
+     * @param class-string<TModel> $modelClass
      */
     public function __construct(iterable $items = [], string $modelClass = UserModel::class) {
         $this->modelClass = $modelClass;
@@ -37,7 +37,7 @@ class UserCollection extends OffbeatModelCollection
 
         foreach ($items as $item) {
             $userModel = $this->createValidUserModel($item);
-            if ($userModel) {
+            if (is_subclass_of($userModel, $modelClass)) {
                 $users[] = $userModel;
             }
         }
@@ -88,6 +88,7 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * @template T
+     * @deprecated
      * @param class-string<T> $className
      * @return UserCollection<T>
      */
@@ -97,7 +98,7 @@ class UserCollection extends OffbeatModelCollection
             throw new UserModelException('Cannot cast items in UserCollection to a class that does not extend UserModel.');
         }
 
-        $collection = new UserCollection();
+        $collection = new UserCollection([], $className);
         foreach ($this as $user) {
             $collection->add(new $className($user->getWpUser()));
         }
@@ -126,15 +127,19 @@ class UserCollection extends OffbeatModelCollection
         return parent::add($this->createValidUserModel($item));
     }
 
-    /** @param int|WP_User|UserModel $item */
+    /**
+     * @param int|WP_User|UserModel $item
+     * @return TModel|null
+     */
     protected function createValidUserModel($item): ?UserModel
     {
         if ($item instanceof UserModel) {
-            return $item;
+            $item = $item->getWpUser();
         }
 
         if (is_int($item) || $item instanceof WP_User) {
-            return User::get($item);
+            $user = User::get($item, $this->modelClass);
+            return ($user && is_subclass_of($user, $this->modelClass, false)) ? $user : null;
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');

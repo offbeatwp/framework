@@ -8,12 +8,14 @@ use WP_User;
 class User
 {
     /**
-     * Convert a user to the <b>first</b> matching UserModel or the preferred model, if provided
+     * Convert a user to the <b>first</b> matching UserModel which also matches/extends the preferred model
+     * <b>Beware:</b> It is possible that this method will NOT return a class that extends the prefferred class.<br>
+     * It will return the
      * @param WP_User $user
-     * @param class-string<UserModel>|'' $preferredModel
+     * @param class-string<UserModel> $preferredModel
      * @return UserModel
      */
-    public static function convertWpUserToModel(WP_User $user, string $preferredModel = ''): UserModel
+    public static function convertWpUserToModel(WP_User $user, string $preferredModel = UserModel::class): UserModel
     {
         $modelClass = null;
 
@@ -21,7 +23,7 @@ class User
             $modelRoleClass = UserRole::getModelByUserRole($role);
 
             if ($modelRoleClass) {
-                if (!$preferredModel || $preferredModel === $modelRoleClass) {
+                if (is_subclass_of($modelRoleClass, $preferredModel)) {
                     return new $modelRoleClass($user);
                 }
 
@@ -37,9 +39,9 @@ class User
 
     /**
      * @param int|WP_User $id
-     * @param class-string<UserModel>|'' $preferredModel
+     * @param class-string<UserModel> $preferredModel
      */
-    public static function get($id, string $preferredModel = ''): ?UserModel
+    public static function get($id, string $preferredModel = UserModel::class): ?UserModel
     {
         $user = is_int($id) ? get_userdata($id) : $id;
 
