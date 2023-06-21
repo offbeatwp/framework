@@ -24,9 +24,15 @@ class UserCollection extends OffbeatModelCollection
 {
     /** @var UserModel[]|TModel[] */
     protected $items = [];
+    /** @var class-string<UserModel>|'' */
+    private string $modelClass;
 
-    /** @param int[]|WP_User[]|UserModel[] $items */
-    public function __construct(iterable $items = []) {
+    /**
+     * @param int[]|WP_User[]|UserModel[] $items
+     * @param class-string<UserModel>|'' $modelClass
+     */
+    public function __construct(iterable $items = [], string $modelClass = UserModel::class) {
+        $this->modelClass = $modelClass;
         $users = [];
 
         foreach ($items as $item) {

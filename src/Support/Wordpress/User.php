@@ -35,13 +35,16 @@ class User
         return new $modelClass($user);
     }
 
-    /** @param int|WP_User $id */
-    public static function get($id): ?UserModel
+    /**
+     * @param int|WP_User $id
+     * @param class-string<UserModel>|'' $preferredModel
+     */
+    public static function get($id, string $preferredModel = ''): ?UserModel
     {
         $user = is_int($id) ? get_userdata($id) : $id;
 
         if ($user) {
-            return self::convertWpUserToModel($user);
+            return self::convertWpUserToModel($user, $preferredModel);
         }
 
         return null;
