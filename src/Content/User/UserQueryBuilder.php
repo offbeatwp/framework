@@ -20,10 +20,7 @@ class UserQueryBuilder
     protected bool $skipOnLimit = false;
     protected bool $skipOnInclude = false;
 
-    /**
-     * @param class-string<TModel> $modelClass
-     * @noinspection PhpUndefinedMethodInspection
-     */
+    /** @param class-string<TModel> $modelClass */
     final public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
