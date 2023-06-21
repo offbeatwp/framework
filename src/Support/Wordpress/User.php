@@ -7,18 +7,32 @@ use WP_User;
 
 class User
 {
-    /** Convert a user to the <b>first</b> matching UserModel. */
-    public static function convertWpUserToModel(WP_User $user): UserModel
+    /**
+     * Convert a user to the <b>first</b> matching UserModel or the preferred model, if provided
+     * @param WP_User $user
+     * @param class-string<UserModel>|'' $preferredModel
+     * @return UserModel
+     */
+    public static function convertWpUserToModel(WP_User $user, string $preferredModel = ''): UserModel
     {
+        $modelClass = null;
+
         foreach ($user->roles as $role) {
-            $model = UserRole::getModelByUserRole($role);
-            if ($model) {
-                return new $model($user);
+            $modelRoleClass = UserRole::getModelByUserRole($role);
+
+            if ($modelRoleClass) {
+                if (!$preferredModel || $preferredModel === $modelRoleClass) {
+                    return new $modelRoleClass($user);
+                }
+
+                if (!$modelClass) {
+                    $modelClass = $modelRoleClass;
+                }
             }
         }
 
-        $model = UserRole::getDefaultUserModel();
-        return new $model($user);
+        $modelClass = $modelClass ?: UserRole::getDefaultUserModel();
+        return new $modelClass($user);
     }
 
     /** @param int|WP_User $id */
