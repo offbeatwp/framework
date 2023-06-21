@@ -23,7 +23,7 @@ class User
             $modelRoleClass = UserRole::getModelByUserRole($role);
 
             if ($modelRoleClass) {
-                if (is_subclass_of($modelRoleClass, $preferredModel)) {
+                if (is_a($modelRoleClass, $preferredModel, true)) {
                     return new $modelRoleClass($user);
                 }
 

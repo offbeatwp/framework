@@ -37,7 +37,7 @@ class UserCollection extends OffbeatModelCollection
 
         foreach ($items as $item) {
             $userModel = $this->createValidUserModel($item);
-            if (is_subclass_of($userModel, $modelClass)) {
+            if (is_a($userModel, $modelClass)) {
                 $users[] = $userModel;
             }
         }
@@ -139,7 +139,7 @@ class UserCollection extends OffbeatModelCollection
 
         if (is_int($item) || $item instanceof WP_User) {
             $user = User::get($item, $this->modelClass);
-            return ($user && is_subclass_of($user, $this->modelClass, false)) ? $user : null;
+            return ($user && is_a($user, $this->modelClass)) ? $user : null;
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');
