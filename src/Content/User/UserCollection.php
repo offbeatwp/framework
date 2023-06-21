@@ -45,9 +45,7 @@ class UserCollection extends OffbeatModelCollection
      */
     public function getIds(): array
     {
-        return array_map(static function (UserModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
+        return array_map(static fn(UserModel $model) => $model->getId() ?: 0, $this->items);
     }
 
     /** @return UserModel[] */
@@ -60,7 +58,6 @@ class UserCollection extends OffbeatModelCollection
      * Push one or more items onto the end of the user collection.
      * @param int|WP_User|UserModel ...$values
      * @return $this
-     * 
      */
     public function push(...$values)
     {
@@ -137,6 +134,12 @@ class UserCollection extends OffbeatModelCollection
         throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');
     }
 
+    /**
+     * Immideatly <b>deletes all users that are part of this collection.</b><br>
+     * Be careful!
+     * @param int|null $reassign
+     * @return void
+     */
     public function deleteAll(?int $reassign = null)
     {
         $this->each(function (UserModel $user) use ($reassign) {
