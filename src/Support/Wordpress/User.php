@@ -7,39 +7,53 @@ use WP_User;
 
 class User
 {
-    /** Convert a user to the <b>first</b> matching UserModel. */
-    public static function convertWpUserToModel(WP_User $user): UserModel
+    /**
+     * Convert a user to the <b>first</b> matching UserModel which also matches/extends the preferred model
+     * <b>Beware:</b> It is possible that this method will NOT always return a class that extends the prefferred class, as it can return the default User Model.
+     * @param WP_User $user
+     * @param class-string<UserModel> $preferredModel
+     * @return UserModel
+     */
+    public static function convertWpUserToModel(WP_User $user, string $preferredModel = UserModel::class): UserModel
     {
+        $modelClass = null;
+
         foreach ($user->roles as $role) {
-            $model = UserRole::getModelByUserRole($role);
-            if ($model) {
-                return new $model($user);
+            $modelRoleClass = UserRole::getModelByUserRole($role);
+
+            if ($modelRoleClass) {
+                if (is_a($modelRoleClass, $preferredModel, true)) {
+                    return new $modelRoleClass($user);
+                }
+
+                if (!$modelClass) {
+                    $modelClass = $modelRoleClass;
+                }
             }
         }
 
-        $model = UserRole::getDefaultUserModel();
-        return new $model($user);
+        $modelClass = $modelClass ?: UserRole::getDefaultUserModel();
+        return new $modelClass($user);
     }
 
-    /** @param int|WP_User $id */
-    public static function get($id): ?UserModel
+    /**
+     * @param int|WP_User $id
+     * @param class-string<UserModel> $preferredModel
+     */
+    public static function get($id, string $preferredModel = UserModel::class): ?UserModel
     {
         $user = is_int($id) ? get_userdata($id) : $id;
 
         if ($user) {
-            return self::convertWpUserToModel($user);
+            return self::convertWpUserToModel($user, $preferredModel);
         }
 
         return null;
     }
 
-    /**
-     * @param string $slug
-     * @return void
-     */
     public static function removeUserColumn(string $slug): void
     {
-        add_filter('manage_users_columns', function (array $columnHeaders) use ($slug) {
+        add_filter('manage_users_columns', static function (array $columnHeaders) use ($slug) {
             unset($columnHeaders[$slug]);
             return $columnHeaders;
         });
@@ -56,12 +70,12 @@ class User
      */
     public static function addUserColumn(string $slug, string $header, callable $callback)
     {
-        add_action('manage_users_columns', function ($columnHeaders) use ($slug, $header) {
+        add_action('manage_users_columns', static function ($columnHeaders) use ($slug, $header) {
             $columnHeaders[$slug] = $header;
             return $columnHeaders;
         });
 
-        add_action('manage_users_custom_column', function ($output, $columnName, $userId) use ($slug, $callback) {
+        add_action('manage_users_custom_column', static function ($output, $columnName, $userId) use ($slug, $callback) {
             if ($columnName === $slug) {
                 $output = $callback($output, $columnName, $userId);
             }

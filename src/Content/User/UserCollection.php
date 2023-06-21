@@ -10,7 +10,7 @@ use TypeError;
 use WP_User;
 
 /**
- * @template TModel
+ * @template TModel extends UserModel
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
  * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
@@ -22,16 +22,22 @@ use WP_User;
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var UserModel[]|TModel[] */
+    /** @var TModel[] */
     protected $items = [];
+    /** @var class-string<TModel> */
+    private string $modelClass;
 
-    /** @param int[]|WP_User[]|UserModel[] $items */
-    public function __construct(iterable $items = []) {
+    /**
+     * @param int[]|WP_User[]|UserModel[] $items
+     * @param class-string<TModel> $modelClass
+     */
+    public function __construct(iterable $items = [], string $modelClass = UserModel::class) {
+        $this->modelClass = $modelClass;
         $users = [];
 
         foreach ($items as $item) {
             $userModel = $this->createValidUserModel($item);
-            if ($userModel) {
+            if (is_a($userModel, $this->modelClass)) {
                 $users[] = $userModel;
             }
         }
@@ -45,9 +51,7 @@ class UserCollection extends OffbeatModelCollection
      */
     public function getIds(): array
     {
-        return array_map(static function (UserModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
+        return array_map(static fn(UserModel $model) => $model->getId() ?: 0, $this->items);
     }
 
     /** @return UserModel[] */
@@ -60,7 +64,6 @@ class UserCollection extends OffbeatModelCollection
      * Push one or more items onto the end of the user collection.
      * @param int|WP_User|UserModel ...$values
      * @return $this
-     * 
      */
     public function push(...$values)
     {
@@ -85,6 +88,7 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * @template T
+     * @deprecated
      * @param class-string<T> $className
      * @return UserCollection<T>
      */
@@ -94,7 +98,7 @@ class UserCollection extends OffbeatModelCollection
             throw new UserModelException('Cannot cast items in UserCollection to a class that does not extend UserModel.');
         }
 
-        $collection = new UserCollection();
+        $collection = new UserCollection([], $className);
         foreach ($this as $user) {
             $collection->add(new $className($user->getWpUser()));
         }
@@ -123,20 +127,30 @@ class UserCollection extends OffbeatModelCollection
         return parent::add($this->createValidUserModel($item));
     }
 
-    /** @param int|WP_User|UserModel $item */
+    /**
+     * @param int|WP_User|UserModel $item
+     * @return TModel|null
+     */
     protected function createValidUserModel($item): ?UserModel
     {
         if ($item instanceof UserModel) {
-            return $item;
+            $item = $item->getWpUser();
         }
 
         if (is_int($item) || $item instanceof WP_User) {
-            return User::get($item);
+            $user = User::get($item, $this->modelClass);
+            return ($user && is_a($user, $this->modelClass)) ? $user : null;
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');
     }
 
+    /**
+     * Immideatly <b>deletes all users that are part of this collection.</b><br>
+     * Be careful!
+     * @param int|null $reassign
+     * @return void
+     */
     public function deleteAll(?int $reassign = null)
     {
         $this->each(function (UserModel $user) use ($reassign) {
