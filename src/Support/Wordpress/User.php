@@ -33,13 +33,9 @@ class User
         return null;
     }
 
-    /**
-     * @param string $slug
-     * @return void
-     */
     public static function removeUserColumn(string $slug): void
     {
-        add_filter('manage_users_columns', function (array $columnHeaders) use ($slug) {
+        add_filter('manage_users_columns', static function (array $columnHeaders) use ($slug) {
             unset($columnHeaders[$slug]);
             return $columnHeaders;
         });
@@ -56,12 +52,12 @@ class User
      */
     public static function addUserColumn(string $slug, string $header, callable $callback)
     {
-        add_action('manage_users_columns', function ($columnHeaders) use ($slug, $header) {
+        add_action('manage_users_columns', static function ($columnHeaders) use ($slug, $header) {
             $columnHeaders[$slug] = $header;
             return $columnHeaders;
         });
 
-        add_action('manage_users_custom_column', function ($output, $columnName, $userId) use ($slug, $callback) {
+        add_action('manage_users_custom_column', static function ($output, $columnName, $userId) use ($slug, $callback) {
             if ($columnName === $slug) {
                 $output = $callback($output, $columnName, $userId);
             }
