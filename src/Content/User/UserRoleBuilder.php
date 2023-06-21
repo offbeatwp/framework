@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
+use InvalidArgumentException;
 use OffbeatWP\Support\Wordpress\UserRole;
 
 final class UserRoleBuilder
@@ -24,6 +25,10 @@ final class UserRoleBuilder
      */
     public function model(string $modelClass): UserRoleBuilder
     {
+        if (!is_subclass_of($modelClass, UserModel::class)) {
+            throw new InvalidArgumentException($modelClass . ' does not extend UserModel.');
+        }
+
         $this->modelClass = $modelClass;
         return $this;
     }
