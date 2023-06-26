@@ -28,7 +28,7 @@ class Post
         return null;
     }
 
-    public function maybeRedirect(PostModel $post)
+    public function maybeRedirect(PostModel $post, $ignoreGetParameters = [])
     {
         if (is_preview()) {
             return;
@@ -40,9 +40,18 @@ class Post
 
         if ($requestUri !== $postUri) {
             $url = $post->getPermalink();
+            
+            $getParameters = $_GET;
+            if (!empty($getParameters)) {
+                foreach ($getParameters as $getParameterKey => $getParameter) {
+                    if (array_search($getParameterKey, $ignoreGetParameters) !== false) {
+                        unset($getParameters[$getParameterKey]);
+                    }
+                }
 
-            if (!empty($_GET)) {
-                $url .= '?' . http_build_query($_GET);
+                if (!empty($getParameters)) {
+                    $url .= '?' . http_build_query($getParameters);
+                }
             }
 
             offbeat('http')->redirect($url);
