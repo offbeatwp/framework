@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\User;
 use BadMethodCallException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
@@ -130,6 +131,23 @@ class UserModel
 
     final public function setLogin(string $userLogin): self
     {
+        if (!$userLogin) {
+            throw new InvalidArgumentException('Username cannot be empty');
+        }
+
+        if (strlen($userLogin) > 60) {
+            throw new InvalidArgumentException('Username cannot be longer than 60 characters');
+        }
+
+        $username = wp_strip_all_tags($userLogin);
+        $username = remove_accents($username);
+        $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
+        $username = preg_replace('/&.+?;/', '', $username);
+
+        if ($userLogin !== $username) {
+            throw new InvalidArgumentException($userLogin . ' is not a valid username. You could instead use: ' . $username);
+        }
+
         if ($this->wpUser->user_login !== $userLogin) {
             $this->newUserLogin = $userLogin;
         }
