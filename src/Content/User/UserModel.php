@@ -131,8 +131,12 @@ class UserModel
 
     final public function setLogin(string $userLogin): self
     {
-        if ($userLogin === '' || strlen($userLogin) > 60) {
-            throw new InvalidArgumentException('Username must have 1 ~ 60 characters.');
+        if (!$userLogin) {
+            throw new InvalidArgumentException('Username cannot be empty');
+        }
+
+        if (strlen($userLogin) > 60) {
+            throw new InvalidArgumentException('Username cannot be longer than 60 characters');
         }
 
         $username = wp_strip_all_tags($userLogin);
