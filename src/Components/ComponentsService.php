@@ -2,6 +2,7 @@
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Services\AbstractService;
+use ReflectionClass;
 
 class ComponentsService extends AbstractService
 {
