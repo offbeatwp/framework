@@ -49,7 +49,14 @@ class ComponentsService extends AbstractService
         $components = [];
 
         foreach ($activeComponents as $activeComponent) {
-            $components[$activeComponent] = "Components\\" . $activeComponent . "\\" . $activeComponent;
+            $compomentClass = "Components\\" . $activeComponent . "\\" . $activeComponent;
+            $compomentReflectionClass = new ReflectionClass($compomentClass);
+
+            if ($compomentReflectionClass->isAbstract()) {
+                continue;
+            }
+
+            $components[$activeComponent] = $compomentClass;
         }
 
         return array_unique($components);
