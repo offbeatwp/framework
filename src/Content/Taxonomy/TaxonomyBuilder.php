@@ -19,7 +19,7 @@ class TaxonomyBuilder
      * @param string $singularLabel
      * @return TaxonomyBuilder
      */
-    public function make(string $taxonomy, $postTypes, $pluralName, $singularLabel = ''): TaxonomyBuilder
+    public function make(string $taxonomy, $postTypes, $pluralName, $singularLabel = ''): self
     {
         $this->taxonomy = $taxonomy;
         $this->postTypes = (array)$postTypes;
@@ -31,14 +31,14 @@ class TaxonomyBuilder
     }
 
     /** @param string[] $capabilities Valid keys include: 'manage_terms', 'edit_terms', 'delete_terms' and 'assign_terms' */
-    public function capabilities(array $capabilities = []): TaxonomyBuilder
+    public function capabilities(array $capabilities = []): self
     {
         $this->args['capabilities'] = $capabilities;
         return $this;
     }
 
     /** @param string[]|bool[]|int[]|bool $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask' */
-    public function rewrite($rewrite): TaxonomyBuilder
+    public function rewrite($rewrite): self
     {
         $this->args['rewrite'] = $rewrite;
         return $this;
@@ -76,7 +76,7 @@ class TaxonomyBuilder
      * @param array{name?: string, singular_name?: string, search_items?: string, popular_items?: string, all_items?: string, parent_item?: string, parent_item_colon?: string, name_field_description?: string, slug_field_description?: string, parent_field_description?: string, desc_field_description?: string, edit_item?: string, view_item?: string, update_item?: string, add_new_item?: string, new_item_name?: string, separate_items_with_commas?: string, add_or_remove_items?: string, choose_from_most_used?: string, not_found?: string, no_terms?: string, filter_by_item?: string, items_list_navigation?: string, items_list?: string, most_used?: string, back_to_items?: string, item_link?: string, item_link_description?: string} $labels
      * @return TaxonomyBuilder
      */
-    public function labels(array $labels): TaxonomyBuilder
+    public function labels(array $labels): self
     {
         if (!isset($this->args['labels'])) {
             $this->args['labels'] = [];
@@ -87,7 +87,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function hierarchyDepth(int $depth): TaxonomyBuilder
+    public function hierarchyDepth(int $depth): self
     {
         $this->hierarchical((bool)$depth);
 
@@ -102,7 +102,7 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function hierarchical(bool $hierarchical = false): TaxonomyBuilder
+    public function hierarchical(bool $hierarchical = false): self
     {
         $this->args['hierarchical'] = $hierarchical;
         return $this;
@@ -112,76 +112,90 @@ class TaxonomyBuilder
      * @param class-string<TermModel> $modelClass
      * @return TaxonomyBuilder
      */
-    public function model(string $modelClass): TaxonomyBuilder
+    public function model(string $modelClass): self
     {
         $this->modelClass = $modelClass;
         return $this;
     }
 
-    public function notPubliclyQueryable(): TaxonomyBuilder
+    /**
+     * Whether the taxonomy is publicly queryable.
+     * If not set, the default is inherited from <b>public</b>.
+     */
+    public function publiclyQueryable(bool $publiclyQueryable): self
+    {
+        $this->args['publicly_queryable'] = $publiclyQueryable;
+        return $this;
+    }
+
+    /** @deprecated */
+    public function notPubliclyQueryable(): self
     {
         $this->args['publicly_queryable'] = false;
         return $this;
     }
 
     /** Whether a taxonomy is intended for use publicly either via the admin interface or by front-end users */
-    public function public(bool $public = true): TaxonomyBuilder
+    public function public(bool $public = true): self
     {
         $this->args['public'] = $public;
         return $this;
     }
 
     /** Whether to generate and allow a UI for managing terms in this taxonomy in the admin */
-    public function showUi(bool $showUi = true): TaxonomyBuilder
+    public function showUi(bool $showUi = true): self
     {
         $this->args['show_ui'] = $showUi;
         return $this;
     }
 
     /** Makes this taxonomy available for selection in navigation menus */
-    public function showNavMenus(bool $show = true): TaxonomyBuilder
+    public function showNavMenus(bool $show = true): self
     {
         $this->args['show_in_nav_menus'] = $show;
         return $this;
     }
 
     /** Whether to list the taxonomy in the Tag Cloud Widget controls */
-    public function showTagCloud(bool $show = true): TaxonomyBuilder
+    public function showTagCloud(bool $show = true): self
     {
         $this->args['show_tagcloud'] = $show;
         return $this;
     }
 
     /** Whether this taxonomy should be shown in the admin menu */
-    public function inMenu(bool $menu): TaxonomyBuilder
+    public function inMenu(bool $menu): self
     {
         $this->args['show_in_menu'] = $menu;
         return $this;
     }
 
     /** Whether to include the taxonomy in the REST API */
-    public function inRest(bool $rest = true): TaxonomyBuilder
+    public function inRest(bool $rest = true): self
     {
         $this->args['show_in_rest'] = $rest;
         return $this;
     }
 
     /** Whether to display a column for the taxonomy on its post type listing screens */
-    public function showAdminColumn(bool $showAdminColumn = true): TaxonomyBuilder
+    public function showAdminColumn(bool $showAdminColumn = true): self
     {
         $this->args['show_admin_column'] = $showAdminColumn;
         return $this;
     }
 
     /** Used to disable the metabox */
-    public function hideMetaBox(): TaxonomyBuilder
+    public function hideMetaBox(): self
     {
         $this->args['meta_box_cb'] = false;
         return $this;
     }
 
-    /** @deprecated Does not work with Gutenberg editor. */
-    public function useCheckboxes(): TaxonomyBuilder
+    /**
+     * @deprecated Does not work with Gutenberg editor.<br>Tip: Advanced Custom Fields has a good way to do this with the save/load term options.
+     * @noinspection PhpDeprecationInspection
+     */
+    public function useCheckboxes(): self
     {
         $this->metaBox('post_categories_meta_box');
 
@@ -196,9 +210,9 @@ class TaxonomyBuilder
         return $this;
     }
 
-    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): TaxonomyBuilder
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): self
     {
-        add_filter("manage_edit-{$this->taxonomy}_columns", function ($columns) use ($metaName, $label) {
+        add_filter("manage_edit-{$this->taxonomy}_columns", static function ($columns) use ($metaName, $label) {
             $columns[$metaName] = $label ?: $metaName;
             return $columns;
         });
@@ -224,7 +238,7 @@ class TaxonomyBuilder
      * @param callable $metaBoxCallback
      * @deprecated Gutenberg does not respect this setting and the devs indicated that they don't care
      */
-    public function metaBox($metaBoxCallback): TaxonomyBuilder
+    public function metaBox($metaBoxCallback): self
     {
         $this->args['meta_box_cb'] = $metaBoxCallback;
 
@@ -232,7 +246,7 @@ class TaxonomyBuilder
     }
 
     /** Hides the "description" field in on the Taxonomy add/edit page */
-    public function hideDescriptionField(): TaxonomyBuilder
+    public function hideDescriptionField(): self
     {
         add_action($this->taxonomy . '_edit_form', function () {
             $this->_hideTermDescriptionWrap();
@@ -253,7 +267,7 @@ class TaxonomyBuilder
      * Hides the parent field on the add/edit taxonomy pages.<br/>
      * <b>Note:</b> This will also hide the "add new term" option on all post edit/add pages.
      */
-    public function hideParentField(): TaxonomyBuilder
+    public function hideParentField(): self
     {
         add_action($this->taxonomy . '_edit_form', function () {
             $this->_hideTermParentWrap();
@@ -275,7 +289,7 @@ class TaxonomyBuilder
      * @param string $singleName Must be CamelCase.
      * @param string $pluralName Must be CamelCase. Defaults to singlename if omitted.
      */
-    public function showInGraphQl(string $singleName, string $pluralName = ''): TaxonomyBuilder
+    public function showInGraphQl(string $singleName, string $pluralName = ''): self
     {
         $this->args['show_in_graphql'] = true;
         $this->args['graphql_single_name'] = $singleName;
