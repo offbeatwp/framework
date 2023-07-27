@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Post;
 use Illuminate\Support\Traits\Macroable;
 use WP_Post;
 use WP_Query;
-use function _PHPStan_4dd92cd93\RingCentral\Psr7\parse_request;
 
 /** @final */
 class PostTypeBuilder
