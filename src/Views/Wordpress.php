@@ -266,7 +266,7 @@ class Wordpress
         }
 
         if (!isset($attributes['class']) && !empty($classes)) {
-            $attributes['class'] = implode(' ', $classes)];
+            $attributes['class'] = implode(' ', $classes);
         }
         
         return wp_get_attachment_image($attachmentID, $size, false, $attributes);
