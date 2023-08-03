@@ -259,13 +259,17 @@ class Wordpress
      * @param int[]|string $size
      * @param string[] $classes
      */
-    public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid']): string
+    public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
     {
         if (!is_int($attachmentID)) {
             trigger_error('Wordpress::getAttachmentImage expects an integer as parameter, but received ' . gettype($attachmentID) .'.', E_USER_DEPRECATED);
         }
 
-        return wp_get_attachment_image($attachmentID, $size, false, ['class' => implode(' ', $classes)]);
+        if (!isset($attributes['class']) && !empty($classes)) {
+            $attributes['class'] = implode(' ', $classes)];
+        }
+        
+        return wp_get_attachment_image($attachmentID, $size, false, $attributes);
     }
 
     /**
