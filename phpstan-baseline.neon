@@ -1,0 +1,189 @@
+parameters:
+	ignoreErrors:
+		-
+			message: """
+				#^Instantiation of deprecated class Doctrine\\\\Common\\\\Cache\\\\ArrayCache\\:
+				Deprecated without replacement in doctrine/cache 1\\.11\\. This class will be dropped in 2\\.0$#
+			"""
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects \\$this\\(OffbeatWP\\\\Components\\\\AbstractComponent\\)\\|class\\-string\\<\\$this\\(OffbeatWP\\\\Components\\\\AbstractComponent\\)\\>, \\$this\\(OffbeatWP\\\\Components\\\\AbstractComponent\\) given\\.$#"
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: "#^Call to static method get\\(\\) on an unknown class OffbeatWP\\\\AcfCore\\\\ComponentFields\\.$#"
+			count: 1
+			path: src/Components/GenericWidget.php
+
+		-
+			message: "#^Function get_field not found\\.$#"
+			count: 1
+			path: src/Components/GenericWidget.php
+
+		-
+			message: "#^Function get_fields not found\\.$#"
+			count: 1
+			path: src/Components/GenericWidget.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Components\\\\GenericWidget\\:\\:form\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: src/Components/GenericWidget.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$deps with type array\\<string\\> is incompatible with native type string\\.$#"
+			count: 1
+			path: src/Content/Enqueue/AbstractEnqueueBuilder.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Content\\\\Post\\\\PostModel\\:\\:allAsArray\\(\\) should return array\\<static\\(OffbeatWP\\\\Content\\\\Post\\\\PostModel\\)\\> but returns array\\<OffbeatWP\\\\Content\\\\Post\\\\PostModel\\>\\.$#"
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Content\\\\Post\\\\PostModel\\:\\:find\\(\\) should return static\\(OffbeatWP\\\\Content\\\\Post\\\\PostModel\\)\\|null but returns OffbeatWP\\\\Content\\\\Post\\\\PostModel\\|null\\.$#"
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: "#^Parameter \\#1 \\$content of function _restore_wpautop_hook expects string, null given\\.$#"
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: "#^Parameter \\#1 \\$postarr of function wp_update_post expects array\\{ID\\?\\: int, post_author\\?\\: int, post_date\\?\\: string, post_date_gmt\\?\\: string, post_content\\?\\: string, post_content_filtered\\?\\: string, post_title\\?\\: string, post_excerpt\\?\\: string, \\.\\.\\.\\}, object\\|null given\\.$#"
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: "#^Class OffbeatWP\\\\Content\\\\Post\\\\PostsCollection @implements tag contains incompatible type Illuminate\\\\Support\\\\Enumerable&iterable\\<\\(int\\|string\\), TModel\\>\\.$#"
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: "#^Class OffbeatWP\\\\Content\\\\Post\\\\PostsCollection has @implements tag, but does not implement any interface\\.$#"
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: "#^Return type \\(iterable\\<OffbeatWP\\\\Content\\\\Post\\\\PostModel\\>&OffbeatWP\\\\Content\\\\Post\\\\WpPostsIterator\\) of method OffbeatWP\\\\Content\\\\Post\\\\PostsCollection\\:\\:getIterator\\(\\) should be compatible with return type \\(ArrayIterator\\) of method Illuminate\\\\Support\\\\Collection\\:\\:getIterator\\(\\)$#"
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Content\\\\Taxonomy\\\\TermModel\\)\\:\\:TAXONOMY\\.$#"
+			count: 4
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Content\\\\Taxonomy\\\\TermModel\\:\\:all\\(\\) should return iterable\\<static\\(OffbeatWP\\\\Content\\\\Taxonomy\\\\TermModel\\)\\>&OffbeatWP\\\\Content\\\\Taxonomy\\\\TermsCollection but returns OffbeatWP\\\\Content\\\\Taxonomy\\\\TermsCollection\\.$#"
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Content\\\\Taxonomy\\\\TermQueryBuilder\\:\\:count\\(\\) should return int but returns array\\<int\\|string\\|WP_Term\\>\\|string\\.$#"
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Content\\\\User\\\\UserCollection\\:\\:as\\(\\) should return OffbeatWP\\\\Content\\\\User\\\\UserCollection\\<T\\> but returns OffbeatWP\\\\Content\\\\User\\\\UserCollection\\<OffbeatWP\\\\Content\\\\User\\\\UserModel&T\\>\\.$#"
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: "#^PHPDoc tag @return with type TModel\\|null is not subtype of native type OffbeatWP\\\\Content\\\\User\\\\UserModel\\|null\\.$#"
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: "#^Method OffbeatWP\\\\Content\\\\User\\\\UserModel\\:\\:allAsArray\\(\\) should return array\\<static\\(OffbeatWP\\\\Content\\\\User\\\\UserModel\\)\\> but returns array\\<OffbeatWP\\\\Content\\\\User\\\\UserModel\\>\\.$#"
+			count: 1
+			path: src/Content/User/UserModel.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects \\$this\\(OffbeatWP\\\\Controllers\\\\AbstractController\\)\\|class\\-string\\<\\$this\\(OffbeatWP\\\\Controllers\\\\AbstractController\\)\\>, \\$this\\(OffbeatWP\\\\Controllers\\\\AbstractController\\) given\\.$#"
+			count: 1
+			path: src/Controllers/AbstractController.php
+
+		-
+			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\Fields\\\\AbstractField\\)\\:\\:FIELD_TYPE\\.$#"
+			count: 1
+			path: src/Form/Fields/AbstractField.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Form/Fields/AbstractField.php
+
+		-
+			message: "#^Constructor of class OffbeatWP\\\\Form\\\\FieldsCollections\\\\Heading has an unused parameter \\$includeLead\\.$#"
+			count: 1
+			path: src/Form/FieldsCollections/Heading.php
+
+		-
+			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\FieldsContainers\\\\AbstractFieldsContainer\\)\\:\\:TYPE\\.$#"
+			count: 1
+			path: src/Form/FieldsContainers/AbstractFieldsContainer.php
+
+		-
+			message: "#^Access to undefined constant OffbeatWP\\\\Form\\\\FieldsContainers\\\\FieldsContainerInterface\\:\\:LEVEL\\.$#"
+			count: 1
+			path: src/Form/Form.php
+
+		-
+			message: "#^Call to an undefined method OffbeatWP\\\\Form\\\\Fields\\\\FieldInterface\\:\\:getId\\(\\)\\.$#"
+			count: 1
+			path: src/Form/Form.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Form/Form.php
+
+		-
+			message: "#^Template type T of function container\\(\\) is not referenced in a parameter\\.$#"
+			count: 1
+			path: src/Foundation/helpers.php
+
+		-
+			message: "#^Template type T of function offbeat\\(\\) is not referenced in a parameter\\.$#"
+			count: 1
+			path: src/Foundation/helpers.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects \\$this\\(OffbeatWP\\\\Hooks\\\\AbstractAction\\)\\|class\\-string\\<\\$this\\(OffbeatWP\\\\Hooks\\\\AbstractAction\\)\\>, \\$this\\(OffbeatWP\\\\Hooks\\\\AbstractAction\\) given\\.$#"
+			count: 1
+			path: src/Hooks/AbstractAction.php
+
+		-
+			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionClass constructor expects \\$this\\(OffbeatWP\\\\Hooks\\\\AbstractFilter\\)\\|class\\-string\\<\\$this\\(OffbeatWP\\\\Hooks\\\\AbstractFilter\\)\\>, \\$this\\(OffbeatWP\\\\Hooks\\\\AbstractFilter\\) given\\.$#"
+			count: 1
+			path: src/Hooks/AbstractFilter.php
+
+		-
+			message: "#^Class OffbeatWP\\\\Routes\\\\RouteCollection has @implements tag, but does not implement any interface\\.$#"
+			count: 1
+			path: src/Routes/RouteCollection.php
+
+		-
+			message: "#^Access to undefined constant class\\-string\\<OffbeatWP\\\\Console\\\\AbstractCommand\\>\\|OffbeatWP\\\\Console\\\\AbstractCommand\\:\\:COMMAND\\.$#"
+			count: 1
+			path: src/Support/Wordpress/Console.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: "#^Parameter \\#2 \\$associative of function get_headers expects bool, int given\\.$#"
+			count: 1
+			path: src/Support/Wordpress/WpFile.php
