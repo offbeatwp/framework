@@ -34,7 +34,7 @@ parameters:
 			path: src/Components/GenericWidget.php
 
 		-
-			message: "#^PHPDoc tag @param for parameter \\$deps with type array\\<string\\> is incompatible with native type string\\.$#"
+			message: "#^Property OffbeatWP\\\\Content\\\\Enqueue\\\\AbstractEnqueueBuilder\\:\\:\\$deps \\(array\\<string\\>\\) does not accept array\\<int\\|string, array\\<string\\>\\>\\.$#"
 			count: 1
 			path: src/Content/Enqueue/AbstractEnqueueBuilder.php
 
