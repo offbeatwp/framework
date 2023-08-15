@@ -1,11 +1,13 @@
 # phpstan.neon
 parameters:
+    level: 5
     phpVersion: 80200
     treatPhpDocTypesAsCertain: false
+    paths:
+        - src
     scanFiles:
-          - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
-    ignoreErrors:
-        - '/Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects \$this/'
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
 includes:
+    - phpstan-baseline.neon
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
