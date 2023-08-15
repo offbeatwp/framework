@@ -211,25 +211,25 @@ trait GetMetaTrait
         }
     }
 
-    /**
-     * @param string $key
-     * @param scalar[] $shape
-     * @return scalar[][]|null[][]
-     * @see settype
-     */
-    public function getMetaRepeater(string $key, array $shape): array
-    {
-        $result = [];
-        $count = $this->getMetaInt($key);
-
-        for ($i = 0; $i < $count; $i++) {
-            foreach ($shape as $subKey => $type) {
-                $result[$i][$type] = $this->getMetaWithType("{$key}_{$i}_{$subKey}", $type);
-            }
-        }
-
-        return $result;
-    }
+//    /**
+//     * @param string $key
+//     * @param scalar[] $shape
+//     * @return scalar[][]|null[][]
+//     * @see settype
+//     */
+//    public function getMetaRepeater(string $key, array $shape): array
+//    {
+//        $result = [];
+//        $count = $this->getMetaInt($key);
+//
+//        for ($i = 0; $i < $count; $i++) {
+//            foreach ($shape as $subKey => $type) {
+//                $result[$i][$type] = $this->getMetaWithType("{$key}_{$i}_{$subKey}", $type);
+//            }
+//        }
+//
+//        return $result;
+//    }
 
     /** Retrieve a meta value as a collection.<br> */
     public function getMetaCollection(string $key): Collection
@@ -255,5 +255,72 @@ trait GetMetaTrait
         }
 
         return null;
+    }
+
+    public function getMetaRepeater(array $config): array
+    {
+        $results = [];
+
+        foreach ($config as $field) {
+            if (empty($field['name'])) {
+                continue;
+            }
+
+            $metaKey = $field['name'];
+
+            if (isset($field['meta_key_prefix'])) {
+                $metaKey = $field['meta_key_prefix'] . $metaKey;
+            }
+
+            $fieldValue = get_post_meta($this->getId(), $metaKey, true);
+
+            if (isset($field['layouts'])) { // We're dealing with flexible content layouts.
+                if (!$fieldValue) {
+                    continue;
+                }
+
+                // Build a keyed array of possible layout types.
+                $layoutTypes = [];
+                foreach ($field['layouts'] as $layoutType) {
+                    $layoutTypes[$layoutType['name']] = $layoutType;
+                }
+
+                foreach ($fieldValue as $key => $currentLayoutType) {
+                    $newConfig = $layoutTypes[$currentLayoutType]['sub_fields'];
+
+                    if (!$newConfig) {
+                        continue;
+                    }
+
+                    foreach ($newConfig as &$fieldConfig) {
+                        $fieldConfig['meta_key_prefix'] = $metaKey . "_{$key}_";
+                    }
+
+                    $results[$field['name']][] = array_merge(['acf_fc_layout' => $currentLayoutType], $this->getMetaRepeater($newConfig));
+                }
+            } elseif (isset($field['sub_fields'])) { // We're dealing with repeater fields.
+                if (!$fieldValue) {
+                    continue;
+                }
+
+                for ($i = 0; $i < $fieldValue; $i++) {
+                    $newConfig = $field['sub_fields'];
+
+                    if (!$newConfig) {
+                        continue;
+                    }
+
+                    foreach ($newConfig as &$fieldConfig) {
+                        $fieldConfig['meta_key_prefix'] = $metaKey . "_{$i}_";
+                    }
+
+                    $results[$field['name']][] = $this->getMetaRepeater($newConfig);
+                }
+            } else {
+                $results[$field['name']] = $fieldValue;
+            }
+        }
+
+        return $results;
     }
 }
