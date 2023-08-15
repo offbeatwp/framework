@@ -10,6 +10,7 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use stdClass;
 
 trait GetMetaTrait
 {
@@ -257,70 +258,38 @@ trait GetMetaTrait
         return null;
     }
 
-    public function getMetaRepeater(array $config): array
+    /**
+     * @internal
+     * @param array[]|string[] $format
+     * @return array[]|string[]
+     */
+    public function getMetaGroup(array $format): array
     {
-        $results = [];
+        $data = [];
 
-        foreach ($config as $field) {
-            if (empty($field['name'])) {
-                continue;
-            }
-
-            $metaKey = $field['name'];
-
-            if (isset($field['meta_key_prefix'])) {
-                $metaKey = $field['meta_key_prefix'] . $metaKey;
-            }
-
-            $fieldValue = get_post_meta($this->getId(), $metaKey, true);
-
-            if (isset($field['layouts'])) { // We're dealing with flexible content layouts.
-                if (!$fieldValue) {
-                    continue;
-                }
-
-                // Build a keyed array of possible layout types.
-                $layoutTypes = [];
-                foreach ($field['layouts'] as $layoutType) {
-                    $layoutTypes[$layoutType['name']] = $layoutType;
-                }
-
-                foreach ($fieldValue as $key => $currentLayoutType) {
-                    $newConfig = $layoutTypes[$currentLayoutType]['sub_fields'];
-
-                    if (!$newConfig) {
-                        continue;
-                    }
-
-                    foreach ($newConfig as &$fieldConfig) {
-                        $fieldConfig['meta_key_prefix'] = $metaKey . "_{$key}_";
-                    }
-
-                    $results[$field['name']][] = array_merge(['acf_fc_layout' => $currentLayoutType], $this->getMetaRepeater($newConfig));
-                }
-            } elseif (isset($field['sub_fields'])) { // We're dealing with repeater fields.
-                if (!$fieldValue) {
-                    continue;
-                }
-
-                for ($i = 0; $i < $fieldValue; $i++) {
-                    $newConfig = $field['sub_fields'];
-
-                    if (!$newConfig) {
-                        continue;
-                    }
-
-                    foreach ($newConfig as &$fieldConfig) {
-                        $fieldConfig['meta_key_prefix'] = $metaKey . "_{$i}_";
-                    }
-
-                    $results[$field['name']][] = $this->getMetaRepeater($newConfig);
-                }
+        foreach ($format as $key => $type) {
+            if (is_array($type)) {
+                $data[$key] = $this->getMetaGroup($type);
             } else {
-                $results[$field['name']] = $fieldValue;
+                $data[$key] = $this->convert($key, $type);
             }
         }
 
-        return $results;
+        return $data;
+    }
+
+    /** @return stdClass|array|bool|float|int|string|null */
+    private function convert(string $key, string $type)
+    {
+        switch ($type) {
+            case 'string': return $this->getMetaString($key);
+            case 'bool': return $this->getMetaBool($key);
+            case 'float': return $this->getMetaFloat($key);
+            case 'int': return $this->getMetaInt($key);
+            case 'array': return $this->getMetaArray($key);
+            case 'mixed': return $this->getMetaValue($key);
+        }
+
+        throw new InvalidArgumentException('Improper type: ' . $type);
     }
 }
