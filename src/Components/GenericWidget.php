@@ -5,6 +5,7 @@ namespace OffbeatWP\Components;
 use OffbeatWP\AcfCore\ComponentFields;
 use WP_Widget;
 
+/** @deprecated */
 class GenericWidget extends WP_Widget
 {
     use ComponentInterfaceTrait;
@@ -31,7 +32,7 @@ class GenericWidget extends WP_Widget
 
     public function widget($args, $instance)
     {
-        $this->widgetId = "widget_" . $args["widget_id"];
+        $this->widgetId = 'widget_' . $args['widget_id'];
 
         if (method_exists($this, 'setWidgetSettings')) {
             $this->setWidgetSettings();
@@ -50,6 +51,7 @@ class GenericWidget extends WP_Widget
         echo $args['after_widget'];
     }
 
+    /** @deprecated */
     public function getFieldValues()
     {
         $settings = (object)[];
@@ -69,6 +71,7 @@ class GenericWidget extends WP_Widget
         return $settings;
     }
 
+    /** @deprecated */
     public function get_field($key)
     {
         return get_field($key, $this->widgetId);
@@ -84,9 +87,10 @@ class GenericWidget extends WP_Widget
 
     public function form($instance)
     {
-        echo "<br>";
+        echo '<br>';
     }
 
+    /** @deprecated */
     public function the_field($key)
     {
         echo $this->get_field($key);
@@ -94,33 +98,31 @@ class GenericWidget extends WP_Widget
 
     public function registerForm()
     {
-        if (!function_exists('acf_add_local_field_group')) {
-            return;
-        }
+        if (function_exists('acf_add_local_field_group')) {
+            $fields = ComponentFields::get($this->settings['component_name'], 'acfeditor');
 
-        $fields = ComponentFields::get($this->settings['component_name'], 'acfeditor');
-
-        acf_add_local_field_group([
-            'key' => 'group_widget_' . $this->settings['id_base'],
-            'title' => 'Widget settings - ' . $this->settings['name'],
-            'fields' => $fields,
-            'location' => [
-                [
+            acf_add_local_field_group([
+                'key' => 'group_widget_' . $this->settings['id_base'],
+                'title' => 'Widget settings - ' . $this->settings['name'],
+                'fields' => $fields,
+                'location' => [
                     [
-                        'param' => 'widget',
-                        'operator' => '==',
-                        'value' => $this->settings['id_base'],
+                        [
+                            'param' => 'widget',
+                            'operator' => '==',
+                            'value' => $this->settings['id_base'],
+                        ],
                     ],
                 ],
-            ],
-            'menu_order' => 0,
-            'position' => 'normal',
-            'style' => 'default',
-            'label_placement' => 'top',
-            'instruction_placement' => 'label',
-            'hide_on_screen' => '',
-            'active' => 1,
-            'description' => '',
-        ]);
+                'menu_order' => 0,
+                'position' => 'normal',
+                'style' => 'default',
+                'label_placement' => 'top',
+                'instruction_placement' => 'label',
+                'hide_on_screen' => '',
+                'active' => 1,
+                'description' => '',
+            ]);
+        }
     }
 }
