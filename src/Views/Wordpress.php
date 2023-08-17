@@ -87,6 +87,7 @@ class Wordpress
      *     @type string             $item_spacing         Whether to preserve whitespace within the menu's HTML.
      *                                                    Accepts 'preserve' or 'discard'. Default 'preserve'.
      * }
+     * @phpstan-param null|array{menu: int|string|WP_Term, menu_class: string, menu_id: string, container: string, container_class: string, container_id: string, container_aria_label: string, fallback_cb: callable|false, before: string, after: string, link_before: string, link_after: string, echo: bool, depth: int, walker: object, theme_location: string, items_wrap: string, item_spacing: string} $args
      * @return false|string|null
      */
     public function navMenu(?array $args = [])
@@ -320,6 +321,7 @@ class Wordpress
      *                                  'async' (default), 'sync', or 'auto'. Passing false or an empty
      *                                  string will result in the attribute being omitted.
      * }
+     * @phpstan-param array{src: string, class: string, alt: string, srcset: string, sizes: string, loading: string|false, decoding: string|false} $attributes
      * @return string
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
