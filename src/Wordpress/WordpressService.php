@@ -17,6 +17,7 @@ use OffbeatWP\Support\Wordpress\Taxonomy;
 
 class WordpressService
 {
+    /** @var class-string[] */
     public $bindings = [
         'admin-page'        => AdminPage::class,
         'ajax'              => Ajax::class,
@@ -32,6 +33,7 @@ class WordpressService
         'enqueue-style'     => WpStyleEnqueueBuilder::class,
     ];
 
+    /** @return void */
     public function register()
     {
         $this->registerMenus();
@@ -43,6 +45,7 @@ class WordpressService
         add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10 ,2);
     }
 
+    /** @return void */
     public function registerMenus()
     {
         $menus = config('menus');
@@ -52,6 +55,7 @@ class WordpressService
         }
     }
 
+    /** @return void */
     public function registerImageSizes()
     {
         $images = config('images');
@@ -63,6 +67,7 @@ class WordpressService
         }
     }
 
+    /** @return void */
     public function registerSidebars()
     {
         $sidebars = config('sidebars');
@@ -75,6 +80,7 @@ class WordpressService
         }
     }
 
+    /** @return void */
     public function registerPageTemplate()
     {
         add_filter('theme_page_templates', function ($postTemplates) {
@@ -88,6 +94,11 @@ class WordpressService
         }, 10, 1);
     }
 
+    /**
+     * @param string $template
+     * @param mixed[] $data
+     * @return string
+     */
     public function applyPageTemplate($template, $data)
     {
         if (is_singular('page') && empty($data['ignore_page_template'])) {

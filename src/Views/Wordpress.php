@@ -6,9 +6,11 @@ use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
 use WP_Site;
+use WP_Term;
 
 class Wordpress
 {
+    /** @return false|string */
     public function head()
     {
         ob_start();
@@ -16,6 +18,7 @@ class Wordpress
         return ob_get_clean();
     }
 
+    /** @return false|string */
     public function footer()
     {
         ob_start();
@@ -50,7 +53,40 @@ class Wordpress
 
     /**
      * Returns a navigation menu.
-     * @param array|null $args Optional. Array of nav menu arguments.
+     * @param string[]|int[]|bool[]|object[]|callable[]|null $args {
+     *     Optional. Array of nav menu arguments.
+     *
+     *     @type int|string|WP_Term $menu                 Desired menu. Accepts a menu ID, slug, name, or object.
+     *                                                    Default empty.
+     *     @type string             $menu_class           CSS class to use for the ul element which forms the menu.
+     *                                                    Default 'menu'.
+     *     @type string             $menu_id              The ID that is applied to the ul element which forms the menu.
+     *                                                    Default is the menu slug, incremented.
+     *     @type string             $container            Whether to wrap the ul, and what to wrap it with.
+     *                                                    Default 'div'.
+     *     @type string             $container_class      Class that is applied to the container.
+     *                                                    Default 'menu-{menu slug}-container'.
+     *     @type string             $container_id         The ID that is applied to the container. Default empty.
+     *     @type string             $container_aria_label The aria-label attribute that is applied to the container
+     *                                                    when it's a nav element. Default empty.
+     *     @type callable|false     $fallback_cb          If the menu doesn't exist, a callback function will fire.
+     *                                                    Default is 'wp_page_menu'. Set to false for no fallback.
+     *     @type string             $before               Text before the link markup. Default empty.
+     *     @type string             $after                Text after the link markup. Default empty.
+     *     @type string             $link_before          Text before the link text. Default empty.
+     *     @type string             $link_after           Text after the link text. Default empty.
+     *     @type bool               $echo                 Whether to echo the menu or return it. Default true.
+     *     @type int                $depth                How many levels of the hierarchy are to be included.
+     *                                                    0 means all. Default 0.
+     *                                                    Default 0.
+     *     @type object             $walker               Instance of a custom walker class. Default empty.
+     *     @type string             $theme_location       Theme location to be used. Must be registered with
+     *                                                    register_nav_menu() in order to be selectable by the user.
+     *     @type string             $items_wrap           How the list items should be wrapped. Uses printf() format with
+     *                                                    numbered placeholders. Default is a ul with an id and class.
+     *     @type string             $item_spacing         Whether to preserve whitespace within the menu's HTML.
+     *                                                    Accepts 'preserve' or 'discard'. Default 'preserve'.
+     * }
      * @return false|string|null
      */
     public function navMenu(?array $args = [])
@@ -145,12 +181,21 @@ class Wordpress
         return get_blog_details($id) ?: null;
     }
 
-    /** Echos the class names for the body element. */
+    /**
+     * Echos the class names for the body element.
+     * @param string $class
+     * @return void
+     */
     public function bodyClass($class = '')
     {
         body_class($class);
     }
 
+    /**
+     * @param string|null $action
+     * @param mixed $args
+     * @return false|string
+     */
     public function action(?string $action, $args = [])
     {
         ob_start();
@@ -253,11 +298,29 @@ class Wordpress
 
     /**
      * Gets an HTML img element representing an image attachment.<br>
-     * While <b>$size/b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
+     * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
      * @param int $attachmentID
      * @param int[]|string $size
      * @param string[] $classes
+     * @param string[]|false[] $attributes {
+     *     Optional. Attributes for the image markup.
+     *
+     *     @type string       $src      Image attachment URL.
+     *     @type string       $class    CSS class name or space-separated list of classes.
+     *                                  Default `attachment-$size_class size-$size_class`,
+     *                                  where `$size_class` is the image size being requested.
+     *     @type string       $alt      Image description for the alt attribute.
+     *     @type string       $srcset   The 'srcset' attribute value.
+     *     @type string       $sizes    The 'sizes' attribute value.
+     *     @type string|false $loading  The 'loading' attribute value. Passing a value of false
+     *                                  will result in the attribute being omitted for the image.
+     *                                  Defaults to 'lazy', depending on wp_lazy_loading_enabled().
+     *     @type string       $decoding The 'decoding' attribute value. Possible values are
+     *                                  'async' (default), 'sync', or 'auto'. Passing false or an empty
+     *                                  string will result in the attribute being omitted.
+     * }
+     * @return string
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
     {
