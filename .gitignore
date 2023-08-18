@@ -1,3 +1,5 @@
 vendor/
 composer.lock
 .idea
+package.json
+phpstan.neon

@@ -357,7 +357,13 @@ class Wordpress
         return implode(', ', $srcSet);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     * @param string|null $format
+     * @param string|int|bool $date
+     * @param bool $strtotime
+     * @return string
+     */
     public function formatDate(?string $format, $date, bool $strtotime = false): string
     {
         if ($strtotime) {
