@@ -33,7 +33,7 @@ class Post
      * @param string[] $ignoreGetParameters
      * @return void
      */
-    public function maybeRedirect(PostModel $post, $ignoreGetParameters = [])
+    public function maybeRedirect(PostModel $post, array $ignoreGetParameters = [])
     {
         if (is_preview()) {
             return;
