@@ -29,6 +29,7 @@ class Taxonomy
     /**
      * @param string $taxonomy
      * @param class-string<TermModel> $modelClass
+     * @return void
      */
     public function registerTermModel(string $taxonomy, string $modelClass)
     {
@@ -44,6 +45,7 @@ class Taxonomy
     /**
      * @deprecated Use convertWpTermToModel instead
      * @see convertWpTermToModel
+     * @return TermModel
      */
     public function convertWpPostToModel(WP_Term $term)
     {

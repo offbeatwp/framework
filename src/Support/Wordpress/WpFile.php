@@ -12,6 +12,7 @@ final class WpFile
     private string $type;
     private ?string $error;
 
+    /** @param array{file: string, url: string, type: string, error: string|false|null} $result */
     private function __construct(array $result)
     {
         $this->file = $result['file'];
@@ -91,14 +92,14 @@ final class WpFile
         return new WpFile(wp_upload_bits($filename, null, $fileContent, $time));
     }
 
-    /** @param array $fileArray Array that represents a `$_FILES` upload array.<br>This array must have a <i>name</i> and a <i>tmp_name</i> key. */
+    /** @param array{name: string, tmp_name: string} $fileArray Array that represents a `$_FILES` upload array.<br>This array must have a <i>name</i> and a <i>tmp_name</i> key. */
     public static function uploadFromArray(array $fileArray): WpFile
     {
         return self::uploadBits($fileArray['name'], file_get_contents($fileArray['tmp_name']));
     }
 
     /**
-     * @param array $fileArray Array that represents a `$_FILES` upload array from a multi-upload filed.
+     * @param array{name: string[], tmp_name: string[]} $fileArray Array that represents a `$_FILES` upload array from a multi-upload filed.
      * @return WpFile[]
      */
     public static function uploadFromMultiArray(array $fileArray): array
