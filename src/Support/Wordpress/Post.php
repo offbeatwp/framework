@@ -54,7 +54,7 @@ class Post
                     }
                 }
 
-                if (!empty($getParameters)) {
+                if ($getParameters) {
                     $url .= '?' . http_build_query($getParameters);
                 }
             }
