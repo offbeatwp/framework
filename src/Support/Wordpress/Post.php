@@ -47,9 +47,9 @@ class Post
             $url = $post->getPermalink();
             
             $getParameters = $_GET;
-            if (!empty($getParameters)) {
+            if (is_array($getParameters)) {
                 foreach ($getParameters as $getParameterKey => $getParameter) {
-                    if (array_search($getParameterKey, $ignoreGetParameters) !== false) {
+                    if (in_array($getParameterKey, $ignoreGetParameters)) {
                         unset($getParameters[$getParameterKey]);
                     }
                 }
