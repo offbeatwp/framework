@@ -28,6 +28,11 @@ class Post
         return null;
     }
 
+    /**
+     * @param PostModel $post
+     * @param string[] $ignoreGetParameters
+     * @return void
+     */
     public function maybeRedirect(PostModel $post, $ignoreGetParameters = [])
     {
         if (is_preview()) {
