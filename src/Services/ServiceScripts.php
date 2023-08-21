@@ -7,8 +7,10 @@ use OffbeatWP\SiteSettings\SettingsScripts;
 
 class ServiceScripts extends AbstractService
 {
+    /** @var SiteSettings|null */
     protected $settings;
 
+    /** @return void */
     public function register(SiteSettings $settings)
     {
         $this->settings = $settings;
@@ -20,16 +22,19 @@ class ServiceScripts extends AbstractService
         $settings->addPage(SettingsScripts::class);
     }
 
+    /** @return void */
     public function scriptsHead()
     {
         echo $this->settings->get('scripts_head');
     }
 
+    /** @return void */
     public function scriptsBodyOpen()
     {
         echo $this->settings->get('scripts_open_body');
     }
 
+    /** @return void */
     public function scriptsFooter()
     {
         echo $this->settings->get('scripts_footer');

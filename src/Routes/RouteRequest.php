@@ -6,7 +6,7 @@ use OffbeatWP\Routes\Routes\Route;
 
 final class RouteRequest
 {
-    private $route;
+    private Route $route;
 
     public function __construct(Route $route)
     {

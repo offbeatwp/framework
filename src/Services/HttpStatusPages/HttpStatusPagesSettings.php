@@ -18,7 +18,8 @@ class HttpStatusPagesSettings
     {
         $form = new Form();
 
-        if (!($httpStatusPagesCodes = config('app.http_status_pages_codes'))) {
+        $httpStatusPagesCodes = config('app.http_status_pages_codes');
+        if (!$httpStatusPagesCodes) {
             $httpStatusPagesCodes = collect('404');
         }
 
