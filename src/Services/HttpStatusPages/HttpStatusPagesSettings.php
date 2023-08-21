@@ -6,8 +6,8 @@ use OffbeatWP\Form\Form;
 
 class HttpStatusPagesSettings
 {
-    const ID = 'http-status-pages';
-    const PRIORITY = 90;
+    public const ID = 'http-status-pages';
+    public const PRIORITY = 90;
 
     public function title(): string
     {
