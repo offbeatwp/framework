@@ -2,11 +2,11 @@
 
 namespace OffbeatWP\Routes;
 
-class WpRedirect
+final class WpRedirect
 {
-    private $location;
-    private $status;
-    private $redirectBy;
+    private string $location;
+    private int $status;
+    private string $redirectBy;
 
     public function __construct(string $location, int $status = 302, string $redirectBy = 'WordPress')
     {
