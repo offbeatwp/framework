@@ -6,8 +6,8 @@ use OffbeatWP\Form\Form;
 
 class HttpStatusPagesSettings
 {
-    const ID = 'http-status-pages';
-    const PRIORITY = 90;
+    public const ID = 'http-status-pages';
+    public const PRIORITY = 90;
 
     public function title(): string
     {
@@ -18,7 +18,8 @@ class HttpStatusPagesSettings
     {
         $form = new Form();
 
-        if (!($httpStatusPagesCodes = config('app.http_status_pages_codes'))) {
+        $httpStatusPagesCodes = config('app.http_status_pages_codes');
+        if (!$httpStatusPagesCodes) {
             $httpStatusPagesCodes = collect('404');
         }
 

@@ -5,6 +5,7 @@ namespace OffbeatWP\Services\PageTypes;
 use OffbeatWP\Content\Taxonomy\TermModel;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
+use WP_Post;
 use WP_Query;
 
 class PageTypesService extends AbstractService
@@ -12,6 +13,7 @@ class PageTypesService extends AbstractService
     public const TAXONOMY = 'page-type';
     public const POST_TYPES = 'page';
 
+    /** @var bool */
     public $isPageTypeSaved = false;
 
     public function register()
@@ -67,6 +69,10 @@ class PageTypesService extends AbstractService
         }
     }
 
+    /**
+     * @param WP_Post $post
+     * @return void
+     */
     public function show_required_field_error_msg($post)
     {
         $taxonomy = self::TAXONOMY;
@@ -83,6 +89,10 @@ class PageTypesService extends AbstractService
         }
     }
 
+    /**
+     * @param int $postId
+     * @return void
+     */
     public function savePageType($postId)
     {
         if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || $this->isPageTypeSaved) {
@@ -97,23 +107,24 @@ class PageTypesService extends AbstractService
 
         $pageType = sanitize_text_field($_POST['page_type']);
 
-        if (!$pageType) {
-            $postdata = [
-                'ID' => $postId,
-                'post_status' => 'draft',
-            ];
-            wp_update_post($postdata);
-        } else {
+        if ($pageType) {
             $term = get_term_by('slug', $pageType, $taxonomy);
 
             if ($term) {
                 wp_set_object_terms($postId, $term->term_id, $taxonomy);
             }
+        } else {
+            $postdata = [
+                'ID' => $postId,
+                'post_status' => 'draft',
+            ];
+            wp_update_post($postdata);
         }
 
         $this->isPageTypeSaved = true;
     }
 
+    /** @return void */
     public function metaBox()
     {
         $terms = PageTypeModel::query()->excludeEmpty(false)->order('term_id', 'ASC')->all();

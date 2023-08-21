@@ -6,6 +6,7 @@ use OffbeatWP\Contracts\SiteSettings;
 
 class HttpStatusPagesService extends AbstractService
 {
+    /** @var SiteSettings|null */
     protected $settings;
 
     public function register(SiteSettings $settings)
@@ -17,6 +18,11 @@ class HttpStatusPagesService extends AbstractService
         add_filter('offbeatwp/http_status', [$this, 'renderHttpStatusPage'], 20, 2);
     }
 
+    /**
+     * @param mixed $return
+     * @param int $code
+     * @return mixed
+     */
     public function renderHttpStatusPage($return, int $code) {
         global $wp_query, $wp_the_query;
 

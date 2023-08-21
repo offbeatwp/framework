@@ -6,8 +6,8 @@ use OffbeatWP\Form\Form;
 
 class SettingsScripts
 {
-    const ID = 'scripts';
-    const PRIORITY = 90;
+    public const ID = 'scripts';
+    public const PRIORITY = 90;
 
     public function title(): string
     {

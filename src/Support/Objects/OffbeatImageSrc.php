@@ -5,13 +5,15 @@ namespace OffbeatWP\Support\Objects;
 use ArrayIterator;
 use IteratorAggregate;
 
+/** @implements IteratorAggregate<int, string|int|bool> */
 final class OffbeatImageSrc implements IteratorAggregate
 {
-    private $url;
-    private $width;
-    private $height;
-    private $resized;
+    private string $url;
+    private int $width;
+    private int $height;
+    private bool $resized;
 
+    /** @param string[]|int[]|bool[] $imgData */
     public function __construct(array $imgData)
     {
         $this->url = $imgData[0];
@@ -40,6 +42,7 @@ final class OffbeatImageSrc implements IteratorAggregate
         return $this->resized;
     }
 
+    /** @return ArrayIterator<int, string|int|bool> */
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator([$this->url, $this->width, $this->height, $this->resized]);

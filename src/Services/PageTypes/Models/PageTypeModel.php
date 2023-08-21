@@ -5,5 +5,5 @@ use OffbeatWP\Content\Taxonomy\TermModel;
 
 class PageTypeModel extends TermModel
 {
-    const TAXONOMY = 'page-type';
+    public const TAXONOMY = 'page-type';
 }
