@@ -18,13 +18,17 @@ abstract class AbstractComponent
         ViewableTrait::view as protected traitView;
     }
 
+    /** @var View */
     public $view;
+    /** @var Form|null */
     public $form = null;
+    /** @var ContextInterface|null */
     protected $context;
+    /** @var string[] */
     private $cssClasses = [];
     /** @var int|null */
     private $renderId = null;
-
+    /** @var bool */
     protected $assetsEnqueued = false;
 
     /** @return Form|null */
@@ -51,7 +55,7 @@ abstract class AbstractComponent
      */
     abstract static function settings();
 
-    public function __construct(View $view, ContextInterface $context = null)
+    public function __construct(View $view, ?ContextInterface $context = null)
     {
         $this->view = $view;
         $this->context = $context;
@@ -62,6 +66,11 @@ abstract class AbstractComponent
         }
     }
 
+    /**
+     * @param string $name
+     * @param mixed[] $data
+     * @return string|null
+     */
     public function view(string $name, array $data = [])
     {
         if (!isset($data['cssClasses'])) {
@@ -88,7 +97,7 @@ abstract class AbstractComponent
 
     /**
      * Render the component.
-     * @param object|array $settings
+     * @param object|mixed[] $settings
      * @return string|null
      */
     public function renderComponent($settings)
@@ -149,13 +158,20 @@ abstract class AbstractComponent
         $this->setCssClasses(apply_filters('offbeatwp/component/classes', $this->cssClasses, $componentSlug));
     }
 
+    /**
+     * @param object|mixed[] $settings
+     * @return string
+     */
     protected function getCacheId($settings): string
     {
         $prefix = $this->context ? $this->context->getCacheId() : '';
         return md5($prefix . get_class($this) . json_encode($settings));
     }
 
-    /** @return false|string */
+    /**
+     * @param string $id
+     * @return false|string
+     */
     protected function getCachedComponent($id)
     {
         return $this->getCachedObject($id);
@@ -252,8 +268,10 @@ abstract class AbstractComponent
         return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 
+    /** @return void */
     public static function enqueueAssets() {}
 
+    /** @return void */
     public static function _enqueueAssets()
     {
         static::enqueueAssets();
