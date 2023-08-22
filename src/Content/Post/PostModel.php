@@ -264,6 +264,7 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
+    /** @return false|string */
     public function getPermalink()
     {
         return get_permalink($this->getId());

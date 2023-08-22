@@ -1,8 +1,11 @@
 <?php
 namespace OffbeatWP\Foundation;
 
+use Closure;
 use DI\Container;
 use DI\ContainerBuilder;
+use DI\Definition\Helper\CreateDefinitionHelper;
+use DI\Definition\Helper\DefinitionHelper;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
@@ -63,6 +66,7 @@ final class App
         add_action('wp', [$this, 'findRoute'], 1);
     }
 
+    /** @return CreateDefinitionHelper[] */
     private function baseBindings(): array
     {
         return [
@@ -141,6 +145,11 @@ final class App
         $this->services[get_class($service)] = $service;
     }
 
+    /**
+     * @param string $abstract
+     * @param mixed|DefinitionHelper|Closure $concrete
+     * @return void
+     */
     public function bind($abstract, $concrete)
     {
         $this->container->set($abstract, $concrete);
@@ -161,6 +170,11 @@ final class App
         return get_template_directory() . '/components';
     }
 
+    /**
+     * @param string|null $config
+     * @param mixed $default
+     * @return mixed
+     */
     public function config(?string $config, $default)
     {
         if ($this->config === null) {

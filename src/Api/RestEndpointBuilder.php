@@ -12,6 +12,7 @@ class RestEndpointBuilder
     /** @var callable */
     public $callback;
     public string $method = WP_REST_Server::READABLE;
+    /** @var Closure[] */
     public array $args = [];
     /** @var callable */
     public $permissionCallback = '__return_true';

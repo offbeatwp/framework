@@ -27,6 +27,7 @@ use WP_Query;
  */
 class PostsCollection extends OffbeatModelCollection
 {
+    /** @var IWpQuerySubstitute|WP_Query|null  */
     protected $query = null;
 
     /** @param  int[]|WP_Post[]|WP_Query $items */
@@ -91,6 +92,7 @@ class PostsCollection extends OffbeatModelCollection
 
     /**
      * Retrieves a paginated navigation to next/previous set of posts, when applicable.
+     * @param array{base?: string, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $rawArgs
      * @see paginate_links().
      */
     public function getPagination(array $rawArgs = [], string $slug = ''): string
@@ -142,6 +144,7 @@ class PostsCollection extends OffbeatModelCollection
         return '';
     }
 
+    /** @param array{base?: string, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $args */
     private function getPaginatedLinks(array $args): string
     {
         $GLOBALS['wp_query'] = $this->query;

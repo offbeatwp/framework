@@ -5,6 +5,7 @@ use WP_REST_Request;
 
 abstract class AbstractRestEndpoint
 {
+    /** @var WP_REST_Request */
     protected $request;
 
     public function __construct(WP_REST_Request $request)
@@ -17,5 +18,6 @@ abstract class AbstractRestEndpoint
         return $this->request;
     }
 
+    /** @return mixed */
     abstract public function response();
 }

@@ -2,14 +2,18 @@
 
 namespace OffbeatWP\Modules;
 
+use Illuminate\Support\Collection;
 use OffbeatWP\Commands\Commands;
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Services\AbstractService;
 use ReflectionClass;
 
 abstract class AbstractModule extends AbstractService
 {
+    /** @var App */
     public $app;
 
+    /** @param App $app */
     public function __construct($app)
     {
         $this->app = $app;
@@ -32,11 +36,13 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
+    /** @return string */
     public function getName()
     {
         return (new ReflectionClass($this))->getShortName();
     }
 
+    /** @return void */
     public function registerComponents()
     {
         $directory = $this->getDirectory() . '/Components';
@@ -50,12 +56,14 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
+    /** @return false|string */
     public function getNamespace()
     {
         $classInfo = new ReflectionClass($this);
         return substr($classInfo->name, 0, strrpos($classInfo->name, "\\"));
     }
 
+    /** @return string */
     public function getDirectory()
     {
         $classInfo = new ReflectionClass($this);
@@ -64,6 +72,7 @@ abstract class AbstractModule extends AbstractService
         return dirname($classPath);
     }
 
+    /** @return string */
     public function getUrl()
     {
         $path = str_replace(get_stylesheet_directory(), '', $this->getDirectory());
@@ -71,6 +80,11 @@ abstract class AbstractModule extends AbstractService
         return get_stylesheet_directory_uri() . $path;
     }
 
+    /**
+     * @param string $path
+     * @param bool $findDirs This parameter is unused and does not do unless your module overrides this method.
+     * @return Collection|null
+     */
     public function getRegisterableObjects($path, $findDirs = false)
     {
         if (!is_dir($path)) {

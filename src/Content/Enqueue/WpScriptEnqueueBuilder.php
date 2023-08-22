@@ -9,16 +9,18 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
 {
     /** @var array{value: string, inFooter: bool, position: string}[] */
     protected array $bindingsToPass = [];
+    /** @var mixed[] */
     protected array $l10nData = [];
     protected string $l10nName = '';
     protected bool $inFooter = false;
+    /** @var mixed[] */
     protected static array $vars = [];
 
     /**
      * Pass a variable to the enqueued script. This variable will be globally available.
      * The actual output of the JavaScript Script tag containing your variable occurs at the time that the enqueued script is printed.
      * @param string $varName Must be alphanumeric.
-     * @param scalar|array|object|null $varValue Will be encoded with json_encode.
+     * @param scalar|mixed[]|object|null $varValue Will be encoded with json_encode.
      * @param bool $includeAfter When true, the variable will included after the script.
      */
     public function addVariable(string $varName, $varValue, bool $includeAfter = false): self
@@ -38,6 +40,7 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
     /**
      * Localize a script.<br>
      * Works only if the script has already been registered.
+     * @param mixed[] $l10n
      */
     public function localize(array $l10n, string $objectName = 'tl'): self
     {

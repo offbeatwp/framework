@@ -6,6 +6,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Http
 {
+    /**
+     * @param int $code
+     * @param string $description
+     * @return mixed
+     */
     public function abort(int $code, string $description = '')
     {
         status_header($code, $description);
@@ -19,6 +24,11 @@ class Http
         exit;
     }
 
+    /**
+     * @param string|null $requestUri
+     * @param int $status
+     * @return void
+     */
     public function redirectToParentUrl($requestUri = null, int $status = 301): void
     {   
         if ($requestUri === null) {
