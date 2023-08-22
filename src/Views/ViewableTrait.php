@@ -12,7 +12,7 @@ trait ViewableTrait
     /** @var mixed|View */
     public $view;
 
-    /** @return mixed */
+    /** @return string|null */
     public function view(string $name, array $data = [])
     {
         $view = container()->get(View::class);
