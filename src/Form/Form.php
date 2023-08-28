@@ -2,6 +2,7 @@
 namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
+use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
 use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
@@ -15,8 +16,11 @@ class Form extends Collection
 {
     /** @var Form|FieldsContainerInterface */
     private $activeItem;
+    /** @var string[] */
     private $fieldKeys = [];
+    /** @var string */
     private $fieldPrefix = '';
+    /** @var Form|FieldsContainerInterface */
     public $parent;
 
     public function __construct()
@@ -70,15 +74,16 @@ class Form extends Collection
         return $this;
     }
 
+    /** @return Form|FieldsContainerInterface */
     public function getActiveItem()
     {
         return $this->activeItem;
     }
 
     /**
-     * @param FieldsContainerInterface|Form $item
+     * @param Form|FieldsContainerInterface $item
      * @param bool $setParent
-     * @return FieldsContainerInterface|Form
+     * @return Form|FieldsContainerInterface
      */
     public function setActiveItem($item, $setParent = false)
     {
@@ -91,6 +96,11 @@ class Form extends Collection
         return $this->activeItem;
     }
 
+    /**
+     * @param string $id
+     * @param string $label
+     * @return $this
+     */
     public function addTab($id, $label)
     {
         $this->add(new Tab($id, $label));
@@ -98,6 +108,11 @@ class Form extends Collection
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param string $label
+     * @return $this
+     */
     public function addSection($id, $label)
     {
         $this->add(new Section($id, $label));
@@ -105,6 +120,11 @@ class Form extends Collection
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param string $label
+     * @return $this
+     */
     public function addRepeater($id, $label)
     {
         $this->add(new Repeater($id, $label));
@@ -112,6 +132,10 @@ class Form extends Collection
         return $this;
     }
 
+    /**
+     * @param FieldInterface $field
+     * @return $this
+     */
     public function addField(FieldInterface $field)
     {
         $this->fieldKeys[] = $field->getId();
@@ -120,6 +144,10 @@ class Form extends Collection
         return $this;
     }
 
+    /**
+     * @param FieldsCollectionInterface $fieldsCollection
+     * @return $this
+     */
     public function addFields(FieldsCollectionInterface $fieldsCollection)
     {
         $fieldsCollection->each(function ($field) {
@@ -129,6 +157,9 @@ class Form extends Collection
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function closeField()
     {
         $parentField = $this->getActiveItem()->getParent();
@@ -140,39 +171,47 @@ class Form extends Collection
         return $this;
     }
 
+    /** @return string */
     public function getType()
     {
         return 'form';
     }
 
-    public function getFieldPrefix() 
+    /** @return string */
+    public function getFieldPrefix()
     {
         return $this->fieldPrefix;
     }
 
+    /** @param string $fieldPrefix */
     public function setFieldPrefix($fieldPrefix) 
     {
         $this->fieldPrefix = $fieldPrefix;
     }
 
+    /** @inheritDoc */
     public function toArray()
     {
-        $items = $this->map(function ($item) {
-            return $item->toArray();
-        });
-
+        $items = $this->map(fn($item) => $item->toArray());
         return $items->toArray();
     }
 
+    /** @return string[] */
     public function getFieldKeys()
     {
         return $this->fieldKeys;
     }
 
+    /**
+     * @param AbstractComponent $component
+     * @param string $fieldPrefix
+     * @return void
+     */
     public function addComponentForm($component, $fieldPrefix) {
         $activeItem = $this->getActiveItem();
 
-        if (!is_object($componentForm = $component::getForm())) {
+        $componentForm = $component::getForm();
+        if (!is_object($componentForm)) {
             return;
         }
 
@@ -184,16 +223,22 @@ class Form extends Collection
         $this->setActiveItem($activeItem);
     }
 
+    /**
+     * @param Form|FieldsContainerInterface $item
+     * @return void
+     */
     public function setParent($item)
     {
         $this->parent = $item;
     }
 
+    /** @return Form|FieldsContainerInterface */
     public function getParent()
     {
         return $this->parent;
     }
 
+    /** @return AbstractField[]|AbstractFieldsContainer[] */
     public function getDefaultValues(): array
     {
         $values = [];
@@ -207,6 +252,7 @@ class Form extends Collection
         return $values;
     }
 
+    /** @return static */
     public static function create()
     {
         return new static();
