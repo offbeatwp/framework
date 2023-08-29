@@ -5,14 +5,18 @@ use Closure;
 
 class Design
 {
-    public function getRowThemeClasses($id)
+    /**
+     * @param string $id
+     * @return mixed
+     */
+    public function getRowThemeClasses(string $id)
     {
         $rowThemes  = config('design.row_themes');
         if (!$rowThemes) {
             return null;
         }
 
-        $subId      = null;
+        $subId = null;
 
         if (strpos($id, '**') !== false) {
             $ids   = explode('**', $id);
@@ -33,6 +37,12 @@ class Design
         return $classes;
     }
 
+    /**
+     * @param string $id
+     * @param string $context
+     * @param string $prefix
+     * @return string|null
+     */
     public function getMarginClasses($id, $context, $prefix)
     {
         $margins = config('design.margins');
@@ -49,6 +59,12 @@ class Design
         return str_replace('{{prefix}}', $prefix, $margins[$id]['classes']);
     }
 
+    /**
+     * @param string $id
+     * @param string $context
+     * @param string $prefix
+     * @return string|null
+     */
     public function getPaddingClasses($id, $context, $prefix)
     {
         $paddings = config('design.paddings');
@@ -65,6 +81,7 @@ class Design
         return str_replace('{{prefix}}', $prefix, $paddings[$id]['classes']);
     }
 
+    /** @return mixed[] */
     public function getRowThemesList()
     {
         $rowThemes = config('design.row_themes');
@@ -97,6 +114,10 @@ class Design
         return $rowThemesList;
     }
 
+    /**
+     * @param string $context
+     * @return mixed[]
+     */
     public function getMarginsList($context = null)
     {
         $margins = config('design.margins');
@@ -113,6 +134,10 @@ class Design
         })->toArray();
     }
 
+    /**
+     * @param string $context
+     * @return mixed[]
+     */
     public function getPaddingsList($context = null)
     {
         $paddings = config('design.paddings');
