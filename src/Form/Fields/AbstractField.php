@@ -10,7 +10,7 @@ abstract class AbstractField implements FieldInterface
     public $label;
     /** @var bool */
     public $required;
-    /** @var string[]|bool[] */
+    /** @var mixed[] */
     public $attributes = [];
 
     public function __construct() {
@@ -37,7 +37,6 @@ abstract class AbstractField implements FieldInterface
         return $field;
     }
 
-    /* Basic Setters */
     public function setId(string $id): void
     {
         $this->id = $id;
@@ -55,13 +54,22 @@ abstract class AbstractField implements FieldInterface
         $this->setAttribute('required', $required);
     }
 
-    /** @internal Use attribute instead */
+    /**
+     * @internal Use attribute instead
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
     public function setAttribute($key, $value = null): void
     {
         $this->attributes[$key] = $value;
     }
 
-    /** @internal Use attributes instead */
+    /**
+     * @internal Use attributes instead
+     * @param mixed[] $attributes
+     * @return void
+     */
     public function setAttributes(array $attributes): void
     {
         $this->attributes = array_merge($this->attributes, $attributes);
@@ -103,11 +111,16 @@ abstract class AbstractField implements FieldInterface
         return $this->required;
     }
 
+    /** @return mixed[] */
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
     public function getAttribute($key)
     {
         return $this->getAttributes()[$key] ?? null;
@@ -120,12 +133,20 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     * @return $this
+     */
     public function default($value): self
     {
         $this->setAttribute('default', $value);
         return $this;
     }
 
+    /**
+     * @param mixed[] $attributes
+     * @return $this
+     */
     public function attributes(array $attributes): self
     {
         $this->setAttributes($attributes);
@@ -156,6 +177,11 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     */
     public function attribute(string $key, $value): self
     {
         $this->setAttribute($key, $value);
@@ -168,7 +194,7 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
-    /* Functions */
+    /** @return array{type: string, field_type: string, id: string, label: string, attributes: mixed[], required: bool} */
     public function toArray(): array
     {
         return [
