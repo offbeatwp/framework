@@ -12,7 +12,11 @@ trait ViewableTrait
     /** @var mixed|View */
     public $view;
 
-    /** @return string|null */
+    /**
+     * @param string $name
+     * @param mixed[] $data
+     * @return mixed
+     */
     public function view(string $name, array $data = [])
     {
         $view = container()->get(View::class);
@@ -42,7 +46,7 @@ trait ViewableTrait
             return;
         }
 
-        $moduleClass = $matches[0] . '\\' . '' . $matches[1];
+        $moduleClass = $matches[0] . '\\' . $matches[1];
 
         if (container()->has($moduleClass)) {
             $module = container()->get($moduleClass);
