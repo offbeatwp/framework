@@ -126,7 +126,18 @@ final class RoutesManager
         return $routeObj;
     }
 
-    /** @param string|Closure $target */
+    /**
+     * @param string|Closure $target
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $defaults
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @param string|null $host
+     * @param string[] $schemes
+     * @param string[] $methods
+     * @param string|null $condition
+     * @return Route
+     */
     public function createRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): Route
     {
         $name = $this->getNextRouteName();
@@ -224,7 +235,6 @@ final class RoutesManager
                 throw new InvalidRouteException('Route does not match (override)');
             }
 
-            /** @var PathRoute|null $route */
             $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
 

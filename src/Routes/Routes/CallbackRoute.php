@@ -10,13 +10,13 @@ class CallbackRoute extends Route
     /**
      * @param string $name
      * @param Closure $matchCallback
-     * @param Closure|string|array $actionCallback
-     * @param array $defaults
-     * @param array $requirements
-     * @param array $options
+     * @param callable $actionCallback
+     * @param mixed[] $defaults
+     * @param mixed[] $requirements
+     * @param mixed[] $options
      * @param string|null $host
-     * @param array $schemes
-     * @param array $methods
+     * @param string[] $schemes
+     * @param string[] $methods
      * @param string|null $condition
      */
     public function __construct(string $name, Closure $matchCallback, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '') {
