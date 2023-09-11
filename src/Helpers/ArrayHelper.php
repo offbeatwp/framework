@@ -1,38 +1,54 @@
 <?php
 namespace OffbeatWP\Helpers;
 
+use InvalidArgumentException;
+
 class ArrayHelper {
-    public static function isAssoc($array): bool
+    /**
+     * @param mixed $input
+     * @return bool
+     */
+    public static function isAssoc($input): bool
     {
-        return is_array($array) && $array && array_keys($array) !== range(0, count($array) - 1);
+        return is_array($input) && $input && array_keys($input) !== range(0, count($input) - 1);
     }
 
+    /**
+     * @param mixed[] $array1
+     * @param mixed[] $array2
+     * @return mixed[]
+     */
     public static function mergeRecursiveAssoc(iterable $array1, iterable $array2): array
     {
         $array = [];
 
-        foreach ($array1 as $key => $value) {
-            if (!isset($array2[$key])) {
-                $array[$key] = $array1[$key];
+        foreach ($array1 as $key1 => $value1) {
+            if (!isset($array2[$key1])) {
+                $array[$key1] = $value1;
                 continue;
             }
 
-            if (is_array($array1[$key]) && self::isAssoc($array1[$key])) {
-                $array[$key] = self::mergeRecursiveAssoc($array1[$key], $array2[$key]);
+            if (is_array($value1) && self::isAssoc($value1)) {
+                $array[$key1] = self::mergeRecursiveAssoc($value1, $array2[$key1]);
             } else {
-                $array[$key] = $array2[$key];
+                $array[$key1] = $array2[$key1];
             }
         }
 
-        foreach ($array2 as $key => $value) {
-            if (!isset($array1[$key])) {
-                $array[$key] = $array2[$key];
+        foreach ($array2 as $key2 => $value2) {
+            if (!isset($array1[$key2])) {
+                $array[$key2] = $value2;
             }
         }
 
         return $array;
     }
 
+    /**
+     * @param string $key
+     * @param mixed[] $array
+     * @return mixed
+     */
     public static function getValueFromDottedKey(string $key, iterable $array = [])
     {
         foreach (explode('.', $key) as $var) {
@@ -94,5 +110,27 @@ class ArrayHelper {
         }
 
         return $output;
+    }
+
+    /**
+     * Recursively removes all NULL values from an array<br>
+     * This passed array may not contain any objects
+     * @throws InvalidArgumentException
+     * @param scalar[]|null[]|mixed[][] $array
+     * @return scalar[]|mixed[][]
+     */
+    public static function filterNull(array $array): array
+    {
+        foreach ($array as $key => $value) {
+            if ($value === null) {
+                unset($array[$key]);
+            } elseif (is_array($value)) {
+                $array[$key] = ArrayHelper::filterNull($value);
+            } elseif (!is_scalar($value)) {
+                throw new InvalidArgumentException('Array key ' . $key . ' has illegal value type: ' . gettype($value));
+            }
+        }
+
+        return $array;
     }
 }
