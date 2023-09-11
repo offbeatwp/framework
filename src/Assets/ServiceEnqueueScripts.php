@@ -17,7 +17,9 @@ class ServiceEnqueueScripts extends AbstractService
 
     public function enqueueScripts()
     {
-        wp_enqueue_script('jquery');
+        if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
+            wp_enqueue_script('jquery');
+        }
 
         wp_deregister_script('wp-embed');
 
