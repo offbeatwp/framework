@@ -53,7 +53,7 @@ abstract class AbstractComponent
      * *string* **icon** - The name of the dash-icon that this setting will use in the editor
      *
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
-     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: string[], block: mixed[]}
+     * @return array{name?: string, description?: string, slug: string, category?: string, icon?: string, supports?: string[], block?: mixed[]}
      */
     abstract static function settings();
 
