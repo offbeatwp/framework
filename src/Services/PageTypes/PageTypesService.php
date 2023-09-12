@@ -25,8 +25,9 @@ class PageTypesService extends AbstractService
             ->showAdminColumn()
             ->set();
 
-        add_action('restrict_manage_posts', [$this, 'tsm_filter_post_type_by_taxonomy']);
-        add_filter('parse_query', [$this, 'tsm_convert_id_to_term_in_query']);
+        add_action('restrict_manage_posts', [$this, 'filterPostTypeByTaxonomy']);
+
+        add_action('parse_query', [$this, 'converIfToTermInQuery']);
 
         add_action('save_post_page', [$this, 'savePageType']);
 
@@ -34,7 +35,7 @@ class PageTypesService extends AbstractService
     }
 
     /** @return void */
-    public function tsm_filter_post_type_by_taxonomy()
+    public function filterPostTypeByTaxonomy()
     {
         global $typenow;
 
@@ -60,7 +61,7 @@ class PageTypesService extends AbstractService
      * @param WP_Query $query
      * @return void
      */
-    public function tsm_convert_id_to_term_in_query($query)
+    public function converIfToTermInQuery($query)
     {
         global $pagenow;
 
@@ -138,7 +139,9 @@ class PageTypesService extends AbstractService
             return;
         }
 
-        $pagePageType = offbeat('post')->get()->getTerms(self::TAXONOMY)->all();
+        $post = offbeat('post')->get();
+
+        $pagePageType = ($post) ? offbeat('post')->get()->getTerms(self::TAXONOMY)->all() : collect();
 
         if ($pagePageType->isNotEmpty()) {
             $slug = $pagePageType->first()->getSlug();
