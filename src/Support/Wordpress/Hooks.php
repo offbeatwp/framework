@@ -24,7 +24,7 @@ class Hooks
 
     /**
      * @param string $filter
-     * @param ...$parameters
+     * @param mixed ...$parameters
      * @return string
      */
     public function applyFilters(string $filter, ...$parameters)
@@ -52,7 +52,7 @@ class Hooks
 
     /**
      * @param string $action
-     * @param ...$args
+     * @param mixed ...$args
      * @return void
      */
     public function doAction($action, ...$args)

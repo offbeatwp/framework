@@ -9,6 +9,7 @@ class HttpStatusPagesService extends AbstractService
     /** @var SiteSettings|null */
     protected $settings;
 
+    /** @return void */
     public function register(SiteSettings $settings)
     {
         $this->settings = $settings;

@@ -2,6 +2,7 @@
 namespace OffbeatWP\Services;
 
 abstract class AbstractServicePageBuilder extends AbstractService {
+    /** @return void */
     public function register()
     {
         if (method_exists($this, 'onRegisterComponent')) {
@@ -13,6 +14,10 @@ abstract class AbstractServicePageBuilder extends AbstractService {
         }
     }
 
+    /**
+     * @param mixed[] $component
+     * @return void
+     */
     public function _onRegisterComponent($component)
     {
         $componentClass = $component['class'];

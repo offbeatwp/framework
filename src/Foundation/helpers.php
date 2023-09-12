@@ -19,6 +19,11 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('config')) {
+    /**
+     * @param string|null $config
+     * @param mixed $default
+     * @return mixed
+     */
     function config(?string $config = null, $default = null) {
         /** @var App $app */
         $app = offbeat();
@@ -45,13 +50,20 @@ if (!function_exists('container')) {
 }
 
 if (!function_exists('assetUrl')) {
+    /**
+     * @param string $file
+     * @return false|string
+     */
     function assetUrl(string $file) {
         return offbeat('assets')->getUrl($file);
     }
 }
 
 if (!function_exists('setting')) {
-    /** @param string $key */
+    /**
+     * @param string $key
+     * @return mixed
+     */
     function setting($key) {
         return offbeat(SiteSettings::class)->get($key);
     }

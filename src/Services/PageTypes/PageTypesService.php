@@ -16,6 +16,7 @@ class PageTypesService extends AbstractService
     /** @var bool */
     public $isPageTypeSaved = false;
 
+    /** @return void */
     public function register()
     {
         offbeat('taxonomy')::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
@@ -32,6 +33,7 @@ class PageTypesService extends AbstractService
         add_action('edit_form_top', [$this, 'show_required_field_error_msg']);
     }
 
+    /** @return void */
     public function tsm_filter_post_type_by_taxonomy()
     {
         global $typenow;
@@ -54,7 +56,10 @@ class PageTypesService extends AbstractService
         }
     }
 
-    /** @param WP_Query $query */
+    /**
+     * @param WP_Query $query
+     * @return void
+     */
     public function tsm_convert_id_to_term_in_query($query)
     {
         global $pagenow;

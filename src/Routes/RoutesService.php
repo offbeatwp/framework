@@ -6,10 +6,12 @@ use WP_Query;
 
 class RoutesService extends AbstractService
 {
+    /** @var class-string[] */
     public $bindings = [
         'routes' => RoutesManager::class,
     ];
 
+    /** @return void */
     public function register()
     {
         $this->loadRoutes();
@@ -19,6 +21,7 @@ class RoutesService extends AbstractService
         }
     }
 
+    /** @return void */
     public function loadRoutes()
     {
         offbeat('routes')->setPriorityMode(RoutesManager::PRIORITY_LOW);
@@ -32,6 +35,7 @@ class RoutesService extends AbstractService
         offbeat('routes')->setPriorityMode(RoutesManager::PRIORITY_HIGH);
     }
 
+    /** @return void */
     public function urlRoutePreps()
     {
         if (!offbeat('routes')->findRoute()) {
