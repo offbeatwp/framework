@@ -13,8 +13,7 @@ class PageTypesService extends AbstractService
     public const TAXONOMY = 'page-type';
     public const POST_TYPES = 'page';
 
-    /** @var bool */
-    public $isPageTypeSaved = false;
+    public bool $isPageTypeSaved = false;
 
     /** @return void */
     public function register()
@@ -27,11 +26,11 @@ class PageTypesService extends AbstractService
 
         add_action('restrict_manage_posts', [$this, 'filterPostTypeByTaxonomy']);
 
-        add_action('parse_query', [$this, 'converIfToTermInQuery']);
+        add_action('parse_query', [$this, 'converIdToTermInQuery']);
 
         add_action('save_post_page', [$this, 'savePageType']);
 
-        add_action('edit_form_top', [$this, 'show_required_field_error_msg']);
+        add_action('edit_form_top', [$this, 'showRequiredFieldErrorMsg']);
     }
 
     /** @return void */
@@ -61,7 +60,7 @@ class PageTypesService extends AbstractService
      * @param WP_Query $query
      * @return void
      */
-    public function converIfToTermInQuery($query)
+    public function converIdToTermInQuery($query)
     {
         global $pagenow;
 
@@ -79,7 +78,7 @@ class PageTypesService extends AbstractService
      * @param WP_Post $post
      * @return void
      */
-    public function show_required_field_error_msg($post)
+    public function showRequiredFieldErrorMsg($post)
     {
         $taxonomy = self::TAXONOMY;
         $post_type = self::POST_TYPES;
