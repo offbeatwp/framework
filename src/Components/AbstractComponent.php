@@ -48,10 +48,12 @@ abstract class AbstractComponent
      *
      * *string* **category** - The category to which this component belongs to
      *
+     * *mixed[]* **block** - Block information
+     *
      * *string* **icon** - The name of the dash-icon that this setting will use in the editor
      *
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
-     * @return string[]|string[][]|Form[]
+     * @return array{name: string, description: string, slug: string, category: string, icon: string, supports: string[], block: mixed[]}
      */
     abstract static function settings();
 

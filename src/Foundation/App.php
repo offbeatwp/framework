@@ -208,7 +208,11 @@ final class App
         $this->route = $route;
     }
 
-    /** @throws WpErrorException */
+    /**
+     * @param mixed[] $config
+     * @return void
+     * @throws WpErrorException
+     */
     public function run($config = []): void
     {
         $route = $this->route;
