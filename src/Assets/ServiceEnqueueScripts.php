@@ -17,7 +17,7 @@ class ServiceEnqueueScripts extends AbstractService
 
     public function enqueueScripts()
     {
-        if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
+        if (is_admin() || apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
             wp_enqueue_script('jquery');
         }
 

@@ -183,7 +183,7 @@ class AssetsManager
     public function enqueueScripts(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
-        if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
+        if (is_admin() || apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
             $dependencies[] = 'jquery';
         }
 
