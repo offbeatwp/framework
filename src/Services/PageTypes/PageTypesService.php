@@ -141,7 +141,7 @@ class PageTypesService extends AbstractService
 
         $post = offbeat('post')->get();
 
-        $pagePageType = ($post) ? offbeat('post')->get()->getTerms(self::TAXONOMY)->all() : collect();
+        $pagePageType = ($post) ? $post->getTerms(self::TAXONOMY)->all() : collect();
 
         if ($pagePageType->isNotEmpty()) {
             $slug = $pagePageType->first()->getSlug();
