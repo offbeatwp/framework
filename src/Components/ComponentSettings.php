@@ -95,6 +95,16 @@ final class ComponentSettings
     }
 
     /**
+     * Returns the value of the component setting and casts it to an array.
+     * @param string $index
+     * @return string[]
+     */
+    public function getArray(string $index): array
+    {
+        return (array)$this->get($index);
+    }
+
+    /**
      * Return the value form a url param.
      * If the url param does not exist, the component setting value is returned instead.
      * @param string $index
