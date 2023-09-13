@@ -116,14 +116,19 @@ final class ComponentSettings
         foreach ($keys as $key) {
             $item = $this->get($key);
 
+            $str = '';
             if (is_scalar($item)) {
-                $parameters[] = $key . '=' . $item;
+                $str = urlencode($item);
             } elseif (is_array($item)) {
-                $parameters[] = $key . '=' . implode(',', $item);
+                $str = implode(',', array_map('urlencode', $item));
             } elseif ($item instanceof Collection) {
-                $parameters[] = $key . '=' . $item->implode(',');
+                $str = $item->map('urlencode')->implode(',');
             } elseif ($item !== null) {
                 trigger_error($key . ' could not be parsed to URL param!', E_USER_WARNING);
+            }
+
+            if ($str) {
+                $parameters[] = $key . '=' . $str;
             }
         }
 
