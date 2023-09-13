@@ -2,6 +2,8 @@
 
 namespace OffbeatWP\Components;
 
+use Illuminate\Support\Collection;
+
 #[\AllowDynamicProperties]
 final class ComponentSettings
 {
@@ -23,7 +25,7 @@ final class ComponentSettings
     /**
      * Set a value manually.
      * @param string $index
-     * @param mixed $value
+     * @param string|string[]|null $value
      */
     public function set(string $index, $value): void
     {
@@ -33,7 +35,7 @@ final class ComponentSettings
     /**
      * Returns the value of the component setting or the default value of the setting if it does not exist.
      * @param string $index The index of the value to retrieve.
-     * @return mixed
+     * @return string|string[]|null
      */
     public function get(string $index)
     {
@@ -96,10 +98,35 @@ final class ComponentSettings
      * Return the value form a url param.
      * If the url param does not exist, the component setting value is returned instead.
      * @param string $index
-     * @return scalar|array|null
+     * @return string|string[]|null
      */
     public function getUrlParam(string $index)
     {
         return $_GET[$index] ?? $this->get($index);
+    }
+
+    /**
+     * @param string[] $keys
+     * @return string
+     */
+    public function toUrlParams(array $keys): string
+    {
+        $parameters = [];
+
+        foreach ($keys as $key) {
+            $item = $this->get($key);
+
+            if (is_scalar($item)) {
+                $parameters[] = $key . '=' . $item;
+            } elseif (is_array($item)) {
+                $parameters[] = $key . '=' . implode(',', $item);
+            } elseif ($item instanceof Collection) {
+                $parameters[] = $key . '=' . $item->implode(',');
+            } elseif ($item !== null) {
+                trigger_error($key . ' could not be parsed to URL param!', E_USER_WARNING);
+            }
+        }
+
+        return implode('&', $parameters);
     }
 }
