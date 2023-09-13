@@ -106,6 +106,8 @@ final class ComponentSettings
     }
 
     /**
+     * Convert the given keys to URL parameters.<br>
+     * Values will be url-encoded.
      * @param string[] $keys
      * @return string
      */
