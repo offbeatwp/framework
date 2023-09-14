@@ -95,7 +95,7 @@ final class ComponentSettings
     }
 
     /**
-     * Returns the value of the component setting and casts it to an array.
+     * @deprecated Returns the value of the component setting and casts it to an array.
      * @param string $index
      * @return string[]
      */
