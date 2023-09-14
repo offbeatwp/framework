@@ -25,7 +25,7 @@ final class ComponentSettings
     /**
      * Set a value manually.
      * @param string $index
-     * @param string|mixed[]|null $value
+     * @param mixed $value
      */
     public function set(string $index, $value): void
     {
@@ -35,7 +35,7 @@ final class ComponentSettings
     /**
      * Returns the value of the component setting or the default value of the setting if it does not exist.
      * @param string $index The index of the value to retrieve.
-     * @return string|mixed[]|null
+     * @return mixed
      */
     public function get(string $index)
     {
@@ -108,7 +108,7 @@ final class ComponentSettings
      * Return the value form a url param.
      * If the url param does not exist, the component setting value is returned instead.
      * @param string $index
-     * @return string|mixed[]|null
+     * @return mixed
      */
     public function getUrlParam(string $index)
     {
