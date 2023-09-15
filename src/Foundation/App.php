@@ -210,10 +210,10 @@ final class App
 
     /**
      * @param mixed[] $config
-     * @return void
+     * @return void|string
      * @throws WpErrorException
      */
-    public function run($config = []): void
+    public function run($config = [])
     {
         $route = $this->route;
 
