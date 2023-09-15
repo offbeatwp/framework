@@ -236,6 +236,10 @@ final class App
             $output = apply_filters('route_render_output', $output); //Legacy
             $output = apply_filters('offbeatwp/route/output', $output);
 
+            if (isset($config['return']) && $config['return'] === true) {
+                return $output;
+            }
+
             echo $output;
         } catch (InvalidRouteException $e) {
             // Find new route
