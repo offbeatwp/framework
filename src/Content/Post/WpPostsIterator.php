@@ -4,9 +4,10 @@ namespace OffbeatWP\Content\Post;
 
 use Iterator;
 
+/** @template TModel of PostModel */
 class WpPostsIterator implements Iterator
 {
-    /** @var PostModel[] */
+    /** @var TModel[]|PostModel[] */
     protected array $items;
     private $originalPost;
     private bool $globalPostWasChanged = false;
@@ -21,7 +22,7 @@ class WpPostsIterator implements Iterator
         reset($this->items);
     }
 
-    /** @return PostModel|false */
+    /** @return TModel|PostModel|false */
     #[\ReturnTypeWillChange]
     public function current()
     {
