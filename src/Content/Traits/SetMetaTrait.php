@@ -6,7 +6,7 @@ trait SetMetaTrait
 {
     /**
      * @param string $key Metadata name.
-     * @param scalar|array $value The new metadata value.
+     * @param scalar|mixed[] $value The new metadata value.
      * @return $this
      */
     public function setMeta(string $key, $value): self

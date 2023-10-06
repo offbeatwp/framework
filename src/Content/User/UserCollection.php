@@ -110,7 +110,7 @@ class UserCollection extends OffbeatModelCollection
      * Push a model onto the beginning of the user collection.
      * @param int|WP_User|UserModel $value
      * @param array-key $key
-     * @return UserCollection
+     * @return UserCollection<TModel>
      */
     public function prepend($value, $key = null)
     {
@@ -120,7 +120,7 @@ class UserCollection extends OffbeatModelCollection
     /**
      * Add a model to the user collection.
      * @param int|WP_User|UserModel $item
-     * @return UserCollection
+     * @return UserCollection<TModel>
      */
     public function add($item)
     {
