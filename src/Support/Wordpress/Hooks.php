@@ -5,7 +5,7 @@ class Hooks
 {
     /**
      * @param string $filter
-     * @param callable $callback
+     * @param callable(mixed...): mixed $callback
      * @param int $priority
      * @param int $acceptArguments
      * @return void
@@ -25,7 +25,7 @@ class Hooks
     /**
      * @param string $filter
      * @param mixed ...$parameters
-     * @return string
+     * @return mixed
      */
     public function applyFilters(string $filter, ...$parameters)
     {
@@ -34,7 +34,7 @@ class Hooks
 
     /**
      * @param string $action
-     * @param callable $callback
+     * @param callable(mixed...): void $callback
      * @param int $priority
      * @param int $acceptArguments
      * @return void
