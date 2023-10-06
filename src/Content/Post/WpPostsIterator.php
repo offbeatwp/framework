@@ -7,7 +7,10 @@ use Iterator;
 /** @template TModel of PostModel */
 class WpPostsIterator implements Iterator
 {
-    /** @var TModel[]|PostModel[] */
+    /**
+     * @var PostModel[]
+     * @phpstan-var TModel[]
+     */
     protected array $items;
     private $originalPost;
     private bool $globalPostWasChanged = false;
@@ -22,7 +25,10 @@ class WpPostsIterator implements Iterator
         reset($this->items);
     }
 
-    /** @return TModel|PostModel|false */
+    /**
+     * @return PostModel|false
+     * @phpstan-return TModel|false
+     */
     #[\ReturnTypeWillChange]
     public function current()
     {
