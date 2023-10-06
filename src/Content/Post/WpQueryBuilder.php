@@ -9,13 +9,16 @@ use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
 
+/** @template TModel of PostModel */
 class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
+    /** @var mixed[] */
     protected array $queryVars = [];
     private string $wpQueryClass = WP_Query::class;
 
+    /** @return PostsCollection<TModel> */
     public function all(): PostsCollection
     {
         return $this->take(-1);
@@ -34,6 +37,7 @@ class WpQueryBuilder
      * When true, the query will not count total rows.<br/>
      * This makes the query slighlty faster, but will not work if the total post count is required.<br/>
      * One example where total post count is required is pagination.
+     * @return $this<TModel>
      */
     public function noFoundRows(bool $noFoundRows): self
     {
@@ -41,7 +45,10 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** Shows all posts rather than paginating. */
+    /**
+     * Shows all posts rather than paginating.
+     * @return $this<TModel>
+     */
     public function noPaging(): self
     {
         $this->queryVars['nopaging'] = true;
@@ -50,6 +57,7 @@ class WpQueryBuilder
         return $this;
     }
 
+    /** @return PostsCollection<TModel> */
     public function get(): PostsCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
@@ -62,12 +70,13 @@ class WpQueryBuilder
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
     }
 
+    /** @return mixed[] */
     public function getQueryVars(): array
     {
         return $this->queryVars;
     }
 
-    /** @return scalar|array|null */
+    /** @return scalar|mixed[]|null */
     public function getQueryVar(string $var)
     {
         $queryVars = $this->getQueryVars();
@@ -75,6 +84,7 @@ class WpQueryBuilder
         return $queryVars[$var] ?? null;
     }
 
+    /** @return PostsCollection<TModel> */
     public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
@@ -161,6 +171,7 @@ class WpQueryBuilder
         return $query;
     }
 
+    /** @return $this<TModel> */
     public function limit(int $amount): self
     {
         if ($amount <= 0) {
@@ -213,7 +224,7 @@ class WpQueryBuilder
 
     /**
      * @param class-string<WP_Query|IWpQuerySubstitute> $queryObjectClassName
-     * @return $this
+     * @return $this<TModel>
      */
     public function useQuery(string $queryObjectClassName): self
     {
@@ -224,7 +235,7 @@ class WpQueryBuilder
     /**
      * Note: Wordpress Pagination automatically handles offset, so using this method might interfere with that
      * @param int $numberOfItems
-     * @return $this
+     * @return $this<TModel>
      */
     public function offset(int $numberOfItems): self
     {
@@ -237,7 +248,7 @@ class WpQueryBuilder
      * Prepending a term with a hyphen will exclude posts matching that term.<br>
      * EG: 'pillow -sofa' will return posts containing 'pillow' but not 'sofa'.
      * @param string $searchString
-     * @return $this
+     * @return $this<TModel>
      */
     public function search(string $searchString): self
     {
@@ -247,7 +258,7 @@ class WpQueryBuilder
 
     /**
      * @param string $slug The post slug.
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereSlug(string $slug): self
     {
@@ -257,7 +268,7 @@ class WpQueryBuilder
 
     /**
      * @param string|string[] $postTypes
-     * @return $this
+     * @return $this<TModel>
      */
     public function wherePostType($postTypes): self
     {
@@ -280,7 +291,7 @@ class WpQueryBuilder
      * @param string|null $field Select taxonomy term by. Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
      * @param string|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
      * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): self
     {
@@ -315,7 +326,7 @@ class WpQueryBuilder
 
     /**
      * @param int[]|string[] $args
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereDate(array $args): self
     {
@@ -343,7 +354,7 @@ class WpQueryBuilder
      * <b>trash</b> – post is in trashbin<br/>
      * <b>any</b> – retrieves any status except for <i>inherit</i>, <i>trash</i> and <i>auto-draft</i>. Custom post statuses with <i>exclude_from_search</i> set to true are also excluded
      * @param string[] $postStatus Array containing the post statuses to include
-     * @return $this
+     * @return $this<TModel>
      */
     public function wherePostStatus(array $postStatus): self
     {
@@ -352,10 +363,10 @@ class WpQueryBuilder
     }
 
     /**
-     * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|mixed[] $key Valid keys include 'key', 'value', 'compare' and 'type'
      * @param string|int|string[]|int[] $value
      * @param string $compare
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereMeta($key, $value = '', string $compare = '='): self
     {
@@ -380,7 +391,7 @@ class WpQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereIdNotIn($ids): self
     {
@@ -390,7 +401,7 @@ class WpQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereIdIn($ids): self
     {
@@ -400,7 +411,7 @@ class WpQueryBuilder
 
     /**
      * @param int[] $ids
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereAuthorIdIn(array $ids): self
     {
@@ -413,7 +424,7 @@ class WpQueryBuilder
      * When an <i>integer</i> is passed, the page with that number will be loaded.<br/>
      * Passing <i>0</i> or <i>false</i> will disable pagination.
      * @param bool|int $paginated
-     * @return $this
+     * @return $this<TModel>
      */
     public function paginated($paginated = true): self
     {
@@ -433,6 +444,7 @@ class WpQueryBuilder
         return $this;
     }
 
+    /** @return $this<TModel> */
     public function suppressFilters(bool $suppress = true): self
     {
         $this->queryVars['suppress_filters'] = $suppress;
@@ -440,10 +452,10 @@ class WpQueryBuilder
     }
 
     /**
-     * @param PostModel|PostsCollection $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModel|PostsCollection<PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
      * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
-     * @return $this
+     * @return $this<TModel>
      */
     public function hasRelationshipWith($postModelOrCollection, $relationKey, $direction = null): self
     {
@@ -460,7 +472,7 @@ class WpQueryBuilder
      * @param int[] $ids Array of ID's to check a relation
      * @param string $relationKey The relation key
      * @param bool $inverted Set to <i>true</i> to reverse the relation
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereRelatedTo(array $ids, string $relationKey, bool $inverted = false): self
     {
