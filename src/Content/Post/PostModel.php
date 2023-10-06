@@ -661,18 +661,25 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?self
+    /** @return static|null */
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?self
+    /** @return static|null */
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-    /** @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>. */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?self
+    /**
+     * @private
+     * @final
+     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
+     * @return static|null
+     */
+    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
     {
         $currentPost = $GLOBALS['post'] ?? null;
 
