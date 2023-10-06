@@ -62,7 +62,7 @@ class User
     /**
      * @param string $slug
      * @param string $header
-     * @param callable $callback Expects a callback that returns a string. Callback will get the following 3 args:<br>
+     * @param callable(string, string, int): string $callback Expects a callback that returns a string. Callback will get the following 3 args:<br>
      * string <b>$output</b><br>
      * string <b>$columnName</b><br>
      * int <b>$userId</b>

@@ -14,7 +14,7 @@ abstract class OffbeatModelCollection extends Collection
 
     /**
      * Get the values of a given key. This will return a basic Collection.
-     * @param string|array|int|null $value
+     * @param string|mixed[]|int|null $value
      * @param string|null $key
      * @return Collection
      */
@@ -35,7 +35,7 @@ abstract class OffbeatModelCollection extends Collection
     /**
      * Run an associative map over each of the items. This will return a basic Collection.
      * The callback should return an associative array with a single key/value pair.
-     * @param callable  $callback
+     * @param callable(mixed): mixed[] $callback
      * @return Collection
      */
     public function mapWithKeys(callable $callback)
@@ -45,7 +45,7 @@ abstract class OffbeatModelCollection extends Collection
 
     /**
      * Run a map over each of the items. This will return a basic Collection.
-     * @param callable $callback
+     * @param callable(mixed): mixed $callback
      * @return Collection
      */
     public function map(callable $callback): Collection
@@ -60,14 +60,12 @@ abstract class OffbeatModelCollection extends Collection
      */
     public function mapAs(string $methodName): Collection
     {
-        return $this->toCollection()->map(function ($item) use ($methodName) {
-            return $item->$methodName();
-        });
+        return $this->toCollection()->map(fn($item) => $item->$methodName());
     }
 
     /**
      * Group an associative array by a field or using a callback. This will return a basic Collection.
-     * @param array|callable|string $groupBy
+     * @param mixed[]|callable|string $groupBy
      * @param bool $preserveKeys
      * @return Collection
      */
