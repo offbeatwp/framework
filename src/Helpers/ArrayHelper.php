@@ -5,6 +5,7 @@ use InvalidArgumentException;
 
 class ArrayHelper {
     /**
+     * @pure
      * @param mixed $input
      * @return bool
      */
@@ -14,6 +15,7 @@ class ArrayHelper {
     }
 
     /**
+     * @pure
      * @param mixed[] $array1
      * @param mixed[] $array2
      * @return mixed[]
@@ -45,6 +47,7 @@ class ArrayHelper {
     }
 
     /**
+     * @pure
      * @param string $key
      * @param mixed[] $array
      * @return mixed
@@ -63,6 +66,7 @@ class ArrayHelper {
     }
 
     /**
+     * @pure
      * @param scalar|scalar[] $data
      * @param bool $deleteNonNumericValues When true, any non-numeric values found in the array are deleted.
      * @return int[]
@@ -115,6 +119,7 @@ class ArrayHelper {
     /**
      * Recursively removes all NULL values from an array<br>
      * This passed array may not contain any objects
+     * @pure
      * @throws InvalidArgumentException
      * @param scalar[]|null[]|mixed[][] $array
      * @return scalar[]|mixed[][]

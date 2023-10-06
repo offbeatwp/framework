@@ -19,6 +19,7 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use stdClass;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
@@ -29,21 +30,22 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|object|null */
+    /** @var WP_Post|stdClass|null */
     public $wpPost;
-    /** @var array */
+    /** @var mixed[] */
     public $metaInput = [];
-    /** @var array */
+    /** @var mixed[] */
     protected $metaToUnset = [];
-    /** @var array|false|string */
+    /** @var mixed[]|false|string */
     protected $metas = false;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
     /**
      * @var string[]|null
-     * This should be a string array that is indexed with strings<br>
+     * This should be an associative string array<br>
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
-     * The value should the <b>method name</b> of the method on this model that returns a relation object
+     * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
+     * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
      * @see Relation
      */
     public $relationKeyMethods = null;
@@ -85,7 +87,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $method
-     * @param array $parameters
+     * @param mixed[] $parameters
      * @return mixed
      */
     public static function __callStatic($method, $parameters)
@@ -99,7 +101,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $method
-     * @param array $parameters
+     * @param mixed[] $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -211,7 +213,7 @@ class PostModel implements PostModelInterface
             $didManualRestoreWpAutopHook = true;
         }
 
-        $content =  apply_filters('the_content', $content);
+        $content = apply_filters('the_content', $content);
 
         if ($didManualRestoreWpAutopHook) {
             $priority = has_filter( 'the_content', 'wpautop' );
@@ -418,6 +420,7 @@ class PostModel implements PostModelInterface
         return $values;
     }
 
+    /** @return mixed */
     public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
