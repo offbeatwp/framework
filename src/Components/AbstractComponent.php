@@ -127,12 +127,11 @@ abstract class AbstractComponent
 
         $filteredSettings = apply_filters('offbeat.component.settings', $settings, $this);
         $defaultValues = self::getForm()->getDefaultValues();
+        $settings = new ComponentSettings($filteredSettings, $defaultValues);
 
-        static::_enqueueAssets();
+        static::_enqueueAssets($settings);
 
-        $output = container()->call([$this, 'render'], [
-            'settings' => new ComponentSettings($filteredSettings, $defaultValues)
-        ]);
+        $output = container()->call([$this, 'render'], ['settings' => $settings]);
 
         $render = apply_filters('offbeat.component.render', $output, $this);
         return $this->setCachedObject($cachedId, $render);
@@ -271,11 +270,11 @@ abstract class AbstractComponent
     }
 
     /** @return void */
-    public static function enqueueAssets() {}
+    public static function enqueueAssets(ComponentSettings $settings) {}
 
     /** @return void */
-    public static function _enqueueAssets()
+    public static function _enqueueAssets(ComponentSettings $settings)
     {
-        static::enqueueAssets();
+        static::enqueueAssets($settings);
     }
 }
