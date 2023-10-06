@@ -69,7 +69,7 @@ class PostsCollection extends OffbeatModelCollection
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 
-    /** @return WpPostsIterator|PostModel[] */
+    /** @return WpPostsIterator|TModel[] */
     public function getIterator(): WpPostsIterator
     {
         return new WpPostsIterator($this->items);
@@ -172,9 +172,7 @@ class PostsCollection extends OffbeatModelCollection
      */
     public function getIds(): array
     {
-        return array_map(static function (PostModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
+        return array_map(static fn(PostModel $model) => $model->getId() ?: 0, $this->items);
     }
 
     /** @return TModel[]|PostModel[] */
