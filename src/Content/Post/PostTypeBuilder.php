@@ -14,6 +14,7 @@ class PostTypeBuilder
     /** @var null|class-string<PostModel> */
     private ?string $modelClass = null;
     private ?string $postType = null;
+    /** @var mixed[] */
     private array $postTypeArgs = [];
 
     public function make(string $postType, string $pluralLabel, string $singularLabel = ''): self
@@ -127,7 +128,7 @@ class PostTypeBuilder
     /**
      * Adds a new filter dropdown to the admin table.
      * @param string $metaKey The metakey that should be filtered on.
-     * @param iterable $choices An array of choices to choose from, keyed by their meta value. Falsy values will be treated as an 'all' option.
+     * @param string[]|int[] $choices An array of choices to choose from, keyed by their meta value. Falsy values will be treated as an 'all' option.
      * @return $this
      */
     public function addAdminTableFilter(string $metaKey, iterable $choices): self
@@ -275,6 +276,7 @@ class PostTypeBuilder
         return $this;
     }
 
+    /** @deprecated */
     public function notPubliclyQueryable(): self
     {
         $this->postTypeArgs['publicly_queryable'] = false;
@@ -334,7 +336,7 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** An array of registered taxonomies like category or post_tag that will be used with this post type. */
+    /** @param string[] $taxonomies An array of registered taxonomies like category or post_tag that will be used with this post type. */
     public function taxonomies(array $taxonomies): self
     {
         $this->postTypeArgs['taxonomies'] = $taxonomies;
@@ -351,7 +353,10 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @deprecated This function does not actually appear to do anything */
+    /**
+     * @param null $position
+     * @deprecated This function does not actually appear to do anything
+     */
     public function position($position = null): self
     {
         trigger_error('Deprecated position called in PostTypeBuilder.', E_USER_DEPRECATED);

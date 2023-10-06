@@ -5,6 +5,10 @@ use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Form\Fields\Text;
 
 class Heading extends AbstractFieldsCollection {
+    /**
+     * @param string $defaultHeading
+     * @param bool $includeLead
+     */
     public function __construct($defaultHeading = 'h3', $includeLead = false)
     {
         parent::__construct();

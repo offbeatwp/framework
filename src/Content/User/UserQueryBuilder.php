@@ -16,6 +16,7 @@ class UserQueryBuilder
 
     /** @var class-string<UserModel> */
     protected string $modelClass;
+    /** @var mixed[] */
     protected array $queryVars = ['number' => 0];
     protected bool $skipOnLimit = false;
     protected bool $skipOnInclude = false;
@@ -40,12 +41,16 @@ class UserQueryBuilder
         return apply_filters('offbeatwp/users/query/get', new UserCollection($results, $this->modelClass), $this);
     }
 
-    /** @deprecated Use the <b>get</b> method instead. */
+    /**
+     * @deprecated Use the <b>get</b> method instead.
+     * @return UserCollection<TModel>
+     */
     public function all(): UserCollection
     {
         return $this->take(0);
     }
 
+    /** @return UserCollection<TModel> */
     public function take(int $numberOfUsers): UserCollection
     {
         $this->queryVars['number'] = $numberOfUsers;
@@ -84,7 +89,7 @@ class UserQueryBuilder
     /**
      * @param string[]|string $properties Sort retrieved users by parameter. Defaults to <i>login</i>.
      * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
-     * @return $this
+     * @return $this<TModel>
      */
     public function orderBy($properties, string $direction = ''): self
     {
@@ -101,7 +106,7 @@ class UserQueryBuilder
 
     /**
      * @param string $email Must be a valid email address, or an exception will be thrown.
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereEmail(string $email): self
     {
@@ -117,7 +122,7 @@ class UserQueryBuilder
 
     /**
      * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
-     * @return $this
+     * @return $this<TModel>
      */
     public function withRoles(array $roles): self
     {
@@ -127,7 +132,7 @@ class UserQueryBuilder
 
     /**
      * @param string[] $roles An array of role names. Matched users must have at least one of these roles.
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereRoleIn(array $roles): self
     {
@@ -137,7 +142,7 @@ class UserQueryBuilder
 
     /**
      * @param string[] $roles An array of role names to exclude. Users matching one or more of these roles will not be included in results.
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereRoleNotIn(array $roles): UserQueryBuilder
     {
@@ -145,6 +150,10 @@ class UserQueryBuilder
         return $this;
     }
 
+    /**
+     * @param mixed[] $metaQueryArray
+     * @return $this<TModel>
+     */
     public function whereMeta(array $metaQueryArray): self
     {
         if (!isset($this->queryVars['meta_query'])) {
@@ -158,7 +167,7 @@ class UserQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this
+     * @return $this<TModel>
      */
     public function whereIdIn($ids): self
     {
@@ -169,7 +178,7 @@ class UserQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this
+     * @return $this<TModel><TModel>
      */
     public function whereIdNotIn($ids): self
     {
@@ -178,6 +187,7 @@ class UserQueryBuilder
         return $this;
     }
 
+    /** @return $this<TModel><TModel> */
     public function limit(int $amount): self
     {
         $this->skipOnLimit = ($amount <= 0);
@@ -214,6 +224,7 @@ class UserQueryBuilder
         return $this->getQueryResults()[0] ?? null;
     }
 
+    /** @return mixed[] */
     private function getQueryResults(): array
     {
         if ($this->skipOnLimit || $this->skipOnInclude) {
