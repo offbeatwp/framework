@@ -2,84 +2,88 @@
 
 namespace OffbeatWP\Assets;
 
-class AssetsManager
+final class AssetsManager
 {
-    public $actions = [];
-    public $manifest = null;
-    public $entrypoints = null;
+    public ?array $manifest = null;
+    public ?array $entrypoints = null;
 
-    /** @return false|string */
-    public function getUrl(string $filename)
+    public function getUrl(string $filename): ?string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
-        if ($path !== false) {
-            if (strpos($path, 'http') === 0) {
+        if ($path !== null) {
+            if (strncmp($path, 'http', 4) === 0) {
                 return $path;
             }
 
             return $this->getAssetsUrl($path);
         }
 
-        return false;
+        return null;
     }
 
-    /** @return false|string */
-    public function getPath(string $filename)
+    public function getPath(string $filename): ?string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
-        if ($path !== false) {
+        if ($path !== null) {
             return $this->getAssetsPath($path);
         }
 
-        return false;
+        return null;
     }
 
-    /** @return string|false */
-    public function getEntryFromAssetsManifest(string $filename)
+    public function getEntryFromAssetsManifest(string $filename): ?string
     {
-        return $this->getAssetsManifest()->$filename ?? false;
+        return $this->getAssetsManifest()[$filename] ?? null;
     }
 
-    /** @return object|false|null */
-    public function getAssetsManifest()
+    /** @return mixed[]|null */
+    public function getAssetsManifest(): ?array
     {
         if ($this->manifest === null) {
             $path = $this->getAssetsPath('manifest.json', true);
 
             if (file_exists($path)) {
-                $this->manifest = json_decode(file_get_contents($path), false);
+                $content = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+
+                if (is_array($content)) {
+                    $this->manifest = $content;
+                }
             }
         }
 
         return $this->manifest;
     }
 
-    /** @return object|false|null */
-    public function getAssetsEntryPoints()
+    /** @return mixed[]|null */
+    public function getAssetsEntryPoints(): ?array
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
 
             if (file_exists($path)) {
-                $this->entrypoints = json_decode(file_get_contents($path), false);
+                $content = json_decode(file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+
+                if (is_array($content)) {
+                    $this->entrypoints = $content;
+                }
             }
         }
 
         return $this->entrypoints;
     }
 
-    /** @return mixed[]|false */
-    public function getAssetsByEntryPoint(string $entry, string $key)
+    /** @return mixed[]|null */
+    public function getAssetsByEntryPoint(string $entry, string $key): ?array
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
-        if (empty($entrypoints->entrypoints->$entry->$key)) {
-            return false;
+        if (!$entrypoints || empty($entrypoints['entrypoints'][$entry][$key])) {
+            return null;
         }
 
-        return $entrypoints->entrypoints->$entry->$key;
+        return $entrypoints['entrypoints'][$entry][$key];
     }
 
     public function getAssetsPath(string $path = '', bool $forceAssetsPath = false): string
@@ -113,7 +117,7 @@ class AssetsManager
 
     public function getAssetsUrl(string $path = ''): string
     {
-        if (strpos($path, 'http') === 0) {
+        if (strncmp($path, 'http', 4) === 0) {
             return $path;
         }
 
