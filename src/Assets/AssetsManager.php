@@ -70,7 +70,7 @@ class AssetsManager
         return $this->entrypoints;
     }
 
-    /** @return array|false */
+    /** @return mixed[]|false */
     public function getAssetsByEntryPoint(string $entry, string $key)
     {
         $entrypoints = $this->getAssetsEntryPoints();
@@ -153,25 +153,11 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_style_is($handle)) {
-                    if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
-                        wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
-                    } else {
-                        add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
-                            wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
-                        });
-                    }
+                    $this->_enqueueStyle($handle, $this->getAssetsUrl($asset), $dependencies);
                 }
             }
-
-            return;
-        }
-
-        if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
-            wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
         } else {
-            add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
-                wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
-            });
+            $this->_enqueueStyle('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
         }
     }
 
@@ -197,24 +183,44 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
-                    if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
-                        wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
-                    } else {
-                        add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
-                            wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
-                        });
-                    }
+                    $this->_enqueueScript($handle, $this->getAssetsUrl($asset), $dependencies);
                 }
             }
-
-            return;
-        }
-
-        if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
-            wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), $dependencies, false, true);
         } else {
-            add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
-                wp_enqueue_script('theme-script-' . $entry, $this->getUrl($entry . '.js'), $dependencies, false, true);
+            $this->_enqueueScript('theme-script-' . $entry, $this->getUrl($entry . '.js'), $dependencies);
+        }
+    }
+
+    /**
+     * @param string $handle
+     * @param string $src
+     * @param string[] $deps
+     * @return void
+     */
+    private function _enqueueScript(string $handle, string $src, array $deps): void
+    {
+        if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
+            wp_enqueue_script($handle, $src, $deps, false, true);
+        } else {
+            add_action('wp_enqueue_scripts', static function () use ($handle, $src, $deps) {
+                wp_enqueue_script($handle, $src, $deps, false, true);
+            });
+        }
+    }
+
+    /**
+     * @param string $handle
+     * @param string $src
+     * @param string[] $deps
+     * @return void
+     */
+    private function _enqueueStyle(string $handle, string $src, array $deps): void
+    {
+        if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
+            wp_enqueue_style($handle, $src, $deps);
+        } else {
+            add_action('wp_enqueue_scripts', static function () use ($handle, $src, $deps) {
+                wp_enqueue_style($handle, $src, $deps);
             });
         }
     }
