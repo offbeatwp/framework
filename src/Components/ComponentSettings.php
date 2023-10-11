@@ -2,7 +2,10 @@
 
 namespace OffbeatWP\Components;
 
+use DateTimeZone;
+use Exception;
 use Illuminate\Support\Collection;
+use OffbeatWP\Support\Wordpress\WpDateTime;
 
 #[\AllowDynamicProperties]
 final class ComponentSettings
@@ -102,6 +105,25 @@ final class ComponentSettings
     public function getArray(string $index): array
     {
         return (array)$this->get($index);
+    }
+
+    /**
+     * Returns the value of the component setting.<br>
+     * Timezone will default to <b>UTC</b> if not specified in the second parameter.<br>
+     * Will return <i>NULL</i> if DateTime is not valid.
+     */
+    public function getDateTime(string $index, ?DateTimeZone $timeZone = null): ?WpDateTime
+    {
+        $datetime = $this->getString($index);
+        if (!$datetime) {
+            return null;
+        }
+
+        try {
+            return WpDateTime::make($datetime, $timeZone ?? new DateTimeZone('UTC'));
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
