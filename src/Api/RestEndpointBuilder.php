@@ -16,14 +16,10 @@ class RestEndpointBuilder
     public string $method = WP_REST_Server::READABLE;
     /** @var Closure[] */
     public array $args = [];
-    /** @var callable */
+    /** @var callable(WP_Rest_Request): (bool|WP_Error) */
     public $permissionCallback = '__return_true';
 
-    /**
-     * @param string $namespace
-     * @param string $route
-     * @param callable(WP_REST_Request): mixed $callback
-     */
+    /** @param callable(WP_REST_Request): mixed $callback */
     final public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
@@ -37,11 +33,7 @@ class RestEndpointBuilder
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param callable(string, WP_Rest_Request, string): bool $callback
-     * @return $this
-     */
+    /** @param callable(string, WP_Rest_Request, string): bool $callback */
     public function validate(string $key, callable $callback): self
     {
         if (!isset($this->args[$key])) {
@@ -59,10 +51,7 @@ class RestEndpointBuilder
         return $this;
     }
 
-    /**
-     * @param callable(WP_Rest_Request): (bool|WP_Error) $callback
-     * @return $this
-     */
+    /** @param callable(WP_Rest_Request): (bool|WP_Error) $callback */
     public function permission(callable $callback): self
     {
         $this->permissionCallback = $callback;
@@ -83,16 +72,19 @@ class RestEndpointBuilder
         });
     }
 
+    /** @param callable(WP_REST_Request): mixed $callback */
     final public static function get(string $namespace, string $route, callable $callback): self
     {
         return new static($namespace, $route, $callback);
     }
 
+    /** @param callable(WP_REST_Request): mixed $callback */
     final public static function post(string $namespace, string $route, callable $callback): self
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
 
+    /** @param callable(WP_REST_Request): mixed $callback */
     final public static function delete(string $namespace, string $route, callable $callback): self
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
