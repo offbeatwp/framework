@@ -5,6 +5,7 @@ namespace OffbeatWP\Components;
 use OffbeatWP\Exceptions\NonexistentComponentException;
 use OffbeatWP\Layout\ContextInterface;
 
+/** @final */
 class ComponentRepository
 {
     /** @var class-string<AbstractComponent>[] */
@@ -47,6 +48,7 @@ class ComponentRepository
     }
 
     /**
+     * @deprecated
      * @param string $name
      * @param class-string<AbstractComponent> $componentClass
      */
@@ -87,7 +89,7 @@ class ComponentRepository
 
     /**
      * @param string|null $name
-     * @return class-string<AbstractComponent>|class-string<AbstractComponent>[]|null
+     * @return class-string<AbstractComponent>|class-string<AbstractComponent>[]
      * @throws NonexistentComponentException
      */
     public function get($name = null)
