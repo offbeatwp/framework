@@ -164,8 +164,7 @@ class Form extends Collection
         if ($parentField) {
             $this->setActiveItem($parentField);
         } else {
-            $activeId = ($this->getActiveItem() instanceof Form) ? 'The Form' : $this->getActiveItem()->id;
-            trigger_error($activeId . ' has no parent field.', E_USER_WARNING);
+            trigger_error('Failed to get parent field of Form. ' . $this->fieldPrefix, E_USER_WARNING);
         }
 
         return $this;
