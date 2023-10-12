@@ -130,4 +130,16 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
             'items'      => $items->toArray(),
         ];
     }
+
+    /**
+     * Expects a multi-dimensional array as argument.
+     * Arrays should have a <b>field</b>, <b>operator</b> and optionally a <b>value</b> key
+     * @param array{field: string, operator: string, value?: string|int}[][] $logic
+     * @return $this
+     */
+    public function conditionalLogic(array $logic): self
+    {
+        $this->attributes['conditional_logic'] = $logic;
+        return $this;
+    }
 }

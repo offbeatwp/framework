@@ -12,13 +12,13 @@ use OffbeatWP\Form\FieldsContainers\Tab;
 
 class Form extends Collection
 {
+    private string $fieldPrefix = '';
     /** @var string[] */
     private array $fieldKeys = [];
     /** @var Form|AbstractFieldsContainer */
     private Collection $activeItem;
-    private string $fieldPrefix = '';
-    /** @var Form|AbstractFieldsContainer */
-    public $parent;
+    /** @var Form|AbstractFieldsContainer|null */
+    public ?Collection $parent = null;
 
     public function __construct()
     {
