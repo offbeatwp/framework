@@ -17,9 +17,8 @@ class Form extends Collection
     /** @var Form|FieldsContainerInterface */
     private $activeItem;
     /** @var string[] */
-    private $fieldKeys = [];
-    /** @var string */
-    private $fieldPrefix = '';
+    private array $fieldKeys = [];
+    private string $fieldPrefix = '';
     /** @var Form|FieldsContainerInterface */
     public $parent;
 
@@ -35,7 +34,7 @@ class Form extends Collection
      */
     public function add($item, $prepend = false)
     {
-        // If item is Tab and active itme is Section move back to parent
+        // If item is Tab and active item is Section move back to parent
         if ($this->getActiveItem() !== $this && $item instanceof FieldsContainerInterface) {
             while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
                 $this->closeField();
@@ -48,7 +47,7 @@ class Form extends Collection
             $this->closeField();
         }
 
-        // If active item is the form, push item directly the the items
+        // If active item is the form, push item directly into the collection
         if ($this->getActiveItem() === $this) {
             if ($prepend) {
                 $this->prepend($item);
@@ -157,15 +156,16 @@ class Form extends Collection
         return $this;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function closeField()
     {
         $parentField = $this->getActiveItem()->getParent();
 
         if ($parentField) {
             $this->setActiveItem($parentField);
+        } else {
+            $activeId = ($this->getActiveItem() instanceof Form) ? 'The Form' : $this->getActiveItem()->id;
+            trigger_error($activeId . ' has no parent field.', E_USER_WARNING);
         }
 
         return $this;
@@ -184,7 +184,7 @@ class Form extends Collection
     }
 
     /** @param string $fieldPrefix */
-    public function setFieldPrefix($fieldPrefix) 
+    public function setFieldPrefix($fieldPrefix)
     {
         $this->fieldPrefix = $fieldPrefix;
     }
@@ -225,11 +225,12 @@ class Form extends Collection
 
     /**
      * @param Form|FieldsContainerInterface $item
-     * @return void
+     * @return $this
      */
     public function setParent($item)
     {
         $this->parent = $item;
+        return $this;
     }
 
     /** @return Form|FieldsContainerInterface */
