@@ -230,7 +230,7 @@ class Form extends Collection
         return $this;
     }
 
-    /** @return Form|AbstractFieldsContainer */
+    /** @return Form|AbstractFieldsContainer|null */
     public function getParent()
     {
         return $this->parent;
