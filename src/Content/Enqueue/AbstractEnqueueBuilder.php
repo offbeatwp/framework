@@ -17,13 +17,22 @@ abstract class AbstractEnqueueBuilder
         return $this;
     }
 
+    /** @return $this */
     final public function setAsset(string $filename): self
     {
         $this->src = offbeat('assets')->getUrl($filename) ?: '';
+
+        if (!$this->src) {
+            trigger_error('Could not find asset url for ' . $filename, E_USER_WARNING);
+        }
+
         return $this;
     }
 
-    /** @param string $src The file location. */
+    /**
+     * @param string $src The file location.
+     * @return $this
+     */
     final public function setAbsoluteSrc(string $src): self
     {
         $this->src = $src;
@@ -42,7 +51,10 @@ abstract class AbstractEnqueueBuilder
         return $this;
     }
 
-    /** @param string $version String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes */
+    /**
+     * @param string $version String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes
+     * @return $this
+     */
     final public function setVersion(string $version): self
     {
         $this->version = $version;

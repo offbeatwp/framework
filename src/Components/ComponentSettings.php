@@ -138,6 +138,7 @@ final class ComponentSettings
     }
 
     /**
+     * @deprecated
      * Convert the given keys to URL parameters.<br>
      * Values will be url-encoded.
      * @param string[] $keys
@@ -167,5 +168,26 @@ final class ComponentSettings
         }
 
         return implode('&', $parameters);
+    }
+
+    /**
+     * Return an array with values of the given keys<br>
+     * NULL values will not be returned
+     * @param string[] $keys
+     * @return mixed[]
+     */
+    public function toArray(iterable $keys): array
+    {
+        $new = [];
+
+        foreach ($keys as $key) {
+            $value = $this->get($key);
+
+            if ($value !== null) {
+                $new[$key] = $value;
+            }
+        }
+
+        return $new;
     }
 }

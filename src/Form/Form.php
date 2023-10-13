@@ -4,23 +4,21 @@ namespace OffbeatWP\Form;
 use Illuminate\Support\Collection;
 use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
-use OffbeatWP\Form\FieldsCollections\FieldsCollectionInterface;
+use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
 use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
-use OffbeatWP\Form\FieldsContainers\FieldsContainerInterface;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
-use OffbeatWP\Form\Fields\FieldInterface;
 
 class Form extends Collection
 {
-    /** @var Form|FieldsContainerInterface */
-    private $activeItem;
+    private string $fieldPrefix = '';
     /** @var string[] */
     private array $fieldKeys = [];
-    private string $fieldPrefix = '';
-    /** @var Form|FieldsContainerInterface */
-    public $parent;
+    /** @var Form|AbstractFieldsContainer */
+    private Collection $activeItem;
+    /** @var Form|AbstractFieldsContainer|null */
+    public ?Collection $parent = null;
 
     public function __construct()
     {
@@ -29,13 +27,13 @@ class Form extends Collection
     }
 
     /**
-     * @param FieldInterface|FieldsContainerInterface|FieldsCollectionInterface|Form $item
+     * @param AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item
      * @param bool $prepend
      */
     public function add($item, $prepend = false)
     {
         // If item is Tab and active item is Section move back to parent
-        if ($this->getActiveItem() !== $this && $item instanceof FieldsContainerInterface) {
+        if ($this->getActiveItem() !== $this && $item instanceof AbstractFieldsContainer) {
             while ($item::LEVEL < $this->getActiveItem()::LEVEL) {
                 $this->closeField();
             }
@@ -55,7 +53,7 @@ class Form extends Collection
                 $this->push($item);
             }
 
-            if ($item instanceof FieldsContainerInterface) {
+            if ($item instanceof AbstractFieldsContainer) {
                 $this->setActiveItem($item, true);
             }
 
@@ -66,23 +64,23 @@ class Form extends Collection
         $this->getActiveItem()->add($item);
 
         // If item is instance of Fields Container, change the active item.
-        if ($item instanceof FieldsContainerInterface) {
+        if ($item instanceof AbstractFieldsContainer) {
             $this->setActiveItem($item, true);
         }
 
         return $this;
     }
 
-    /** @return Form|FieldsContainerInterface */
+    /** @return Form|AbstractFieldsContainer */
     public function getActiveItem()
     {
         return $this->activeItem;
     }
 
     /**
-     * @param Form|FieldsContainerInterface $item
+     * @param Form|AbstractFieldsContainer $item
      * @param bool $setParent
-     * @return Form|FieldsContainerInterface
+     * @return Form|AbstractFieldsContainer
      */
     public function setActiveItem($item, $setParent = false)
     {
@@ -132,10 +130,10 @@ class Form extends Collection
     }
 
     /**
-     * @param FieldInterface $field
+     * @param AbstractField $field
      * @return $this
      */
-    public function addField(FieldInterface $field)
+    public function addField(AbstractField $field)
     {
         $this->fieldKeys[] = $field->getId();
         $this->add($field);
@@ -144,10 +142,10 @@ class Form extends Collection
     }
 
     /**
-     * @param FieldsCollectionInterface $fieldsCollection
+     * @param AbstractFieldsCollection $fieldsCollection
      * @return $this
      */
-    public function addFields(FieldsCollectionInterface $fieldsCollection)
+    public function addFields(AbstractFieldsCollection $fieldsCollection)
     {
         $fieldsCollection->each(function ($field) {
             $this->addField($field);
@@ -223,7 +221,7 @@ class Form extends Collection
     }
 
     /**
-     * @param Form|FieldsContainerInterface $item
+     * @param Form|AbstractFieldsContainer $item
      * @return $this
      */
     public function setParent($item)
@@ -232,7 +230,7 @@ class Form extends Collection
         return $this;
     }
 
-    /** @return Form|FieldsContainerInterface */
+    /** @return Form|AbstractFieldsContainer|null */
     public function getParent()
     {
         return $this->parent;
