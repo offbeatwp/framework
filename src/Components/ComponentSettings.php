@@ -146,4 +146,19 @@ final class ComponentSettings
 
         return implode('&', $parameters);
     }
+
+    public function only(iterable $keys): array
+    {
+        $new = [];
+
+        foreach ($keys as $key) {
+            $value = $this->get('key');
+
+            if ($value !== null) {
+                $new[$key] = $value;
+            }
+        }
+
+        return $new;
+    }
 }
