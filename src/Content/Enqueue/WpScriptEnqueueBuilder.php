@@ -30,7 +30,7 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
         }
 
         $this->bindingsToPass[$varName] = [
-            'value' => json_encode($varValue, JSON_THROW_ON_ERROR),
+            'value' => json_encode($varValue, is_object($varValue) ? JSON_THROW_ON_ERROR|JSON_FORCE_OBJECT : JSON_THROW_ON_ERROR),
             'position' => ($includeAfter) ? 'after' : 'before',
         ];
 
