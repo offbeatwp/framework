@@ -70,7 +70,7 @@ class AssetsManager
         return $this->entrypoints;
     }
 
-    /** @return array|false */
+    /** @return string[]|false */
     public function getAssetsByEntryPoint(string $entry, string $key)
     {
         $entrypoints = $this->getAssetsEntryPoints();
