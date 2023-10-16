@@ -21,6 +21,7 @@ class AssetsManager
             return $this->getAssetsUrl($path);
         }
 
+        trigger_error('Could not retrieve url from asset manifest: ' . $filename, E_USER_WARNING);
         return false;
     }
 
@@ -33,6 +34,7 @@ class AssetsManager
             return $this->getAssetsPath($path);
         }
 
+        trigger_error('Could not retrieve patj from asset manifest: ' . $filename, E_USER_WARNING);
         return false;
     }
 
@@ -50,6 +52,10 @@ class AssetsManager
 
             if (file_exists($path)) {
                 $this->manifest = json_decode(file_get_contents($path), false);
+
+                if ($this->manifest === false) {
+                    trigger_error('MANIFEST JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
+                }
             }
         }
 
@@ -64,6 +70,10 @@ class AssetsManager
 
             if (file_exists($path)) {
                 $this->entrypoints = json_decode(file_get_contents($path), false);
+
+                if ($this->entrypoints === false) {
+                    trigger_error('ENTRYPOINT JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
+                }
             }
         }
 
@@ -76,6 +86,7 @@ class AssetsManager
         $entrypoints = $this->getAssetsEntryPoints();
 
         if (empty($entrypoints->entrypoints->$entry->$key)) {
+            trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
             return false;
         }
 
