@@ -34,7 +34,7 @@ class AssetsManager
             return $this->getAssetsPath($path);
         }
 
-        trigger_error('Could not retrieve patj from asset manifest: ' . $filename, E_USER_WARNING);
+        trigger_error('Could not retrieve path from asset manifest: ' . $filename, E_USER_WARNING);
         return false;
     }
 
