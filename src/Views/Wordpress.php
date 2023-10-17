@@ -462,4 +462,12 @@ class Wordpress
     {
         return UserModel::getCurrentUser();
     }
+
+    public function getBlockTemplatePart(string $part):string
+    {
+        ob_start();
+        block_template_part($part);
+
+        return ob_get_clean();
+    }
 }
