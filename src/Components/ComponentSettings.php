@@ -138,7 +138,6 @@ final class ComponentSettings
     }
 
     /**
-     * @deprecated
      * Convert the given keys to URL parameters.<br>
      * Values will be url-encoded.
      * @param string[] $keys
