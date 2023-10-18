@@ -14,7 +14,7 @@ final class WpScriptAsset
      * @see json_encode()
      * @param string $varName Should be a valid JS variable name.
      * @param mixed $data Data will be encodeable with Json.
-     * @return void
+     * @return bool True on success, false on failure.
      */
     public function with(string $varName, $data): bool
     {
