@@ -189,9 +189,9 @@ class AssetsManager
     /**
      * @param string $entry
      * @param string[] $dependencies
-     * @return WpInlineScript
+     * @return WpScriptAsset
      */
-    public function enqueueScripts(string $entry, array $dependencies = []): WpInlineScript
+    public function enqueueScripts(string $entry, array $dependencies = []): WpScriptAsset
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
         if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
@@ -230,6 +230,6 @@ class AssetsManager
             }
         }
 
-        return new WpInlineScript($handle);
+        return new WpScriptAsset($handle);
     }
 }
