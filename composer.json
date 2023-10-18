@@ -5,10 +5,10 @@
   "type": "library",
   "require": {
     "php-di/php-di": "^6.0",
-    "illuminate/support": "^v8.83.18",
-    "symfony/routing": "^5.4",
-    "symfony/http-foundation": "^4.2",
-    "symfony/cache": "^5.0",
+    "illuminate/support": "^v8.83.27",
+    "symfony/routing": "^v5.4.26",
+    "symfony/http-foundation": "^v6.3.5",
+    "symfony/cache": "^v6.3.5",
     "doctrine/cache": "~1.6",
     "ext-dom": "*"
   },
