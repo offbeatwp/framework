@@ -60,6 +60,11 @@ abstract class AbstractComponent
     {
         $this->view = $view;
         $this->context = $context;
+
+        if (!offbeat()->container->has('componentCache')) {
+            // Just a simple lightweight cache if none is set
+            offbeat()->container->set('componentCache', new ComponentArrayCache());
+        }
     }
 
     /**
