@@ -8,8 +8,6 @@
     "illuminate/support": "^v8.83.27",
     "symfony/routing": "^v5.4.26",
     "symfony/http-foundation": "^v5.4.28",
-    "symfony/cache": "^v5.4.29",
-    "doctrine/cache": "~1.6",
     "ext-dom": "*"
   },
   "autoload": {

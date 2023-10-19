@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Components;
 
-use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
@@ -61,11 +60,6 @@ abstract class AbstractComponent
     {
         $this->view = $view;
         $this->context = $context;
-
-        if (!offbeat()->container->has('componentCache')) {
-            // Just a simple lightweight cache if none is set
-            offbeat()->container->set('componentCache', new ArrayCache());
-        }
     }
 
     /**
@@ -182,13 +176,18 @@ abstract class AbstractComponent
     /** @return false|string */
     protected function getCachedObject(string $id)
     {
-        return container('componentCache')->fetch($id);
+        $cache = container('componentCache');
+        return ($cache) ? $cache->fetch($id) : false;
     }
 
     protected function setCachedObject(string $id, ?string $object): ?string
     {
         if ($object) {
-            container('componentCache')->save($id, $object, 60);
+            $cache = container('componentCache');
+
+            if ($cache) {
+                $cache->save($id, $object, 60);
+            }
         }
 
         return $object;
