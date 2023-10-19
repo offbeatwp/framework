@@ -11,7 +11,7 @@ final class ComponentArrayCache
     private int $missesCount = 0;
     private ?int $namespaceVersion = 0;
 
-    /** @return mixed */
+    /** @return mixed|false */
     protected function doFetch(string $id)
     {
         if (!$this->doContains($id)) {
@@ -46,20 +46,16 @@ final class ComponentArrayCache
      * @param string $id
      * @param mixed $data
      * @param int|bool $lifeTime
-     * @return bool
+     * @return void
      */
-    protected function doSave(string $id, $data, $lifeTime = 0): bool
+    protected function doSave(string $id, $data, $lifeTime = 0): void
     {
         $this->data[$id] = [$data, $lifeTime ? time() + $lifeTime : false];
-
-        return true;
     }
 
-    protected function doDelete(string $id): bool
+    protected function doDelete(string $id): void
     {
         unset($this->data[$id]);
-
-        return true;
     }
 
     /** @return mixed */
@@ -72,18 +68,16 @@ final class ComponentArrayCache
      * @param string $id
      * @param mixed $data
      * @param int|bool $lifeTime
-     * @return bool
+     * @return void
      */
-    public function save(string $id, $data, $lifeTime = 0): bool
+    public function save(string $id, $data, $lifeTime = 0): void
     {
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
     }
 
     private function getNamespacedId(string $id): string
     {
-        $namespaceVersion = $this->getNamespaceVersion();
-
-        return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
+        return sprintf('%s[%s][%d]', $this->namespace, $id, $this->getNamespaceVersion());
     }
 
     private function getNamespaceVersion(): int

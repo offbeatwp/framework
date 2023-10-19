@@ -181,18 +181,13 @@ abstract class AbstractComponent
     /** @return false|string */
     protected function getCachedObject(string $id)
     {
-        $cache = container('componentCache');
-        return ($cache) ? $cache->fetch($id) : false;
+        return container('componentCache')->fetch($id);
     }
 
     protected function setCachedObject(string $id, ?string $object): ?string
     {
         if ($object) {
-            $cache = container('componentCache');
-
-            if ($cache) {
-                $cache->save($id, $object, 60);
-            }
+            container('componentCache')->save($id, $object, 60);
         }
 
         return $object;
