@@ -4,11 +4,11 @@
   "license": "MIT",
   "type": "library",
   "require": {
-    "php-di/php-di": "^6.0",
-    "illuminate/support": "^v8.83.18",
-    "symfony/routing": "^5.4",
-    "symfony/http-foundation": "^4.2",
-    "symfony/cache": "^5.0",
+    "php-di/php-di": "^6.4.0",
+    "illuminate/support": "^v8.83.27",
+    "symfony/routing": "^v5.4.26",
+    "symfony/http-foundation": "^v5.4.28",
+    "symfony/cache": "^v5.4.29",
     "doctrine/cache": "~1.6",
     "ext-dom": "*"
   },
@@ -22,9 +22,9 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "php-stubs/wp-cli-stubs": "^2.7",
-    "phpstan/phpstan": "1.9.14",
-    "szepeviktor/phpstan-wordpress": "^1.1",
-    "phpstan/phpstan-deprecation-rules": "^1.1"
+    "php-stubs/wp-cli-stubs": "^v2.8.0",
+    "phpstan/phpstan": "1.10.39",
+    "szepeviktor/phpstan-wordpress": "^v1.1.7",
+    "phpstan/phpstan-deprecation-rules": "^1.1.4"
   }
 }
