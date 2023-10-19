@@ -1,8 +1,9 @@
 # phpstan.neon
 parameters:
-    level: 5
+    level: 6
     phpVersion: 80200
     treatPhpDocTypesAsCertain: false
+    checkGenericClassInNonGenericObjectType: false
     paths:
         - src
     scanFiles:
