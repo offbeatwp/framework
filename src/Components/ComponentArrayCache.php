@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Components;
 
-final class OffbeatArrayCache
+final class ComponentArrayCache
 {
     /** @phpstan-var array<string, array{mixed, int|bool}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private array $data = [];

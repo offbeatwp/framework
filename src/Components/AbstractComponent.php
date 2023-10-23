@@ -63,7 +63,7 @@ abstract class AbstractComponent
 
         if (!offbeat()->container->has('componentCache')) {
             // Just a simple lightweight cache if none is set
-            offbeat()->container->set('componentCache', new OffbeatArrayCache());
+            offbeat()->container->set('componentCache', new ComponentArrayCache());
         }
     }
 
