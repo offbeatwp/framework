@@ -7,20 +7,14 @@ final class ComponentArrayCache
     /** @phpstan-var array<string, array{mixed, int|bool}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private array $data = [];
     private string $namespace = '';
-    private int $hitsCount = 0;
-    private int $missesCount = 0;
     private ?int $namespaceVersion = 0;
 
     /** @return mixed|false */
     protected function doFetch(string $id)
     {
         if (!$this->doContains($id)) {
-            $this->missesCount += 1;
-
             return false;
         }
-
-        $this->hitsCount += 1;
 
         return $this->data[$id][0];
     }
