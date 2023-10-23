@@ -69,6 +69,11 @@ final class ComponentArrayCache
         $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
     }
 
+    public function delete(string $id): void
+    {
+        $this->doDelete($this->getNamespacedId($id));
+    }
+
     private function getNamespacedId(string $id): string
     {
         return sprintf('%s[%s][%d]', $this->namespace, $id, $this->getNamespaceVersion());
