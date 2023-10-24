@@ -95,7 +95,7 @@ class PostsCollection extends OffbeatModelCollection
 
     /**
      * Retrieves a paginated navigation to next/previous set of posts, when applicable.
-     * @param array{base?: string, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $rawArgs
+     * @param array{base?: string, use_buttons?: bool, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $rawArgs
      * @see paginate_links().
      */
     public function getPagination(array $rawArgs = [], string $slug = ''): string
@@ -129,7 +129,7 @@ class PostsCollection extends OffbeatModelCollection
                 $dom = new DOMDocument();
                 $dom->loadHTML($links);
 
-                $nodes = $dom->getElementsByTagName('a');
+                $nodes = $dom->getElementsByTagName(empty($args['use_buttons']) ? 'a' : 'button');
                 foreach ($nodes as $node) {
                     foreach ($attributes as $key => $value) {
                         $node->setAttribute($key, $value);
@@ -147,13 +147,18 @@ class PostsCollection extends OffbeatModelCollection
         return '';
     }
 
-    /** @param array{base?: string, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $args */
+    /** @param array{base?: string, use_buttons?: bool, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $args */
     private function getPaginatedLinks(array $args): string
     {
         $GLOBALS['wp_query'] = $this->query;
         $args['type'] = 'plain';
         $links = paginate_links($args);
         wp_reset_query();
+
+        if (!empty($args['use_buttons'])) {
+            $links = str_replace(['<a', '</a>'], ['<button', '</button>'], $links);
+            $links = preg_replace_callback('/href="(.*\/page\/(\d+)\/?.*?)"/', fn($matches) => 'data-page="' . $matches[2] . '"', $links);
+        }
 
         return $links;
     }
