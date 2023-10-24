@@ -152,6 +152,7 @@ class PostsCollection extends OffbeatModelCollection
     {
         $GLOBALS['wp_query'] = $this->query;
         $args['type'] = 'plain';
+        $args['format'] = 'page/%#%/';
         $links = paginate_links($args);
         wp_reset_query();
 
