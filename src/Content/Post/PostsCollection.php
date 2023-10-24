@@ -157,7 +157,8 @@ class PostsCollection extends OffbeatModelCollection
 
         if (!empty($args['use_buttons'])) {
             $links = str_replace(['<a', '</a>'], ['<button', '</button>'], $links);
-            $links = preg_replace_callback('/href="(.*\/page\/(\d+)\/?.*?)"/', fn($matches) => 'data-page="' . $matches[2] . '"', $links);
+            // TODO: Page is translateable
+            $links = preg_replace_callback('/href=".*(\/page\/(\d+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $links);
         }
 
         return $links;
