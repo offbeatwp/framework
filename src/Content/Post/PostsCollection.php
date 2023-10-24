@@ -175,6 +175,11 @@ class PostsCollection extends OffbeatModelCollection
         return empty($this->query->found_posts) ? $this->count() : $this->query->found_posts;
     }
 
+    public function hasItemsLeft(): bool
+    {
+        return $this->foundPosts() > ($this->count() + ($this->query->query_vars['offset'] ?? 0));
+    }
+
     /**
      * Retrieves all object Ids within this collection as an array.
      * @return int[]
