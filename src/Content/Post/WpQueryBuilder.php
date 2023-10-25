@@ -288,8 +288,8 @@ class WpQueryBuilder
     /**
      * @param string $taxonomy The taxonomy.
      * @param string|int|string[]|int[] $terms Taxonomy term(s).
-     * @param string|null $field Select taxonomy term by. Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
-     * @param string|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
+     * @param "term_id"|"name"|"slug"|"term_taxonomy_id"|null $field Select taxonomy term by. Possible values are ‘term_id’, ‘name’, ‘slug’ or ‘term_taxonomy_id’. Default value is ‘term_id’.
+     * @param "IN"|"NOT IN"|"AND"|"EXISTS"|"NOT EXISTS"|null $operator Operator to test. Possible values are ‘IN’, ‘NOT IN’, ‘AND’, ‘EXISTS’ and ‘NOT EXISTS’. Default value is ‘IN’.
      * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
      * @return $this<TModel>
      */
