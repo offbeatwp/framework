@@ -470,4 +470,16 @@ class Wordpress
 
         return ob_get_clean();
     }
+
+    /**
+     * Retrieves an option value based on an option name.<br>
+     * If the option does not exist, <i>NULL</i> is returned.<br><br>
+     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
+     * @param string $name
+     * @return mixed|null
+     */
+    final public function getOption(string $name)
+    {
+        return get_option($name, null);
+    }
 }
