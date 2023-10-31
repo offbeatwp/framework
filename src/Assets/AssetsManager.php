@@ -199,6 +199,7 @@ class AssetsManager
         }
 
         $dependencies = array_unique($dependencies);
+        $enqueueNow = false;
         $handle = '';
 
         if ($assets) {
@@ -209,7 +210,9 @@ class AssetsManager
                 $handle = 'owp-' . $handle;
 
                 if (!wp_script_is($handle)) {
-                    if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
+                    $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets']);
+
+                    if ($enqueueNow) {
                         wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
                     } else {
                         add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
@@ -220,8 +223,9 @@ class AssetsManager
             }
         } else {
             $handle = 'theme-script-' . $entry;
+            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets']);
 
-            if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets'])) {
+            if ($enqueueNow) {
                 wp_enqueue_script($handle, $this->getUrl($entry . '.js'), $dependencies, false, true);
             } else {
                 add_action('wp_enqueue_scripts', function () use ($handle, $entry, $dependencies) {
@@ -230,6 +234,6 @@ class AssetsManager
             }
         }
 
-        return new WpScriptAsset($handle);
+        return new WpScriptAsset($handle, $enqueueNow);
     }
 }
