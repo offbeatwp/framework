@@ -44,28 +44,40 @@ class TermQueryBuilder
         $this->order($orderBy, $order);
     }
 
-    /** @param int[] $ids Array of term IDs to include. */
+    /**
+     * @param int[] $ids Array of term IDs to include.
+     * @return $this
+     */
     public function include(array $ids): self
     {
         $this->queryVars['include'] = $ids ?: [0];
         return $this;
     }
 
-    /** @param int[] $ids Array of term IDs to exclude. */
+    /**
+     * @param int[] $ids Array of term IDs to exclude.
+     * @return $this
+     */
     public function exclude(array $ids): self
     {
         $this->queryVars['exclude'] = $ids;
         return $this;
     }
 
-    /** @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored */
+    /**
+     * @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored
+     * @return $this
+     */
     public function excludeTree(array $ids): self
     {
         $this->queryVars['exclude_tree'] = $ids;
         return $this;
     }
 
-    /** True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies. */
+    /**
+     * True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies.
+     * @return $this
+     */
     public function childless(bool $childless = true): self
     {
         $this->queryVars['childless'] = true;
@@ -281,7 +293,10 @@ class TermQueryBuilder
         return $result;
     }
 
-    /** @param string[] $slugs Array of slugs to return term(s) for. */
+    /**
+     * @param string[] $slugs Array of slugs to return term(s) for.
+     * @return $this
+     */
     public function whereSlugIn(array $slugs): self
     {
         $this->queryVars['slug'] = $slugs;
@@ -289,6 +304,11 @@ class TermQueryBuilder
     }
 
     // Chainable methods
+
+    /**
+     * @param int $parentId
+     * @return $this
+     */
     public function whereParent(int $parentId): self
     {
         $this->queryVars['parent'] = $parentId;
@@ -332,6 +352,7 @@ class TermQueryBuilder
         return $this;
     }
 
+    /** @return $this */
     public function excludeEmpty(bool $hideEmpty = true): self
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
