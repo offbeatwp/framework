@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Traits;
 
 trait OffbeatQueryTrait
 {
+    /** @var string */
     protected static $lastRequest = '';
 
     /**
@@ -22,7 +23,7 @@ trait OffbeatQueryTrait
      * Get objects where the meta value is NOT equal to the given value.
      * @param string $metaKey
      * @param scalar|null $value
-     * @return static
+     * @return $this
      */
     public function whereMetaIsNot(string $metaKey, $value)
     {
@@ -35,21 +36,25 @@ trait OffbeatQueryTrait
         return $this;
     }
 
-    /** @return static */
+    /**
+     * @param string $metaKey
+     * @param mixed[] $values
+     * @return $this
+     */
     public function whereMetaIn(string $metaKey, array $values)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => 'IN', 'value' => $values]);
         return $this;
     }
 
-    /** @return static */
+    /** @return $this */
     public function whereMetaExists(string $metaKey)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => 'EXISTS']);
         return $this;
     }
 
-    /** @return static */
+    /** @return $this */
     public function whereMetaNotExists(string $metaKey)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => 'NOT EXISTS']);
@@ -59,7 +64,7 @@ trait OffbeatQueryTrait
     /**
      * @param string|string[]|null $orderBy
      * @param string|null $order 'ASC'|'DESC'
-     * @return static
+     * @return $this
      */
     public function order($orderBy = null, ?string $order = null) {
         if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
@@ -125,7 +130,10 @@ trait OffbeatQueryTrait
         return (bool)$this->firstId();
     }
 
-    /** @return static */
+    /**
+     * @param mixed[]|null $parameters
+     * @return $this
+     */
     public function where(?array $parameters)
     {
         $this->queryVars = array_merge($this->queryVars, $parameters);
