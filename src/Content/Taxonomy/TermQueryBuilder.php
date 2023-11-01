@@ -12,9 +12,11 @@ class TermQueryBuilder
 {
     use OffbeatQueryTrait;
 
+    /** @var mixed[] */
     protected $queryVars = [];
     /** @var class-string<TModel> */
     protected $model;
+    /** @var string */
     protected $taxonomy;
 
     /** @param class-string<TModel> $model */
