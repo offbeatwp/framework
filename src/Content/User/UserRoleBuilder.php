@@ -11,6 +11,7 @@ final class UserRoleBuilder
     private ?string $modelClass = null;
     private string $roleName;
     private string $roleDisplayName;
+    /** @var bool[] */
     private array $capabilities = [];
 
     private function __construct(string $roleName, string $roleDisplayName)
