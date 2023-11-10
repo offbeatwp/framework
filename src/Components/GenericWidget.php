@@ -56,16 +56,18 @@ class GenericWidget extends WP_Widget
     {
         $settings = (object)[];
 
-        $fields = get_fields($this->widgetId);
+        if (function_exists('get_fields') && function_exists('get_field')) {
+            $fields = get_fields($this->widgetId);
 
-        if (!$fields) {
-            return $settings;
-        }
+            if (!$fields) {
+                return $settings;
+            }
 
-        $keys = array_keys($fields);
+            $keys = array_keys($fields);
 
-        foreach ($keys as $key) {
-            $settings->{$key} = $this->get_field($key);
+            foreach ($keys as $key) {
+                $settings->{$key} = $this->get_field($key);
+            }
         }
 
         return $settings;
