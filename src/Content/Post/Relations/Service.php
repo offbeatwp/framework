@@ -9,10 +9,11 @@ use WP_Query;
 
 class Service extends AbstractService
 {
+    /** @return void */
     public function register() {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
-        if(offbeat('console')::isConsole()) {
+        if (offbeat('console')::isConsole()) {
             offbeat('console')->register(Install::class);
         }
 
@@ -22,7 +23,7 @@ class Service extends AbstractService
     /**
      * @param string[] $clauses
      * @param WP_Query $query
-     * @return array
+     * @return string[]
      */
     public function insertRelationshipsSql(array $clauses, WP_Query $query): array
     {
