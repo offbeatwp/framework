@@ -7,7 +7,6 @@ final class ComponentArrayCache
     /** @phpstan-var array<string|null, array{mixed, int<0, max>}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private array $data = [];
     private string $namespace = '';
-    private ?int $namespaceVersion = null;
 
     protected function doFetch(string $id): ?string
     {
@@ -79,18 +78,6 @@ final class ComponentArrayCache
 
     private function getNamespacedId(string $id): string
     {
-        return sprintf('%s[%s][%d]', $this->namespace, $id, $this->getNamespaceVersion());
-    }
-
-    private function getNamespaceVersion(): int
-    {
-        if ($this->namespaceVersion !== null) {
-            return $this->namespaceVersion;
-        }
-
-        $namespaceCacheKey = sprintf('OffbeatNamespaceCacheKey[%s]', $this->namespace);
-        $this->namespaceVersion = (int)$this->doFetch($namespaceCacheKey) ?: 1;
-
-        return $this->namespaceVersion;
+        return $this->namespace . '['. $id. ']';
     }
 }
