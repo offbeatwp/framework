@@ -8,25 +8,16 @@ final class ComponentArrayCache
     private array $data = [];
     private string $namespace = '';
 
-    protected function doFetch(string $id): ?string
+    protected function doContains(string $namespacedId): bool
     {
-        if (!$this->doContains($id)) {
-            return null;
-        }
-
-        return $this->data[$id][0];
-    }
-
-    protected function doContains(string $id): bool
-    {
-        if (!isset($this->data[$id])) {
+        if (!isset($this->data[$namespacedId])) {
             return false;
         }
 
-        $expiration = $this->data[$id][1];
+        $expiration = $this->data[$namespacedId][1];
 
         if ($expiration && $expiration < time()) {
-            $this->doDelete($id);
+            $this->doDelete($namespacedId);
             return false;
         }
 
@@ -34,14 +25,14 @@ final class ComponentArrayCache
     }
 
     /** @param int<0, max> $lifeTime */
-    protected function doSave(string $id, string $data, int $lifeTime = 0): void
+    protected function doSave(string $namespacedId, string $data, int $lifeTime = 0): void
     {
-        $this->data[$id] = [$data, $lifeTime ? time() + $lifeTime : false];
+        $this->data[$namespacedId] = [$data, $lifeTime ? time() + $lifeTime : false];
     }
 
-    protected function doDelete(string $id): void
+    protected function doDelete(string $namespacedId): void
     {
-        unset($this->data[$id]);
+        unset($this->data[$namespacedId]);
     }
 
     /**
@@ -51,7 +42,13 @@ final class ComponentArrayCache
      */
     public function fetch(string $id): ?string
     {
-        return $this->doFetch($this->getNamespacedId($id));
+        $namespacedId = $this->getNamespacedId($id);
+
+        if (!$this->doContains($namespacedId)) {
+            return null;
+        }
+
+        return $this->data[$namespacedId][0];
     }
 
     /**
