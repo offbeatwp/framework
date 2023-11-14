@@ -4,12 +4,12 @@ namespace OffbeatWP\Components;
 
 final class ComponentArrayCache
 {
-    /** @phpstan-var array<string, array{mixed, int|bool}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
+    /** @phpstan-var array<string, array{mixed, int|false}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private array $data = [];
     private string $namespace = '';
     private ?int $namespaceVersion = 0;
 
-    /** @return mixed|false */
+    /** @return mixed */
     protected function doFetch(string $id)
     {
         if (!$this->doContains($id)) {
@@ -37,10 +37,8 @@ final class ComponentArrayCache
     }
 
     /**
-     * @param string $id
      * @param string $data
-     * @param int|bool $lifeTime
-     * @return void
+     * @param int|false $lifeTime
      */
     protected function doSave(string $id, $data, $lifeTime = 0): void
     {
@@ -59,10 +57,8 @@ final class ComponentArrayCache
     }
 
     /**
-     * @param string $id
      * @param string $data
-     * @param int|bool $lifeTime
-     * @return void
+     * @param int|false $lifeTime
      */
     public function save(string $id, $data, $lifeTime = 0): void
     {
