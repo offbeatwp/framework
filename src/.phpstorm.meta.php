@@ -17,7 +17,8 @@ namespace PHPSTORM_META {
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
         'assets' => \OffbeatWP\Assets\AssetsManager::class,
-        'http' => \OffbeatWP\Http\Http::class
+        'http' => \OffbeatWP\Http\Http::class,
+        'componentCache' => \OffbeatWP\Components\ComponentArrayCache::class
     ]));
 
     override(\container(), map([
@@ -36,6 +37,7 @@ namespace PHPSTORM_META {
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
         'assets' => \OffbeatWP\Assets\AssetsManager::class,
-        'http' => \OffbeatWP\Http\Http::class
+        'http' => \OffbeatWP\Http\Http::class,
+        'componentCache' => \OffbeatWP\Components\ComponentArrayCache::class
     ]));
 }
