@@ -30,7 +30,7 @@ class PostsCollection extends OffbeatModelCollection
     /** @var IWpQuerySubstitute|WP_Query|null  */
     protected $query = null;
 
-    /** @param  int[]|WP_Post[]|WP_Query $items */
+    /** @param int[]|WP_Post[]|WP_Query $items */
     public function __construct($items = [])
     {
         $postItems = [];
@@ -191,7 +191,7 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /**
-     * @return PostModel[]
+     * @return PostModel[]|TModel[]
      * @phpstan-return TModel[]
      */
     public function toArray()
