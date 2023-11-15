@@ -159,4 +159,10 @@ class UserCollection extends OffbeatModelCollection
 
         $this->items = [];
     }
+
+    /** @return UserCollection<TModel> */
+    final public function values(): UserCollection
+    {
+        return new static(array_values($this->items), $this->modelClass);
+    }
 }
