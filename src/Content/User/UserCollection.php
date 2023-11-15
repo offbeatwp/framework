@@ -19,6 +19,7 @@ use WP_User;
  * @method UserModel|null reduce(callable $callback, mixed $initial = null)
  * @method UserModel offsetGet(int|string $key)
  * @method ArrayIterator|UserModel[] getIterator()
+ * @phpstan-method TModel[] all()
  */
 class UserCollection extends OffbeatModelCollection
 {
