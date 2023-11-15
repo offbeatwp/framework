@@ -89,7 +89,7 @@ class UserQueryBuilder
     /**
      * @param string[]|string $properties Sort retrieved users by parameter. Defaults to <i>login</i>.
      * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
-     * @return $this<TModel>
+     * @return $this
      */
     public function orderBy($properties, string $direction = ''): self
     {
@@ -106,7 +106,7 @@ class UserQueryBuilder
 
     /**
      * @param string $email Must be a valid email address, or an exception will be thrown.
-     * @return $this<TModel>
+     * @return $this
      */
     public function whereEmail(string $email): self
     {
@@ -122,7 +122,7 @@ class UserQueryBuilder
 
     /**
      * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
-     * @return $this<TModel>
+     * @return $this
      */
     public function withRoles(array $roles): self
     {
@@ -132,7 +132,7 @@ class UserQueryBuilder
 
     /**
      * @param string[] $roles An array of role names. Matched users must have at least one of these roles.
-     * @return $this<TModel>
+     * @return $this
      */
     public function whereRoleIn(array $roles): self
     {
@@ -142,7 +142,7 @@ class UserQueryBuilder
 
     /**
      * @param string[] $roles An array of role names to exclude. Users matching one or more of these roles will not be included in results.
-     * @return $this<TModel>
+     * @return $this
      */
     public function whereRoleNotIn(array $roles): UserQueryBuilder
     {
@@ -152,7 +152,7 @@ class UserQueryBuilder
 
     /**
      * @param mixed[] $metaQueryArray
-     * @return $this<TModel>
+     * @return $this
      */
     public function whereMeta(array $metaQueryArray): self
     {
@@ -167,7 +167,7 @@ class UserQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this<TModel>
+     * @return $this
      */
     public function whereIdIn($ids): self
     {
@@ -178,7 +178,7 @@ class UserQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this<TModel><TModel>
+     * @return $this<TModel>
      */
     public function whereIdNotIn($ids): self
     {
@@ -187,7 +187,7 @@ class UserQueryBuilder
         return $this;
     }
 
-    /** @return $this<TModel><TModel> */
+    /** @return $this<TModel> */
     public function limit(int $amount): self
     {
         $this->skipOnLimit = ($amount <= 0);
