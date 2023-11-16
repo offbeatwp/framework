@@ -367,8 +367,8 @@ class WpQueryBuilder
     }
 
     /**
-     * @param non-empty-string|mixed[] $key Valid keys include 'key', 'value', 'compare' and 'type'
-     * @phpstan-param non-empty-string|MetaQueryEntry|MetaQueryEntry[]|MetaQueryEntry[][]|MetaQueryEntry[][][]|MetaQueryEntry[][][][]|MetaQueryEntry[][][][][]
+     * @param non-empty-string|mixed[] $key
+     * @phpstan-param $key non-empty-string|MetaQueryEntry|MetaQueryEntry[]|MetaQueryEntry[][]|MetaQueryEntry[][][]|MetaQueryEntry[][][][]|MetaQueryEntry[][][][][]
      * @param scalar|scalar[] $value
      * @param "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE" $compare
      * @return $this
