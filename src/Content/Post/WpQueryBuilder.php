@@ -363,7 +363,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param non-empty-string|"OR"|"AND"|array{key: non-empty-string, compare: "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE", value?: scalar|scalar[], type?: "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED"|"CHAR"}|mixed[][] $key
+     * @param non-empty-string|("OR"|"AND"|array{key: non-empty-string, compare: "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE", value?: scalar|scalar[], type?: "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED"|"CHAR"})[]|mixed[][] $key
      * @param scalar|scalar[] $value
      * @param "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE" $compare
      * @return $this
