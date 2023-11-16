@@ -363,12 +363,13 @@ class WpQueryBuilder
     }
 
     /**
-     * @param non-empty-string|array<"OR"|"AND"|array{key: non-empty-string, compare: "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE", value?: scalar|scalar[], type?: "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED"|"CHAR"}>|mixed[][] $key
+     * @param non-empty-string|mixed[] $key
      * @param scalar|scalar[] $value
      * @param "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE" $compare
+     * @param "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED" $type
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '='): self
+    public function whereMeta($key, $value = '', string $compare = '=', string $type = 'CHAR'): self
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -381,6 +382,7 @@ class WpQueryBuilder
                 'key'     => $key,
                 'value'   => $value,
                 'compare' => $compare,
+                'type'    => $type
             ];
         }
 
