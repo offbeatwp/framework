@@ -11,8 +11,7 @@ use WP_Query;
 
 /**
  * @template TModel of PostModel
- * @phpstan-type MetaClause array{key: non-empty-string, compare: "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE", value?: scalar|scalar[], type?: "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED"|"CHAR"}
- * @phpstan-type MetaQueryEntry MetaClause|array{relation: "OR"|"AND"}
+ * @phpstan-type MetaClause "OR"|"AND"|array{key: non-empty-string, compare: "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE", value?: scalar|scalar[], type?: "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED"|"CHAR"}
  */
 class WpQueryBuilder
 {
@@ -367,8 +366,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param non-empty-string|mixed[] $key
-     * @phpstan-param non-empty-string|MetaQueryEntry|MetaQueryEntry[]|MetaQueryEntry[][]|MetaQueryEntry[][][]|MetaQueryEntry[][][][]|MetaQueryEntry[][][][][] $key
+     * @phpstan-param non-empty-string|MetaClause[]|MetaClause[][]|MetaClause[][][]|MetaClause[][][][]|MetaClause[][][][][] $key
      * @param scalar|scalar[] $value
      * @param "="|"!="|">"|">="|"<"|"<="|"LIKE"|"NOT LIKE"|"IN"|"NOT IN"|"BETWEEN"|"NOT BETWEEN"|"EXISTS"|"NOT EXISTS"|"REGEXP"|"NOT REGEXP"|"RLIKE" $compare
      * @return $this
