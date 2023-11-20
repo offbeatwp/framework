@@ -8,6 +8,7 @@ use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 /**
  * @implements IteratorAggregate<string, OffbeatRoute>
  * @method OffbeatRoute[] all()
+ * @method OffbeatRoute|null get(string $name)
  */
 class RouteCollection extends SymfonyRouteCollection
 {

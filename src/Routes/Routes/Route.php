@@ -20,10 +20,10 @@ class Route extends SymfonyRoute
     /**
      * @param string $name
      * @param string $path
-     * @param callable $actionCallback
-     * @param array $defaults
-     * @param array $requirements
-     * @param array $options
+     * @param callable(mixed[]): mixed $actionCallback
+     * @param mixed[] $defaults
+     * @param mixed[] $requirements
+     * @param mixed[] $options
      * @param string|null $host
      * @param string[] $schemes
      * @param string[] $methods
@@ -46,6 +46,7 @@ class Route extends SymfonyRoute
         return $this;
     }
 
+    /** @return callable(mixed[]): mixed */
     public function getActionCallback()
     {
         $actionCallback = $this->actionCallback;
@@ -57,6 +58,7 @@ class Route extends SymfonyRoute
         return $actionCallback;
     }
 
+    /** @return mixed */
     public function doActionCallback()
     {
         $actionCallback = $this->getActionCallback();
@@ -73,6 +75,7 @@ class Route extends SymfonyRoute
         return is_callable($this->actionCallback) || (is_array($this->actionCallback) && method_exists($this->actionCallback[0], $this->actionCallback[1]));
     }
 
+    /** @return mixed[] */
     public function getParameters()
     {
         $parameters = $this->getDefaults();
@@ -94,6 +97,7 @@ class Route extends SymfonyRoute
         return $this;
     }
 
+    /** @return string */
     public function getName()
     {
         return $this->name;

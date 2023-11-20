@@ -23,6 +23,7 @@ final class RoutesManager
     protected Collection $actions;
     protected RouteCollection $routeCollection;
     protected int $routeIterator = 0;
+    /** @var PathRoute|CallbackRoute|false */
     protected $lastMatchRoute;
 
     protected string $priorityMode = self::PRIORITY_HIGH;
@@ -44,6 +45,7 @@ final class RoutesManager
         return $this->routeCollection;
     }
 
+    /** @return $this */
     public function setPriorityMode(string $mode): self
     {
         if (!in_array($mode, [self::PRIORITY_LOW, self::PRIORITY_HIGH])) {
@@ -54,11 +56,25 @@ final class RoutesManager
         return $this;
     }
 
+    /**
+     * @param string|Closure $checkCallback
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createCallbackRoute($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
         return $this->createRoute($checkCallback, $actionCallback, $parameters, [], $options);
     }
 
+    /**
+     * @param string|Closure $checkCallback
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $options
+     * @return Route
+     */
     public function callback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
         $route = $this->createCallbackRoute($checkCallback, $actionCallback, $parameters, $options);
@@ -66,23 +82,55 @@ final class RoutesManager
         return $route;
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createGetRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['GET']);
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function get($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createGetRoute($route, $actionCallback, $parameters, $requirements, $options);
         $this->addRoute($routeObj);
         return $routeObj;
     }
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
 
     public function createPostRoute(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['POST']);
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function post(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createPostRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -90,11 +138,27 @@ final class RoutesManager
         return $routeObj;
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createPutRoute(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PUT']);
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function put(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createPutRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -102,11 +166,27 @@ final class RoutesManager
         return $routeObj;
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createPatchRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PATCH']);
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function patch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         $route = $this->createPatchRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -114,11 +194,27 @@ final class RoutesManager
         return $route;
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createDeleteRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['DELETE']);
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function delete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createDeleteRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -134,9 +230,9 @@ final class RoutesManager
      * @param mixed[] $options
      * @param string|null $host
      * @param string[] $schemes
-     * @param string[] $methods
+     * @param array<"GET"|"POST"|"PUT"|"DELETE"|"PATCH"> $methods
      * @param string|null $condition
-     * @return Route
+     * @return PathRoute|CallbackRoute
      */
     public function createRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): Route
     {
@@ -157,6 +253,9 @@ final class RoutesManager
     /**
      * Add a route to the stack based on it's priority.<br>
      * If no priority is set, the default priority is the priority set via the priority mode method.
+     * @param Route $route
+     * @param ""|"low"|"high"|"fixed" $priority
+     * @return $this
      */
     public function addRoute(Route $route, string $priority = ''): self
     {
@@ -177,6 +276,7 @@ final class RoutesManager
         return $this;
     }
 
+    /** @return $this */
     public function addRoutes(): self
     {
         if ($this->routesAdded) {
@@ -206,6 +306,7 @@ final class RoutesManager
         return $this;
     }
 
+    /** @return PathRoute|CallbackRoute|false */
     public function findRoute()
     {
         $route = $this->findPathRoute();
@@ -219,6 +320,7 @@ final class RoutesManager
         return $route;
     }
 
+    /** @return PathRoute|null|false */
     public function findPathRoute()
     {
         // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
@@ -235,6 +337,7 @@ final class RoutesManager
                 throw new InvalidRouteException('Route does not match (override)');
             }
 
+            /** @var PathRoute|null $route */
             $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
 
@@ -259,7 +362,10 @@ final class RoutesManager
         return false;
     }
 
-    /** @param Route $route */
+    /**
+     * @param Route $route
+     * @return void
+     */
     public function removeRoute($route)
     {
         if ($route instanceof Route) {
@@ -273,6 +379,7 @@ final class RoutesManager
         }
     }
 
+    /** @return PathRoute|CallbackRoute|false */
     public function getLastMatchRoute()
     {
         return $this->lastMatchRoute;
