@@ -56,11 +56,25 @@ final class RoutesManager
         return $this;
     }
 
+    /**
+     * @param string|Closure $checkCallback
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createCallbackRoute($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
         return $this->createRoute($checkCallback, $actionCallback, $parameters, [], $options);
     }
 
+    /**
+     * @param string|Closure $checkCallback
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $options
+     * @return Route
+     */
     public function callback($checkCallback, $actionCallback, $parameters = [], array $options = []): Route
     {
         $route = $this->createCallbackRoute($checkCallback, $actionCallback, $parameters, $options);
@@ -68,23 +82,55 @@ final class RoutesManager
         return $route;
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createGetRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['GET']);
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function get($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createGetRoute($route, $actionCallback, $parameters, $requirements, $options);
         $this->addRoute($routeObj);
         return $routeObj;
     }
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
 
     public function createPostRoute(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['POST']);
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function post(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createPostRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -92,11 +138,27 @@ final class RoutesManager
         return $routeObj;
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createPutRoute(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PUT']);
     }
 
+    /**
+     * @param string $route
+     * @param callable $actionCallback
+     * @param mixed[] $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function put(string $route, $actionCallback, array $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createPutRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -104,11 +166,27 @@ final class RoutesManager
         return $routeObj;
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createPatchRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['PATCH']);
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function patch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         $route = $this->createPatchRoute($route, $actionCallback, $parameters, $requirements, $options);
@@ -116,11 +194,27 @@ final class RoutesManager
         return $route;
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function createDeleteRoute($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         return $this->createRoute($route, $actionCallback, $parameters, $requirements, $options, '', [], ['DELETE']);
     }
 
+    /**
+     * @param string|Closure $route
+     * @param callable $actionCallback
+     * @param mixed[]|Closure $parameters
+     * @param mixed[] $requirements
+     * @param mixed[] $options
+     * @return Route
+     */
     public function delete($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
         $routeObj = $this->createDeleteRoute($route, $actionCallback, $parameters, $requirements, $options);
