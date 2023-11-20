@@ -5,6 +5,7 @@ use Closure;
 
 class CallbackRoute extends Route
 {
+    /** @var callable(): bool */
     private $matchCallback;
 
     /**
@@ -33,14 +34,17 @@ class CallbackRoute extends Route
         $this->setCondition($condition);
     }
 
-    public function setMatchCallback ($matchCallback) {
+    /**
+     * @param callable(): bool $matchCallback
+     * @return void
+     */
+    public function setMatchCallback($matchCallback) {
             $this->matchCallback = $matchCallback;
     }
 
-    public function doMatchCallback():bool
+    public function doMatchCallback(): bool
     {
         $matchCallback = $this->matchCallback;
-
         return $matchCallback();
     }
 }
