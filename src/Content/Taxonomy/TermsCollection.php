@@ -72,6 +72,7 @@ class TermsCollection extends OffbeatModelCollection
     /**
      * Deletes <b>all</b> the terms in this collection from the database.
      * @param bool $force
+     * @return void
      */
     public function deleteAll(bool $force)
     {
