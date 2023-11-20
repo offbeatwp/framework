@@ -136,7 +136,7 @@ final class RoutesManager
      * @param mixed[] $options
      * @param string|null $host
      * @param string[] $schemes
-     * @param string[] $methods
+     * @param array<"GET"|"POST"|"PUT"|"DELETE"|"PATCH"> $methods
      * @param string|null $condition
      * @return PathRoute|CallbackRoute
      */
@@ -159,6 +159,8 @@ final class RoutesManager
     /**
      * Add a route to the stack based on it's priority.<br>
      * If no priority is set, the default priority is the priority set via the priority mode method.
+     * @param Route $route
+     * @param ""|"low"|"high"|"fixed" $priority
      * @return $this
      */
     public function addRoute(Route $route, string $priority = ''): self
