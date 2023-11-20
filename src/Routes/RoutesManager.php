@@ -28,6 +28,7 @@ final class RoutesManager
 
     protected string $priorityMode = self::PRIORITY_HIGH;
     protected bool $routesAdded = false;
+    /** @var Route[][] */
     protected array $routes = [
         self::PRIORITY_LOW => [],
         self::PRIORITY_HIGH => [],

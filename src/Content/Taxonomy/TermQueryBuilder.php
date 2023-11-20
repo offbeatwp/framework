@@ -305,8 +305,6 @@ class TermQueryBuilder
         return $this;
     }
 
-    // Chainable methods
-
     /**
      * @param int $parentId
      * @return $this
@@ -318,7 +316,7 @@ class TermQueryBuilder
     }
 
     /**
-     * @param string|array $key Valid keys include 'key', 'value', 'compare' and 'type'
+     * @param string|mixed[] $key Valid keys include 'key', 'value', 'compare' and 'type'
      * @param string|int|string[]|int[] $value
      * @param string $compare
      * @return $this

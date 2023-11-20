@@ -52,6 +52,11 @@ class TermModel implements TermModelInterface
         // Does nothing unless overriden by parent
     }
 
+    /**
+     * @param string $method
+     * @param mixed[] $parameters
+     * @return mixed
+     */
     public static function __callStatic($method, $parameters)
     {
         if (static::hasMacro($method)) {
@@ -61,6 +66,11 @@ class TermModel implements TermModelInterface
         return static::query()->$method(...$parameters);
     }
 
+    /**
+     * @param string $method
+     * @param mixed[] $parameters
+     * @return mixed
+     */
     public function __call($method, $parameters)
     {
         if (static::hasMacro($method)) {
@@ -135,9 +145,10 @@ class TermModel implements TermModelInterface
         return null;
     }
 
+    /** @return Collection<int> */
     public function getAncestorIds(): Collection
     {
-        return collect(get_ancestors( $this->getId(), $this->getTaxonomy(), 'taxonomy'));
+        return collect(get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy'));
     }
 
     public function getEditLink(): string
@@ -152,7 +163,7 @@ class TermModel implements TermModelInterface
         });
     }
 
-    /** @return array|false|string */
+    /** @return mixed[]|false|string */
     public function getMetas()
     {
         return get_term_meta($this->getId());
@@ -179,7 +190,10 @@ class TermModel implements TermModelInterface
         return update_term_meta($this->getId(), $key, $value);
     }
 
-    /** @param string|string[]|null $postTypes */
+    /**
+     * @param string|string[]|null $postTypes
+     * @return WpQueryBuilder<TermModel>
+     */
     public function getPosts($postTypes = null): WpQueryBuilder
     {
         global $wp_taxonomies;

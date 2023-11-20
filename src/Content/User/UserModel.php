@@ -20,8 +20,11 @@ use WP_User;
 class UserModel
 {
     protected WP_User $wpUser;
+    /** @var mixed[]|null */
     protected ?array $metas = null;
+    /** @var mixed[] */
     protected array $metaInput = [];
+    /** @var ("")[] */
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
     private bool $isInitialised = false;
@@ -196,6 +199,7 @@ class UserModel
         return $this->wpUser->ID;
     }
 
+    /** @return mixed[] */
     public function getMetas(): ?array
     {
         if ($this->metas === null && $this->getId() > 0) {
@@ -362,7 +366,10 @@ class UserModel
         return $roles;
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     * @return string[]
+     */
     public function getTranslatedRoles(string $domain = 'default'): array
     {
         return array_map(static function (string $role) use ($domain) {
