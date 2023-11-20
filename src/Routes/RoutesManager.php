@@ -44,6 +44,7 @@ final class RoutesManager
         return $this->routeCollection;
     }
 
+    /** @return $this */
     public function setPriorityMode(string $mode): self
     {
         if (!in_array($mode, [self::PRIORITY_LOW, self::PRIORITY_HIGH])) {
@@ -136,7 +137,7 @@ final class RoutesManager
      * @param string[] $schemes
      * @param string[] $methods
      * @param string|null $condition
-     * @return Route
+     * @return PathRoute|CallbackRoute
      */
     public function createRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): Route
     {
@@ -157,6 +158,7 @@ final class RoutesManager
     /**
      * Add a route to the stack based on it's priority.<br>
      * If no priority is set, the default priority is the priority set via the priority mode method.
+     * @return $this
      */
     public function addRoute(Route $route, string $priority = ''): self
     {
@@ -177,6 +179,7 @@ final class RoutesManager
         return $this;
     }
 
+    /** @return $this */
     public function addRoutes(): self
     {
         if ($this->routesAdded) {
@@ -219,6 +222,7 @@ final class RoutesManager
         return $route;
     }
 
+    /** @return PathRoute|null|false */
     public function findPathRoute()
     {
         // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
@@ -235,6 +239,7 @@ final class RoutesManager
                 throw new InvalidRouteException('Route does not match (override)');
             }
 
+            /** @var PathRoute|null $route */
             $route = $this->getRouteCollection()->get($parameters['_route']);
             $route->addDefaults($parameters);
 
@@ -249,7 +254,6 @@ final class RoutesManager
     {
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);
 
-        /** @var CallbackRoute $callbackRoute */
         foreach ($callbackRoutes->all() as $callbackRoute) {
             if (apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) && $callbackRoute->doMatchCallback()) {
                 return $callbackRoute;
