@@ -23,6 +23,7 @@ final class RoutesManager
     protected Collection $actions;
     protected RouteCollection $routeCollection;
     protected int $routeIterator = 0;
+    /** @var PathRoute|CallbackRoute|false */
     protected $lastMatchRoute;
 
     protected string $priorityMode = self::PRIORITY_HIGH;
@@ -209,6 +210,7 @@ final class RoutesManager
         return $this;
     }
 
+    /** @return PathRoute|CallbackRoute|false */
     public function findRoute()
     {
         $route = $this->findPathRoute();
@@ -254,6 +256,7 @@ final class RoutesManager
     {
         $callbackRoutes = $this->getRouteCollection()->findByType(CallbackRoute::class);
 
+        /** @var CallbackRoute $callbackRoute */
         foreach ($callbackRoutes->all() as $callbackRoute) {
             if (apply_filters('offbeatwp/route/match/wp', true, $callbackRoute) && $callbackRoute->doMatchCallback()) {
                 return $callbackRoute;
