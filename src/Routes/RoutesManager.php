@@ -266,7 +266,10 @@ final class RoutesManager
         return false;
     }
 
-    /** @param Route $route */
+    /**
+     * @param Route $route
+     * @return void
+     */
     public function removeRoute($route)
     {
         if ($route instanceof Route) {
@@ -280,6 +283,7 @@ final class RoutesManager
         }
     }
 
+    /** @return PathRoute|CallbackRoute|false */
     public function getLastMatchRoute()
     {
         return $this->lastMatchRoute;
