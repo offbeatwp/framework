@@ -21,8 +21,8 @@ if (!function_exists('offbeat')) {
 if (!function_exists('config')) {
     /**
      * @param string|null $config
-     * @param mixed $default
-     * @return mixed
+     * @param null $default Unused
+     * @return object|resource|\Illuminate\Support\Collection|string|float|int|bool|null
      */
     function config(?string $config = null, $default = null) {
         /** @var App $app */
