@@ -471,6 +471,10 @@ class Wordpress
         return ob_get_clean();
     }
 
+    public function getTemplatePart(string $slug, $tagName = null, $className = null) {
+        return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","theme":"theme","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
+    }
+
 //    /**
 //     * Retrieves an option value based on an option name.<br>
 //     * If the option does not exist, <i>NULL</i> is returned.<br><br>
