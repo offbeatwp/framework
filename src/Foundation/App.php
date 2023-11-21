@@ -172,8 +172,8 @@ final class App
 
     /**
      * @param string|null $config
-     * @param mixed $default
-     * @return mixed
+     * @param null $default
+     * @return object|resource|\Illuminate\Support\Collection|string|float|int|bool|null|Config
      */
     public function config(?string $config, $default)
     {

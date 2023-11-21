@@ -85,10 +85,15 @@ class Config {
         }
     }
 
+    /**
+     * @param string $key
+     * @param null $default Unused
+     * @return object|resource|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
+     */
     public function get(string $key, $default = null)
     {
         $config = $this->config;
-        $return = ArrayHelper::getValueFromDottedKey($key, $config);
+        $return = ArrayHelper::getValueFromDottedKey($key, $config ?: []);
 
         if (is_array($return)) {
             $return = collect($return);
@@ -108,6 +113,7 @@ class Config {
         return $value;
     }
 
+    /** @return mixed[] */
     public function all()
     {
         return $this->config;
