@@ -37,7 +37,7 @@ final class ComponentArrayCache
 
     /**
      * Fetches an entry from the cache.
-     * @param string $id The id of the cache entry to fetch.
+     * @param non-empty-string $id The id of the cache entry to fetch.
      * @return string|null The cached data or <i>NULL</i>, if no cache entry exists for the given id.
      */
     public function fetch(string $id): ?string
@@ -54,7 +54,7 @@ final class ComponentArrayCache
     /**
      * Puts data into the cache.
      *
-     * @param string $id The cache id.
+     * @param non-empty-string $id The cache id.
      * @param string $data The cache entry/data.
      * @param int<0, max> $lifeTime The lifetime. If != 0, sets a specific lifetime for this cache entry. (0 => infinite lifeTime)
      */
@@ -65,7 +65,7 @@ final class ComponentArrayCache
 
     /**
      * Deletes a cache entry.
-     * @param string $id The cache id.
+     * @param non-empty-string $id The cache id.
      * @return void
      */
     public function delete(string $id): void
