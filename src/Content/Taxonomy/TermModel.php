@@ -3,6 +3,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -192,7 +193,7 @@ class TermModel implements TermModelInterface
 
     /**
      * @param string|string[]|null $postTypes
-     * @return WpQueryBuilder<TermModel>
+     * @return WpQueryBuilder<PostModel>
      */
     public function getPosts($postTypes = null): WpQueryBuilder
     {

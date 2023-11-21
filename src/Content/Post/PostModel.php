@@ -19,7 +19,6 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
-use stdClass;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
@@ -30,7 +29,7 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|stdClass|null */
+    /** @var WP_Post|object|null */
     public $wpPost;
     /** @var mixed[] */
     public $metaInput = [];
@@ -74,6 +73,8 @@ class PostModel implements PostModelInterface
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
+        } else {
+            trigger_error('PostModel expects a WP_Post, NULL, int or a numeric string as argument but got: ' . gettype($post));
         }
 
         $this->init();
