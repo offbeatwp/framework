@@ -2,10 +2,15 @@
 
 namespace OffbeatWP\Assets;
 
+use stdClass;
+
 class AssetsManager
 {
+    /** @var array{} */
     public $actions = [];
+    /** @var null|stdClass|false */
     public $manifest = null;
+    /** @var null|stdClass|false */
     public $entrypoints = null;
 
     /** @return false|string */
@@ -44,7 +49,7 @@ class AssetsManager
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
-    /** @return object|false|null */
+    /** @return stdClass|false|null */
     public function getAssetsManifest()
     {
         if ($this->manifest === null) {
@@ -62,7 +67,7 @@ class AssetsManager
         return $this->manifest;
     }
 
-    /** @return object|false|null */
+    /** @return stdClass|false|null */
     public function getAssetsEntryPoints()
     {
         if ($this->entrypoints === null) {
