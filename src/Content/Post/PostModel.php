@@ -73,6 +73,8 @@ class PostModel implements PostModelInterface
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
+        } else {
+            trigger_error('PostModel expects a WP_Post, NULL, int or a numeric string as argument but got: ' . gettype($post));
         }
 
         $this->init();
@@ -800,7 +802,7 @@ class PostModel implements PostModelInterface
             $this->wpPost->meta_input = $this->metaInput;
         }
 
-        if ($this->getId() === null || $this->wpPost === null) {
+        if ($this->getId() === null) {
             // Insert post
             $updatedPostId = wp_insert_post((array)$this->wpPost);
             $insertedPost = get_post($updatedPostId);
