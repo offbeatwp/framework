@@ -19,7 +19,6 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
-use stdClass;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
@@ -30,7 +29,7 @@ class PostModel implements PostModelInterface
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|stdClass|null */
+    /** @var WP_Post|object|null */
     public $wpPost;
     /** @var mixed[] */
     public $metaInput = [];
@@ -801,7 +800,7 @@ class PostModel implements PostModelInterface
             $this->wpPost->meta_input = $this->metaInput;
         }
 
-        if ($this->getId() === null) {
+        if ($this->getId() === null || $this->wpPost === null) {
             // Insert post
             $updatedPostId = wp_insert_post((array)$this->wpPost);
             $insertedPost = get_post($updatedPostId);
