@@ -472,7 +472,7 @@ class Wordpress
     }
 
     public function getTemplatePart(string $slug, $tagName = null, $className = null) {
-        return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","theme":"theme","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
+        return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
 
 //    /**
