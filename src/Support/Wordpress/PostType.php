@@ -43,4 +43,10 @@ class PostType
     {
         return array_search($modelClass, $this->postTypeModels, true);
     }
+
+    /** @return string[] Returns an array of all post types registered with an Offbeat Model */
+    public function getPostTypes(): array
+    {
+        return array_keys($this->postTypeModels);
+    }
 }
