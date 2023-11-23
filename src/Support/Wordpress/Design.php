@@ -141,7 +141,7 @@ class Design
     public function getPaddingsList($context = null)
     {
         $paddings = config('design.paddings');
-        if(!$paddings) {
+        if(!is_iterable($paddings)) {
             return [];
         }
 
