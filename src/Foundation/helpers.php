@@ -1,6 +1,5 @@
 <?php
 
-use OffbeatWP\Config\Config;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
@@ -23,7 +22,7 @@ if (!function_exists('config')) {
     /**
      * @param string|null $config
      * @param null $default Unused
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
+     * @return mixed
      */
     function config(?string $config = null, $default = null) {
         /** @var App $app */
