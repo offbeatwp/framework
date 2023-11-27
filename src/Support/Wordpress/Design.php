@@ -2,6 +2,7 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
+use Illuminate\Support\Collection;
 
 class Design
 {
@@ -85,7 +86,7 @@ class Design
     public function getRowThemesList()
     {
         $rowThemes = config('design.row_themes');
-        if(!$rowThemes) {
+        if(!$rowThemes instanceof Collection) {
             return [];
         }
 
@@ -121,17 +122,16 @@ class Design
     public function getMarginsList($context = null)
     {
         $margins = config('design.margins');
-        if(!$margins) {
-            return [];
-        }
 
         if ($margins instanceof Closure) {
             $margins = collect($margins($context));
         }
 
-        return $margins->map(function ($item) {
-            return $item['label'];
-        })->toArray();
+        if ($margins instanceof Collection) {
+            return $margins->map(fn($item) => $item['label'])->toArray();
+        }
+
+        return [];
     }
 
     /**
@@ -141,16 +141,15 @@ class Design
     public function getPaddingsList($context = null)
     {
         $paddings = config('design.paddings');
-        if(!is_iterable($paddings)) {
-            return [];
-        }
 
         if ($paddings instanceof Closure) {
             $paddings = collect($paddings($context));
         }
 
-        return $paddings->map(function ($item) {
-            return $item['label'];
-        })->toArray();
+        if ($paddings instanceof Collection) {
+            return $paddings->map(fn($item) => $item['label'])->toArray();
+        }
+
+        return [];
     }
 }
