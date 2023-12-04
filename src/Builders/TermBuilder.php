@@ -11,11 +11,9 @@ use WP_Term;
 final class TermBuilder
 {
     private int $id;
-    private ?WP_Term $sourceTerm = null;
-    private string $name;
-    private string $taxonomy;
+    private ?WP_Term $sourceTerm;
     /** @var array{name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
-    private array $args = [];
+    private array $args;
 
     /** @param WP_Term|mixed[]|null $sourceTerm */
     private function __construct(int $id, $sourceTerm)
@@ -23,17 +21,11 @@ final class TermBuilder
         $this->id = $id;
 
         if (is_array($sourceTerm)) {
-            $this->name = $sourceTerm['name'];
-            $this->taxonomy = $sourceTerm['taxonomy'];
+            $this->args = $sourceTerm;
+            $this->sourceTerm = null;
         } else {
+            $this->args = get_object_vars($sourceTerm);
             $this->sourceTerm = $sourceTerm;
-            $this->name = $sourceTerm->name;
-            $this->taxonomy = $sourceTerm->taxonomy;
-            $this->args = [
-                'description' => $sourceTerm->description,
-                'parent' => $sourceTerm->parent,
-                'slug' => $sourceTerm->slug
-            ];
         }
     }
 
@@ -45,7 +37,7 @@ final class TermBuilder
      */
     public static function create(string $termName, string $taxonomy): TermBuilder
     {
-        return new TermBuilder(0, ['term' => $termName, 'taxonomy' => $taxonomy]);
+        return new TermBuilder(0, ['name' => $termName, 'taxonomy' => $taxonomy]);
     }
 
     /**
@@ -148,9 +140,9 @@ final class TermBuilder
     public function save(): int
     {
         if ($this->id && $this->sourceTerm->term_id === $this->id) {
-            $result = wp_update_term($this->id, $this->taxonomy, $this->args);
+            $result = wp_update_term($this->id, $this->args['taxonomy'], $this->args);
         } else {
-            $result = wp_insert_term($this->name, $this->taxonomy, $this->args);
+            $result = wp_insert_term($this->args['name'], $this->args['taxonomy'], $this->args);
         }
 
         if ($result instanceof WP_Error) {
