@@ -10,39 +10,42 @@ use WP_Term;
 
 final class TermBuilder
 {
-    private int $id = 0;
+    private int $id;
+    private ?WP_Term $sourceTerm = null;
     private string $name;
     private string $taxonomy;
     /** @var array{name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
     private array $args = [];
 
-    /** @param WP_Term|mixed[]|null $term */
-    private function __construct($term)
+    /** @param WP_Term|mixed[]|null $sourceTerm */
+    private function __construct(int $id, $sourceTerm)
     {
-        if (is_array($term)) {
-            $this->name = $term['name'];
-            $this->taxonomy = $term['taxonomy'];
+        $this->id = $id;
+
+        if (is_array($sourceTerm)) {
+            $this->name = $sourceTerm['name'];
+            $this->taxonomy = $sourceTerm['taxonomy'];
         } else {
-            $this->id = $term->term_id;
-            $this->name = $term->name;
-            $this->taxonomy = $term->taxonomy;
+            $this->sourceTerm = $sourceTerm;
+            $this->name = $sourceTerm->name;
+            $this->taxonomy = $sourceTerm->taxonomy;
             $this->args = [
-                'description' => $term->description,
-                'parent' => $term->parent,
-                'slug' => $term->slug
+                'description' => $sourceTerm->description,
+                'parent' => $sourceTerm->parent,
+                'slug' => $sourceTerm->slug
             ];
         }
     }
 
     /**
      * @pure
-     * @param string $term The term name. Must not exceed 200 characters.
+     * @param string $termName The term name. Must not exceed 200 characters.
      * @param string $taxonomy The taxonomy to which to add the term.
      * @return TermBuilder
      */
-    public static function create(string $term, string $taxonomy): TermBuilder
+    public static function create(string $termName, string $taxonomy): TermBuilder
     {
-        return new TermBuilder(['term' => $term, 'taxonomy' => $taxonomy]);
+        return new TermBuilder(0, ['term' => $termName, 'taxonomy' => $taxonomy]);
     }
 
     /**
@@ -52,12 +55,33 @@ final class TermBuilder
      */
     public static function from($term): TermBuilder
     {
-        if ($term instanceof WP_Term) {
-            return new TermBuilder($term);
+        $term = self::getWpTerm($term);
+        return new TermBuilder($term->term_id, $term);
+    }
+
+    /**
+     * @pure
+     * @param TermModel|WP_Term $term
+     * @return TermBuilder
+     */
+    public static function copy($term): TermBuilder
+    {
+        $term = self::getWpTerm($term);
+        return new TermBuilder(0, $term);
+    }
+
+    /**
+     * @param TermModel|WP_Term $term
+     * @return WP_Term
+     */
+    private static function getWpTerm($term): WP_Term
+    {
+        if ($term instanceof TermModel) {
+            $term = $term->wpTerm;
         }
 
-        if ($term instanceof TermModel) {
-            return new TermBuilder($term->wpTerm);
+        if ($term instanceof WP_Term) {
+            return $term;
         }
 
         throw new InvalidArgumentException('TermBuilder::from expects a WP_Term or TermModel as argument, but got ' . gettype($term));
@@ -75,7 +99,7 @@ final class TermBuilder
 
     /**
      * The ID of the parent term.
-     * @phpstan-param int<0, max> $parent
+     * @param int<0, max> $parent
      * @return $this
      */
     public function parent(int $parent): self
@@ -118,12 +142,12 @@ final class TermBuilder
     /**
      * Inserts or updates the term in the database.<br>
      * Return term ID on success, throw a WpErrorException on failure.
-     * @return int
+     * @return positive-int
      * @throws WpErrorException
      */
     public function save(): int
     {
-        if ($this->id) {
+        if ($this->id && $this->sourceTerm->term_id === $this->id) {
             $result = wp_update_term($this->id, $this->taxonomy, $this->args);
         } else {
             $result = wp_insert_term($this->name, $this->taxonomy, $this->args);
@@ -131,6 +155,19 @@ final class TermBuilder
 
         if ($result instanceof WP_Error) {
             throw new WpErrorException($result->get_error_message());
+        }
+
+        // Copy the meta from the original term meta to the new term
+        if ($this->sourceTerm && $this->sourceTerm->term_id !== $this->id) {
+            global $wpdb;
+
+            $wpdb->query($wpdb->prepare(
+                "INSERT INTO {$wpdb->termmeta} (term_id, meta_key, meta_value) 
+                SELECT %d, meta_key, meta_value FROM {$wpdb->termmeta} 
+                WHERE term_id = %d;",
+                $this->id,
+                $this->sourceTerm->term_id
+            ));
         }
 
         return $result['term_id'];
