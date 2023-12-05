@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
-use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -419,7 +418,7 @@ class UserModel
         }
 
         if (!$this->wpUser->user_pass) {
-            $this->wpUser->user_pass = Str::random(32);
+            $this->wpUser->user_pass = wp_generate_password(32);
         }
 
         $userData = $this->wpUser->to_array();
