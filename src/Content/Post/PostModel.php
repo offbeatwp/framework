@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\Post;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
@@ -25,6 +26,8 @@ use WP_User;
 
 class PostModel implements PostModelInterface
 {
+    public const POST_TYPE = 'any';
+
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
@@ -62,19 +65,25 @@ class PostModel implements PostModelInterface
     {
         if ($post === null) {
             trigger_error('Passing NULL to PostModel constructor is deprecated.', E_USER_DEPRECATED);
-            $this->wpPost = (object)[];
-            $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
-            $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
-            $this->wpPost->comment_status = self::DEFAULT_COMMENT_STATUS;
-            $this->wpPost->ping_status = self::DEFAULT_PING_STATUS;
+            $postObj = (object)[];
+            $postObj->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
+            $postObj->post_status = self::DEFAULT_POST_STATUS;
+            $postObj->comment_status = self::DEFAULT_COMMENT_STATUS;
+            $postObj->ping_status = self::DEFAULT_PING_STATUS;
         } elseif ($post instanceof WP_Post) {
-            $this->wpPost = $post;
+            $postObj = $post;
         } elseif (is_numeric($post)) {
             trigger_error('Passing a number to PostModel constructor is deprecated.', E_USER_DEPRECATED);
-            $this->wpPost = get_post($post);
+            $postObj = get_post($post);
         } else {
             throw new TypeError('PostModel expects a WP_Post as argument but got: ' . gettype($post));
         }
+
+        if (!static::is($postObj)) {
+            throw new InvalidArgumentException('The provided POST object does not respect the is method of ' . get_class($this));
+        }
+
+        $this->wpPost = $postObj;
 
         $this->init();
     }
@@ -1007,6 +1016,15 @@ class PostModel implements PostModelInterface
                 }
             }
         }
+    }
+
+    /**
+     * @pure
+     * @return static
+     */
+    final public static function from(WP_Post $post)
+    {
+        return new static($post);
     }
     
     public static function is(WP_Post $post): bool

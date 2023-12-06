@@ -49,4 +49,10 @@ class PostType
     {
         return array_keys($this->postTypeModels);
     }
+
+    /** @return class-string<PostModel>[] */
+    public function getPostTypeModels(): array
+    {
+        return $this->postTypeModels;
+    }
 }
