@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
@@ -463,32 +462,6 @@ class PostModel implements PostModelInterface
         }
 
         return null;
-    }
-
-    /** @deprecated Use getPostDateTime instead. */
-    public function getCreatedAt(): Carbon
-    {
-        trigger_error('The getCreatedAt method is deprecated.', E_USER_DEPRECATED);
-        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$creationDate) {
-            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($creationDate);
-    }
-
-    /** @deprecated Use getModifiedDateTime instead. */
-    public function getUpdatedAt(): Carbon
-    {
-        trigger_error('The getUpdatedAt method is deprecated.', E_USER_DEPRECATED);
-        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$updateDate) {
-            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($updateDate);
     }
 
     /** @throws PostMetaNotFoundException */
