@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
@@ -161,7 +160,7 @@ class PostModel implements PostModelInterface
         // Now clone the wpPost reference
         $this->wpPost = clone $this->wpPost;
         // Set ID to null
-        $this->setId(null);
+        $this->wpPost->ID = null;
         // Since the new post is unsaved, we'll have to add all meta values
         $this->refreshMetaInput(false);
     }
@@ -170,7 +169,7 @@ class PostModel implements PostModelInterface
     {
         foreach ($this->getMetaValues($ignoreLowDashPrefix) as $key => $value) {
             if (!array_key_exists($key, $this->metaInput)) {
-                $this->setMeta($key, $value);
+                $this->_setMeta($key, $value);
             }
         }
     }
@@ -225,19 +224,21 @@ class PostModel implements PostModelInterface
         return $content;
     }
 
+    /** @deprecated */
     public function setId(?int $id): self
     {
         $this->wpPost->ID = $id;
         return $this;
     }
 
-    /** Set the (unfiltered) post content. */
+    /** @deprecated */
     public function setContent(string $content): self
     {
         $this->wpPost->post_content = $content;
         return $this;
     }
 
+    /** @deprecated */
     public function setAuthor(int $authorId): self
     {
         $this->wpPost->post_author = $authorId;
@@ -245,6 +246,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * @deprecated
      * @param string|string[]|int[] $terms An array of terms to set for the post, or a string of term slugs separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
      * @param string $taxonomy Taxonomy name of the term(s) to set.
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
@@ -319,7 +321,7 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_status;
     }
 
-    /** @see PostStatus */
+    /** @deprecated */
     public function setPostStatus(string $newStatus): self
     {
         $this->wpPost->post_status = $newStatus;
@@ -465,32 +467,6 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /** @deprecated Use getPostDateTime instead. */
-    public function getCreatedAt(): Carbon
-    {
-        trigger_error('The getCreatedAt method is deprecated.', E_USER_DEPRECATED);
-        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$creationDate) {
-            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($creationDate);
-    }
-
-    /** @deprecated Use getModifiedDateTime instead. */
-    public function getUpdatedAt(): Carbon
-    {
-        trigger_error('The getUpdatedAt method is deprecated.', E_USER_DEPRECATED);
-        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$updateDate) {
-            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($updateDate);
-    }
-
     /** @throws PostMetaNotFoundException */
     public function getMetaOrFail(string $key): string
     {
@@ -503,16 +479,18 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
+    /** @deprecated */
     public function setMetas(iterable $metadata): self
     {
         foreach ($metadata as $key => $value) {
-            $this->setMeta($key, $value);
+            $this->_setMeta($key, $value);
         }
 
         return $this;
     }
 
     /**
+     * @deprecated
      * Moves a meta value from one key to another.
      * @param string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
      * @param string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
@@ -520,8 +498,8 @@ class PostModel implements PostModelInterface
     public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
     {
         if ($this->hasMeta($oldMetaKey) && !$this->hasMeta($newMetaKey)) {
-            $this->setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
-            $this->unsetMeta($oldMetaKey);
+            $this->_setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
+            $this->_unsetMeta($oldMetaKey);
         }
     }
 
@@ -577,18 +555,21 @@ class PostModel implements PostModelInterface
         return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
+    /** @deprecated */
     public function setExcerpt(string $excerpt): self
     {
         $this->wpPost->post_excerpt = $excerpt;
         return $this;
     }
 
+    /** @deprecated */
     public function setTitle(string $title): self
     {
         $this->wpPost->post_title = $title;
         return $this;
     }
 
+    /** @deprecated */
     public function setPostName(string $postName): self
     {
         $this->wpPost->post_name = $postName;
@@ -961,14 +942,14 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * Create a PostModel with an ID without running get_post.
+     * @deprecated
      * @param int $id Only accepts and ID as parameter.
      * @return static
      */
     public static function createLazy(int $id)
     {
         $model = new static(null);
-        $model->setId($id);
+        $model->wpPost->ID = $id;
 
         return $model;
     }

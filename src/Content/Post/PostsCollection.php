@@ -124,21 +124,6 @@ class PostsCollection extends OffbeatModelCollection
 
             $links = $this->getPaginatedLinks($args);
 
-            if (isset($args['attribs'])) {
-                $attributes = (array)$args['attribs'];
-                $dom = new DOMDocument();
-                $dom->loadHTML($links);
-
-                $nodes = $dom->getElementsByTagName(empty($args['use_buttons']) ? 'a' : 'button');
-                foreach ($nodes as $node) {
-                    foreach ($attributes as $key => $value) {
-                        $node->setAttribute($key, $value);
-                    }
-                }
-
-                $links = $dom->saveHTML();
-            }
-
             if ($links) {
                 return _navigation_markup($links, $args['class'], $args['screen_reader_text'], $args['aria_label']);
             }
