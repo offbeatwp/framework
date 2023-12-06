@@ -468,6 +468,7 @@ class PostModel implements PostModelInterface
     /** @deprecated Use getPostDateTime instead. */
     public function getCreatedAt(): Carbon
     {
+        trigger_error('The getCreatedAt method is deprecated.', E_USER_DEPRECATED);
         $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
 
         if (!$creationDate) {
@@ -480,6 +481,7 @@ class PostModel implements PostModelInterface
     /** @deprecated Use getModifiedDateTime instead. */
     public function getUpdatedAt(): Carbon
     {
+        trigger_error('The getUpdatedAt method is deprecated.', E_USER_DEPRECATED);
         $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
 
         if (!$updateDate) {

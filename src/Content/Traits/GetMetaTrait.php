@@ -127,7 +127,7 @@ trait GetMetaTrait
 
         try {
             return WpDateTime::make($datetime);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -147,7 +147,7 @@ trait GetMetaTrait
 
         try {
             return WpDateTimeImmutable::make($datetime);
-        } catch (Exception $e) {
+        } catch (Exception)  {
             return null;
         }
     }
@@ -202,12 +202,14 @@ trait GetMetaTrait
      */
     public function getMetaCarbon(string $key, ?DateTimeZone $tz = null): ?Carbon
     {
+        trigger_error('The getMetaCarbon method is deprecated.', E_USER_DEPRECATED);
         $value = $this->getMeta($key);
 
         if ($value) {
             try {
                 return Carbon::parse($value, $tz);
             } catch (Exception $e) {
+                trigger_error($e->getMessage(), E_USER_WARNING);
                 return null;
             }
         }
