@@ -18,6 +18,7 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use TypeError;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
@@ -56,13 +57,11 @@ class PostModel implements PostModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    /**
-     * @final
-     * @param WP_Post|int|null $post
-     */
-    public function __construct($post = null)
+    /** @param WP_Post|int|null $post */
+    final public function __construct($post = null)
     {
         if ($post === null) {
+            trigger_error('Passing NULL to PostModel constructor is deprecated.', E_USER_DEPRECATED);
             $this->wpPost = (object)[];
             $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
             $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
@@ -71,9 +70,10 @@ class PostModel implements PostModelInterface
         } elseif ($post instanceof WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
+            trigger_error('Passing a number to PostModel constructor is deprecated.', E_USER_DEPRECATED);
             $this->wpPost = get_post($post);
         } else {
-            trigger_error('PostModel expects a WP_Post, NULL, int or a numeric string as argument but got: ' . gettype($post));
+            throw new TypeError('PostModel expects a WP_Post as argument but got: ' . gettype($post));
         }
 
         $this->init();
@@ -1007,5 +1007,10 @@ class PostModel implements PostModelInterface
                 }
             }
         }
+    }
+    
+    public static function is(WP_Post $post): bool
+    {
+        return true;
     }
 }
