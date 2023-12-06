@@ -7,11 +7,11 @@
     "php-di/php-di": "^6.4.0",
     "illuminate/collections": "^v8.83.27",
     "illuminate/macroable": "^v8.83.27",
-    "illuminate/support": "^v8.83.27",
     "symfony/routing": "^v5.4.26",
     "symfony/http-foundation": "^v5.4.32",
     "doctrine/cache": "v1.13.*",
-    "ext-dom": "*"
+    "ext-dom": "*",
+    "nesbot/carbon": "^2.53.1"
   },
   "autoload": {
     "files": [
