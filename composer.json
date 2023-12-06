@@ -5,11 +5,11 @@
   "type": "library",
   "require": {
     "php-di/php-di": "^6.4.0",
-    "illuminate/collections": "^8.0.0",
-    "illuminate/macroable": "^8.0.0",
+    "illuminate/collections": "^v8.83.27",
+    "illuminate/macroable": "^v8.83.27",
     "illuminate/support": "^v8.83.27",
     "symfony/routing": "^v5.4.26",
-    "symfony/http-foundation": "^v5.4.28",
+    "symfony/http-foundation": "^v5.4.32",
     "doctrine/cache": "v1.13.*",
     "ext-dom": "*"
   },
@@ -23,9 +23,9 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "php-stubs/wp-cli-stubs": "^v2.8.0",
+    "php-stubs/wp-cli-stubs": "^v2.9.0",
     "phpstan/phpstan": "1.10.39",
-    "szepeviktor/phpstan-wordpress": "^v1.1.7",
+    "szepeviktor/phpstan-wordpress": "^v1.3.2",
     "phpstan/phpstan-deprecation-rules": "^1.1.4"
   }
 }
