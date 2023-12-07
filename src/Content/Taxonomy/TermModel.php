@@ -7,7 +7,6 @@ use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
-use WP_Error;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -120,7 +119,7 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->description;
     }
 
-    /** @return string|WP_Error */
+    /** @return string|\WP_Error */
     public function getLink()
     {
         return get_term_link($this->wpTerm);
@@ -171,8 +170,8 @@ class TermModel implements TermModelInterface
     }
 
     /**
-     * @param string $key
-     * @param bool $single
+     * @param string $key Optional. The meta key to retrieve. By default, returns data for all keys. Default empty.
+     * @param bool $single Optional. Whether to return a single value. This parameter has no effect if `$key` is not specified. Default false.
      * @return mixed
      */
     public function getMeta(string $key, bool $single = true)
@@ -182,9 +181,9 @@ class TermModel implements TermModelInterface
 
     /**
      * <b>This will immideatly update the term meta, even is save() is not called!</b>
-     * @param string $key
-     * @param mixed $value
-     * @return bool|int|WP_Error
+     * @param string $key Metadata key.
+     * @param mixed $value Metadata value. Must be serializable if non-scalar.
+     * @return bool|int|\WP_Error
      */
     public function setMeta(string $key, $value)
     {
@@ -219,7 +218,7 @@ class TermModel implements TermModelInterface
     }
 
     /**
-     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
+     * Retrieves the current term from the wordpress loop, provided the TermModel is or extends the TermModel class that it is called on.
      * @return static|null
      */
     public static function current()
@@ -244,11 +243,7 @@ class TermModel implements TermModelInterface
         return static::query()->excludeEmpty(false)->get();
     }
 
-    /**
-     * Checks if a model with the given ID exists.
-     * @param int|null $id
-     * @return bool
-     */
+    /** Checks if a model with the given ID exists. */
     public static function exists(?int $id): bool
     {
         if ($id <= 0) {

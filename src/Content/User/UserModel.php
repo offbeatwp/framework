@@ -43,7 +43,6 @@ class UserModel
             $this->metas = [];
         }
 
-        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         if (is_int($user)) {
             trigger_error('Constructed UserModel with integer. Use UserModel::find instead.', E_USER_DEPRECATED);
             $userData = get_userdata($user);
@@ -77,7 +76,7 @@ class UserModel
      */
     public function __call($method, $parameters)
     {
-        $className = class_basename($this);
+        $className = get_class($this);
 
         if (static::hasMacro($method)) {
             trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);
@@ -312,7 +311,7 @@ class UserModel
         return $this->getMetaString('phone_number');
     }
 
-    /** Date the user registered as a Carbon Date. */
+    /** Returns the date the user registered as a WpDateTimeImmutable object. */
     final public function getRegistrationDate(): ?WpDateTimeImmutable
     {
         return ($this->wpUser->user_registered) ? new WpDateTimeImmutable($this->wpUser->user_registered) : null;
