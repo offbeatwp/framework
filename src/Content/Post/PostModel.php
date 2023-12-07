@@ -304,9 +304,8 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param string $metaKey
      * @param int[]|string $size Image size. Accepts any registered image size name, or an array of width and height values in pixels (in that order). Default 'thumbnail'.
-     * @param array $attributes Attributes for the image markup. Default <i>thumbnail<i/>.
+     * @param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string} $attributes Attributes for the image markup.
      * @return string HTML image element or empty string on failure.
      */
     public function getAttachmentImage(string $metaKey, $size = 'thumbnail', array $attributes = []): string
@@ -331,10 +330,7 @@ class PostModel implements PostModelInterface
         return $this->getPostType() === $postType;
     }
 
-    /**
-     * @param string $format
-     * @return false|string
-     */
+    /** @return false|string */
     public function getPostDate(string $format = '')
     {
         return get_the_date($format, $this->wpPost);
@@ -344,10 +340,8 @@ class PostModel implements PostModelInterface
     {
         return get_the_modified_date($format, $this->wpPost) ?: null;
     }
-    /**
-     * @param bool $formatted
-     * @return false|string
-     */
+
+    /** @return false|string */
     public function getExcerpt(bool $formatted = true)
     {
         if (!$formatted) {
@@ -394,7 +388,7 @@ class PostModel implements PostModelInterface
         return $authorId;
     }
 
-    /** @return false|array|string */
+    /** @return false|mixed[]|string */
     public function getMetas()
     {
         if ($this->metas === false) {
@@ -406,7 +400,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
-     * @return array An array of all values whose key is not prefixed with <i>_</i>
+     * @return mixed[] An array of all values whose key is not prefixed with <i>_</i>
      */
     public function getMetaValues(bool $ignoreLowDashPrefix = true): array
     {
@@ -527,8 +521,7 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $taxonomy
-     * @param array $unused
-     * @return TermQueryBuilder
+     * @param array{} $unused
      */
     public function getTerms($taxonomy, $unused = []): TermQueryBuilder
     {
@@ -635,7 +628,7 @@ class PostModel implements PostModelInterface
         return $this->getChildren();
     }
 
-    /** @return PostsCollection Retrieves the children of this post. */
+    /** @return PostsCollection<static> Retrieves the children of this post. */
     public function getChildren()
     {
         return static::query()->where(['post_parent' => $this->getId()])->all();
@@ -647,7 +640,7 @@ class PostModel implements PostModelInterface
         return get_post_ancestors($this->getId());
     }
 
-    /** @return Collection Returns the ancestors of a post. */
+    /** @return Collection<static> Returns the ancestors of a post. */
     public function getAncestors(): Collection
     {
         $ancestors = collect();
@@ -879,7 +872,6 @@ class PostModel implements PostModelInterface
     /**
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
-     * @return WP_Post_Type|null
      */
     public static function getPostTypeObject(): ?WP_Post_Type
     {
@@ -914,37 +906,25 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @param string $relationKey
-     * @return HasMany
-     */
+    /** @param string $relationKey */
     public function hasMany($relationKey): HasMany
     {
         return new HasMany($this, $relationKey);
     }
 
-    /**
-     * @param string $relationKey
-     * @return HasOne
-     */
+    /** @param string $relationKey */
     public function hasOne($relationKey): HasOne
     {
         return new HasOne($this, $relationKey);
     }
 
-    /**
-     * @param string $relationKey
-     * @return BelongsTo
-     */
+    /** @param string $relationKey */
     public function belongsTo($relationKey): BelongsTo
     {
         return new BelongsTo($this, $relationKey);
     }
 
-    /**
-     * @param string $relationKey
-     * @return BelongsToMany
-     */
+    /** @param string $relationKey */
     public function belongsToMany($relationKey): BelongsToMany
     {
         return new BelongsToMany($this, $relationKey);
