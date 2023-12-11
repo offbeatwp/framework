@@ -325,7 +325,8 @@ class WpQueryBuilder
     }
 
     /**
-     * @param int[]|string[] $args
+     * @phpstan-param array{year?: int, month?: int, week?: int, day?: int, hour?: int, minute?: int, second?: int, after?: string[], before?: string[], inclusive?: bool, compare?: string, column: ?string, relation?: string}|array{year?: int, month?: int, week?: int, day?: int, hour?: int, minute?: int, second?: int, after?: string[], before?: string[], inclusive?: bool, compare?: string, column: ?string, relation?: string}[] $args
+     * @param array<string, string|int>|array<string, string|int>[] $args
      * @return $this
      */
     public function whereDate(array $args): self
