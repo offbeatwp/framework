@@ -74,7 +74,7 @@ class PostModel implements PostModelInterface
         } elseif (is_numeric($post)) {
             $this->wpPost = get_post($post);
         } else {
-            trigger_error('PostModel expects a WP_Post, NULL, int or a numeric string as argument but got: ' . gettype($post));
+            trigger_error('PostModel expects a WP_Post, NULL or integer as argument but got: ' . gettype($post));
         }
 
         $this->init();
