@@ -27,8 +27,8 @@ class WpPostsIterator extends ArrayIterator
      */
     public function valid(): bool
     {
-        if (key($this) !== null) {
-            $item = current($this)->wpPost;
+        if ($this->key() !== null) {
+            $item = $this->current()->wpPost;
 
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {
