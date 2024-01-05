@@ -221,7 +221,7 @@ trait GetMetaTrait
 
     /**
      * @param non-empty-string $metaKey
-     * @param "string"|"boolean"|"array"|"integer"|"int"|"double"|"float" $type
+     * @param "string"|"boolean"|"array"|"integer"|"double"|"float" $type
      * @return scalar|mixed[]
      */
     private function getMetaX(string $metaKey, string $type)
@@ -238,7 +238,7 @@ trait GetMetaTrait
             return $this->getMetaArray($metaKey);
         }
 
-        if ($type === 'integer' || $type === 'int') {
+        if ($type === 'integer') {
             return $this->getMetaInt($metaKey);
         }
 
