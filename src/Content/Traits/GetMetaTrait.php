@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTimeZone;
 use Exception;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -193,6 +194,59 @@ trait GetMetaTrait
     public function getMetaCollection(string $key): Collection
     {
         return collect($this->getMetaArray($key));
+    }
+
+    /**
+     * @param string $metaKey
+     * @param mixed[] $shape
+     * @return mixed[]
+     */
+    public function getMetaRepeater(string $metaKey, array $shape): array
+    {
+        $output = [];
+
+        $l = $this->getMetaInt($metaKey);
+
+        for ($i = 0; $i < $l; $i++) {
+            $output[$i] = [];
+
+            foreach ($shape as $key => $value) {
+                $fullKey = $metaKey . '_' . $i . '_' . $key;
+                $output[$i][$key] = is_array($value) ? $this->getMetaRepeater($fullKey, $value) : $this->getMetaX($fullKey, $value);
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * @param non-empty-string $metaKey
+     * @param "string"|"boolean"|"array"|"integer"|"double"|"float" $type
+     * @return scalar|mixed[]
+     */
+    private function getMetaX(string $metaKey, string $type)
+    {
+        if ($type === 'string') {
+            return $this->getMetaString($metaKey);
+        }
+
+        if ($type === 'boolean') {
+            return $this->getMetaBool($metaKey);
+        }
+
+        if ($type === 'array') {
+            return $this->getMetaArray($metaKey);
+        }
+
+        if ($type === 'integer') {
+            return $this->getMetaInt($metaKey);
+        }
+
+        if ($type === 'double' || $type === 'float') {
+            return $this->getMetaFloat($metaKey);
+        }
+
+        throw new InvalidArgumentException('Invalid type parameter: ' . $type);
     }
 
     /**
