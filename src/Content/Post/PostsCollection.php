@@ -147,7 +147,7 @@ class PostsCollection extends OffbeatModelCollection
         return '';
     }
 
-    /** @param array{base?: string, use_buttons?: bool, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $args */
+    /** @param array{base?: string, use_buttons?: bool, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[], always_show_buttons?: bool} $args */
     private function getPaginatedLinks(array $args): string
     {
         $GLOBALS['wp_query'] = $this->query;
@@ -155,6 +155,16 @@ class PostsCollection extends OffbeatModelCollection
         $args['format'] = 'page/%#%/';
         $links = paginate_links($args);
         wp_reset_query();
+
+        if ($args['always_show_buttons']) {
+            if (!strpos($links, 'class="prev')) {
+                $links = '<span class="prev page-numbers placeholder-prevnext disabled">' . $args['prev_text'] . '</span>' . $links;
+            }
+
+            if (!strpos($links, 'class="next')) {
+                $links .= '<span class="next page-numbers placeholder-prevnext disabled">'. $args['next_text'] .'</span>';
+            }
+        }
 
         if (!empty($args['use_buttons'])) {
             $links = str_replace(['<a', '</a>'], ['<button', '</button>'], $links);
