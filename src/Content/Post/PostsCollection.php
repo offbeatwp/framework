@@ -167,9 +167,18 @@ class PostsCollection extends OffbeatModelCollection
         }
 
         if (!empty($args['use_buttons'])) {
+            // Replace A tag with BUTTOn tag
             $links = str_replace(['<a', '</a>'], ['<button', '</button>'], $links);
-            // TODO: Page is translateable
-            $links = preg_replace_callback('/href=".*(\/page\/(\d+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $links);
+
+            // Replace href with data-page
+            $chunks = explode('>', $links);
+            for ($i = 0, $l = count($chunks); $i < $l; $i++) {
+                if (strpos($chunks[$i], '<button') !== false) {
+                    $chunks[$i] = preg_replace_callback('/href=".*(\/page\/(\d+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $chunks[$i]);
+                }
+            }
+
+            $links = implode('>', $chunks);
         }
 
         return $links;
