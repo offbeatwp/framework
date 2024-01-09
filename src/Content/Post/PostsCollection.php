@@ -156,7 +156,7 @@ class PostsCollection extends OffbeatModelCollection
         $links = paginate_links($args);
         wp_reset_query();
 
-        if ($args['always_show_buttons']) {
+        if (!empty($args['always_show_buttons'])) {
             if (!strpos($links, 'class="prev')) {
                 $links = '<span class="prev page-numbers placeholder-prevnext disabled">' . $args['prev_text'] . '</span>' . $links;
             }
