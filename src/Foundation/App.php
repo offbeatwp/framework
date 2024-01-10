@@ -113,6 +113,8 @@ final class App
             }
 
             $this->markServiceAsInitiated($service);
+        } else {
+            trigger_error('Class for service "' . $serviceClass . '" could not be found.');
         }
     }
 
