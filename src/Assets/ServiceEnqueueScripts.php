@@ -26,8 +26,11 @@ class ServiceEnqueueScripts extends AbstractService
         wp_deregister_script('wp-embed');
 
         if (apply_filters('offbeatwp/assets/include_main_script_by_default', true)) {
-            offbeat('assets')->enqueueStyles('main');
             offbeat('assets')->enqueueScripts('main');
+        }
+
+        if (apply_filters('offbeatwp/assets/include_main_style_by_default', true)) {
+            offbeat('assets')->enqueueStyles('main');
         }
 
         if (apply_filters('offbeatwp/scripts/move_to_footer', true)) {
