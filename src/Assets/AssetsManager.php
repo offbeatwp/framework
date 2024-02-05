@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Assets;
 
+use InvalidArgumentException;
 use stdClass;
 
 class AssetsManager
@@ -240,5 +241,25 @@ class AssetsManager
         }
 
         return new WpScriptAsset($handle, $enqueueNow);
+    }
+
+    /**
+     * Retrieves the <b>primary</b> asset url for the given handle.
+     * @param string $handle The handle
+     * @param string $assetType The type. Either <b>js</b> or <b>css</b>.
+     * @return non-empty-string
+     */
+    public function getAssetUrlByHandle(string $handle, string $assetType): ?string
+    {
+        if ($assetType !== 'js' && $assetType !== 'css') {
+            throw new InvalidArgumentException('Type parameter must be either "js" or "css"');
+        }
+
+        $assets = $this->getAssetsByEntryPoint($handle, $assetType);
+        if ($assets) {
+            return $this->getAssetsUrl(ltrim($assets[0], './'));
+        }
+
+        return $this->getUrl($handle . '.' . $assetType) ?: null;
     }
 }
