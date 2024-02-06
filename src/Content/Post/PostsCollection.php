@@ -152,7 +152,7 @@ class PostsCollection extends OffbeatModelCollection
     {
         $GLOBALS['wp_query'] = $this->query;
         $args['type'] = 'plain';
-        $args['format'] = 'page/%#%/';
+        $args['format'] = $args['format'] ?? 'page/%#%/';
         $links = paginate_links($args);
         wp_reset_query();
 
@@ -167,7 +167,7 @@ class PostsCollection extends OffbeatModelCollection
         }
 
         if (!empty($args['use_buttons'])) {
-            // Replace A tag with BUTTOn tag
+            // Replace A tag with BUTTON tag
             $links = str_replace(['<a', '</a>'], ['<button', '</button>'], $links);
 
             // Replace href with data-page
