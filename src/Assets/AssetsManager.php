@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Assets;
 
+use Generator;
 use InvalidArgumentException;
 use stdClass;
 
@@ -152,54 +153,39 @@ class AssetsManager
         return get_template_directory_uri() . '/assets' . $path;
     }
 
-    /**
-     * @param string $entry
-     * @param string[] $dependencies
-     * @return void
-     */
+    /** @param string[] $dependencies */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
-        $assets = $this->getAssetsByEntryPoint($entry, 'css');
         $dependencies = array_unique($dependencies);
 
-        if ($assets) {
-            foreach ($assets as $asset) {
-                $asset = ltrim($asset, './');
-                $baseName = basename($asset);
-                $handle = substr($baseName, 0, strpos($baseName, '.'));
-                $handle = 'owp-' . $handle;
-
+        foreach ($this->yieldUrlsAndAssets($entry, 'css') as [$handle, $assetUrl, $asset]) {
+            if ($asset) {
                 if (!wp_style_is($handle)) {
                     if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
-                        wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
+                        wp_enqueue_style($handle, $assetUrl, $dependencies);
                     } else {
-                        add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
-                            wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
+                        add_action('wp_enqueue_scripts', function () use ($handle, $assetUrl, $dependencies) {
+                            wp_enqueue_style($handle, $assetUrl, $dependencies);
                         });
                     }
                 }
+            } else {
+                $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+
+                if ($enqueueNow) {
+                    wp_enqueue_style($handle, $assetUrl, $dependencies);
+                } else {
+                    add_action('wp_enqueue_scripts', function () use ($handle, $assetUrl, $dependencies) {
+                        wp_enqueue_style($handle, $assetUrl, $dependencies);
+                    });
+                }
             }
-
-            return;
-        }
-
-        if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
-            wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
-        } else {
-            add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
-                wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
-            });
         }
     }
 
-    /**
-     * @param string $entry
-     * @param string[] $dependencies
-     * @return WpScriptAsset
-     */
+    /** @param string[] $dependencies */
     public function enqueueScripts(string $entry, array $dependencies = []): WpScriptAsset
     {
-        $assets = $this->getAssetsByEntryPoint($entry, 'js');
         if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
             $dependencies[] = 'jquery';
         }
@@ -208,35 +194,29 @@ class AssetsManager
         $enqueueNow = false;
         $handle = '';
 
-        if ($assets) {
-            foreach ($assets as $asset) {
-                $asset = ltrim($asset, './');
-                $baseName = basename($asset);
-                $handle = substr($baseName, 0, strpos($baseName, '.'));
-                $handle = 'owp-' . $handle;
-
+        foreach ($this->yieldUrlsAndAssets($entry, 'js') as [$handle, $assetUrl, $asset]) {
+            if ($asset) {
                 if (!wp_script_is($handle)) {
                     $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
 
                     if ($enqueueNow) {
-                        wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
+                        wp_enqueue_script($handle, $assetUrl, $dependencies, false, true);
                     } else {
-                        add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
-                            wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
+                        add_action('wp_enqueue_scripts', function () use ($handle, $assetUrl, $dependencies) {
+                            wp_enqueue_script($handle, $assetUrl, $dependencies, false, true);
                         });
                     }
                 }
-            }
-        } else {
-            $handle = 'theme-script-' . $entry;
-            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
-
-            if ($enqueueNow) {
-                wp_enqueue_script($handle, $this->getUrl($entry . '.js'), $dependencies, false, true);
             } else {
-                add_action('wp_enqueue_scripts', function () use ($handle, $entry, $dependencies) {
-                    wp_enqueue_script($handle, $this->getUrl($entry . '.js'), $dependencies, false, true);
-                });
+                $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+
+                if ($enqueueNow) {
+                    wp_enqueue_script($handle, $assetUrl, $dependencies, false, true);
+                } else {
+                    add_action('wp_enqueue_scripts', function () use ($handle, $assetUrl, $dependencies) {
+                        wp_enqueue_script($handle, $assetUrl, $dependencies, false, true);
+                    });
+                }
             }
         }
 
@@ -244,22 +224,29 @@ class AssetsManager
     }
 
     /**
-     * Retrieves the <b>primary</b> asset url for the given handle.
-     * @param string $handle The handle
-     * @param string $assetType The type. Either <b>js</b> or <b>css</b>.
-     * @return non-empty-string
+     * Returns a generator of typles containing Handle, URL and Asset in that order
+     * @param string $entry
+     * @param 'js'|'css' $assetType
+     * @return \Generator<array{0: string, 1: string|false, 2: string|null}>
      */
-    public function getAssetUrlByHandle(string $handle, string $assetType): ?string
+    public function yieldUrlsAndAssets(string $entry, string $assetType): Generator
     {
         if ($assetType !== 'js' && $assetType !== 'css') {
             throw new InvalidArgumentException('Type parameter must be either "js" or "css"');
         }
 
-        $assets = $this->getAssetsByEntryPoint($handle, $assetType);
+        $assets = $this->getAssetsByEntryPoint($entry, $assetType);
         if ($assets) {
-            return $this->getAssetsUrl(ltrim($assets[0], './'));
-        }
+            foreach ($assets as $asset) {
+                $asset = ltrim($asset, './');
+                $baseName = basename($asset);
+                $handle = 'owp-' . substr($baseName, 0, strpos($baseName, '.'));
 
-        return $this->getUrl($handle . '.' . $assetType) ?: null;
+                yield [$handle, $this->getAssetsUrl($asset), $asset];
+            }
+        } else {
+            $handle = 'theme-' . (($assetType === 'js') ? 'script' : 'style') . '-' . $entry;
+            yield [$handle, $this->getUrl($entry . '.' . $assetType), null];
+        }
     }
 }
