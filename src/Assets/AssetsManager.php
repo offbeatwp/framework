@@ -8,8 +8,6 @@ use stdClass;
 
 class AssetsManager
 {
-    /** @var array{} */
-    public $actions = [];
     /** @var null|stdClass|false */
     public $manifest = null;
     /** @var null|stdClass|false */
