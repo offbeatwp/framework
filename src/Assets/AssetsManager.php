@@ -6,7 +6,7 @@ use Generator;
 use InvalidArgumentException;
 use stdClass;
 
-class AssetsManager
+final class AssetsManager
 {
     /** @var null|stdClass|false */
     public $manifest = null;
