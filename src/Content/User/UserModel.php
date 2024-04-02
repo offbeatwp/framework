@@ -532,6 +532,22 @@ class UserModel
         return $this->getMetaBool('default_password_nag');
     }
 
+    /** @return static */
+    final public static function from(WP_User $wpUser)
+    {
+        if (!$wpUser->ID) {
+            throw new InvalidArgumentException('Cannot create UserModel from WP_User object: Invalid User ID');
+        }
+
+        foreach (static::definedUserRoles() as $expectedRole) {
+            if (in_array($expectedRole, $wpUser->roles, true)) {
+                return new static($wpUser);
+            }
+        }
+
+        throw new InvalidArgumentException('Cannot create UserModel from WP_User object: Invalid Role');
+    }
+
     /**
      * Only users that match at least one of these roles will be queried.<br/>
      * Generally, you'll only want to return <b>one</b> role unless the model class is abstract.<br/>

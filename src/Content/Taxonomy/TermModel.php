@@ -3,6 +3,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -235,6 +236,20 @@ class TermModel implements TermModelInterface
     public function count(): int
     {
         return $this->wpTerm->count;
+    }
+
+    /** @return static */
+    final public static function from(WP_Term $wpTerm)
+    {
+        if (!$wpTerm->term_id) {
+            throw new InvalidArgumentException('Cannot create TermModel from WP_Term object: Invalid ID');
+        }
+
+        if (defined(static::class . '::POST_TYPE') && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
+            throw new InvalidArgumentException('Cannot create TermModel from WP_Term object: Invalid Taxonomy');
+        }
+
+        return new static($wpTerm);
     }
 
     /** @return TermsCollection<static> Empty terms <b>will</b> be included. */
