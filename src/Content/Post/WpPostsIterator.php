@@ -2,28 +2,14 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Iterator;
+use ArrayIterator;
 
 /** @template TModel of PostModel */
-class WpPostsIterator implements Iterator
+class WpPostsIterator extends ArrayIterator
 {
-    /**
-     * @var PostModel[]
-     * @phpstan-var TModel[]
-     */
-    protected array $items;
+    /** @var \WP_Post|null */
     private $originalPost;
     private bool $globalPostWasChanged = false;
-
-    public function __construct(array $items)
-    {
-        $this->items = $items;
-    }
-
-    public function rewind(): void
-    {
-        reset($this->items);
-    }
 
     /**
      * @return PostModel|false
@@ -32,30 +18,17 @@ class WpPostsIterator implements Iterator
     #[\ReturnTypeWillChange]
     public function current()
     {
-        return current($this->items);
-    }
-
-    /** @return int|string|null */
-    #[\ReturnTypeWillChange]
-    public function key()
-    {
-        return key($this->items);
-    }
-
-    public function next(): void
-    {
-        next($this->items);
+        return parent::current();
     }
 
     /**
      * Many WordPress methods rely on the global post object.<br>
      * In the valid method we setup the global post object to ensure that these methods work properly during this iteration of the loop.
-     * @return bool
      */
     public function valid(): bool
     {
-        if (key($this->items) !== null) {
-            $item = current($this->items)->wpPost;
+        if ($this->key() !== null) {
+            $item = $this->current()->wpPost;
 
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {
