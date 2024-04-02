@@ -237,6 +237,12 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->count;
     }
 
+    /** @return static */
+    final public static function from(WP_Term $wpTerm)
+    {
+        return new static($wpTerm);
+    }
+
     /** @return TermsCollection<static> Empty terms <b>will</b> be included. */
     public static function all(): TermsCollection
     {

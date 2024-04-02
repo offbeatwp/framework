@@ -532,6 +532,12 @@ class UserModel
         return $this->getMetaBool('default_password_nag');
     }
 
+    /** @return static */
+    final public static function from(WP_User $wpUser)
+    {
+        return new static($wpUser);
+    }
+
     /**
      * Only users that match at least one of these roles will be queried.<br/>
      * Generally, you'll only want to return <b>one</b> role unless the model class is abstract.<br/>

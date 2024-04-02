@@ -965,6 +965,12 @@ class PostModel implements PostModelInterface
         return new WpQueryBuilderModel(static::class);
     }
 
+    /** @return static */
+    final public static function from(WP_Post $wpPost)
+    {
+        return new static($wpPost);
+    }
+
     /** @return int[] Retrieves the value of a meta field as an array of IDs. */
     private function getMetaRelationIds(string $key): array
     {
