@@ -535,7 +535,17 @@ class UserModel
     /** @return static */
     final public static function from(WP_User $wpUser)
     {
-        return new static($wpUser);
+        if (!$wpUser->ID) {
+            throw new InvalidArgumentException('Cannot create UserModel from WP_User object: Invalid User ID');
+        }
+
+        foreach (static::definedUserRoles() as $expectedRole) {
+            if (in_array($expectedRole, $wpUser->roles, true)) {
+                return new static($wpUser);
+            }
+        }
+
+        throw new InvalidArgumentException('Cannot create UserModel from WP_User object: Invalid Role');
     }
 
     /**

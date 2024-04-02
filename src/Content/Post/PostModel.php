@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
@@ -968,6 +969,14 @@ class PostModel implements PostModelInterface
     /** @return static */
     final public static function from(WP_Post $wpPost)
     {
+        if (!$wpPost->ID) {
+            throw new InvalidArgumentException('Cannot create PostModel from WP_Post object: Invalid ID');
+        }
+
+        if (defined(static::class . '::POST_TYPE') && !in_array($wpPost->post_type, (array)static::POST_TYPE, true)) {
+            throw new InvalidArgumentException('Cannot create PostModel from WP_Post object: Invalid Post Type');
+        }
+
         return new static($wpPost);
     }
 
