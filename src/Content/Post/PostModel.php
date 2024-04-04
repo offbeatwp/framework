@@ -5,13 +5,10 @@ namespace OffbeatWP\Content\Post;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
-use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
-use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
-use OffbeatWP\Content\Post\Relations\HasOneOrMany;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -19,29 +16,14 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
-use TypeError;
 use WP_Post;
 use WP_Post_Type;
-use WP_User;
 
 class PostModel implements PostModelInterface
 {
-    public const POST_TYPE = 'any';
+    public readonly WP_Post $wpPost;
+    protected ?array $metas = null;
 
-    private const DEFAULT_POST_STATUS = 'publish';
-    private const DEFAULT_COMMENT_STATUS = 'closed';
-    private const DEFAULT_PING_STATUS = 'closed';
-
-    /** @var WP_Post|object|null */
-    public $wpPost;
-    /** @var mixed[] */
-    public $metaInput = [];
-    /** @var mixed[] */
-    protected $metaToUnset = [];
-    /** @var mixed[]|false|string */
-    protected $metas = false;
-    /** @var int[][][]|bool[][]|string[][]|int[][] */
-    protected array $termsToSet = [];
     /**
      * @var string[]|null
      * This should be an associative string array<br>
@@ -50,7 +32,7 @@ class PostModel implements PostModelInterface
      * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
      * @see Relation
      */
-    public $relationKeyMethods = null;
+    public ?array $relationKeyMethods = null;
 
     use BaseModelTrait;
     use SetMetaTrait;
@@ -60,146 +42,27 @@ class PostModel implements PostModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    /** @param WP_Post|int|null $post */
-    final public function __construct($post = null)
+    public function __construct(WP_Post $wpPost)
     {
-        if ($post === null) {
-            trigger_error('Passing NULL to PostModel constructor is deprecated.', E_USER_DEPRECATED);
-            $postObj = (object)[];
-            $postObj->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
-            $postObj->post_status = self::DEFAULT_POST_STATUS;
-            $postObj->comment_status = self::DEFAULT_COMMENT_STATUS;
-            $postObj->ping_status = self::DEFAULT_PING_STATUS;
-        } elseif ($post instanceof WP_Post) {
-            $postObj = $post;
-        } elseif (is_numeric($post)) {
-            trigger_error('Passing a number to PostModel constructor is deprecated.', E_USER_DEPRECATED);
-            $postObj = get_post($post);
-        } else {
-            throw new TypeError('PostModel expects a WP_Post as argument but got: ' . gettype($post));
+        if ($wpPost->ID <= 0) {
+            throw new OffbeatInvalidModelException('Could not construct ' . class_basename($this) . ' with invalid ID: ' . $wpPost->ID);
         }
 
-        if (!static::is($postObj)) {
-            throw new InvalidArgumentException('The provided POST object does not respect the is method of ' . get_class($this));
-        }
-
-        $this->wpPost = $postObj;
-
-        $this->init();
+        $this->wpPost = $wpPost;
     }
 
-    /** This method is called at the end of the PostModel constructor */
-    protected function init(): void
+    ///////////////
+    /// Getters ///
+    ///////////////
+    /** @return positive-int */
+    public function getId(): int
     {
-        // Does nothing unless overriden by parent
+        return $this->wpPost->ID;
     }
 
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return static::macroCallStatic($method, $parameters);
-        }
-
-        return static::query()->$method(...$parameters);
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-
-        if (method_exists(WpQueryBuilderModel::class, $method)) {
-            trigger_error('Called a QueryBuilder method on a model instance through magic.');
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        if (method_exists($this, $methodName)) {
-            return $this->$methodName();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset($name): bool
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        return method_exists($this, $methodName);
-    }
-
-    public function __clone()
-    {
-        // Gather all metas while we still have the original wpPost reference
-        $this->getMetas();
-        // Now clone the wpPost reference
-        $this->wpPost = clone $this->wpPost;
-        // Set ID to null
-        $this->wpPost->ID = null;
-        // Since the new post is unsaved, we'll have to add all meta values
-        $this->refreshMetaInput(false);
-    }
-
-    protected function refreshMetaInput(bool $ignoreLowDashPrefix = true): void
-    {
-        foreach ($this->getMetaValues($ignoreLowDashPrefix) as $key => $value) {
-            if (!array_key_exists($key, $this->metaInput)) {
-                $this->_setMeta($key, $value);
-            }
-        }
-    }
-
-    ///////////////////////////
-    /// Getters and Setters ///
-    ///////////////////////////
-    public function getId(): ?int
-    {
-        return $this->wpPost->ID ?? null;
-    }
-
-    /** @return string */
-    public function getTitle()
+    public function getTitle(): string
     {
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
-    }
-
-    public function getUnfilteredTitle(): string
-    {
-        return $this->wpPost->post_title;
     }
 
     public function getContent(): string
@@ -213,7 +76,6 @@ class PostModel implements PostModelInterface
         // When the_content filter is already running with Gutenberg content
         // it adds another filter that prevents wpautop to be executed.
         // do some magic to restore the wpautop and restore the restoreautop afterwards.
-
         $hasRestoreWpautopHook = has_filter('the_content', '_restore_wpautop_hook');
         $didManualRestoreWpAutopHook = false;
         if ($hasRestoreWpautopHook) {
@@ -233,40 +95,6 @@ class PostModel implements PostModelInterface
         return $content;
     }
 
-    /** @deprecated */
-    public function setId(?int $id): self
-    {
-        $this->wpPost->ID = $id;
-        return $this;
-    }
-
-    /** @deprecated */
-    public function setContent(string $content): self
-    {
-        $this->wpPost->post_content = $content;
-        return $this;
-    }
-
-    /** @deprecated */
-    public function setAuthor(int $authorId): self
-    {
-        $this->wpPost->post_author = $authorId;
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     * @param string|string[]|int[] $terms An array of terms to set for the post, or a string of term slugs separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
-     * @param string $taxonomy Taxonomy name of the term(s) to set.
-     * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
-     * @return self
-     */
-    public function setTerms($terms, string $taxonomy, bool $append = false): self
-    {
-        $this->termsToSet[] = ['termIds' => $terms, 'taxonomy' => $taxonomy, 'append' => $append];
-        return $this;
-    }
-
     public function getPostName(): string
     {
         return $this->wpPost->post_name;
@@ -277,19 +105,21 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string */
-    public function getPermalink()
+    /**
+     * Retrieves the full permalink for the current post or post ID.
+     * @return string|null The permalink URL. Null if the post does not exist.
+     */
+    public function getPermalink(): ?string
     {
-        return get_permalink($this->getId());
+        return get_permalink($this->getId()) ?: null;
     }
 
-    /** @return false|string */
-    public function getPostTypeLabel()
+    public function getPostTypeLabel(): ?string
     {
         $postType = get_post_type_object(get_post_type($this->wpPost));
 
         if (!$postType || !$postType->label) {
-            return false;
+            return null;
         }
 
         return $postType->label;
@@ -300,7 +130,7 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_type;
     }
 
-    public function getPostTypeInstance(): ?WP_Post_Type
+    public function getPostTypeObject(): ?WP_Post_Type
     {
         return get_post_type_object(get_post_type($this->wpPost));
     }
@@ -330,36 +160,12 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_status;
     }
 
-    /** @deprecated */
-    public function setPostStatus(string $newStatus): self
-    {
-        $this->wpPost->post_status = $newStatus;
-        return $this;
-    }
-
     public function isPostType(string $postType): bool
     {
         return $this->getPostType() === $postType;
     }
 
-    /**
-     * @param string $format
-     * @return false|string
-     */
-    public function getPostDate(string $format = '')
-    {
-        return get_the_date($format, $this->wpPost);
-    }
-
-    public function getModifiedDate(string $format = ''): ?string
-    {
-        return get_the_modified_date($format, $this->wpPost) ?: null;
-    }
-    /**
-     * @param bool $formatted
-     * @return false|string
-     */
-    public function getExcerpt(bool $formatted = true)
+    public function getExcerpt(bool $formatted = true): ?string
     {
         if (!$formatted) {
             return get_the_excerpt($this->wpPost);
@@ -375,40 +181,18 @@ class PostModel implements PostModelInterface
 
         $GLOBALS['post'] = $currentPost;
 
-        return $excerpt;
+        return $excerpt ?: null;
     }
 
-    /**
-     * @deprecated Consider using getAuthorModel instead
-     * @return false|WP_User
-     */
-    public function getAuthor()
+    public function getAuthorId(): int
     {
-        $authorId = $this->getAuthorId();
-
-        if (!$authorId) {
-            return false;
-        }
-
-        return get_userdata($authorId);
-    }
-
-    /** @return false|int|numeric-string */
-    public function getAuthorId()
-    {
-        $authorId = $this->wpPost->post_author;
-
-        if (!$authorId) {
-            return false;
-        }
-
-        return $authorId;
+        return (int)$this->wpPost->post_author;
     }
 
     /** @return false|array|string */
     public function getMetas()
     {
-        if ($this->metas === false) {
+        if ($this->metas === null) {
             $this->metas = get_post_meta($this->getId());
         }
 
@@ -488,16 +272,6 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    /** @deprecated */
-    public function setMetas(iterable $metadata): self
-    {
-        foreach ($metadata as $key => $value) {
-            $this->_setMeta($key, $value);
-        }
-
-        return $this;
-    }
-
     /**
      * @deprecated
      * Moves a meta value from one key to another.
@@ -558,71 +332,25 @@ class PostModel implements PostModelInterface
         return get_the_post_thumbnail_url($this->wpPost, $size);
     }
 
-    /** @return false|int */
-    public function getFeaturedImageId()
+    public function getThumbnailId(): int
     {
-        return get_post_thumbnail_id($this->wpPost) ?: false;
+        return (int)get_post_thumbnail_id($this->wpPost);
     }
 
-    /** @deprecated */
-    public function setExcerpt(string $excerpt): self
+    public function getParentId(): int
     {
-        $this->wpPost->post_excerpt = $excerpt;
-        return $this;
-    }
-
-    /** @deprecated */
-    public function setTitle(string $title): self
-    {
-        $this->wpPost->post_title = $title;
-        return $this;
-    }
-
-    /** @deprecated */
-    public function setPostName(string $postName): self
-    {
-        $this->wpPost->post_name = $postName;
-        return $this;
-    }
-
-    public function getParentId(): ?int
-    {
-        if ($this->wpPost->post_parent) {
-            return $this->wpPost->post_parent;
-        }
-
-        return null;
-    }
-
-    public function hasParent(): bool
-    {
-        return (bool)$this->getParentId();
+        return $this->wpPost->post_parent;
     }
 
     public function getParent(): ?PostModel
     {
-        if (!$this->getParentId()) {
-            return null;
-        }
-
-        return new static($this->getParentId());
+        return static::find($this->getParentId());
     }
 
     public function getTopLevelParent(): ?PostModel
     {
         $ancestors = $this->getAncestors();
-        $this->getAncestors()->last();
-        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
-    }
-
-    /**
-     * @deprecated Use getChildren instead
-     * @see getChildren
-     */
-    public function getChilds(): PostsCollection
-    {
-        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
-        return $this->getChildren();
+        return $ancestors->isNotEmpty() ? $ancestors->last() : null;
     }
 
     /** @return PostsCollection Retrieves the children of this post. */
@@ -749,33 +477,26 @@ class PostModel implements PostModelInterface
      * This includes comments, post meta fields, and terms associated with the post.
      * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
      * @param bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
-     * @return false|WP_Post|null
      */
-    public function delete(bool $force = true)
+    public function delete(bool $force = true): ?WP_Post
     {
-        return wp_delete_post($this->getId(), $force);
+        return wp_delete_post($this->getId(), $force) ?: null;
     }
 
-    /**
-     * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
-     * @return false|WP_Post|null
-     */
-    public function trash()
+    /** Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted. */
+    public function trash(): ?WP_Post
     {
-        return wp_trash_post($this->getId());
+        return wp_trash_post($this->getId()) ?: null;
     }
 
-    /**
-     * Restores a post from the Trash.
-     * @return false|WP_Post|null
-     */
-    public function untrash()
+    /** Restores a post from the Trash. */
+    public function untrash(): ?WP_Post
     {
-        return wp_untrash_post($this->getId());
+        return wp_untrash_post($this->getId()) ?: null;
     }
 
     /** Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
-    public function replicate(): self
+    public function replicate(): static
     {
         $copy = clone $this;
 
@@ -787,77 +508,9 @@ class PostModel implements PostModelInterface
         return $copy;
     }
 
-    /** Returns the ID of the inserted/updated model, or <b>0</b> on failure */
-    public function save(): int
-    {
-        if ($this->metaInput) {
-            $this->wpPost->meta_input = $this->metaInput;
-        }
-
-        if ($this->getId() === null) {
-            // Insert post
-            $updatedPostId = wp_insert_post((array)$this->wpPost);
-            $insertedPost = get_post($updatedPostId);
-
-            // Set internal wpPost
-            if ($insertedPost instanceof WP_Post) {
-                $this->wpPost = $insertedPost;
-            }
-        } else {
-            // Update post
-            $updatedPostId = wp_update_post($this->wpPost);
-
-            // Unset Meta
-            if ($updatedPostId && is_int($updatedPostId)) {
-                foreach ($this->metaToUnset as $keyToUnset => $valueToUnset) {
-                    delete_post_meta($updatedPostId, $keyToUnset, $valueToUnset);
-                }
-            }
-        }
-
-        if ($updatedPostId) {
-            // Attach Terms to post
-            $this->attachTerms($updatedPostId);
-
-            // Update the relations
-            foreach (array_keys($this->metaInput + $this->metaToUnset) as $key) {
-                $this->updateRelation($key);
-            }
-        }
-
-        return $updatedPostId;
-    }
-
-    private function attachTerms(int $id): void
-    {
-        foreach ($this->termsToSet as $term) {
-            wp_set_post_terms($id, $term['termIds'], $term['taxonomy'], $term['append']);
-        }
-    }
-
-    public function saveOrFail(): int
-    {
-        $result = $this->save();
-
-        if ($result <= 0) {
-            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
-        }
-
-        return $result;
-    }
-
     protected function getBaseClassName(): string
     {
         return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
-    }
-
-    /**
-     * @deprecated
-     * @return string[]|null
-     */
-    protected function getRelationKeyMethods(): ?array
-    {
-        return $this->relationKeyMethods ?? null;
     }
 
     public function refreshMetas()
@@ -866,30 +519,10 @@ class PostModel implements PostModelInterface
         $this->getMetas();
     }
 
-    /**
-     * Retrieves the associated post type object.
-     * Only works after the post type has been registered.
-     * @return WP_Post_Type|null
-     */
-    public static function getPostTypeObject(): ?WP_Post_Type
-    {
-        $modelClass = static::class;
-
-        if (defined("{$modelClass}::POST_TYPE")) {
-            return get_post_type_object($modelClass::POST_TYPE);
-        }
-
-        return null;
-    }
-
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    /**
-     * @param string $relationKey
-     * @return null|string
-     */
-    public function getMethodByRelationKey($relationKey)
+    public function getMethodByRelationKey(string $relationKey): ?string
     {
         $method = $relationKey;
 
@@ -904,63 +537,30 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /**
-     * @param string $relationKey
-     * @return HasMany
-     */
-    public function hasMany($relationKey): HasMany
+    final public function hasMany(string $relationKey): HasMany
     {
         return new HasMany($this, $relationKey);
     }
 
-    /**
-     * @param string $relationKey
-     * @return HasOne
-     */
-    public function hasOne($relationKey): HasOne
+    final public function hasOne(string $relationKey): HasOne
     {
         return new HasOne($this, $relationKey);
     }
 
-    /**
-     * @param string $relationKey
-     * @return BelongsTo
-     */
-    public function belongsTo($relationKey): BelongsTo
+    final public function belongsTo(string $relationKey): BelongsTo
     {
         return new BelongsTo($this, $relationKey);
     }
 
-    /**
-     * @param string $relationKey
-     * @return BelongsToMany
-     */
-    public function belongsToMany($relationKey): BelongsToMany
+    final public function belongsToMany(string $relationKey): BelongsToMany
     {
         return new BelongsToMany($this, $relationKey);
     }
 
-    /**
-     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
-     * @return static|null
-     */
-    public static function current()
+    final public static function current(): ?static
     {
         $post = offbeat('post')->get();
         return ($post instanceof static) ? $post : null;
-    }
-
-    /**
-     * @deprecated
-     * @param int $id Only accepts and ID as parameter.
-     * @return static
-     */
-    public static function createLazy(int $id)
-    {
-        $model = new static(null);
-        $model->wpPost->ID = $id;
-
-        return $model;
     }
 
     /** @return PostsCollection<static> */
@@ -994,40 +594,14 @@ class PostModel implements PostModelInterface
 
         return [];
     }
-    
-    private function updateRelation(string $key): void
-    {
-        $method = $this->getMethodByRelationKey($key);
 
-        if ($method) {
-            $relation = $this->$method();
-
-            if ($relation) {
-                $ids = $this->getMetaRelationIds($key);
-
-                if ($ids && $relation instanceof HasOneOrMany) {
-                    $relation->attach($ids, false);
-                } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
-                    $relation->associate($ids, false);
-                } elseif ($relation instanceof HasOneOrMany) {
-                    $relation->detachAll();
-                } elseif ($relation instanceof BelongsToOneOrMany) {
-                    $relation->dissociateAll();
-                }
-            }
-        }
-    }
-
-    /**
-     * @pure
-     * @return static
-     */
-    final public static function from(WP_Post $post)
+    /** @pure */
+    final public static function from(WP_Post $post): static
     {
         return new static($post);
     }
     
-    public static function is(WP_Post $post): bool
+    public function is(WP_Post $post): bool
     {
         return true;
     }
