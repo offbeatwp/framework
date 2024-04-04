@@ -4,7 +4,6 @@ namespace OffbeatWP\Content\Taxonomy;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
-use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -193,7 +192,7 @@ class TermModel implements TermModelInterface
 
     /**
      * @param string|string[]|null $postTypes
-     * @return WpQueryBuilder<PostModel>
+     * @return WpQueryBuilder<\OffbeatWP\Content\Post\PostModel>
      */
     public function getPosts($postTypes = null): WpQueryBuilder
     {
@@ -241,12 +240,12 @@ class TermModel implements TermModelInterface
     /** @return static */
     final public static function from(WP_Term $wpTerm)
     {
-        if (!$wpTerm->term_id) {
-            throw new InvalidArgumentException('Cannot create TermModel from WP_Term object: Invalid ID');
+        if ($wpTerm->term_id <= 0) {
+            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_Term object: Invalid ID');
         }
 
         if (defined(static::class . '::POST_TYPE') && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
-            throw new InvalidArgumentException('Cannot create TermModel from WP_Term object: Invalid Taxonomy');
+            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_Term object: Invalid Taxonomy');
         }
 
         return new static($wpTerm);
