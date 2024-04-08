@@ -345,21 +345,21 @@ class PostModel implements PostModelInterface
     /** @return false|string */
     public function getExcerpt(bool $formatted = true)
     {
-        if (!$formatted) {
-            return get_the_excerpt($this->wpPost);
+        if ($formatted) {
+            $currentPost = $GLOBALS['post'] ?? null;
+
+            $GLOBALS['post'] = $this->wpPost;
+
+            ob_start();
+            the_excerpt();
+            $excerpt = ob_get_clean();
+
+            $GLOBALS['post'] = $currentPost;
+
+            return $excerpt;
         }
 
-        $currentPost = $GLOBALS['post'] ?? null;
-
-        $GLOBALS['post'] = $this->wpPost;
-
-        ob_start();
-        the_excerpt();
-        $excerpt = ob_get_clean();
-
-        $GLOBALS['post'] = $currentPost;
-
-        return $excerpt;
+        return get_the_excerpt($this->wpPost);
     }
 
     /**
@@ -907,26 +907,22 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /** @param string $relationKey */
-    public function hasMany($relationKey): HasMany
+    final public function hasMany(string $relationKey): HasMany
     {
         return new HasMany($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function hasOne($relationKey): HasOne
+    final public function hasOne(string $relationKey): HasOne
     {
         return new HasOne($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function belongsTo($relationKey): BelongsTo
+    final public function belongsTo(string $relationKey): BelongsTo
     {
         return new BelongsTo($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function belongsToMany($relationKey): BelongsToMany
+    final public function belongsToMany(string $relationKey): BelongsToMany
     {
         return new BelongsToMany($this, $relationKey);
     }
@@ -942,8 +938,7 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * Create a PostModel with an ID without running get_post.
-     * @param int $id Only accepts and ID as parameter.
+     * @deprecated Use PostModel::create and setId instead.
      * @return static
      */
     public static function createLazy(int $id)
