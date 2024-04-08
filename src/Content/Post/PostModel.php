@@ -3,8 +3,6 @@
 namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
@@ -23,6 +21,8 @@ class PostModel implements PostModelInterface
 {
     public readonly WP_Post $wpPost;
     protected ?array $metas = null;
+    /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
+    private array $data = [];
 
     /**
      * @var string[]|null
@@ -37,10 +37,6 @@ class PostModel implements PostModelInterface
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
 
     public function __construct(WP_Post $wpPost)
     {
@@ -49,6 +45,11 @@ class PostModel implements PostModelInterface
         }
 
         $this->wpPost = $wpPost;
+    }
+
+    public function is(WP_Post $post): bool
+    {
+        return true;
     }
 
     ///////////////
@@ -111,18 +112,11 @@ class PostModel implements PostModelInterface
      */
     public function getPermalink(): ?string
     {
-        return get_permalink($this->getId()) ?: null;
-    }
-
-    public function getPostTypeLabel(): ?string
-    {
-        $postType = get_post_type_object(get_post_type($this->wpPost));
-
-        if (!$postType || !$postType->label) {
-            return null;
+        if (!array_key_exists('permalink', $this->data)) {
+            $this->data['permalink'] = get_permalink($this->getId()) ?: null;
         }
 
-        return $postType->label;
+        return $this->data['permalink'];
     }
 
     public function getPostType(): string
@@ -132,7 +126,11 @@ class PostModel implements PostModelInterface
 
     public function getPostTypeObject(): ?WP_Post_Type
     {
-        return get_post_type_object(get_post_type($this->wpPost));
+        if (!array_key_exists('post_type_object', $this->data)) {
+            $this->data['post_type_object'] = get_post_type_object(get_post_type($this->wpPost));
+        }
+
+        return $this->data['post_type_object'];
     }
 
     /**
@@ -167,21 +165,25 @@ class PostModel implements PostModelInterface
 
     public function getExcerpt(bool $formatted = true): ?string
     {
-        if (!$formatted) {
-            return get_the_excerpt($this->wpPost);
+        if ($formatted) {
+            $currentPost = $GLOBALS['post'] ?? null;
+
+            $GLOBALS['post'] = $this->wpPost;
+
+            ob_start();
+            the_excerpt();
+            $excerpt = ob_get_clean();
+
+            $GLOBALS['post'] = $currentPost;
+
+            return $excerpt ?: null;
         }
 
-        $currentPost = $GLOBALS['post'] ?? null;
+        if (!array_key_exists('excerpt', $this->data)) {
+            $this->data['excerpt'] = get_the_excerpt($this->wpPost);
+        }
 
-        $GLOBALS['post'] = $this->wpPost;
-
-        ob_start();
-        the_excerpt();
-        $excerpt = ob_get_clean();
-
-        $GLOBALS['post'] = $currentPost;
-
-        return $excerpt ?: null;
+        return $this->data['excerpt'];
     }
 
     public function getAuthorId(): int
@@ -189,11 +191,10 @@ class PostModel implements PostModelInterface
         return (int)$this->wpPost->post_author;
     }
 
-    /** @return false|array|string */
-    public function getMetas()
+    public function getMetas(): array
     {
         if ($this->metas === null) {
-            $this->metas = get_post_meta($this->getId());
+            $this->metas = get_post_meta($this->getId()) ?: [];
         }
 
         return $this->metas;
@@ -216,13 +217,10 @@ class PostModel implements PostModelInterface
         return $values;
     }
 
-    /** @return mixed */
-    public function getMeta(string $key, bool $single = true)
+    public function getMeta(string $key, bool $single = true): mixed
     {
         if (isset($this->getMetas()[$key])) {
-            return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
+            return $single && is_array($this->getMetas()[$key]) ? reset($this->getMetas()[$key]) : $this->getMetas()[$key];
         }
 
         return null;
@@ -231,33 +229,31 @@ class PostModel implements PostModelInterface
     /** Retrieves the WP Admin edit link for this post. <br>Returns <i>null</i> if the post type does not exist or does not allow an editing UI. */
     public function getEditLink(): ?string
     {
-        return get_edit_post_link($this->getId());
+        if (!array_key_exists('edit_post_link', $this->data)) {
+            $this->data['edit_post_link'] = get_edit_post_link($this->getId());
+        }
+
+        return $this->data['edit_post_link'];
     }
 
     public function getPostDateTime(): ?WpDateTimeImmutable
     {
-        if ($this->getId()) {
+        if (!array_key_exists('date', $this->data)) {
             $gmt = get_post_datetime($this->getId(), 'date', 'gmt');
-
-            if ($gmt) {
-                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
-            }
+            $this->data['date'] = ($gmt) ? WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC')) : null;
         }
 
-        return null;
+        return $this->data['date'];
     }
 
     public function getModifiedDateTime(): ?WpDateTimeImmutable
     {
-        if ($this->getId()) {
+        if (!array_key_exists('modified', $this->data)) {
             $gmt = get_post_datetime($this->getId(), 'modified', 'gmt');
-
-            if ($gmt) {
-                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
-            }
+            $this->data['modified'] = ($gmt) ? WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC')) : null;
         }
 
-        return null;
+        return $this->data['modified'];
     }
 
     /** @throws PostMetaNotFoundException */
@@ -272,30 +268,9 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    /**
-     * @deprecated
-     * Moves a meta value from one key to another.
-     * @param string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
-     * @param string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
-     */
-    public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
+    public function getTerms(string $taxonomy): TermQueryBuilder
     {
-        if ($this->hasMeta($oldMetaKey) && !$this->hasMeta($newMetaKey)) {
-            $this->_setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
-            $this->_unsetMeta($oldMetaKey);
-        }
-    }
-
-    /**
-     * @param string $taxonomy
-     * @param array $unused
-     * @return TermQueryBuilder
-     */
-    public function getTerms($taxonomy, $unused = []): TermQueryBuilder
-    {
-        $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
-
-        return $model::query()->whereRelatedToPost($this->getId());
+        return offbeat('taxonomy')->getModelByTaxonomy($taxonomy)::query()->whereRelatedToPost($this->getId());
     }
 
     /**
@@ -303,7 +278,7 @@ class PostModel implements PostModelInterface
      * @param string $taxonomy
      * @return bool
      */
-    public function hasTerm($term, string $taxonomy): bool
+    public function hasTerm(array|int|string $term, string $taxonomy): bool
     {
         return has_term($term, $taxonomy, $this->getId());
     }
@@ -318,18 +293,18 @@ class PostModel implements PostModelInterface
      * @param int[]|string[]|string $attr
      * @return string The post thumbnail image tag.
      */
-    public function getFeaturedImage($size = 'thumbnail', $attr = []): string
+    public function getFeaturedImage(array|string $size = 'thumbnail', array|string $attr = []): string
     {
         return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
 
     /**
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
+     * @return null|string The post thumbnail URL or NULL if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
-    public function getFeaturedImageUrl($size = 'thumbnail')
+    public function getFeaturedImageUrl(array|string $size = 'thumbnail'): ?string
     {
-        return get_the_post_thumbnail_url($this->wpPost, $size);
+        return get_the_post_thumbnail_url($this->wpPost, $size) ?: null;
     }
 
     public function getThumbnailId(): int
@@ -365,16 +340,16 @@ class PostModel implements PostModelInterface
         return get_post_ancestors($this->getId());
     }
 
-    /** @return Collection Returns the ancestors of a post. */
-    public function getAncestors(): Collection
+    /** @return static[] Returns the ancestors of a post. */
+    public function getAncestors(): array
     {
-        $ancestors = collect();
+        $ancestors = [];
 
-        if ($this->hasParent()) {
+        if ($this->getParentId()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
                 $ancestor = offbeat('post')->get($ancestorId);
                 if ($ancestor) {
-                    $ancestors->push($ancestor);
+                    $ancestors[] = $ancestor;
                 }
             }
         }
@@ -382,25 +357,17 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
-    /** @return static|null */
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    /** @return static|null */
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-    /**
-     * @private
-     * @final
-     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
-     * @return static|null
-     */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
+    private function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?static
     {
         $currentPost = $GLOBALS['post'] ?? null;
 
@@ -440,8 +407,7 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    /** @return WP_Post|object|null */
-    public function getPostObject(): ?object
+    public function getPostObject(): ?WP_Post
     {
         return $this->wpPost;
     }
@@ -495,27 +461,9 @@ class PostModel implements PostModelInterface
         return wp_untrash_post($this->getId()) ?: null;
     }
 
-    /** Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
-    public function replicate(): static
-    {
-        $copy = clone $this;
-
-        foreach(get_object_taxonomies($this->wpPost) as $taxonomyName) {
-            $termIds = $this->getTerms($taxonomyName)->excludeEmpty(false)->ids();
-            $copy->termsToSet[] = ['termIds' => $termIds, 'taxonomy' => $taxonomyName, 'append' => false];
-        }
-
-        return $copy;
-    }
-
-    protected function getBaseClassName(): string
-    {
-        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
-    }
-
     public function refreshMetas()
     {
-        $this->metas = false;
+        $this->metas = null;
         $this->getMetas();
     }
 
@@ -575,34 +523,9 @@ class PostModel implements PostModelInterface
         return new WpQueryBuilderModel(static::class);
     }
 
-    /** @return int[] Retrieves the value of a meta field as an array of IDs. */
-    private function getMetaRelationIds(string $key): array
-    {
-        $value = get_post_meta($this->getId(), $key, true);
-
-        if (is_serialized($value)) {
-            $value = unserialize($value, ['allowed_classes' => false]);
-        }
-
-        if (is_array($value)) {
-            return array_map('intval', $value);
-        }
-
-        if (is_numeric($value)) {
-            return [(int)$value];
-        }
-
-        return [];
-    }
-
     /** @pure */
     final public static function from(WP_Post $post): static
     {
         return new static($post);
-    }
-    
-    public function is(WP_Post $post): bool
-    {
-        return true;
     }
 }
