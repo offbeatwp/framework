@@ -23,7 +23,7 @@ abstract class AbstractBlockCallback
     }
 
     /** @return mixed[] */
-    final public function getAttributes(): ?array
+    final public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -34,13 +34,13 @@ abstract class AbstractBlockCallback
         return $this->attributes[$index] ?? null;
     }
 
-    final public function getContent(): ?string
+    final public function getContent(): string
     {
         return $this->content;
     }
 
     /** @return \WP_Block_List|array{} */
-    final public function getInnerBlocks(): iterable
+    final public function getInnerBlocks()
     {
         return $this->wpBlock->inner_blocks;
     }
@@ -51,11 +51,11 @@ abstract class AbstractBlockCallback
         return $this->wpBlock->context;
     }
 
-    abstract public function render(): string;
-
     /** @param mixed[] $attributes */
     final public static function renderBlock(array $attributes, string $content, WP_Block $wpBlock): string
     {
         return (new static($attributes, $content, $wpBlock))->render();
     }
+
+    abstract public function render(): string;
 }
