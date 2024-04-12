@@ -122,7 +122,7 @@ class PostModel implements PostModelInterface
         }
 
         if (method_exists(WpQueryBuilderModel::class, $method)) {
-            trigger_error('Called a QueryBuilder method on a model instance through magic.');
+            trigger_error('Called a QueryBuilder method on a model instance through magic method.', E_USER_DEPRECATED);
             return static::query()->$method(...$parameters);
         }
 
