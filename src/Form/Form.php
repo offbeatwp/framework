@@ -200,11 +200,12 @@ class Form extends Collection
     }
 
     /**
-     * @param AbstractComponent $component
+     * @param AbstractComponent|class-string<AbstractComponent> $component
      * @param string $fieldPrefix
      * @return void
      */
-    public function addComponentForm($component, $fieldPrefix) {
+    public function addComponentForm($component, $fieldPrefix)
+    {
         $activeItem = $this->getActiveItem();
 
         $componentForm = $component::getForm();
