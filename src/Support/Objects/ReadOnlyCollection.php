@@ -51,34 +51,10 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
         return true;
     }
 
-    /** Determine if any of the keys exist in the collection. */
-    public function hasAny(int|array $offset): bool
-    {
-        if ($this->isEmpty()) {
-            return false;
-        }
-
-        $offsets = is_array($offset) ? $offset : func_get_args();
-
-        foreach ($offsets as $value) {
-            if ($this->has($value)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /** Determine if the collection is empty or not. */
     public function isEmpty(): bool
     {
         return !$this->items;
-    }
-
-    /** Determine if the collection contains a single item. */
-    public function containsOneItem(): bool
-    {
-        return $this->count() === 1;
     }
 
     /**
@@ -127,8 +103,8 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
     }
 
     /**
-     * Set the item at a given offset.
-     * @param int $offset
+     * @throws BadMethodCallException
+     * @return never-return
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -136,8 +112,8 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
     }
 
     /**
-     * Unset the item at a given offset.
-     * @param int $offset
+     * @throws BadMethodCallException
+     * @return never-return
      */
     public function offsetUnset(mixed $offset): void
     {
