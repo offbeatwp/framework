@@ -13,7 +13,7 @@ class TermQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var mixed[] */
-    protected $queryVars = [];
+    protected $queryVars = ['hide_empty' => false];
     /** @var class-string<TModel> */
     protected $model;
     /** @var string */

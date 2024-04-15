@@ -15,10 +15,13 @@ class WpQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var mixed[] */
-    protected array $queryVars = [];
+    protected array $queryVars = ['limit' => -1];
     private string $wpQueryClass = WP_Query::class;
 
-    /** @return PostsCollection<TModel> */
+    /**
+     * @deprecated
+     * @return PostsCollection<TModel>
+     */
     public function all(): PostsCollection
     {
         return $this->take(-1);
