@@ -3,9 +3,8 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayAccess;
-use DOMDocument;
 use Illuminate\Support\Enumerable;
-use OffbeatWP\Content\Common\OffbeatModelCollection;
+use Offbeatp\Support\Objects\ReadOnlyCollection\ReadOnlyCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;
@@ -17,39 +16,21 @@ use WP_Query;
  * @implements ArrayAccess<array-key, TModel>
  * @implements Enumerable<array-key, TModel>
  *
- * @method PostModel|mixed pull(int|string $key, mixed $default = null)
  * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
  * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
- * @method PostModel|static|null pop(int $count = 1)
- * @method PostModel|static|null shift(int $count = 1)
- * @method PostModel|null reduce(callable $callback, mixed $initial = null)
  * @method PostModel offsetGet(int|string $key)
  */
-class PostsCollection extends OffbeatModelCollection
+class PostsCollection extends ReadOnlyCollection
 {
-    /** @var IWpQuerySubstitute|WP_Query|null  */
-    protected $query = null;
+    protected IWpQuerySubstitute|WP_Query $query;
 
-    /** @param int[]|WP_Post[]|WP_Query $items */
-    public function __construct($items = [])
+    public function __construct(IWpQuerySubstitute|WP_Query $query)
     {
         $postItems = [];
+        $this->query = $query;
 
-        if ($items instanceof WP_Query || $items instanceof IWpQuerySubstitute) {
-            $this->query = $items;
-
-            if (!empty($items->posts)) {
-                foreach ($items->posts as $post) {
-                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
-                }
-            }
-        } elseif (is_iterable($items)) {
-            foreach ($items as $key => $item) {
-                $postModel = $this->createValidPostModel($item);
-                if ($postModel) {
-                    $postItems[$key] = $postModel;
-                }
-            }
+        foreach ($query->posts as $post) {
+            $postItems[] = offbeat('post')->convertWpPostToModel($post);
         }
 
         parent::__construct($postItems);
@@ -176,23 +157,14 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /**
-     * @return PostModel[]|TModel[]
-     * @phpstan-return TModel[]
-     */
-    public function toArray()
-    {
-        return $this->toCollection()->toArray();
-    }
-
-    /**
      * Deletes <b>all</b> the posts in this collection from the database.
      * @param bool $force
      */
     public function deleteAll(bool $force)
     {
-        $this->each(function (PostModel $model) use ($force) {
+        foreach ($this->all() as $model) {
             $model->delete($force);
-        });
+        }
 
         $this->items = [];
     }

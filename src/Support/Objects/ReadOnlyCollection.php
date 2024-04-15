@@ -66,16 +66,16 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
         return array_keys($this->items);
     }
 
+    /** Get the first item from the collection. */
+    public function first(): mixed
+    {
+        return $this->items[0] ?? null;
+    }
+
     /** Get the last item from the collection. */
     public function last(): mixed
     {
         return $this->items[count($this->items) - 1] ?? null;
-    }
-
-    /** Get an iterator for the items. */
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->items);
     }
 
     /** Count the number of items in the collection. */
