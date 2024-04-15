@@ -8,14 +8,11 @@ use BadMethodCallException;
 use Countable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Traits\EnumeratesValues;
 use IteratorAggregate;
 use JsonSerializable;
 
-class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
+abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
-    use EnumeratesValues;
-
     protected array $items = [];
 
     public function __construct(array $items = [])
@@ -145,5 +142,40 @@ class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorA
     public function offsetUnset(mixed $offset): void
     {
         throw new BadMethodCallException('Cannot modify readonly Collection.');
+    }
+
+    public function toArray(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * Convert the object to its JSON representation.
+     *
+     * @param int $options
+     * @return string
+     */
+    public function toJson($options = 0): string
+    {
+        return json_encode($this->jsonSerialize(), $options);
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return array_map(function ($value) {
+            if ($value instanceof JsonSerializable) {
+                return $value->jsonSerialize();
+            }
+
+            if ($value instanceof Jsonable) {
+                return json_decode($value->toJson(), true);
+            }
+
+            if ($value instanceof Arrayable) {
+                return $value->toArray();
+            }
+
+            return $value;
+        }, $this->all());
     }
 }
