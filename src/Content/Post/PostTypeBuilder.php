@@ -354,17 +354,6 @@ class PostTypeBuilder
     }
 
     /**
-     * @param null $position
-     * @deprecated This function does not actually appear to do anything
-     */
-    public function position($position = null): self
-    {
-        trigger_error('Deprecated position called in PostTypeBuilder.', E_USER_DEPRECATED);
-        $this->postTypeArgs['position'] = $position;
-        return $this;
-    }
-
-    /**
      * The string to use to build the read, edit, and delete capabilities.
      * @param string $single Singular capability name.
      * @param string $plural Plural capability name. Same as singular name if omitted.

@@ -196,24 +196,6 @@ class PostModel extends OffbeatModel
         return $this->metas;
     }
 
-    /**
-     * @deprecated
-     * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
-     * @return mixed[] An array of all values whose key is not prefixed with <i>_</i>
-     */
-    public function getMetaValues(bool $ignoreLowDashPrefix = true): array
-    {
-        $values = [];
-
-        foreach ($this->getMetas() as $key => $value) {
-            if (!$ignoreLowDashPrefix || $key[0] !== '_') {
-                $values[$key] = reset($value);
-            }
-        }
-
-        return $values;
-    }
-
     public function getMeta(string $key, bool $single = true): mixed
     {
         if (isset($this->getMetas()[$key])) {
@@ -319,15 +301,8 @@ class PostModel extends OffbeatModel
         return static::find($this->getParentId());
     }
 
-    /** @deprecated */
-    public function getTopLevelParent(): ?static
-    {
-        $ancestors = $this->getAncestors();
-        return $ancestors[array_key_last($ancestors)];
-    }
-
-    /** @return PostsCollection Retrieves the children of this post. */
-    public function getChildren()
+    /** Retrieves the children of this post. */
+    public function getChildren(): PostsCollection
     {
         return static::query()->where(['post_parent' => $this->getId()])->get();
     }
@@ -513,6 +488,11 @@ class PostModel extends OffbeatModel
     public static function defaultQueryArgs(): array
     {
         return ['posts_per_page' => -1];
+    }
+
+    final public function getWpPost(): WP_Post
+    {
+        return $this->wpPost;
     }
 
     /** @return WpQueryBuilder<static> */

@@ -2,6 +2,7 @@
 namespace OffbeatWP\Content\Post;
 
 use InvalidArgumentException;
+use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
@@ -11,6 +12,8 @@ use WP_Query;
 /** @template TModel of PostModel */
 final class WpQueryBuilder
 {
+    use OffbeatQueryTrait;
+
     /** @var class-string<TModel> */
     private string $model;
     /** @var mixed[] */
@@ -146,18 +149,6 @@ final class WpQueryBuilder
         }
 
         return $result;
-    }
-
-    /** @deprecated Find a post based by it's <b>slug</b>. Consider using <b>findBySlug</b> instead. */
-    public function findByName(string $slug): ?PostModel
-    {
-        return $this->findBySlug($slug);
-    }
-
-    /** @deprecated Find a post based by it's <b>slug</b>, or throw an Exception if no post with the provided slug was found. Consider using <b>findBySlugOrFail</b> instead. */
-    public function findByNameOrFail(string $slug): PostModel
-    {
-        return $this->findBySlugOrFail($slug);
     }
 
     private function runQuery(): WP_Query|IWpQuerySubstitute

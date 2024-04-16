@@ -2,8 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-/** @final */
-class TaxonomyBuilder
+final class TaxonomyBuilder
 {
     private string $taxonomy;
     /** @var string[] */
@@ -19,7 +18,7 @@ class TaxonomyBuilder
      * @param string $singularLabel
      * @return TaxonomyBuilder
      */
-    public function make(string $taxonomy, $postTypes, $pluralName, $singularLabel = ''): self
+    public function make(string $taxonomy, string|array $postTypes, string $pluralName, string $singularLabel = ''): self
     {
         $this->taxonomy = $taxonomy;
         $this->postTypes = (array)$postTypes;
@@ -128,13 +127,6 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @deprecated */
-    public function notPubliclyQueryable(): self
-    {
-        $this->args['publicly_queryable'] = false;
-        return $this;
-    }
-
     /** Whether a taxonomy is intended for use publicly either via the admin interface or by front-end users */
     public function public(bool $public = true): self
     {
@@ -191,25 +183,6 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /**
-     * @deprecated Does not work with Gutenberg editor.<br>Tip: Advanced Custom Fields has a good way to do this with the save/load term options.
-     * @noinspection PhpDeprecationInspection
-     */
-    public function useCheckboxes(): self
-    {
-        $this->metaBox('post_categories_meta_box');
-
-        add_filter('post_edit_category_parent_dropdown_args', function ($args) {
-            if ($args['taxonomy'] === $this->taxonomy) {
-                $args['echo'] = false;
-            }
-
-            return $args;
-        });
-
-        return $this;
-    }
-
     public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): self
     {
         add_filter("manage_edit-{$this->taxonomy}_columns", static function ($columns) use ($metaName, $label) {
@@ -228,19 +201,6 @@ class TaxonomyBuilder
 
             return $content;
         }, 10, 3);
-
-        return $this;
-    }
-
-    /**
-     * Used to render a custom metabox
-     *
-     * @param callable $metaBoxCallback
-     * @deprecated Gutenberg does not respect this setting and the devs indicated that they don't care
-     */
-    public function metaBox($metaBoxCallback): self
-    {
-        $this->args['meta_box_cb'] = $metaBoxCallback;
 
         return $this;
     }
