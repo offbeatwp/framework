@@ -1,6 +1,6 @@
 <?php
 
-namespace Offbeatp\Support\Objects\ReadOnlyCollection;
+namespace OffbeatWP\Content\Common;
 
 use ArrayAccess;
 use ArrayIterator;
@@ -10,7 +10,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
-use OffbeatWP\Content\Common\OffbeatModel;
 
 abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {

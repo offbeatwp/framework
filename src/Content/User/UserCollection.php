@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
-use Offbeatp\Support\Objects\ReadOnlyCollection\ReadOnlyCollection;
+use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_User_Query;
 
 final class UserCollection extends ReadOnlyCollection
