@@ -12,7 +12,7 @@ class WpPostsIterator implements Iterator
      * @phpstan-var TModel[]
      */
     protected array $items;
-    private $originalPost;
+    private mixed $originalPost = null;
     private bool $globalPostWasChanged = false;
 
     public function __construct(array $items)
