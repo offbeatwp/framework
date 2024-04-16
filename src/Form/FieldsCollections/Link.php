@@ -4,10 +4,10 @@ namespace OffbeatWP\Form\FieldsCollections;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Form\Fields\Text;
 
-class Link extends AbstractFieldsCollection {
+final class Link extends AbstractFieldsCollection
+{
     public function __construct()
     {
-        parent::__construct();
         $this->addField(Text::make('link_label', __('Link label', 'offbeatwp')));
         $this->addField(Text::make('link_url', __('Link url', 'offbeatwp')));
 
