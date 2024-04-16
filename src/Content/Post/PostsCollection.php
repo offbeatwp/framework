@@ -20,9 +20,9 @@ use WP_Query;
  * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
  * @method PostModel offsetGet(int|string $key)
  */
-class PostsCollection extends ReadOnlyCollection
+final class PostsCollection extends ReadOnlyCollection
 {
-    protected IWpQuerySubstitute|WP_Query $query;
+    protected readonly IWpQuerySubstitute|WP_Query $query;
 
     public function __construct(IWpQuerySubstitute|WP_Query $query)
     {

@@ -509,16 +509,16 @@ class PostModel extends OffbeatModel
         return ($post instanceof static) ? $post : null;
     }
 
-    /** @return PostsCollection<static> */
-    public static function all(): PostsCollection
+    /** @return mixed[] */
+    public static function defaultQueryArgs(): array
     {
-        return static::query()->take(-1);
+        return ['posts_per_page' => -1];
     }
 
-    /** @return WpQueryBuilderModel<static> */
-    public static function query(): WpQueryBuilderModel
+    /** @return WpQueryBuilder<static> */
+    final public static function query(): WpQueryBuilder
     {
-        return new WpQueryBuilderModel(static::class);
+        return new WpQueryBuilder(static::class);
     }
 
     /** @pure */

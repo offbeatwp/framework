@@ -7,10 +7,9 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config {
     private App $app;
     /** @var mixed[]|null */
-    protected $config = null;
+    protected ?array $config = null;
 
-    /** @param App $app */
-    public function __construct($app) {
+    public function __construct(App $app) {
         $this->app = $app;
 
         if ($this->config === null) {
@@ -50,7 +49,7 @@ final class Config {
     {
         if (is_array($this->all())) {
             foreach ($this->all() as $configKey => $configSet) {
-                if (!ArrayHelper::isAssoc($configSet)) {
+                if (array_is_list($configSet)) {
                     continue;
                 }
 
@@ -84,35 +83,22 @@ final class Config {
         }
     }
 
-    /**
-     * @param string $key
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
-     */
+    /** @return object|mixed[]|float|int|bool|null|\OffbeatWP\Config\Config */
     public function get(string $key)
     {
-        $config = $this->config;
-        $return = ArrayHelper::getValueFromDottedKey($key, $config ?: []);
-
-        if (is_array($return)) {
-            $return = collect($return);
-        }
-
-        return $return;
+        return ArrayHelper::getValueFromDottedKey($key, $this->config ?: []);
     }
 
     /**
      * @param array-key $key
      * @param mixed $value
-     * @return mixed
      */
-    public function set($key, $value) {
+    public function set($key, $value): void
+    {
         $this->config[$key] = $value;
-
-        return $value;
     }
 
-    /** @return mixed[] */
-    public function all()
+    public function all(): array
     {
         return $this->config;
     }

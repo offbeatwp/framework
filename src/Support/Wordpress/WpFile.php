@@ -4,6 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use Exception;
 use OffbeatWP\Exceptions\WpErrorException;
+use RuntimeException;
 
 final class WpFile
 {
@@ -126,13 +127,13 @@ final class WpFile
         $fileName = pathinfo($url, PATHINFO_FILENAME);
 
         if (!$fileName) {
-            throw new Exception('Could not get remote filename.');
+            throw new RuntimeException('Could not get remote filename.');
         }
 
-        $headers = get_headers($url, 1);
+        $headers = get_headers($url, true);
 
         if (!$headers || !isset($headers['Content-Type'])) {
-            throw new Exception('Could not determine content type of file.');
+            throw new RuntimeException('Could not determine content type of file.');
         }
 
         if (in_array($headers['Content-Type'], $allowedContentTypes, true)) {

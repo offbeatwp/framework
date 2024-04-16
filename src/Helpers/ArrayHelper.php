@@ -10,7 +10,7 @@ class ArrayHelper {
      */
     public static function isAssoc($input): bool
     {
-        return is_array($input) && $input && array_keys($input) !== range(0, count($input) - 1);
+        return is_array($input) && $input && !array_is_list($input);
     }
 
     /**

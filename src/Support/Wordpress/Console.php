@@ -4,13 +4,10 @@ namespace OffbeatWP\Support\Wordpress;
 use OffbeatWP\Console\AbstractCommand;
 use WP_CLI;
 
-class Console
+final class Console
 {
-    /**
-     * @param AbstractCommand|class-string<AbstractCommand> $commandClass
-     * @return void
-     */
-    public function register($commandClass): void
+    /** @param AbstractCommand|class-string<AbstractCommand> $commandClass */
+    public function register(AbstractCommand|string $commandClass): void
     {
         if (!self::isConsole()) {
             return;

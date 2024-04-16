@@ -10,33 +10,20 @@ abstract class AbstractCommand {
     /**
      * @param string[] $args
      * @param string[] $argsNamed
-     * @return mixed
      */
-    abstract public function execute(array $args, array $argsNamed);
+    abstract public function execute(array $args, array $argsNamed): mixed;
 
-    /**
-     * @param Exception|string|Throwable|WP_Error $message
-     * @return void
-     */
-    public function error($message)
+    final public function error(Exception|string|Throwable|WP_Error $message): void
     {
         WP_CLI::error($message);
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    public function log(string $message)
+    final public function log(string $message): void
     {
         WP_CLI::log($message);
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    public function success(string $message)
+    final public function success(string $message): void
     {
         WP_CLI::success($message);
     }

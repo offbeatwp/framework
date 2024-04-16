@@ -2,7 +2,6 @@
 namespace OffbeatWP\Content\Post;
 
 use InvalidArgumentException;
-use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
@@ -10,13 +9,21 @@ use WP_Post;
 use WP_Query;
 
 /** @template TModel of PostModel */
-class WpQueryBuilder
+final class WpQueryBuilder
 {
-    use OffbeatQueryTrait;
-
+    /** @var class-string<TModel> */
+    private string $model;
     /** @var mixed[] */
-    protected array $queryVars = ['limit' => -1];
+    private array $queryVars;
     private string $wpQueryClass = WP_Query::class;
+
+    /** @param class-string<PostModel> $modelClass Class of the model that is used */
+    public function __construct(string $modelClass)
+    {
+        $this->model = $modelClass;
+        $this->queryVars = $this->model::defaultQueryArgs();
+        $this->queryVars['post_type'] = (array)$modelClass::POST_TYPE;
+    }
 
     /**
      * @deprecated
@@ -25,15 +32,6 @@ class WpQueryBuilder
     public function all(): PostsCollection
     {
         return $this->take(-1);
-    }
-
-    /**
-     * @param WP_Post $post
-     * @return PostModel|null
-     */
-    public function postToModel($post)
-    {
-        return offbeat('post')->convertWpPostToModel($post);
     }
 
     /**
@@ -162,14 +160,11 @@ class WpQueryBuilder
         return $this->findBySlugOrFail($slug);
     }
 
-    /** @return WP_Query|IWpQuerySubstitute */
-    private function runQuery()
+    private function runQuery(): WP_Query|IWpQuerySubstitute
     {
         do_action('offbeatwp/posts/query/before_get', $this);
         $query = new $this->wpQueryClass($this->queryVars);
         do_action('offbeatwp/posts/query/after_get', $this);
-
-        self::$lastRequest = $query->request;
 
         return $query;
     }
@@ -195,10 +190,7 @@ class WpQueryBuilder
         return $this->runQuery()->posts;
     }
 
-    /**
-     * @param bool $forceDelete
-     * @return WP_Post[] Array of all deleted post data.
-     */
+    /** @return WP_Post[] Array of all deleted post data. */
     public function deleteAll(bool $forceDelete): array
     {
         $deletedPosts = [];
@@ -237,7 +229,6 @@ class WpQueryBuilder
 
     /**
      * Note: Wordpress Pagination automatically handles offset, so using this method might interfere with that
-     * @param int $numberOfItems
      * @return $this
      */
     public function offset(int $numberOfItems): self
@@ -250,7 +241,6 @@ class WpQueryBuilder
      * Search keyword(s).<br>
      * Prepending a term with a hyphen will exclude posts matching that term.<br>
      * EG: 'pillow -sofa' will return posts containing 'pillow' but not 'sofa'.
-     * @param string $searchString
      * @return $this
      */
     public function search(string $searchString): self
@@ -270,59 +260,40 @@ class WpQueryBuilder
     }
 
     /**
-     * @param string|string[] $postTypes
+     * @param string[] $postTypes
      * @return $this
      */
-    public function wherePostType($postTypes): self
+    public function wherePostType(array $postTypes): self
     {
-        if (!isset($this->queryVars['post_type'])) {
-            $this->queryVars['post_type'] = [];
+        if (!is_array($this->model::POST_TYPE) && $this->model::POST_TYPE !== 'any') {
+            throw new UnexpectedValueException("You cannot narrow the post type of " . class_basename($this->model));
         }
 
-        if (is_string($postTypes)) {
-            $postTypes = [$postTypes];
-        }
-
-        $this->queryVars['post_type'] = array_merge($this->queryVars['post_type'], $postTypes);
-
+        $this->queryVars['post_type'] = $postTypes;
         return $this;
     }
 
     /**
      * @param string $taxonomy The taxonomy.
      * @param string|int|string[]|int[] $terms Taxonomy term(s).
-     * @param "term_id"|"name"|"slug"|"term_taxonomy_id"|null $field Select taxonomy term by. Possible values are 'term_id', 'name', 'slug' or 'term_taxonomy_id'. Default value is 'term_id'.
-     * @param "IN"|"NOT IN"|"AND"|"EXISTS"|"NOT EXISTS"|null $operator Operator to test. Possible values are 'IN', 'NOT IN', 'AND', 'EXISTS' and 'NOT EXISTS'. Default value is 'IN'.
+     * @param "term_id"|"name"|"slug"|"term_taxonomy_id" $field Select taxonomy term by. Possible values are 'term_id', 'name', 'slug' or 'term_taxonomy_id'. Default value is 'term_id'.
+     * @param "IN"|"NOT IN"|"AND"|"EXISTS"|"NOT EXISTS" $operator Operator to test. Possible values are 'IN', 'NOT IN', 'AND', 'EXISTS' and 'NOT EXISTS'. Default value is 'IN'.
      * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
      * @return $this
      */
-    public function whereTerm(string $taxonomy, $terms = [], ?string $field = 'slug', ?string $operator = 'IN', bool $includeChildren = true): self
+    public function whereTerm(string $taxonomy, array $terms = [], string $field = 'slug', string $operator = 'IN', bool $includeChildren = true): self
     {
-        if ($field === null) {
-            $field = 'slug';
-        }
-
-        if (!is_array($terms)) {
-            $terms = [$terms];
-        }
-
-        if ($operator === null) {
-            $operator = 'IN';
-        }
-
         if (!isset($this->queryVars['tax_query'])) {
             $this->queryVars['tax_query'] = [];
         }
 
-        $parameters = [
+        $this->queryVars['tax_query'][] = [
             'taxonomy' => $taxonomy,
             'field' => $field,
             'terms' => $terms,
             'operator' => $operator,
             'include_children' => $includeChildren,
         ];
-
-        $this->queryVars['tax_query'][] = $parameters;
 
         return $this;
     }
@@ -459,15 +430,15 @@ class WpQueryBuilder
     /**
      * @param PostModel|PostsCollection<PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
-     * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
+     * @param bool $inverted Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    public function hasRelationshipWith($postModelOrCollection, $relationKey, $direction = null): self
+    public function hasRelationshipWith(PostModel|PostsCollection $postModelOrCollection, string $relationKey, bool $inverted = false): self
     {
         $this->queryVars['relationships'] = [
             'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
             'key' => $relationKey,
-            'direction' => $direction,
+            'direction' => $inverted ? 'reverse' : null,
         ];
 
         return $this;
