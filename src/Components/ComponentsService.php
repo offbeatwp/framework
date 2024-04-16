@@ -1,41 +1,39 @@
 <?php
 namespace OffbeatWP\Components;
 
+use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Services\AbstractService;
 use ReflectionClass;
 
-class ComponentsService extends AbstractService
+final class ComponentsService extends AbstractService
 {
-    public $bindings = [
+    public array $bindings = [
         'components' => ComponentRepository::class
     ];
 
-    public function register()
+    public function register(SiteSettings $settings): void
     {
-        offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents']);
+        add_action('offbeat.ready', [$this, 'registerComponents']);
     }
 
-    public function registerComponents()
+    public function registerComponents(): void
     {
-        $components = $this->registrableComponents();
-
-        if ($components) {
-            foreach ($components as $class) {
-                container('components')->register($class::getSlug(), $class);
-            }
+        foreach ($this->registrableComponents() as $class) {
+            container('components')->register($class::getSlug(), $class);
         }
     }
 
-    public function registrableComponents()
+    public function registrableComponents(): array
     {
         $activeComponents = [];
         $componentsDirectory = $this->getComponentsDirectory();
 
         if (!is_dir($componentsDirectory)) {
-            return null;
+            return [];
         }
 
-        if ($handle = opendir($componentsDirectory)) {
+        $handle = opendir($componentsDirectory);
+        if ($handle) {
             while (($entry = readdir($handle)) !== false) {
                 if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) {
                     continue;
@@ -63,7 +61,7 @@ class ComponentsService extends AbstractService
         return array_unique($components);
     }
 
-    public function getComponentsDirectory()
+    public function getComponentsDirectory(): string
     {
         return $this->app->componentsPath();
     }
