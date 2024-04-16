@@ -18,7 +18,7 @@ use WP_Query;
  */
 final class PostsCollection extends ReadOnlyCollection
 {
-    protected readonly IWpQuerySubstitute|WP_Query $query;
+    private readonly IWpQuerySubstitute|WP_Query $query;
 
     public function __construct(IWpQuerySubstitute|WP_Query $query)
     {
@@ -46,10 +46,7 @@ final class PostsCollection extends ReadOnlyCollection
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 
-    /**
-     * @return WpPostsIterator
-     * @phpstan-return WpPostsIterator<TModel>|TModel[]
-     */
+    /** @phpstan-return WpPostsIterator<TModel>|TModel[] */
     public function getIterator(): WpPostsIterator
     {
         return new WpPostsIterator($this->items);

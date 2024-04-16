@@ -16,11 +16,6 @@ trait BaseModelTrait
         return static::query()->first();
     }
 
-    public static function findOrNew(?int $id): ?static
-    {
-        return static::find($id) ?: static::create();
-    }
-
     final public static function findOrFail(int $id): ?static
     {
         $item = static::find($id);
@@ -39,12 +34,6 @@ trait BaseModelTrait
         }
 
         return static::query()->whereIdIn([$id])->exists();
-    }
-
-    /** @return static[] */
-    final public static function allAsArray(): array
-    {
-        return static::all()->toArray();
     }
 
     final public static function create(): static

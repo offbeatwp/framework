@@ -3,6 +3,7 @@
 namespace Offbeatp\Support\Objects\ReadOnlyCollection;
 
 use ArrayAccess;
+use ArrayIterator;
 use BadMethodCallException;
 use Countable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -72,7 +73,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
     }
 
     /** Count the number of items in the collection. */
-    public function count(): int
+    final public function count(): int
     {
         return count($this->items);
     }
@@ -81,7 +82,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * Determine if an item exists at an offset.
      * @param int $offset
      */
-    public function offsetExists(mixed $offset): bool
+    final public function offsetExists(mixed $offset): bool
     {
         return isset($this->items[$offset]);
     }
@@ -99,7 +100,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * @throws BadMethodCallException
      * @return never-return
      */
-    public function offsetSet(mixed $offset, mixed $value): void
+    final public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new BadMethodCallException('Cannot set value on ReadOnlyCollection.');
     }
@@ -108,12 +109,12 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * @throws BadMethodCallException
      * @return never-return
      */
-    public function offsetUnset(mixed $offset): void
+    final public function offsetUnset(mixed $offset): void
     {
         throw new BadMethodCallException('Cannot unset value on ReadOnlyCollection.');
     }
 
-    public function toArray(): array
+    final public function toArray(): array
     {
         return $this->items;
     }
@@ -146,5 +147,10 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
 
             return $value;
         }, $this->all());
+    }
+
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->items);
     }
 }
