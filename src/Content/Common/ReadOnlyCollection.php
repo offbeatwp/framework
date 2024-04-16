@@ -90,7 +90,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * Get an item at a given offset.
      * @param int $offset
      */
-    public function offsetGet(mixed $offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->items[$offset] ?? null;
     }
