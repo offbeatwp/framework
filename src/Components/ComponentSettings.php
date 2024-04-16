@@ -4,7 +4,6 @@ namespace OffbeatWP\Components;
 
 use DateTimeZone;
 use Exception;
-use Illuminate\Support\Collection;
 use JsonSerializable;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 
@@ -157,8 +156,6 @@ final class ComponentSettings implements JsonSerializable
                 $str = urlencode($item);
             } elseif (is_array($item)) {
                 $str = implode(',', array_map('urlencode', $item));
-            } elseif ($item instanceof Collection) {
-                $str = $item->map('urlencode')->implode(',');
             } elseif ($item !== null) {
                 trigger_error($key . ' could not be parsed to URL param!', E_USER_WARNING);
             }

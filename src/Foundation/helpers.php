@@ -19,15 +19,11 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('config')) {
-    /**
-     * @param string|null $config
-     * @param null $default Unused
-     * @return mixed
-     */
-    function config(?string $config = null, $default = null) {
+    function config(?string $config = null): mixed
+    {
         /** @var App $app */
         $app = offbeat();
-        return $app->config($config, $default);
+        return $app->config($config);
     }
 }
 
@@ -37,7 +33,8 @@ if (!function_exists('container')) {
      * @param class-string<T>|string|null $definition
      * @return T
      */
-    function container(?string $definition = null) {
+    function container(?string $definition = null): mixed
+    {
         /** @var App $app */
         $app = offbeat();
 

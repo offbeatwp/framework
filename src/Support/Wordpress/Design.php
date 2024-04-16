@@ -2,15 +2,10 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
-use Illuminate\Support\Collection;
 
-class Design
+final class Design
 {
-    /**
-     * @param string $id
-     * @return mixed
-     */
-    public function getRowThemeClasses(string $id)
+    public function getRowThemeClasses(string $id): mixed
     {
         $rowThemes  = config('design.row_themes');
         if (!$rowThemes) {
@@ -20,9 +15,7 @@ class Design
         $subId = null;
 
         if (str_contains($id, '**')) {
-            $ids   = explode('**', $id);
-            $id    = $ids[0];
-            $subId = $ids[1];
+            [$id, $subId] = explode('**', $id);
         }
 
         if (!isset($rowThemes[$id])) {
@@ -38,13 +31,7 @@ class Design
         return $classes;
     }
 
-    /**
-     * @param string $id
-     * @param string $context
-     * @param string $prefix
-     * @return string|null
-     */
-    public function getMarginClasses($id, $context, $prefix)
+    public function getMarginClasses(string $id, string $context, string $prefix): ?string
     {
         $margins = config('design.margins');
         if (!$margins) {
@@ -60,13 +47,7 @@ class Design
         return str_replace('{{prefix}}', $prefix, $margins[$id]['classes']);
     }
 
-    /**
-     * @param string $id
-     * @param string $context
-     * @param string $prefix
-     * @return string|null
-     */
-    public function getPaddingClasses($id, $context, $prefix)
+    public function getPaddingClasses(string $id, string $context, string $prefix): ?string
     {
         $paddings = config('design.paddings');
         if (!$paddings) {
@@ -82,63 +63,49 @@ class Design
         return str_replace('{{prefix}}', $prefix, $paddings[$id]['classes']);
     }
 
-    /** @return mixed[] */
-    public function getRowThemesList()
+    /** @return string[]|string[][] */
+    public function getRowThemesList(): array
     {
         $rowThemes = config('design.row_themes');
-        if(!$rowThemes instanceof Collection) {
-            return [];
-        }
 
         $rowThemesList = [];
 
-        $rowThemes->each(function ($item, $key) use (&$rowThemesList) {
-            if (!empty($item['sub_themes'])) {
-                $subThemes       = collect($item['sub_themes']);
-                $rowSubThemeList = [];
+        foreach ($rowThemes as $key => $item) {
+            $label = (string)$item['label'];
 
-                $subThemes->each(function ($subItem, $subKey) use ($item, $key, &$rowSubThemeList) {
-                    $rowSubThemeList["{$key}**{$subKey}"] = "{$item['label']} + {$subItem['label']}";
-                });
-
-                $rowThemeList = array_merge(
-                    [$key => $item['label']],
-                    $rowSubThemeList
-                );
-
-                $rowThemesList[$item['label']] = $rowThemeList;
+            if (empty($item['sub_themes'])) {
+                $rowThemesList[$key] = $label;
             } else {
-                $rowThemesList[$key] = $item['label'];
+                /** @var array<string, string> $rowSubThemeList */
+                $rowSubThemeList = [];
+                foreach ($item['sub_themes'] as $subKey => $subItem) {
+                    $rowSubThemeList["{$key}**{$subKey}"] = "{$label} + {$subItem['label']}";
+                }
+
+                $rowSubThemeList[$key] = $label;
+                $rowThemesList[$label] = $rowSubThemeList;
             }
-        });
+        }
 
         return $rowThemesList;
     }
 
-    /**
-     * @param string $context
-     * @return mixed[]
-     */
-    public function getMarginsList($context = null)
+    public function getMarginsList(mixed $context = null): array
     {
         $margins = config('design.margins');
 
         if ($margins instanceof Closure) {
-            $margins = collect($margins($context));
+            $margins = $margins($context);
         }
 
-        if ($margins instanceof Collection) {
-            return $margins->map(fn($item) => $item['label'])->toArray();
+        if (is_array($margins)) {
+            return array_map(fn($item) => $item['label'], $margins);
         }
 
         return [];
     }
 
-    /**
-     * @param string $context
-     * @return mixed[]
-     */
-    public function getPaddingsList($context = null)
+    public function getPaddingsList(mixed $context = null): array
     {
         $paddings = config('design.paddings');
 
@@ -146,8 +113,8 @@ class Design
             $paddings = collect($paddings($context));
         }
 
-        if ($paddings instanceof Collection) {
-            return $paddings->map(fn($item) => $item['label'])->toArray();
+        if (is_array($paddings)) {
+            return array_map(fn($item) => $item['label'], $paddings);
         }
 
         return [];

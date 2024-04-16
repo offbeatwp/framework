@@ -1,7 +1,6 @@
 <?php
 namespace OffbeatWP\Services\HttpStatusPages;
 
-use Illuminate\Support\Collection;
 use OffbeatWP\Form\Fields\Post;
 use OffbeatWP\Form\Form;
 
@@ -20,13 +19,13 @@ class HttpStatusPagesSettings
         $form = new Form();
 
         $httpStatusPagesCodes = config('app.http_status_pages_codes');
-        if (!$httpStatusPagesCodes instanceof Collection) {
-            $httpStatusPagesCodes = collect('404');
+        if (!is_iterable($httpStatusPagesCodes)) {
+            $httpStatusPagesCodes = [404];
         }
 
-        $httpStatusPagesCodes->each(function($statusCode) use ($form) {
+        foreach ($httpStatusPagesCodes as $statusCode) {
             $form->addField(Post::make('http-status-page-' . $statusCode, 'Page for ' . $statusCode)->fromPostTypes(['page']));
-        });
+        }
 
         return $form;
     }
