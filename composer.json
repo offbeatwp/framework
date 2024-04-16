@@ -17,9 +17,9 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "php-stubs/wp-cli-stubs": "^v2.9.0",
-    "phpstan/phpstan": "1.10.39",
-    "szepeviktor/phpstan-wordpress": "^v1.3.2",
+    "php-stubs/wp-cli-stubs": "^v2.3.0",
+    "phpstan/phpstan": "1.10.66",
+    "szepeviktor/phpstan-wordpress": "^v1.3.4",
     "phpstan/phpstan-deprecation-rules": "^1.1.4"
   }
 }
