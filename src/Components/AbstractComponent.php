@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Components;
 
-use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
@@ -24,7 +23,6 @@ abstract class AbstractComponent
     protected ?ContextInterface $context;
     private ?int $renderId = null;
     protected bool $assetsEnqueued = false;
-
 
     public static function form(): ?Form
     {
@@ -56,9 +54,9 @@ abstract class AbstractComponent
         $this->view = $view;
         $this->context = $context;
 
-        if (!offbeat()->container->has('componentCache')) {
+        if (!offbeat()->container->has(ComponentArrayCache::class)) {
             // Just a simple lightweight cache if none is set
-            offbeat()->container->set('componentCache', new ArrayCache());
+            offbeat()->container->set(ComponentArrayCache::class, new ComponentArrayCache());
         }
     }
 
@@ -76,7 +74,7 @@ abstract class AbstractComponent
         return $this->traitView($name, $data);
     }
 
-    public function setRenderId(int $renderId): void
+    final public function setRenderId(int $renderId): void
     {
         $this->renderId = $renderId;
     }
@@ -101,7 +99,7 @@ abstract class AbstractComponent
         $cachedId = $this->getCacheId($settings);
         $object = $this->getCachedComponent($cachedId);
 
-        if ($object !== false) {
+        if ($object !== null) {
             return $object;
         }
 
@@ -152,31 +150,26 @@ abstract class AbstractComponent
      * @param object|mixed[] $settings
      * @return string
      */
-    protected function getCacheId($settings): string
+    final protected function getCacheId(object|array $settings): string
     {
         $prefix = $this->context ? $this->context->getCacheId() : '';
         return md5($prefix . $this::class . json_encode($settings));
     }
 
-    /**
-     * @param string $id
-     * @return false|string
-     */
-    protected function getCachedComponent($id)
+    final protected function getCachedComponent(string $id): ?string
     {
         return $this->getCachedObject($id);
     }
 
-    /** @return false|string */
-    protected function getCachedObject(string $id)
+    final protected function getCachedObject(string $id): ?string
     {
-        return container('componentCache')->fetch($id);
+        return container(ComponentArrayCache::class)->fetch($id);
     }
 
-    protected function setCachedObject(string $id, ?string $object): ?string
+    final protected function setCachedObject(string $id, ?string $object): ?string
     {
         if ($object) {
-            container('componentCache')->save($id, $object, 60);
+            container(ComponentArrayCache::class)->save($id, $object, 60);
         }
 
         return $object;

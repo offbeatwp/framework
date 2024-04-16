@@ -5,7 +5,6 @@
   "type": "library",
   "require": {
     "php-di/php-di": "^7.0.6",
-    "doctrine/cache": "v1.13.*",
     "ext-dom": "*"
   },
   "autoload": {
