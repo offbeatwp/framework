@@ -4,7 +4,7 @@ namespace OffbeatWP\Content\Post;
 
 use ArrayAccess;
 use Illuminate\Support\Enumerable;
-use Offbeatp\Support\Objects\ReadOnlyCollection;
+use OffbeatWP\Support\Objects\ReadOnlyCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;

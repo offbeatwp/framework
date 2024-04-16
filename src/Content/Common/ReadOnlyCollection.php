@@ -1,6 +1,6 @@
 <?php
 
-namespace Offbeatp\Support\Objects;
+namespace OffbeatWP\Support\Objects;
 
 use ArrayAccess;
 use ArrayIterator;
