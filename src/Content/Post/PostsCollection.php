@@ -15,10 +15,6 @@ use WP_Query;
  *
  * @implements ArrayAccess<array-key, TModel>
  * @implements Enumerable<array-key, TModel>
- *
- * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
- * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
- * @method PostModel offsetGet(int|string $key)
  */
 final class PostsCollection extends ReadOnlyCollection
 {
@@ -51,7 +47,7 @@ final class PostsCollection extends ReadOnlyCollection
     }
 
     /**
-     * @return WpPostsIterator|PostModel[]
+     * @return WpPostsIterator
      * @phpstan-return WpPostsIterator<TModel>|TModel[]
      */
     public function getIterator(): WpPostsIterator
@@ -131,8 +127,7 @@ final class PostsCollection extends ReadOnlyCollection
         return $links;
     }
 
-    /** @return IWpQuerySubstitute|WP_Query|null */
-    public function getQuery()
+    public function getQuery(): IWpQuerySubstitute|WP_Query
     {
         return $this->query;
     }
@@ -157,15 +152,23 @@ final class PostsCollection extends ReadOnlyCollection
     }
 
     /**
-     * Deletes <b>all</b> the posts in this collection from the database.
-     * @param bool $force
+     * @param int $offset
+     * @phpstan-return TModel|null
      */
-    public function deleteAll(bool $force)
+    public function offsetGet(mixed $offset): ?PostModel
     {
-        foreach ($this->all() as $model) {
-            $model->delete($force);
-        }
+        return parent::offsetGet($offset);
+    }
 
-        $this->items = [];
+    /** Get the first item from the collection. */
+    public function first(): ?PostModel
+    {
+        return parent::first();
+    }
+
+    /** Get the last item from the collection. */
+    public function last(): ?PostModel
+    {
+        return parent::last();
     }
 }

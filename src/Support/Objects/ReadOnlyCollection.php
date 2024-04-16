@@ -3,42 +3,35 @@
 namespace Offbeatp\Support\Objects\ReadOnlyCollection;
 
 use ArrayAccess;
-use ArrayIterator;
 use BadMethodCallException;
 use Countable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
+use OffbeatWP\Content\Common\OffbeatModel;
 
 abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
-    protected array $items = [];
+    protected readonly array $items;
 
+    /** @param array<int, OffbeatModel> $items */
     public function __construct(array $items = [])
     {
         $this->items = $items;
     }
 
     /** Get all of the items in the collection as an array. */
-    public function all(): array
+    final public function all(): array
     {
         return $this->items;
     }
 
-    /** Get an item from the collection by key. */
-    public function get(int $offset): mixed
-    {
-        return $this->items[$offset] ?? null;
-    }
-
     /**
      * Determine if an item exists in the collection by key.
-     *
      * @param int|int[] $offset
-     * @return bool
      */
-    public function has(int|array $offset): bool
+    final public function has(int|array $offset): bool
     {
         $offsets = is_array($offset) ? $offset : func_get_args();
 
@@ -52,7 +45,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
     }
 
     /** Determine if the collection is empty or not. */
-    public function isEmpty(): bool
+    final public function isEmpty(): bool
     {
         return !$this->items;
     }
@@ -61,19 +54,19 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * Get the keys of the collection items.
      * @return int[]
      */
-    public function keys(): array
+    final public function keys(): array
     {
         return array_keys($this->items);
     }
 
     /** Get the first item from the collection. */
-    public function first(): mixed
+    public function first(): ?OffbeatModel
     {
         return $this->items[0] ?? null;
     }
 
     /** Get the last item from the collection. */
-    public function last(): mixed
+    public function last(): ?OffbeatModel
     {
         return $this->items[count($this->items) - 1] ?? null;
     }
@@ -97,9 +90,9 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * Get an item at a given offset.
      * @param int $offset
      */
-    public function offsetGet(mixed $offset): mixed
+    public function offsetGet(mixed $offset): ?OffbeatModel
     {
-        return $this->items[$offset];
+        return $this->items[$offset] ?? null;
     }
 
     /**
@@ -108,7 +101,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        throw new BadMethodCallException('Cannot modify readonly Collection.');
+        throw new BadMethodCallException('Cannot set value on ReadOnlyCollection.');
     }
 
     /**
@@ -117,7 +110,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      */
     public function offsetUnset(mixed $offset): void
     {
-        throw new BadMethodCallException('Cannot modify readonly Collection.');
+        throw new BadMethodCallException('Cannot unset value on ReadOnlyCollection.');
     }
 
     public function toArray(): array
@@ -136,7 +129,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
         return json_encode($this->jsonSerialize(), $options);
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
         return array_map(function ($value) {
             if ($value instanceof JsonSerializable) {
