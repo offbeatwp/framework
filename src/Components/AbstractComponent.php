@@ -18,21 +18,15 @@ abstract class AbstractComponent
         ViewableTrait::view as protected traitView;
     }
 
-    /** @var View */
-    public $view;
-    /** @var Form|null */
-    public $form = null;
-    /** @var ContextInterface|null */
-    protected $context;
     /** @var string[] */
     private $cssClasses = [];
-    /** @var int|null */
-    private $renderId = null;
-    /** @var bool */
-    protected $assetsEnqueued = false;
+    public ?Form $form = null;
+    protected ?ContextInterface $context;
+    private ?int $renderId = null;
+    protected bool $assetsEnqueued = false;
 
-    /** @return Form|null */
-    public static function form()
+
+    public static function form(): ?Form
     {
         return null;
     }
@@ -55,7 +49,7 @@ abstract class AbstractComponent
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
      * @return array{name?: string, description?: string, slug: string, category?: string, icon?: string, supports?: string[], block?: mixed[], variations?: mixed[], form?: Form}
      */
-    abstract static function settings();
+    abstract public static function settings(): array;
 
     public function __construct(View $view, ?ContextInterface $context = null)
     {
@@ -68,12 +62,8 @@ abstract class AbstractComponent
         }
     }
 
-    /**
-     * @param string $name
-     * @param mixed[] $data
-     * @return string|null
-     */
-    public function view(string $name, array $data = [])
+    /** @param mixed[] $data */
+    public function view(string $name, array $data = []): ?string
     {
         if (!isset($data['cssClasses'])) {
             $data['cssClasses'] = $this->getCssClassesAsString();
@@ -115,9 +105,7 @@ abstract class AbstractComponent
             return $object;
         }
 
-        if ($this->context) {
-            $this->context->initContext();
-        }
+        $this->context?->initContext();
 
         $this->attachExtraCssClassesFromSettings($settings, self::getSlug());
 
@@ -128,7 +116,7 @@ abstract class AbstractComponent
         $filteredSettings = apply_filters('offbeat.component.settings', $settings, $this);
         $defaultValues = self::getForm()->getDefaultValues();
 
-        static::_enqueueAssets();
+        $this->enqueueAssets();
 
         $output = container()->call([$this, 'render'], [
             'settings' => new ComponentSettings($filteredSettings, $defaultValues)
@@ -167,7 +155,7 @@ abstract class AbstractComponent
     protected function getCacheId($settings): string
     {
         $prefix = $this->context ? $this->context->getCacheId() : '';
-        return md5($prefix . get_class($this) . json_encode($settings));
+        return md5($prefix . $this::class . json_encode($settings));
     }
 
     /**
@@ -270,12 +258,8 @@ abstract class AbstractComponent
         return apply_filters('offbeatwp/component/form', $form, static::class);
     }
 
-    /** @return void */
-    public static function enqueueAssets() {}
-
-    /** @return void */
-    public static function _enqueueAssets()
+    public function enqueueAssets(): void
     {
-        static::enqueueAssets();
+
     }
 }

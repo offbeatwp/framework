@@ -1,8 +1,8 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -11,7 +11,7 @@ use WP_Error;
 use WP_Taxonomy;
 use WP_Term;
 
-class TermModel implements TermModelInterface
+class TermModel extends OffbeatModel
 {
     use BaseModelTrait;
     use GetMetaTrait;
@@ -20,30 +20,12 @@ class TermModel implements TermModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
-    public $wpTerm;
-    public $id;
-    protected array $metaInput = [];
-    protected array $metaToUnset = [];
+    protected WP_Term $wpTerm;
+    protected ?array $meta = null;
 
-    /**
-     * @final
-     * @param WP_Term|int|null $term
-     */
-    public function __construct($term)
+    protected function __construct(WP_Term $term)
     {
-        if ($term instanceof WP_Term) {
-            $this->wpTerm = $term;
-        } elseif (is_numeric($term)) {
-            $retrievedTerm = get_term($term, static::TAXONOMY);
-            if ($retrievedTerm instanceof WP_Term) {
-                $this->wpTerm = $retrievedTerm;
-            }
-        }
-
-        if (isset($this->wpTerm)) {
-            $this->id = $this->wpTerm->term_id;
-        }
-
+        $this->wpTerm = $term;
         $this->init();
     }
 
@@ -100,9 +82,9 @@ class TermModel implements TermModelInterface
         $this->wpTerm = clone $this->wpTerm;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
-        return $this->wpTerm->term_id ?? null;
+        return $this->wpTerm->term_id;
     }
 
     public function getName(): string
@@ -120,8 +102,7 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->description;
     }
 
-    /** @return string|WP_Error */
-    public function getLink()
+    public function getLink(): string|WP_Error
     {
         return get_term_link($this->wpTerm);
     }
@@ -136,8 +117,7 @@ class TermModel implements TermModelInterface
         return ($this->wpTerm->parent) ?: null;
     }
 
-    /** @return static|null */
-    public function getParent()
+    public function getParent(): ?static
     {
         if ($this->getParentId()) {
             return static::query()->findById($this->getParentId()) ?: null;
@@ -146,28 +126,30 @@ class TermModel implements TermModelInterface
         return null;
     }
 
-    /** @return Collection<int> */
-    public function getAncestorIds(): Collection
+    /** @return int[] */
+    public function getAncestorIds(): array
     {
-        return collect(get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy'));
+        return get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy');
     }
 
-    public function getEditLink(): string
+    public function getEditLink(): ?string
     {
-        return get_edit_term_link($this->wpTerm ?: $this->getId()) ?: '';
+        return get_edit_term_link($this->wpTerm);
     }
 
-    public function getAncestors(): Collection
+    /** @return static[] */
+    public function getAncestors(): array
     {
-        return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::query()->findById($ancestorId);
-        });
+        return array_map(fn(int $ancestorId) => static::find($ancestorId), $this->getAncestorIds());
     }
 
-    /** @return mixed[]|false|string */
-    public function getMetas()
+    public function getMetas(): array
     {
-        return get_term_meta($this->getId());
+        if ($this->meta === null) {
+            $this->meta = get_term_meta($this->getId()) ?: [];
+        }
+
+        return $this->meta;
     }
 
     /**
@@ -178,17 +160,6 @@ class TermModel implements TermModelInterface
     public function getMeta(string $key, bool $single = true)
     {
         return get_term_meta($this->getId(), $key, $single);
-    }
-
-    /**
-     * <b>This will immideatly update the term meta, even is save() is not called!</b>
-     * @param string $key
-     * @param mixed $value
-     * @return bool|int|WP_Error
-     */
-    public function setMeta(string $key, $value)
-    {
-        return update_term_meta($this->getId(), $key, $value);
     }
 
     /**
@@ -255,7 +226,7 @@ class TermModel implements TermModelInterface
             return false;
         }
 
-        return static::query()->excludeEmpty(false)->include([$id])->exists();
+        return static::query()->include([$id])->exists();
     }
 
     /** @return TermQueryBuilder<static> */

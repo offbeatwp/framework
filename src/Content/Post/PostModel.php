@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
@@ -10,19 +11,18 @@ use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
-use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use WP_Post;
 use WP_Post_Type;
 
-class PostModel implements PostModelInterface
+class PostModel extends OffbeatModel
 {
-    public readonly WP_Post $wpPost;
-    protected ?array $metas = null;
-    /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
-    private array $data = [];
+    use BaseModelTrait;
+    use GetMetaTrait;
+
+    public const POST_TYPE = 'any';
 
     /**
      * @var string[]|null
@@ -33,12 +33,12 @@ class PostModel implements PostModelInterface
      * @see Relation
      */
     public ?array $relationKeyMethods = null;
+    protected readonly WP_Post $wpPost;
+    protected ?array $metas = null;
+    /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
+    protected array $data = [];
 
-    use BaseModelTrait;
-    use SetMetaTrait;
-    use GetMetaTrait;
-
-    public function __construct(WP_Post $wpPost)
+    protected function __construct(WP_Post $wpPost)
     {
         if ($wpPost->ID <= 0) {
             throw new OffbeatInvalidModelException('Could not construct ' . class_basename($this) . ' with invalid ID: ' . $wpPost->ID);
@@ -47,16 +47,11 @@ class PostModel implements PostModelInterface
         $this->wpPost = $wpPost;
     }
 
-    public function is(WP_Post $post): bool
-    {
-        return true;
-    }
-
     ///////////////
     /// Getters ///
     ///////////////
     /** @return positive-int */
-    public function getId(): int
+    final public function getId(): int
     {
         return $this->wpPost->ID;
     }
@@ -191,6 +186,7 @@ class PostModel implements PostModelInterface
         return (int)$this->wpPost->post_author;
     }
 
+    /** @return mixed[] */
     public function getMetas(): array
     {
         if ($this->metas === null) {
@@ -201,8 +197,9 @@ class PostModel implements PostModelInterface
     }
 
     /**
+     * @deprecated
      * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
-     * @return array An array of all values whose key is not prefixed with <i>_</i>
+     * @return mixed[] An array of all values whose key is not prefixed with <i>_</i>
      */
     public function getMetaValues(bool $ignoreLowDashPrefix = true): array
     {
@@ -283,7 +280,7 @@ class PostModel implements PostModelInterface
         return has_term($term, $taxonomy, $this->getId());
     }
 
-    public function hasFeaturedImage(): bool
+    public function hasThumbnail(): bool
     {
         return has_post_thumbnail($this->wpPost);
     }
@@ -322,16 +319,17 @@ class PostModel implements PostModelInterface
         return static::find($this->getParentId());
     }
 
-    public function getTopLevelParent(): ?PostModel
+    /** @deprecated */
+    public function getTopLevelParent(): ?static
     {
         $ancestors = $this->getAncestors();
-        return $ancestors->isNotEmpty() ? $ancestors->last() : null;
+        return $ancestors[array_key_last($ancestors)];
     }
 
     /** @return PostsCollection Retrieves the children of this post. */
     public function getChildren()
     {
-        return static::query()->where(['post_parent' => $this->getId()])->all();
+        return static::query()->where(['post_parent' => $this->getId()])->get();
     }
 
     /** @return int[] Retrieves the IDs of the ancestors of a post. */
@@ -407,7 +405,7 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    public function getPostObject(): ?WP_Post
+    public function getPostObject(): WP_Post
     {
         return $this->wpPost;
     }

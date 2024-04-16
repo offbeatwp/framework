@@ -4,9 +4,8 @@ namespace OffbeatWP\Config;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
-class Config {
-    /** @var App */
-    private $app;
+final class Config {
+    private App $app;
     /** @var mixed[]|null */
     protected $config = null;
 
@@ -65,10 +64,10 @@ class Config {
                     $explicitEnvConfigs = [];
 
                     foreach ($envConfigs as $envKey => $envConfig) {
-                        if (preg_match('/^!(.*)/', $envKey, $matches) && !in_array($currentEnvironment, explode('|', $matches[1]))) {
+                        if (preg_match('/^!(.*)/', $envKey, $matches) && !in_array($currentEnvironment, explode('|', $matches[1]), true)) {
                             $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
                         } elseif (!preg_match('/^!(.*)/', $envKey, $matches)) {
-                            if (in_array($currentEnvironment, explode('|', $envKey))) {
+                            if (in_array($currentEnvironment, explode('|', $envKey), true)) {
                                 $explicitEnvConfigs[] = $envConfig;
                             }
                         }
@@ -87,10 +86,9 @@ class Config {
 
     /**
      * @param string $key
-     * @param null $default Unused
      * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
      */
-    public function get(string $key, $default = null)
+    public function get(string $key)
     {
         $config = $this->config;
         $return = ArrayHelper::getValueFromDottedKey($key, $config ?: []);

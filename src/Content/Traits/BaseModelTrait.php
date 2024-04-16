@@ -6,26 +6,22 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 
 trait BaseModelTrait
 {
-    /** @return static|null */
-    public static function find(?int $id)
+    public static function find(?int $id): ?static
     {
         return ($id) ? static::query()->findById($id) : null;
     }
 
-    /** @return static|null */
-    public static function first()
+    public static function first(): ?static
     {
         return static::query()->first();
     }
 
-    /** @return static */
-    public static function findOrNew(?int $id)
+    public static function findOrNew(?int $id): ?static
     {
         return static::find($id) ?: static::create();
     }
 
-    /** @return static */
-    public static function findOrFail(int $id)
+    final public static function findOrFail(int $id): ?static
     {
         $item = static::find($id);
         if (!$item) {
@@ -35,11 +31,7 @@ trait BaseModelTrait
         return $item;
     }
 
-    /**
-     * Checks if a model with the given ID exists.
-     * @param int|null $id
-     * @return bool
-     */
+    /** Checks if a model with the given ID exists. */
     public static function exists(?int $id): bool
     {
         if ($id <= 0) {
@@ -50,14 +42,13 @@ trait BaseModelTrait
     }
 
     /** @return static[] */
-    public static function allAsArray()
+    final public static function allAsArray(): array
     {
         return static::all()->toArray();
     }
 
-    /** @return static */
-    public static function create()
+    final public static function create(): static
     {
-        return new static(null);
+        return new static();
     }
 }

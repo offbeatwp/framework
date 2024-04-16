@@ -32,8 +32,7 @@ final class App
     private array $services = [];
     public ?Container $container = null;
     protected ?Config $config = null;
-    /** @var CallbackRoute|PathRoute|false|null */
-    protected $route;
+    protected CallbackRoute|null|false|PathRoute $route;
 
     public static function singleton(): App
     {

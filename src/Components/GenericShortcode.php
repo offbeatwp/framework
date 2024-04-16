@@ -5,19 +5,15 @@ class GenericShortcode
 {
     use ComponentInterfaceTrait;
 
-    public $componentClass = null;
+    public string $componentClass;
 
-    public function __construct($componentClass)
+    public function __construct(string $componentClass)
     {
         $this->componentClass = $componentClass;
     }
 
-    public function renderShortcode($atts, $content = '')
+    public function renderShortcode(array $atts, string $content = ''): string
     {
-        if (!is_array($atts)) {
-            $atts = [];
-        }
-
         if ($content) {
             $atts['content'] = $content;
         }

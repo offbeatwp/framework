@@ -55,7 +55,7 @@ class WpPostsIterator implements Iterator
     public function valid(): bool
     {
         if (key($this->items) !== null) {
-            $item = current($this->items)->wpPost;
+            $item = current($this->items)->getPostObject();
 
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {

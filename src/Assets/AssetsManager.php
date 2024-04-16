@@ -19,7 +19,7 @@ class AssetsManager
         $path = $this->getEntryFromAssetsManifest($filename);
 
         if ($path !== false) {
-            if (strpos($path, 'http') === 0) {
+            if (str_starts_with($path, 'http')) {
                 return $path;
             }
 
@@ -129,7 +129,7 @@ class AssetsManager
 
     public function getAssetsUrl(string $path = ''): string
     {
-        if (strpos($path, 'http') === 0) {
+        if (str_starts_with($path, 'http')) {
             return $path;
         }
 

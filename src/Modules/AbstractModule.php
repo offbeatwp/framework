@@ -2,19 +2,14 @@
 
 namespace OffbeatWP\Modules;
 
-use Illuminate\Support\Collection;
-use OffbeatWP\Commands\Commands;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Services\AbstractService;
 use ReflectionClass;
+use RuntimeException;
 
 abstract class AbstractModule extends AbstractService
 {
-    /** @var App */
-    public $app;
-
-    /** @param App $app */
-    public function __construct($app)
+    public function __construct(App $app)
     {
         $this->app = $app;
         parent::__construct($app);
@@ -36,18 +31,16 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
-    /** @return string */
-    public function getName()
+    public function getName(): string
     {
         return (new ReflectionClass($this))->getShortName();
     }
 
-    /** @return void */
-    public function registerComponents()
+    public function registerComponents(): void
     {
         $directory = $this->getDirectory() . '/Components';
 
-        $registerableComponents = $this->getRegisterableObjects($directory, true);
+        $registerableComponents = $this->getRegisterableObjects($directory);
 
         if ($registerableComponents) {
             foreach ($registerableComponents as $class) {
@@ -56,15 +49,13 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
-    /** @return false|string */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         $classInfo = new ReflectionClass($this);
         return substr($classInfo->name, 0, strrpos($classInfo->name, "\\"));
     }
 
-    /** @return string */
-    public function getDirectory()
+    public function getDirectory(): string
     {
         $classInfo = new ReflectionClass($this);
         $classPath = $classInfo->getFileName();
@@ -72,33 +63,24 @@ abstract class AbstractModule extends AbstractService
         return dirname($classPath);
     }
 
-    /** @return string */
-    public function getUrl()
+    public function getUrl(): string
     {
-        $path = str_replace(get_stylesheet_directory(), '', $this->getDirectory());
-
-        return get_stylesheet_directory_uri() . $path;
+        return get_stylesheet_directory_uri() . str_replace(get_stylesheet_directory(), '', $this->getDirectory());
     }
 
-    /**
-     * @param string $path
-     * @param bool $findDirs This parameter is unused and does not do unless your module overrides this method.
-     * @return Collection|null
-     */
-    public function getRegisterableObjects($path, $findDirs = false)
+    private function getRegisterableObjects(string $path): array
     {
         if (!is_dir($path)) {
-            return null;
+            return throw new RuntimeException($path . ' is not a directory.');
         }
 
-        $paths = glob($path . '/*', GLOB_ONLYDIR);
-        $objects = collect($paths)->filter(function($path) {
-            return !preg_match('/^_/', basename($path));
-        })->mapWithKeys(function ($path) {
-            $baseName = basename($path);
-            
-            return [$baseName => $this->getNamespace() . "\Components\\" . $baseName . "\\" . $baseName];
-        });
+        $paths = array_filter(glob($path . '/*', GLOB_ONLYDIR), fn($path) => !str_starts_with(basename($path), '_'));
+        $objects = [];
+
+        foreach ($paths as $p) {
+            $baseName = basename($p);
+            $objects[$baseName] = $this->getNamespace() . "\Components\\" . $baseName . "\\" . $baseName;
+        }
 
         return $objects;
     }

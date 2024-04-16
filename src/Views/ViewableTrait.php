@@ -8,9 +8,9 @@ use ReflectionClass;
 trait ViewableTrait
 {
     /** @var string[] */
-    public static $loaded = [];
+    public static array $loaded = [];
     /** @var mixed|View */
-    public $view;
+    public View $view;
 
     /**
      * @param string $name

@@ -5,12 +5,14 @@ namespace OffbeatWP\Components;
 use DateTimeZone;
 use Exception;
 use Illuminate\Support\Collection;
+use JsonSerializable;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 
 #[\AllowDynamicProperties]
-final class ComponentSettings
+final class ComponentSettings implements JsonSerializable
 {
     private array $defaultValues;
+    private array $attributes = [];
 
     /**
      * @param object $args
@@ -32,7 +34,7 @@ final class ComponentSettings
      */
     public function set(string $index, $value): void
     {
-        $this->$index = $value;
+        $this->attributes[$index] = $value;
     }
 
     /**
@@ -42,8 +44,8 @@ final class ComponentSettings
      */
     public function get(string $index)
     {
-        if (property_exists($this, $index)) {
-            return $this->$index;
+        if (array_key_exists($index, $this->attributes)) {
+            return $this->attributes[$index];
         }
 
         return $this->defaultValues[$index] ?? null;
@@ -188,5 +190,20 @@ final class ComponentSettings
         }
 
         return $new;
+    }
+
+    public function jsonSerialize(): array
+    {
+        $output = [];
+
+        foreach ($this->attributes as $key => $v) {
+            $value = $this->get($key);
+
+            if ($value !== null) {
+                $output[$key] = $value;
+            }
+        }
+
+        return $output;
     }
 }

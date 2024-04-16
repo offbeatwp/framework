@@ -5,9 +5,8 @@ use InvalidArgumentException;
 
 class ArrayHelper {
     /**
-     * @pure
-     * @param mixed $input
-     * @return bool
+     * @deprecated Use array_is_list instead
+     * @see array_is_list
      */
     public static function isAssoc($input): bool
     {

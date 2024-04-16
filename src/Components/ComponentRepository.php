@@ -36,35 +36,11 @@ class ComponentRepository
             'class' => $componentClass,
         ]);
 
-        if ($componentClass::supports('widget')) {
-            $this->registerWidget($name, $componentClass);
-        }
-
         if ($componentClass::supports('shortcode')) {
             $this->registerShortcode($name, $componentClass);
         }
 
         $this->components[$name] = $componentClass;
-    }
-
-    /**
-     * @deprecated
-     * @param string $name
-     * @param class-string<AbstractComponent> $componentClass
-     */
-    public function registerWidget($name, $componentClass)
-    {
-        $componentSettings = $componentClass::settings();
-
-        $widgetSettings = [
-            'id_base' => $componentSettings['slug'],
-            'name' => $componentSettings['name'],
-            'component_name' => $name,
-        ];
-
-        $widget = new GenericWidget($widgetSettings, $componentClass);
-
-        register_widget($widget);
     }
 
     /**

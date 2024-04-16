@@ -12,13 +12,11 @@ use OffbeatWP\Form\FieldsContainers\Tab;
 
 class Form extends Collection
 {
-    private string $fieldPrefix = '';
     /** @var string[] */
     private array $fieldKeys = [];
-    /** @var Form|AbstractFieldsContainer */
-    private Collection $activeItem;
-    /** @var Form|AbstractFieldsContainer|null */
-    public ?Collection $parent = null;
+    private string $fieldPrefix = '';
+    private AbstractFieldsContainer|Form $activeItem;
+    public AbstractFieldsContainer|Form|null $parent = null;
 
     public function __construct()
     {
@@ -40,8 +38,8 @@ class Form extends Collection
         }
 
         // If item is of the same type as the active item move back to parent
-        $itemClass = get_class($item);
-        if ($itemClass === get_class($this->getActiveItem()) && $itemClass !== self::class) {
+        $itemClass = $item::class;
+        if ($itemClass === $this->getActiveItem()::class && $itemClass !== self::class) {
             $this->closeField();
         }
 
@@ -207,7 +205,7 @@ class Form extends Collection
     public function addComponentForm($component, $fieldPrefix) {
         $activeItem = $this->getActiveItem();
 
-        $componentForm = $component::getForm();
+        $componentForm = $component->getForm();
         if (!is_object($componentForm)) {
             return;
         }
@@ -215,7 +213,7 @@ class Form extends Collection
         $form = clone $componentForm;
         $form->setFieldPrefix($fieldPrefix);
 
-        $this->addSection($fieldPrefix, $component::getName())->add($form);
+        $this->addSection($fieldPrefix, $component->getName())->add($form);
 
         $this->setActiveItem($activeItem);
     }
