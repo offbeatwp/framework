@@ -10,13 +10,12 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
-use OffbeatWP\Content\Common\OffbeatModel;
 
 abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
     protected readonly array $items;
 
-    /** @param array<int, OffbeatModel> $items */
+    /** @param array<int, mixed> $items */
     public function __construct(array $items = [])
     {
         $this->items = $items;
@@ -61,13 +60,13 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
     }
 
     /** Get the first item from the collection. */
-    public function first(): ?OffbeatModel
+    public function first()
     {
         return $this->items[0] ?? null;
     }
 
     /** Get the last item from the collection. */
-    public function last(): ?OffbeatModel
+    public function last()
     {
         return $this->items[count($this->items) - 1] ?? null;
     }
@@ -91,7 +90,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
      * Get an item at a given offset.
      * @param int $offset
      */
-    public function offsetGet(mixed $offset): ?OffbeatModel
+    public function offsetGet(mixed $offset)
     {
         return $this->items[$offset] ?? null;
     }
