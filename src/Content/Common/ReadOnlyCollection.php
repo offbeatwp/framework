@@ -1,6 +1,6 @@
 <?php
 
-namespace Offbeatp\Support\Objects\ReadOnlyCollection;
+namespace Offbeatp\Support\Objects;
 
 use ArrayAccess;
 use ArrayIterator;
