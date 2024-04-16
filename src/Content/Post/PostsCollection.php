@@ -3,7 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayAccess;
-use OffbeatWP\Support\Common\ReadOnlyCollection;
+use OffbeatWP\Content\Common\ReadOnlyCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;
