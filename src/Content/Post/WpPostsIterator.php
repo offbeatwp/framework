@@ -5,18 +5,13 @@ namespace OffbeatWP\Content\Post;
 use ArrayIterator;
 
 /** @template TModel of PostModel */
-class WpPostsIterator extends ArrayIterator
+final class WpPostsIterator extends ArrayIterator
 {
-    /** @var \WP_Post|null */
-    private $originalPost;
+    private mixed $originalPost;
     private bool $globalPostWasChanged = false;
 
-    /**
-     * @return PostModel|false
-     * @phpstan-return TModel|false
-     */
-    #[\ReturnTypeWillChange]
-    public function current()
+    /** @phpstan-return TModel */
+    public function current(): PostModel
     {
         return parent::current();
     }
@@ -28,7 +23,7 @@ class WpPostsIterator extends ArrayIterator
     public function valid(): bool
     {
         if ($this->key() !== null) {
-            $item = $this->current()->wpPost;
+            $post = $this->current()?->getWpPost();
 
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {
@@ -36,8 +31,8 @@ class WpPostsIterator extends ArrayIterator
                 $this->originalPost = $GLOBALS['post'] ?? null;
             }
 
-            $GLOBALS['post'] = $item;
-            setup_postdata($item);
+            $GLOBALS['post'] = $post;
+            setup_postdata($post);
 
             return true;
         }

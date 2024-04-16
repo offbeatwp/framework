@@ -3,9 +3,8 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayAccess;
-use DOMDocument;
 use Illuminate\Support\Enumerable;
-use OffbeatWP\Content\Common\OffbeatModelCollection;
+use Offbeatp\Support\Objects\ReadOnlyCollection\ReadOnlyCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;
@@ -16,40 +15,18 @@ use WP_Query;
  *
  * @implements ArrayAccess<array-key, TModel>
  * @implements Enumerable<array-key, TModel>
- *
- * @method PostModel|mixed pull(int|string $key, mixed $default = null)
- * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
- * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
- * @method PostModel|static|null pop(int $count = 1)
- * @method PostModel|static|null shift(int $count = 1)
- * @method PostModel|null reduce(callable $callback, mixed $initial = null)
- * @method PostModel offsetGet(int|string $key)
  */
-class PostsCollection extends OffbeatModelCollection
+final class PostsCollection extends ReadOnlyCollection
 {
-    /** @var IWpQuerySubstitute|WP_Query|null  */
-    protected $query = null;
+    private readonly IWpQuerySubstitute|WP_Query $query;
 
-    /** @param int[]|WP_Post[]|WP_Query $items */
-    public function __construct($items = [])
+    public function __construct(IWpQuerySubstitute|WP_Query $query)
     {
         $postItems = [];
+        $this->query = $query;
 
-        if ($items instanceof WP_Query || $items instanceof IWpQuerySubstitute) {
-            $this->query = $items;
-
-            if (!empty($items->posts)) {
-                foreach ($items->posts as $post) {
-                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
-                }
-            }
-        } elseif (is_iterable($items)) {
-            foreach ($items as $key => $item) {
-                $postModel = $this->createValidPostModel($item);
-                if ($postModel) {
-                    $postItems[$key] = $postModel;
-                }
-            }
+        foreach ($query->posts as $post) {
+            $postItems[] = offbeat('post')->convertWpPostToModel($post);
         }
 
         parent::__construct($postItems);
@@ -69,10 +46,7 @@ class PostsCollection extends OffbeatModelCollection
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 
-    /**
-     * @return WpPostsIterator|PostModel[]
-     * @phpstan-return WpPostsIterator<TModel>|TModel[]
-     */
+    /** @phpstan-return WpPostsIterator<TModel>|TModel[] */
     public function getIterator(): WpPostsIterator
     {
         return new WpPostsIterator($this->items);
@@ -124,21 +98,6 @@ class PostsCollection extends OffbeatModelCollection
 
             $links = $this->getPaginatedLinks($args);
 
-            if (isset($args['attribs'])) {
-                $attributes = (array)$args['attribs'];
-                $dom = new DOMDocument();
-                $dom->loadHTML($links);
-
-                $nodes = $dom->getElementsByTagName(empty($args['use_buttons']) ? 'a' : 'button');
-                foreach ($nodes as $node) {
-                    foreach ($attributes as $key => $value) {
-                        $node->setAttribute($key, $value);
-                    }
-                }
-
-                $links = $dom->saveHTML();
-            }
-
             if ($links) {
                 return _navigation_markup($links, $args['class'], $args['screen_reader_text'], $args['aria_label']);
             }
@@ -147,45 +106,25 @@ class PostsCollection extends OffbeatModelCollection
         return '';
     }
 
-    /** @param array{base?: string, use_buttons?: bool, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[], always_show_buttons?: bool} $args */
+    /** @param array{base?: string, use_buttons?: bool, format?: string, total?: int, current?: int, aria_current?: string, show_all?: bool, end_size?: int, mid_size?: int, prev_next?: bool, prev_text?: string, next_text?: string, type?: string, add_args?: mixed[], add_fragment?: string, before_page_number?: string, after_page_number?: string, attribs?: string[]} $args */
     private function getPaginatedLinks(array $args): string
     {
         $GLOBALS['wp_query'] = $this->query;
         $args['type'] = 'plain';
-        $args['format'] = $args['format'] ?? 'page/%#%/';
+        $args['format'] = 'page/%#%/';
         $links = paginate_links($args);
         wp_reset_query();
 
-        if (!empty($args['always_show_buttons'])) {
-            if (!strpos($links, 'class="prev')) {
-                $links = '<span class="prev page-numbers placeholder-prevnext disabled">' . $args['prev_text'] . '</span>' . $links;
-            }
-
-            if (!strpos($links, 'class="next')) {
-                $links .= '<span class="next page-numbers placeholder-prevnext disabled">'. $args['next_text'] .'</span>';
-            }
-        }
-
         if (!empty($args['use_buttons'])) {
-            // Replace A tag with BUTTON tag
             $links = str_replace(['<a', '</a>'], ['<button', '</button>'], $links);
-
-            // Replace href with data-page
-            $chunks = explode('>', $links);
-            for ($i = 0, $l = count($chunks); $i < $l; $i++) {
-                if (strpos($chunks[$i], '<button') !== false) {
-                    $chunks[$i] = preg_replace_callback('/href=".*(\/page\/(\d*+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $chunks[$i]);
-                }
-            }
-
-            $links = implode('>', $chunks);
+            // TODO: Page is translateable
+            $links = preg_replace_callback('/href=".*(\/page\/(\d+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $links);
         }
 
         return $links;
     }
 
-    /** @return IWpQuerySubstitute|WP_Query|null */
-    public function getQuery()
+    public function getQuery(): IWpQuerySubstitute|WP_Query
     {
         return $this->query;
     }
@@ -210,24 +149,23 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /**
-     * @return PostModel[]|TModel[]
-     * @phpstan-return TModel[]
+     * @param int $offset
+     * @phpstan-return TModel|null
      */
-    public function toArray()
+    public function offsetGet(mixed $offset): ?PostModel
     {
-        return $this->toCollection()->toArray();
+        return parent::offsetGet($offset);
     }
 
-    /**
-     * Deletes <b>all</b> the posts in this collection from the database.
-     * @param bool $force
-     */
-    public function deleteAll(bool $force)
+    /** Get the first item from the collection. */
+    public function first(): ?PostModel
     {
-        $this->each(function (PostModel $model) use ($force) {
-            $model->delete($force);
-        });
+        return parent::first();
+    }
 
-        $this->items = [];
+    /** Get the last item from the collection. */
+    public function last(): ?PostModel
+    {
+        return parent::last();
     }
 }
