@@ -10,7 +10,7 @@ trait ViewableTrait
     /** @var string[] */
     public static array $loaded = [];
     /** @var mixed|View */
-    public View $view;
+    public mixed $view;
 
     /**
      * @param string $name

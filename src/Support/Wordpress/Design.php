@@ -110,7 +110,7 @@ final class Design
         $paddings = config('design.paddings');
 
         if ($paddings instanceof Closure) {
-            $paddings = collect($paddings($context));
+            $paddings = $paddings($context);
         }
 
         if (is_array($paddings)) {

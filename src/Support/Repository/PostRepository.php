@@ -15,6 +15,6 @@ final class PostRepository
             }
         }
 
-        return new PostModel($post);
+        return PostModel::from($post);
     }
 }
