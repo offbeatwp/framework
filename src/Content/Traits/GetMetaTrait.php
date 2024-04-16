@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Traits;
 use Carbon\Carbon;
 use DateTimeZone;
 use Exception;
-use Illuminate\Support\Collection;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -187,12 +186,6 @@ trait GetMetaTrait
         }
 
         return $models;
-    }
-
-    /** Retrieve a meta value as a collection.<br> */
-    public function getMetaCollection(string $key): Collection
-    {
-        return collect($this->getMetaArray($key));
     }
 
     /**

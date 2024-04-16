@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
-use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -31,10 +30,6 @@ class UserModel extends OffbeatModel
 
     use BaseModelTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
 
     /** @param WP_User|null $user */
     final private function __construct($user = null)
@@ -44,7 +39,6 @@ class UserModel extends OffbeatModel
             $this->metas = [];
         }
 
-        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         if (is_int($user)) {
             trigger_error('Constructed UserModel with integer. Use UserModel::find instead.', E_USER_DEPRECATED);
             $userData = get_userdata($user);

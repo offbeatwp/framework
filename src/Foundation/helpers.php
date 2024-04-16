@@ -6,11 +6,11 @@ use OffbeatWP\Foundation\App;
 if (!function_exists('offbeat')) {
     /**
      * @template T
-     * @param class-string<T>|string|null $service
+     * @param class-string<T>|string $service
      * @return T
      */
-    function offbeat(?string $service = null) {
-        if ($service !== null) {
+    function offbeat(string $service = '') {
+        if ($service) {
             return container($service);
         }
 
@@ -19,7 +19,7 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('config')) {
-    function config(?string $config = null): mixed
+    function config(string $config = ''): mixed
     {
         /** @var App $app */
         $app = offbeat();
@@ -30,15 +30,15 @@ if (!function_exists('config')) {
 if (!function_exists('container')) {
     /**
      * @template T
-     * @param class-string<T>|string|null $definition
+     * @param class-string<T>|string $definition
      * @return T
      */
-    function container(?string $definition = null): mixed
+    function container(string $definition = ''): mixed
     {
         /** @var App $app */
         $app = offbeat();
 
-        if ($definition !== null) {
+        if ($definition) {
             return $app->container->get($definition);
         }
 
@@ -47,21 +47,15 @@ if (!function_exists('container')) {
 }
 
 if (!function_exists('assetUrl')) {
-    /**
-     * @param string $file
-     * @return false|string
-     */
-    function assetUrl(string $file) {
+    function assetUrl(string $file): ?string
+    {
         return offbeat('assets')->getUrl($file);
     }
 }
 
 if (!function_exists('setting')) {
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    function setting($key) {
+    function setting(string $key): mixed
+    {
         return offbeat(SiteSettings::class)->get($key);
     }
 }

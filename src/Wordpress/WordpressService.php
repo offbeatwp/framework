@@ -1,7 +1,6 @@
 <?php
 namespace OffbeatWP\Wordpress;
 
-use Illuminate\Support\Collection;
 use OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder;
 use OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder;
 use OffbeatWP\Support\Wordpress\AdminPage;
@@ -15,10 +14,10 @@ use OffbeatWP\Support\Wordpress\PostType;
 use OffbeatWP\Support\Wordpress\RestApi;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 
-class WordpressService
+final class WordpressService
 {
     /** @var class-string[] */
-    public $bindings = [
+    public array $bindings = [
         'admin-page'        => AdminPage::class,
         'ajax'              => Ajax::class,
         'rest-api'          => RestApi::class,
@@ -45,18 +44,16 @@ class WordpressService
         add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10 ,2);
     }
 
-    /** @return void */
-    public function registerMenus()
+    public function registerMenus(): void
     {
         $menus = config('menus');
 
-        if ($menus instanceof Collection && $menus->isNotEmpty()) {
-            register_nav_menus($menus->toArray());
+        if (is_array($menus)) {
+            register_nav_menus($menus);
         }
     }
 
-    /** @return void */
-    public function registerImageSizes()
+    public function registerImageSizes(): void
     {
         $images = config('images');
 
@@ -67,8 +64,7 @@ class WordpressService
         }
     }
 
-    /** @return void */
-    public function registerSidebars()
+    public function registerSidebars(): void
     {
         $sidebars = config('sidebars');
 
@@ -80,8 +76,7 @@ class WordpressService
         }
     }
 
-    /** @return void */
-    public function registerPageTemplate()
+    public function registerPageTemplate(): void
     {
         add_filter('theme_page_templates', function ($postTemplates) {
             $pageTemplates = offbeat('page')->getPageTemplates();
@@ -91,15 +86,11 @@ class WordpressService
             }
 
             return $postTemplates;
-        }, 10, 1);
+        });
     }
 
-    /**
-     * @param string $template
-     * @param mixed[] $data
-     * @return string
-     */
-    public function applyPageTemplate($template, $data)
+    /** @param mixed[] $data */
+    public function applyPageTemplate(string $template, array $data): string
     {
         if (is_singular('page') && empty($data['ignore_page_template'])) {
             $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);

@@ -4,11 +4,7 @@
   "license": "MIT",
   "type": "library",
   "require": {
-    "php-di/php-di": "^6.4.0",
-    "illuminate/collections": "^v8.83.27",
-    "illuminate/macroable": "^v8.83.27",
-    "symfony/routing": "^v5.4.26",
-    "symfony/http-foundation": "^v5.4.32",
+    "php-di/php-di": "^7.0.6",
     "doctrine/cache": "v1.13.*",
     "ext-dom": "*"
   },

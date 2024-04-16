@@ -2,15 +2,12 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Illuminate\Support\Traits\Macroable;
 use WP_Post;
 use WP_Query;
 
 /** @final */
 class PostTypeBuilder
 {
-    use Macroable;
-
     /** @var null|class-string<PostModel> */
     private ?string $modelClass = null;
     private ?string $postType = null;

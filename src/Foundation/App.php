@@ -161,17 +161,13 @@ final class App
         return get_template_directory() . '/components';
     }
 
-    /**
-     * @param string|null $config
-     * @return mixed
-     */
-    public function config(?string $config)
+    public function config(string $config): mixed
     {
-        if ($this->config === null) {
+        if (!$this->config === null) {
             $this->config = new Config($this);
         }
 
-        if ($config !== null) {
+        if ($config) {
             return $this->config->get($config);
         }
 
