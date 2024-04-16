@@ -2,8 +2,6 @@
 
 namespace OffbeatWP\Content\Traits;
 
-use Carbon\Carbon;
-use DateTimeZone;
 use Exception;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
@@ -126,7 +124,7 @@ trait GetMetaTrait
 
         try {
             return WpDateTime::make($datetime);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -146,7 +144,7 @@ trait GetMetaTrait
 
         try {
             return WpDateTimeImmutable::make($datetime);
-        } catch (Exception $e)  {
+        } catch (Exception)  {
             return null;
         }
     }
@@ -186,27 +184,5 @@ trait GetMetaTrait
         }
 
         return $models;
-    }
-
-    /**
-     * @deprecated Does not respect WordPress site settings. The getMetaDateTime method does.
-     * Retrieve a meta value as a Carbon Date.<br>
-     * If the meta value cannot be parsed to a date then <i>null</i> is returned.
-     */
-    public function getMetaCarbon(string $key, ?DateTimeZone $tz = null): ?Carbon
-    {
-        trigger_error('The getMetaCarbon method is deprecated.', E_USER_DEPRECATED);
-        $value = $this->getMeta($key);
-
-        if ($value) {
-            try {
-                return Carbon::parse($value, $tz);
-            } catch (Exception $e) {
-                trigger_error($e->getMessage(), E_USER_WARNING);
-                return null;
-            }
-        }
-
-        return null;
     }
 }

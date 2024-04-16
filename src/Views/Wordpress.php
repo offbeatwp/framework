@@ -357,22 +357,6 @@ class Wordpress
         return implode(', ', $srcSet);
     }
 
-    /**
-     * @deprecated
-     * @param string|null $format
-     * @param string|int|bool $date
-     * @param bool $strtotime
-     * @return string
-     */
-    public function formatDate(?string $format, $date, bool $strtotime = false): string
-    {
-        if ($strtotime) {
-            $date = strtotime($date);
-        }
-
-        return date_i18n($format, $date);
-    }
-
     /** After looping through a separate query, this function restores the $post global to the current post in the main query. */
     public function resetPostdata(): void
     {

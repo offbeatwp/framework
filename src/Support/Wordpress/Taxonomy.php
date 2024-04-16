@@ -4,10 +4,9 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
-use Symfony\Component\HttpFoundation\Request;
 use WP_Term;
 
-class Taxonomy
+final class Taxonomy
 {
     public const DEFAULT_TERM_MODEL = TermModel::class;
 
@@ -40,17 +39,6 @@ class Taxonomy
     public function getModelByTaxonomy(string $taxonomy): string
     {
         return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
-    }
-
-    /**
-     * @deprecated Use convertWpTermToModel instead
-     * @see convertWpTermToModel
-     * @return TermModel
-     */
-    public function convertWpPostToModel(WP_Term $term)
-    {
-        trigger_error('Deprecated convertWpPostToModel called in Taxonomy. Use convertWpTermToModel instead.', E_USER_DEPRECATED);
-        return $this->convertWpTermToModel($term);
     }
 
     /** @return TermModel */
@@ -89,26 +77,5 @@ class Taxonomy
         }
 
         return null;
-    }
-
-    public function maybeRedirect(TermModel $term): void
-    {
-        $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
-        $requestUri = $request->getPathInfo();
-
-        $url = $term->getLink();
-        $url = str_replace(home_url(), '', $url);
-        $urlPath = parse_url($url, PHP_URL_PATH);
-
-        if (rtrim($requestUri, '/') !== rtrim($urlPath, '/')) {
-            $url = $term->getLink();
-
-            if (!empty($_GET)) {
-                $url .= '?' . http_build_query($_GET);
-            }
-
-            offbeat('http')->redirect($url);
-            exit;
-        }
     }
 }

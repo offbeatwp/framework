@@ -99,16 +99,6 @@ final class ComponentSettings implements JsonSerializable
     }
 
     /**
-     * @deprecated Returns the value of the component setting and casts it to an array.
-     * @param string $index
-     * @return string[]
-     */
-    public function getArray(string $index): array
-    {
-        return (array)$this->get($index);
-    }
-
-    /**
      * Returns the value of the component setting.<br>
      * Timezone will default to <b>UTC</b> if not specified in the second parameter.<br>
      * Will return <i>NULL</i> if DateTime is not valid.
@@ -122,7 +112,7 @@ final class ComponentSettings implements JsonSerializable
 
         try {
             return WpDateTime::make($datetime, $timeZone ?? new DateTimeZone('UTC'));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }

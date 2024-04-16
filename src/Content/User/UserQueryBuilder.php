@@ -10,7 +10,7 @@ use UnexpectedValueException;
 use WP_User_Query;
 
 /** @template TModel of UserModel */
-class UserQueryBuilder
+final class UserQueryBuilder
 {
     use OffbeatQueryTrait;
 
@@ -22,7 +22,7 @@ class UserQueryBuilder
     protected bool $skipOnInclude = false;
 
     /** @param class-string<TModel> $modelClass */
-    final public function __construct(string $modelClass)
+    public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
 
@@ -34,20 +34,7 @@ class UserQueryBuilder
     /** @return UserCollection<TModel> */
     public function get(): UserCollection
     {
-        do_action('offbeatwp/users/query/before_get', $this);
-
-        $results = $this->getQueryResults();
-
-        return apply_filters('offbeatwp/users/query/get', new UserCollection($results, $this->modelClass), $this);
-    }
-
-    /**
-     * @deprecated Use the <b>get</b> method instead.
-     * @return UserCollection<TModel>
-     */
-    public function all(): UserCollection
-    {
-        return $this->take(0);
+        return new UserCollection(new WP_User_Query($this->queryVars));
     }
 
     /** @return UserCollection<TModel> */
@@ -57,13 +44,13 @@ class UserQueryBuilder
         return $this->get();
     }
 
-    /** @return TModel|null */
+    /** @phpstan-return TModel|null */
     public function first(): ?UserModel
     {
         return $this->take(1)->first();
     }
 
-    /** @return TModel|null */
+    /** @phpstan-return TModel|null */
     public function findById(?int $id): ?UserModel
     {
         if ($id <= 0) {
@@ -74,7 +61,7 @@ class UserQueryBuilder
         return $this->first();
     }
 
-    /** @return TModel */
+    /** @phpstan-return TModel */
     public function findByIdOrFail(int $id): UserModel
     {
         $result = $this->findById($id);
@@ -108,7 +95,7 @@ class UserQueryBuilder
      * @param string $email Must be a valid email address, or an exception will be thrown.
      * @return $this
      */
-    public function whereEmail(string $email): self
+    public function whereEmail(string $email)
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException('whereEmail only accepts valid email strings.');
@@ -232,8 +219,6 @@ class UserQueryBuilder
         }
 
         $query = new WP_User_Query($this->queryVars);
-
-        self::$lastRequest = $query->request;
 
         return $query->get_results();
     }

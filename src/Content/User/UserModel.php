@@ -279,12 +279,6 @@ class UserModel extends OffbeatModel
         return get_edit_user_link($this->getId());
     }
 
-    /** @deprecated */
-    public function getPhoneNumber(): string
-    {
-        return $this->getMetaString('phone_number');
-    }
-
     /** Date the user registered as a Carbon Date. */
     final public function getRegistrationDate(): ?WpDateTimeImmutable
     {
@@ -338,18 +332,7 @@ class UserModel extends OffbeatModel
         return $roles;
     }
 
-    /**
-     * @deprecated
-     * @return string[]
-     */
-    public function getTranslatedRoles(string $domain = 'default'): array
-    {
-        return array_map(static function (string $role) use ($domain) {
-            return translate_user_role($role, $domain);
-        }, $this->wpUser->roles);
-    }
-
-    /** @return string|null Returns the role at the specified index, or null if no role exists at the specified index. */
+    /**  Returns the role at the specified index, or null if no role exists at the specified index. */
     public function getRole(int $index): ?string
     {
         return $this->getRoles()[$index] ?? null;
@@ -365,18 +348,10 @@ class UserModel extends OffbeatModel
         return in_array($role, $this->getRoles(), true);
     }
 
-    /** @deprecated */
-    public function getTranslatedRole(int $index, string $domain = 'default'): ?string
-    {
-        $role = $this->getRole($index);
-        return ($role !== null) ? translate_user_role($role, $domain) : null;
-    }
-
     ///////////////////////
     /// Special Methods ///
     ///////////////////////
-    /** @return int|WP_Error */
-    private function _save()
+    private function _save(): int|WP_Error
     {
         if (!$this->isInitialised) {
             throw new BadMethodCallException('The save method cannot be called before a model is initialised.');

@@ -61,17 +61,6 @@ abstract class AbstractEnqueueBuilder
         return $this;
     }
 
-    /**
-     * @deprecated
-     * Add version number for cache busting equal to current installed WordPress version<br>
-     * This makes it easy for attackers to find the WordPress version and thus should not be used
-     */
-    final public function setVersionToWpVersion(): self
-    {
-        $this->version = false;
-        return $this;
-    }
-
     abstract public function register(string $handle): ?AbstractAssetHolder;
 
     abstract public function enqueue(string $handle): void;

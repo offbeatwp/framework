@@ -273,13 +273,6 @@ class PostTypeBuilder
         return $this;
     }
 
-    /** @deprecated */
-    public function notPubliclyQueryable(): self
-    {
-        $this->postTypeArgs['publicly_queryable'] = false;
-        return $this;
-    }
-
     /** Whether a post type is intended for use publicly either via the admin interface or by front-end users. */
     public function public(bool $public = true): self
     {

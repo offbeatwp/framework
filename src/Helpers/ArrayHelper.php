@@ -3,16 +3,7 @@ namespace OffbeatWP\Helpers;
 
 use InvalidArgumentException;
 
-class ArrayHelper {
-    /**
-     * @deprecated Use array_is_list instead
-     * @see array_is_list
-     */
-    public static function isAssoc($input): bool
-    {
-        return is_array($input) && $input && !array_is_list($input);
-    }
-
+final class ArrayHelper {
     /**
      * @pure
      * @param mixed[] $array1
@@ -29,7 +20,7 @@ class ArrayHelper {
                 continue;
             }
 
-            if (is_array($value1) && self::isAssoc($value1)) {
+            if (is_array($value1) && !array_is_list($value1)) {
                 $array[$key1] = self::mergeRecursiveAssoc($value1, $array2[$key1]);
             } else {
                 $array[$key1] = $array2[$key1];
@@ -117,7 +108,7 @@ class ArrayHelper {
 
     /**
      * Recursively removes all NULL values from an array<br>
-     * This passed array may not contain any objects
+     * The passed array may not contain any objects
      * @pure
      * @throws InvalidArgumentException
      * @param scalar[]|null[]|mixed[][] $array
