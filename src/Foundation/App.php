@@ -11,16 +11,9 @@ use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
-use OffbeatWP\Exceptions\InvalidRouteException;
-use OffbeatWP\Exceptions\WpErrorException;
 use OffbeatWP\Http\Http;
-use OffbeatWP\Routes\Routes\CallbackRoute;
-use OffbeatWP\Routes\Routes\PathRoute;
-use OffbeatWP\Routes\Routes\Route;
-use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
-use WP_Error;
 use function DI\autowire;
 use function DI\create;
 
@@ -30,9 +23,8 @@ final class App
 
     /** @var AbstractService[] */
     private array $services = [];
+    private ?Config $config = null;
     public ?Container $container = null;
-    protected ?Config $config = null;
-    protected CallbackRoute|null|false|PathRoute $route;
 
     public static function singleton(): App
     {
@@ -76,7 +68,7 @@ final class App
 
     private function initiateBaseServices(ContainerBuilder $containerBuilder): void
     {
-        foreach ([WordpressService::class, RoutesService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
+        foreach ([WordpressService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
             $this->initiateService($service, $containerBuilder);
         }
     }
@@ -141,7 +133,7 @@ final class App
 
     public function markServiceAsInitiated(object $service): void
     {
-        $this->services[get_class($service)] = $service;
+        $this->services[$service::class] = $service;
     }
 
     /**
@@ -171,110 +163,18 @@ final class App
 
     /**
      * @param string|null $config
-     * @param null $default
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
+     * @return mixed
      */
-    public function config(?string $config, $default)
+    public function config(?string $config)
     {
         if ($this->config === null) {
             $this->config = new Config($this);
         }
 
         if ($config !== null) {
-            return $this->config->get($config, $default);
+            return $this->config->get($config);
         }
 
         return $this->config;
-    }
-
-    public function addRoutes(): void
-    {
-        offbeat('routes')->addRoutes();
-    }
-
-    public function findRoute(): void
-    {
-        if (current_action() === 'wp' && is_admin()) {
-            return;
-        }
-
-        do_action('offbeatwp/route/match/before');
-
-        $route = offbeat('routes')->findRoute();
-
-        do_action('offbeatwp/route/match/after', $route);
-
-        $this->route = $route;
-    }
-
-    /**
-     * @param mixed[] $config
-     * @return void|string
-     * @throws WpErrorException
-     */
-    public function run($config = [])
-    {
-        $route = $this->route;
-
-        try {
-            // Remove route from collection so if there is a second run it skips this route
-            if ($route) {
-                offbeat('routes')->removeRoute($route);
-            }
-
-            $output = $this->runRoute($route);
-
-            if ($output === false) {
-                throw new InvalidRouteException('Route returned false, trying to find next match');
-            }
-
-            if ($output instanceof WP_Error) {
-                throw new WpErrorException($output->get_error_message(), 404);
-            }
-
-            $output = apply_filters('route_render_output', $output); //Legacy
-            $output = apply_filters('offbeatwp/route/output', $output);
-
-            if (isset($config['return']) && $config['return'] === true) {
-                return $output;
-            }
-
-            echo $output;
-        } catch (InvalidRouteException $e) {
-            // Find new route
-            $this->findRoute();
-            $this->run($config);
-        }
-    }
-
-    /**
-     * @param Route|false $route
-     * @return false|string|WP_Error
-     */
-    public function runRoute($route)
-    {
-        $route = apply_filters('offbeatwp/route/run/init', $route);
-
-        if ($route !== false && $route->hasValidActionCallback()) {
-            $actionReturn = apply_filters('offbeatwp/route/run/pre', false, $route);
-
-            if (!$actionReturn) {
-                $route = $route->runMiddleware();
-                $actionReturn = $route->doActionCallback();
-            }
-
-            $actionReturn = apply_filters('offbeatwp/route/run/post', $actionReturn, $route);
-
-            if (is_array($actionReturn)) {
-                header('Content-type: application/json');
-                return json_encode($actionReturn);
-            }
-
-            return $actionReturn;
-        }
-
-        trigger_error('No route matched on URI: ' . filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL));
-        echo offbeat('http')->abort(404);
-        exit;
     }
 }
