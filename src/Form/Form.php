@@ -1,7 +1,8 @@
 <?php
 namespace OffbeatWP\Form;
 
-use Illuminate\Support\Collection;
+use ArrayIterator;
+use IteratorAggregate;
 use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
@@ -9,26 +10,26 @@ use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
 use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
+use Traversable;
 
-class Form extends Collection
+final class Form implements IteratorAggregate
 {
-    /** @var string[] */
+    public const LEVEL = 0;
+
+    /** @var array<int, string> */
     private array $fieldKeys = [];
+    /** @var array<int, AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form> */
+    private array $items = [];
     private string $fieldPrefix = '';
+    private AbstractFieldsContainer|Form|null $parent = null;
     private AbstractFieldsContainer|Form $activeItem;
-    public AbstractFieldsContainer|Form|null $parent = null;
 
     public function __construct()
     {
-        parent::__construct();
         $this->activeItem = $this;
     }
 
-    /**
-     * @param AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item
-     * @param bool $prepend
-     */
-    public function add($item, $prepend = false)
+    public function add(AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item, bool $prepend = false): Form
     {
         // If item is Tab and active item is Section move back to parent
         if ($this->getActiveItem() !== $this && $item instanceof AbstractFieldsContainer) {
@@ -46,9 +47,9 @@ class Form extends Collection
         // If active item is the form, push item directly into the collection
         if ($this->getActiveItem() === $this) {
             if ($prepend) {
-                $this->prepend($item);
+                array_unshift($this->items, $item);
             } else {
-                $this->push($item);
+                $this->items[] = $item;
             }
 
             if ($item instanceof AbstractFieldsContainer) {
@@ -69,18 +70,12 @@ class Form extends Collection
         return $this;
     }
 
-    /** @return Form|AbstractFieldsContainer */
-    public function getActiveItem()
+    public function getActiveItem(): Form|AbstractFieldsContainer
     {
         return $this->activeItem;
     }
 
-    /**
-     * @param Form|AbstractFieldsContainer $item
-     * @param bool $setParent
-     * @return Form|AbstractFieldsContainer
-     */
-    public function setActiveItem($item, $setParent = false)
+    public function setActiveItem(Form|AbstractFieldsContainer $item, bool $setParent = false): Form|AbstractFieldsContainer
     {
         if ($setParent) {
             $item->setParent($this->getActiveItem());
@@ -91,46 +86,29 @@ class Form extends Collection
         return $this->activeItem;
     }
 
-    /**
-     * @param string $id
-     * @param string $label
-     * @return $this
-     */
-    public function addTab($id, $label)
+    /** @return $this */
+    public function addTab(string $id, string $label)
     {
         $this->add(new Tab($id, $label));
-
         return $this;
     }
 
-    /**
-     * @param string $id
-     * @param string $label
-     * @return $this
-     */
-    public function addSection($id, $label)
+    /** @return $this */
+    public function addSection(string $id, string $label)
     {
         $this->add(new Section($id, $label));
-
         return $this;
     }
 
-    /**
-     * @param string $id
-     * @param string $label
-     * @return $this
-     */
-    public function addRepeater($id, $label)
+    /** @return $this */
+    public function addRepeater(string $id, string $label)
     {
         $this->add(new Repeater($id, $label));
 
         return $this;
     }
 
-    /**
-     * @param AbstractField $field
-     * @return $this
-     */
+    /** @return $this */
     public function addField(AbstractField $field)
     {
         $this->fieldKeys[] = $field->getId();
@@ -145,9 +123,9 @@ class Form extends Collection
      */
     public function addFields(AbstractFieldsCollection $fieldsCollection)
     {
-        $fieldsCollection->each(function ($field) {
+        foreach ($fieldsCollection as $field) {
             $this->addField($field);
-        });
+        }
 
         return $this;
     }
@@ -184,11 +162,9 @@ class Form extends Collection
         $this->fieldPrefix = $fieldPrefix;
     }
 
-    /** @inheritDoc */
-    public function toArray()
+    public function toArray(): array
     {
-        $items = $this->map(fn($item) => $item->toArray());
-        return $items->toArray();
+        return array_map(fn($item) => $item->toArray(), $this->items);
     }
 
     /** @return string[] */
@@ -197,15 +173,11 @@ class Form extends Collection
         return $this->fieldKeys;
     }
 
-    /**
-     * @param AbstractComponent $component
-     * @param string $fieldPrefix
-     * @return void
-     */
-    public function addComponentForm($component, $fieldPrefix) {
+    public function addComponentForm(AbstractComponent $component, string $fieldPrefix): void
+    {
         $activeItem = $this->getActiveItem();
 
-        $componentForm = $component->getForm();
+        $componentForm = $component::getForm();
         if (!is_object($componentForm)) {
             return;
         }
@@ -213,23 +185,19 @@ class Form extends Collection
         $form = clone $componentForm;
         $form->setFieldPrefix($fieldPrefix);
 
-        $this->addSection($fieldPrefix, $component->getName())->add($form);
+        $this->addSection($fieldPrefix, $component::getName())->add($form);
 
         $this->setActiveItem($activeItem);
     }
 
-    /**
-     * @param Form|AbstractFieldsContainer $item
-     * @return $this
-     */
-    public function setParent($item)
+    /** @return $this */
+    public function setParent(Form|AbstractFieldsContainer $item)
     {
         $this->parent = $item;
         return $this;
     }
 
-    /** @return Form|AbstractFieldsContainer|null */
-    public function getParent()
+    public function getParent(): Form|AbstractFieldsContainer|null
     {
         return $this->parent;
     }
@@ -248,9 +216,13 @@ class Form extends Collection
         return $values;
     }
 
-    /** @return static */
-    public static function create()
+    public static function create(): static
     {
         return new static();
+    }
+
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->items);
     }
 }

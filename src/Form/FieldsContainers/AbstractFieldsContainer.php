@@ -113,7 +113,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
      */
     public function add($item)
     {
-        $this->push($item);
+        $this->items[] = $item;
         return $item;
     }
 
