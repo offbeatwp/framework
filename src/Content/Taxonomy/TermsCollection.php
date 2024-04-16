@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
-use OffbeatWP\Support\Objects\ReadOnlyCollection;
+use OffbeatWP\Support\Common\ReadOnlyCollection;
 use WP_Term_Query;
 
 final class TermsCollection extends ReadOnlyCollection
