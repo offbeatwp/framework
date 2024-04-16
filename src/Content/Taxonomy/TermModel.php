@@ -23,7 +23,7 @@ class TermModel extends OffbeatModel
     protected WP_Term $wpTerm;
     protected ?array $meta = null;
 
-    protected function __construct(WP_Term $term)
+    private function __construct(WP_Term $term)
     {
         $this->wpTerm = $term;
         $this->init();

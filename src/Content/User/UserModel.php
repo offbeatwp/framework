@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\User;
 use BadMethodCallException;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
@@ -16,7 +17,7 @@ use UnexpectedValueException;
 use WP_Error;
 use WP_User;
 
-class UserModel
+class UserModel extends OffbeatModel
 {
     protected WP_User $wpUser;
     /** @var mixed[]|null */
@@ -36,7 +37,7 @@ class UserModel
     }
 
     /** @param WP_User|null $user */
-    final public function __construct($user = null)
+    final private function __construct($user = null)
     {
         if ($user === null) {
             $user = new WP_User();
