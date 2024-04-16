@@ -71,28 +71,6 @@ class UserModel extends OffbeatModel
         // Does nothing unless overriden by parent
     }
 
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed|void
-     */
-    public function __call($method, $parameters)
-    {
-        $className = get_class($this);
-
-        if (static::hasMacro($method)) {
-            trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpUser->$method)) {
-            trigger_error("{$className}::{$method} accessed a WP_User method.", E_USER_DEPRECATED);
-            return $this->wpUser->$method;
-        }
-
-        throw new BadMethodCallException("Call to undefined UserModel method {$className}::{$method}");
-    }
-
     public function __clone()
     {
         $this->wpUser = clone $this->wpUser;

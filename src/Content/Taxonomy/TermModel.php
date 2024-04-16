@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
+use Error;
 use Illuminate\Support\Traits\Macroable;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\PostModel;
@@ -33,48 +34,6 @@ class TermModel extends OffbeatModel
     protected function init(): void
     {
         // Does nothing unless overriden by parent
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return static::macroCallStatic($method, $parameters);
-        }
-
-        return static::query()->$method(...$parameters);
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        $hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-        
-        if (method_exists(TermQueryBuilder::class, $method)) {
-            trigger_error('Called a QueryBuilder method on a model instance through magic.');
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
     }
 
     public function __clone()
