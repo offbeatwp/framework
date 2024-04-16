@@ -1,133 +1,92 @@
 <?php
 namespace OffbeatWP\Form\FieldsContainers;
 
-use Illuminate\Support\Collection;
+use ArrayIterator;
+use IteratorAggregate;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
 use OffbeatWP\Form\Form;
 
-class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
+abstract class AbstractFieldsContainer implements FieldsContainerInterface, IteratorAggregate
 {
-    /** @var string */
-    public $id;
-    /** @var string */
-    public $label;
-    /** @var Form|FieldsContainerInterface */
-    public $parent;
-    /** @var mixed[] */
-    public $attributes = [];
+    private string $id;
+    private string $label;
+    private Form|FieldsContainerInterface|null $parent = null;
+    private array $attributes = [];
+    private array $items = [];
 
-    /**
-     * @param string $id
-     * @param string $label
-     */
-    public function __construct($id, $label)
-    {
-        parent::__construct();
-        $this->setLabel($label);
-        $this->setId($id);
-    }
-
-    /**
-     * @param string $id
-     * @return self
-     */
-    public function setId($id)
+    final public function __construct(string $id, string $label)
     {
         $this->id = $id;
-        return $this;
+        $this->label = $label;
     }
 
-    /**
-     * @param string $label
-     * @return self
-     */
-    public function setLabel($label)
+    final public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+
+    final public function setLabel(string $label): void
     {
         $this->label = $label;
-        return $this;
     }
 
-    /** @return string */
-    public function getType()
+    final public function getType(): string
     {
         return static::TYPE;
     }
 
-    /** @return string */
-    public function getId()
+    final public function getId(): string
     {
         return $this->id;
     }
 
-    /** @return string */
-    public function getLabel()
+    final public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * @param Form|FieldsContainerInterface $item
-     * @return $this
-     */
-    public function setParent($item)
+    final public function setParent(Form|FieldsContainerInterface $item): void
     {
         $this->parent = $item;
-        return $this;
     }
 
-    /** @return FieldsContainerInterface|Form */
-    public function getParent()
+    final public function getParent(): FieldsContainerInterface|Form|null
     {
         return $this->parent;
     }
 
-    /**
-     * @param mixed[] $attributes
-     * @return self
-     */
-    public function setAttributes($attributes)
+    /** @param mixed[] $attributes */
+    final public function setAttributes(array $attributes): void
     {
-        $this->attributes = array_merge($this->attributes, $attributes);
-        return $this;
+        $this->attributes = $attributes;
     }
 
     /** @return mixed[] */
-    public function getAttributes()
+    final public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    /**
-     * @param string $key
-     * @return false|mixed
-     */
-    public function getAttribute($key)
+    final public function getAttribute(string $key): mixed
     {
-        return $this->getAttributes()[$key] ?? false;
+        return $this->getAttributes()[$key] ?? null;
     }
 
-    /**
-     * @param AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item
-     * @return AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form
-     */
-    public function add($item)
+    final public function add(AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form $item): void
     {
         $this->items[] = $item;
-        return $item;
     }
 
     /** @return array{type: string, id: string, label: string, attributes: mixed[], items: mixed[]} */
-    public function toArray()
+    final public function toArray()
     {
-        $items = $this->map(fn($item) => $item->toArray());
-
         return [
             'type'       => $this->getType(),
             'id'         => $this->getId(),
             'label'      => $this->getLabel(),
             'attributes' => $this->getAttributes(),
-            'items'      => $items->toArray(),
+            'items'      => $this->items,
         ];
     }
 
@@ -137,9 +96,14 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
      * @param array{field: string, operator: string, value?: string|int}[][] $logic
      * @return $this
      */
-    public function conditionalLogic(array $logic): self
+    final public function conditionalLogic(array $logic)
     {
         $this->attributes['conditional_logic'] = $logic;
         return $this;
+    }
+
+    final public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->items);
     }
 }
