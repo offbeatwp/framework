@@ -5,11 +5,16 @@ namespace OffbeatWP\Content\User;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_User_Query;
 
+/**
+ * @template TModel
+ * @implements \ArrayAccess<int, TModel>
+ */
 final class UserCollection extends ReadOnlyCollection
 {
     protected readonly WP_User_Query $query;
 
-    public function __construct(WP_User_Query $query) {
+    public function __construct(WP_User_Query $query)
+    {
         $this->query = $query;
         parent::__construct($query->get_results());
     }

@@ -4,11 +4,16 @@ namespace OffbeatWP\Content\Taxonomy;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_Term_Query;
 
+/**
+ * @template TModel
+ * @implements \ArrayAccess<int, TModel>
+ */
 final class TermsCollection extends ReadOnlyCollection
 {
     protected readonly WP_Term_Query $query;
 
-    public function __construct(WP_Term_Query $query) {
+    public function __construct(WP_Term_Query $query)
+    {
         $this->query = $query;
         parent::__construct($this->query->terms);
     }

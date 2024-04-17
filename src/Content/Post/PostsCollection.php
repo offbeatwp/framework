@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Post;
 
-use ArrayAccess;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
@@ -11,8 +10,7 @@ use WP_Query;
 
 /**
  * @template TModel
- *
- * @implements ArrayAccess<array-key, TModel>
+ * @implements \ArrayAccess<int, TModel>
  */
 final class PostsCollection extends ReadOnlyCollection
 {
@@ -28,20 +26,6 @@ final class PostsCollection extends ReadOnlyCollection
         }
 
         parent::__construct($postItems);
-    }
-
-    /** @param int|WP_Post|PostModel $item */
-    protected function createValidPostModel($item): ?PostModel
-    {
-        if ($item instanceof PostModel) {
-            return $item;
-        }
-
-        if (is_int($item) || $item instanceof WP_Post) {
-            return offbeat('post')->get($item);
-        }
-
-        throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 
     /** @phpstan-return WpPostsIterator<TModel>|TModel[] */

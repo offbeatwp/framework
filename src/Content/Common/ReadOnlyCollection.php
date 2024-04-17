@@ -9,6 +9,10 @@ use Countable;
 use IteratorAggregate;
 use JsonSerializable;
 
+/**
+ * @template TModel
+ * @implements ArrayAccess<int, TModel>
+ */
 abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     protected readonly array $items;
