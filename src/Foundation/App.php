@@ -31,7 +31,7 @@ final class App
 
     /** @var AbstractService[] */
     private array $services = [];
-    public Container $container;
+    public ?Container $container = null;
     protected ?Config $config = null;
     /** @var CallbackRoute|PathRoute|false|null */
     protected $route;
@@ -45,9 +45,8 @@ final class App
         throw new Exception('Attempted to call App::singleton while Offbeat has not been bootstrapped yet.');
     }
 
-    /** App is a singleton and must instantiated via the App::singleton() method. */
-    private function __construct(Container $container) {
-        $this->container = $container;
+    private function __construct() {
+        // App is a singleton and must instantiated via the App::singleton() method.
     }
 
     public function bootstrap(): void
@@ -58,20 +57,16 @@ final class App
         $this->initiateBaseServices($containerBuilder);
         $this->initiateServices($containerBuilder);
 
-        $container = $containerBuilder->build();
+        $this->container = $containerBuilder->build();
 
-        foreach ($this->services as $service) {
-            if (is_callable([$service, 'register'])) {
-                $container->call([$service, 'register']);
-            }
-        }
+        $this->registerServices();
 
-        do_action_ref_array('offbeat.ready', []);
+        offbeat('hooks')->doAction('offbeat.ready');
 
         add_action('init', [$this, 'addRoutes'], PHP_INT_MAX - 1);
         add_action('wp', [$this, 'findRoute'], 1);
 
-        self::$instance = new App($container);
+        self::$instance = new App();
     }
 
     /** @return CreateDefinitionHelper[] */
@@ -123,6 +118,15 @@ final class App
             $this->markServiceAsInitiated($service);
         } else {
             trigger_error('Class for service "' . $serviceClass . '" could not be found.');
+        }
+    }
+
+    private function registerServices(): void
+    {
+        foreach ($this->services as $service) {
+            if (is_callable([$service, 'register'])) {
+                $this->container->call([$service, 'register']);
+            }
         }
     }
 
