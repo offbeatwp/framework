@@ -424,6 +424,21 @@ final class PostQueryBuilder
     }
 
     /**
+     * @param "="|"!="|">"|">="|"<"|"<=" $compare
+     * @param int $value
+     * @return $this
+     */
+    public function whereCommentCount(string $compare, int $value)
+    {
+        if (!in_array($compare, ['=','!=','>','>=','<','<='], true)) {
+            throw new InvalidArgumentException($compare . ' is not a valid comparater for whereCommentCount.');
+        }
+
+        $this->queryVars['comment_count'] = ['compare' => $compare, 'value' => $value];
+        return $this;
+    }
+
+    /**
      * @param int[] $ids Array of ID's to check a relation
      * @param string $relationKey The relation key
      * @param bool $inverted Set to <i>true</i> to reverse the relation

@@ -7,6 +7,7 @@ use OffbeatWP\Content\Post\PostQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\WpErrorException;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use RuntimeException;
 use WP_Error;
 use WP_Taxonomy;
@@ -176,8 +177,13 @@ class TermModel extends OffbeatModel
         return TermBuilder::update($this->wpTerm->term_id, $this->wpTerm->taxonomy);
     }
 
+    public static function defaultQueryArgs(): array
+    {
+        return ['hide_empty' => false];
+    }
+
     /** @return TermQueryBuilder<static> */
-    public static function query(): TermQueryBuilder
+    final public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);
     }

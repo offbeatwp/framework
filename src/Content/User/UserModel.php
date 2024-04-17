@@ -492,8 +492,13 @@ class UserModel extends OffbeatModel
         return static::query()->get();
     }
 
+    public static function defaultQueryArgs(): array
+    {
+        return [];
+    }
+
     /** @return UserQueryBuilder<static> */
-    public static function query(): UserQueryBuilder
+    final public static function query(): UserQueryBuilder
     {
         return new UserQueryBuilder(static::class);
     }

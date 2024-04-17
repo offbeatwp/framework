@@ -484,15 +484,15 @@ class PostModel extends OffbeatModel
         return ($post instanceof static) ? $post : null;
     }
 
-    /** @return mixed[] */
-    public static function defaultQueryArgs(): array
-    {
-        return ['posts_per_page' => -1];
-    }
-
     final public function getWpPost(): WP_Post
     {
         return $this->wpPost;
+    }
+
+    /** @return mixed[] */
+    public static function defaultQueryArgs(): array
+    {
+        return ['posts_per_page' => -1, 'post_status' => PostStatus::PUBLISHED];
     }
 
     /** @return PostQueryBuilder<static> */

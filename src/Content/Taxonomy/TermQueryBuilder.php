@@ -14,7 +14,7 @@ final class TermQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var mixed[] */
-    private array $queryVars = ['hide_empty' => false];
+    private array $queryVars;
     /** @var class-string<TModel> */
     private readonly string $modelClass;
     private readonly string $taxonomy;
@@ -23,27 +23,9 @@ final class TermQueryBuilder
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
-
-        if (defined("$modelClass::TAXONOMY")) {
-            $this->taxonomy = $modelClass::TAXONOMY;
-            $this->queryVars['taxonomy'] = $modelClass::TAXONOMY;
-        }
-
-        if (method_exists($modelClass, 'defaultQuery')) {
-            $modelClass::defaultQuery($this);
-        }
-
-        $order = null;
-        if (defined("$modelClass::ORDER")) {
-            $order = $modelClass::ORDER;
-        }
-
-        $orderBy = null;
-        if (defined("$modelClass::ORDER_BY")) {
-            $orderBy = $modelClass::ORDER_BY;
-        }
-
-        $this->order($orderBy, $order);
+        $this->taxonomy = $modelClass::TAXONOMY;
+        $this->queryVars = $modelClass::defaultQueryArgs();
+        $this->queryVars['taxonomy'] = $modelClass::TAXONOMY;
     }
 
     /**
@@ -54,6 +36,17 @@ final class TermQueryBuilder
     {
         $this->queryVars['include'] = $ids ?: [0];
         return $this;
+    }
+
+    /**
+     * Alias for the 'include' method.
+     * @see TermQueryBuilder::include()
+     * @param int[] $ids Array of term IDs to include.
+     * @return $this
+     */
+    public function whereIdIn(array $ids)
+    {
+        return $this->include($ids);
     }
 
     /**
