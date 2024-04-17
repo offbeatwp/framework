@@ -2,10 +2,11 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use OffbeatWP\Content\Common\OffbeatObjectBuilder;
 use OffbeatWP\Exceptions\TermBuilderException;
 use WP_Error;
 
-final class TermBuilder
+final class TermBuilder extends OffbeatObjectBuilder
 {
     /** @var array{term_id?: int, name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
     private array $args;
