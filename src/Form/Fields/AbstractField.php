@@ -4,16 +4,13 @@ namespace OffbeatWP\Form\Fields;
 
 abstract class AbstractField implements FieldInterface
 {
-    /** @var string */
-    public $id;
-    /** @var string */
-    public $label;
-    /** @var bool */
-    public $required;
+    public string $id;
+    public string $label;
+    public bool $required;
     /** @var mixed[] */
-    public $attributes = [];
+    public array $attributes = [];
 
-    public function __construct() {
+    private function __construct() {
         $this->init();
     }
 
@@ -22,12 +19,7 @@ abstract class AbstractField implements FieldInterface
         // Only exists to be overriden
     }
 
-    /**
-     * @param string $id
-     * @param string $label
-     * @return static
-     */
-    public static function make(string $id, string $label)
+    public static function make(string $id, string $label): static
     {
         $field = new static();
 
@@ -54,13 +46,8 @@ abstract class AbstractField implements FieldInterface
         $this->setAttribute('required', $required);
     }
 
-    /**
-     * @internal Use attribute instead
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function setAttribute($key, $value = null): void
+    /** @internal Use attribute instead */
+    public function setAttribute(string $key, mixed $value): void
     {
         $this->attributes[$key] = $value;
     }
@@ -68,7 +55,6 @@ abstract class AbstractField implements FieldInterface
     /**
      * @internal Use attributes instead
      * @param mixed[] $attributes
-     * @return void
      */
     public function setAttributes(array $attributes): void
     {
@@ -117,11 +103,7 @@ abstract class AbstractField implements FieldInterface
         return $this->attributes;
     }
 
-    /**
-     * @param string $key
-     * @return mixed|null
-     */
-    public function getAttribute($key)
+    public function getAttribute(string $key): mixed
     {
         return $this->getAttributes()[$key] ?? null;
     }
@@ -133,11 +115,8 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
-    /**
-     * @param mixed $value
-     * @return $this
-     */
-    public function default($value): self
+    /** @return $this */
+    final public function default(mixed $value)
     {
         $this->setAttribute('default', $value);
         return $this;
@@ -147,19 +126,21 @@ abstract class AbstractField implements FieldInterface
      * @param mixed[] $attributes
      * @return $this
      */
-    public function attributes(array $attributes): self
+    public function attributes(array $attributes)
     {
         $this->setAttributes($attributes);
         return $this;
     }
 
-    public function required(bool $required = true): self
+    /** @return $this */
+    public function required(bool $required = true)
     {
         $this->setRequired($required);
         return $this;
     }
 
-    public function allowNull(bool $allowNull = true): self
+    /** @return $this */
+    public function allowNull(bool $allowNull = true)
     {
         $this->setAttribute('allow_null', ($allowNull) ? 1 : 0);
         return $this;
@@ -177,18 +158,15 @@ abstract class AbstractField implements FieldInterface
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return $this
-     */
-    public function attribute(string $key, $value): self
+    /** @return $this */
+    public function attribute(string $key, mixed $value): self
     {
         $this->setAttribute($key, $value);
         return $this;
     }
 
-    public function width(int $percent): self
+    /** @return $this */
+    public function width(int $percent)
     {
         $this->setAttribute('width', $percent);
         return $this;

@@ -10,19 +10,11 @@ abstract class AbstractFieldsCollection implements FieldsCollectionInterface, It
     /** @var array<int, FieldInterface> */
     protected array $fields = [];
 
-    /**
-     * @param FieldInterface $field
-     * @return void
-     */
     public function addField(FieldInterface $field): void
     {
         $this->fields[] = $field;
     }
 
-    /**
-     * @param FieldsCollectionInterface $fieldsCollection
-     * @return void
-     */
     public function addFields(FieldsCollectionInterface $fieldsCollection): void
     {
         foreach ($fieldsCollection as $field) {

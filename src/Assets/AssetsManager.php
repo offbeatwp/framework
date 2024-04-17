@@ -151,11 +151,7 @@ class AssetsManager
         return get_template_directory_uri() . '/assets' . $path;
     }
 
-    /**
-     * @param string $entry
-     * @param string[] $dependencies
-     * @return void
-     */
+    /** @param string[] $dependencies */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');

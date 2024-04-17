@@ -3,12 +3,8 @@ namespace OffbeatWP\Content\Post\Relations;
 
 class HasOneOrMany extends Relation
 {
-    /**
-     * @param int|int[] $ids
-     * @param bool $append
-     * @return void
-     */
-    public function attach($ids, $append = true)
+    /** @param int|int[] $ids */
+    public function attach(int|array $ids, bool $append = true): void
     {
         if (!$append) {
             $this->detachAll();

@@ -2,15 +2,16 @@
 namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\Relations\Console\Install;
+use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
 use WP_Query;
 
-class Service extends AbstractService
+final class Service extends AbstractService
 {
-    /** @return void */
-    public function register() {
+    public function register(SiteSettings $settings): void
+    {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
         if (offbeat('console')::isConsole()) {
@@ -22,7 +23,6 @@ class Service extends AbstractService
 
     /**
      * @param string[] $clauses
-     * @param WP_Query $query
      * @return string[]
      */
     public function insertRelationshipsSql(array $clauses, WP_Query $query): array
@@ -50,7 +50,6 @@ class Service extends AbstractService
     }
 
     /**
-     * @param WP_Query $query
      * @return string[][]
      * @throws InvalidQueryOperatorException
      */

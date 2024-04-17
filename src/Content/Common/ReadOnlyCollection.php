@@ -6,12 +6,10 @@ use ArrayAccess;
 use ArrayIterator;
 use BadMethodCallException;
 use Countable;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
 use IteratorAggregate;
 use JsonSerializable;
 
-abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
+abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     protected readonly array $items;
 
@@ -95,20 +93,14 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
         return $this->items[$offset] ?? null;
     }
 
-    /**
-     * @throws BadMethodCallException
-     * @return never-return
-     */
-    final public function offsetSet(mixed $offset, mixed $value): void
+    /** This method will always throw a BadMethodCallException when called. */
+    final public function offsetSet(mixed $offset, mixed $value): never
     {
         throw new BadMethodCallException('Cannot set value on ReadOnlyCollection.');
     }
 
-    /**
-     * @throws BadMethodCallException
-     * @return never-return
-     */
-    final public function offsetUnset(mixed $offset): void
+    /** This method will always throw a BadMethodCallException when called. */
+    final public function offsetUnset(mixed $offset): never
     {
         throw new BadMethodCallException('Cannot unset value on ReadOnlyCollection.');
     }
@@ -116,36 +108,6 @@ abstract class ReadOnlyCollection implements ArrayAccess, Arrayable, Countable, 
     final public function toArray(): array
     {
         return $this->items;
-    }
-
-    /**
-     * Convert the object to its JSON representation.
-     *
-     * @param int $options
-     * @return string
-     */
-    public function toJson($options = 0): string
-    {
-        return json_encode($this->jsonSerialize(), $options);
-    }
-
-    public function jsonSerialize(): array
-    {
-        return array_map(function ($value) {
-            if ($value instanceof JsonSerializable) {
-                return $value->jsonSerialize();
-            }
-
-            if ($value instanceof Jsonable) {
-                return json_decode($value->toJson(), true);
-            }
-
-            if ($value instanceof Arrayable) {
-                return $value->toArray();
-            }
-
-            return $value;
-        }, $this->all());
     }
 
     public function getIterator(): ArrayIterator

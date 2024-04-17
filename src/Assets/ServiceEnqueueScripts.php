@@ -1,12 +1,12 @@
 <?php
 namespace OffbeatWP\Assets;
 
+use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Services\AbstractService;
 
-class ServiceEnqueueScripts extends AbstractService
+final class ServiceEnqueueScripts extends AbstractService
 {
-    /** @return void */
-    public function register()
+    public function register(SiteSettings $settings): void
     {
         if (is_admin()) {
             return;
@@ -16,8 +16,7 @@ class ServiceEnqueueScripts extends AbstractService
         add_action('wp_footer',    [$this, 'footerVars'], 5);
     }
 
-    /** @return void */
-    public function enqueueScripts()
+    public function enqueueScripts(): void
     {
         if (is_admin() || apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
             wp_enqueue_script('jquery');
@@ -43,8 +42,7 @@ class ServiceEnqueueScripts extends AbstractService
         }
     }
 
-    /** @return void */
-    public function footerVars()
+    public function footerVars(): void
     {
         $vars = apply_filters('wp_js_vars', ['ajax_url' => admin_url('admin-ajax.php')]);
 

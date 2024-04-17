@@ -16,8 +16,7 @@ namespace PHPSTORM_META {
         'enqueue-style' => \OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder::class,
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
-        'assets' => \OffbeatWP\Assets\AssetsManager::class,
-        'http' => \OffbeatWP\Http\Http::class
+        'assets' => \OffbeatWP\Assets\AssetsManager::class
     ]));
 
     override(\container(), map([
@@ -35,7 +34,6 @@ namespace PHPSTORM_META {
         'enqueue-style' => \OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder::class,
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
-        'assets' => \OffbeatWP\Assets\AssetsManager::class,
-        'http' => \OffbeatWP\Http\Http::class
+        'assets' => \OffbeatWP\Assets\AssetsManager::class
     ]));
 }

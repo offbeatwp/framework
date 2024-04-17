@@ -1,17 +1,14 @@
 <?php
 namespace OffbeatWP\Foundation;
 
-use Closure;
 use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Helper\CreateDefinitionHelper;
-use DI\Definition\Helper\DefinitionHelper;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
-use OffbeatWP\Http\Http;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
 use function DI\autowire;
@@ -60,10 +57,7 @@ final class App
     /** @return CreateDefinitionHelper[] */
     private function baseBindings(): array
     {
-        return [
-            'assets' => create(AssetsManager::class),
-            'http' => create(Http::class),
-        ];
+        return ['assets' => create(AssetsManager::class)];
     }
 
     private function initiateBaseServices(ContainerBuilder $containerBuilder): void
@@ -136,12 +130,7 @@ final class App
         $this->services[$service::class] = $service;
     }
 
-    /**
-     * @param string $abstract
-     * @param mixed|DefinitionHelper|Closure $concrete
-     * @return void
-     */
-    public function bind($abstract, $concrete)
+    public function bind(string $abstract, mixed $concrete): void
     {
         $this->container->set($abstract, $concrete);
     }
