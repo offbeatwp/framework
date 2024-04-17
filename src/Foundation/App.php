@@ -61,7 +61,7 @@ final class App
             $container->call([$service, 'register']);
         }
 
-        do_action('offbeat.ready');
+        do_action_ref_array('offbeat.ready', []);
 
         self::$instance = new static($container);
     }
