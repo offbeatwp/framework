@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayAccess;
-use Illuminate\Support\Enumerable;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
@@ -14,7 +13,6 @@ use WP_Query;
  * @template TModel
  *
  * @implements ArrayAccess<array-key, TModel>
- * @implements Enumerable<array-key, TModel>
  */
 final class PostsCollection extends ReadOnlyCollection
 {

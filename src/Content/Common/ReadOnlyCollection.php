@@ -110,6 +110,11 @@ abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAgg
         return $this->items;
     }
 
+    public function jsonSerialize(): array
+    {
+        return $this->items;
+    }
+
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->items);
