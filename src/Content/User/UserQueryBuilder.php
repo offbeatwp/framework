@@ -9,12 +9,12 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
 use WP_User_Query;
 
-/** @template TModel of UserModel */
+/** @template TModel of \OffbeatWP\Content\User\UserModel */
 final class UserQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var class-string<UserModel> */
+    /** @var class-string<TModel> */
     private readonly string $modelClass;
     /** @var mixed[] */
     private array $queryVars = ['number' => 0];
@@ -34,7 +34,7 @@ final class UserQueryBuilder
     /** @return UserCollection<TModel> */
     public function get(): UserCollection
     {
-        return new UserCollection(new WP_User_Query($this->queryVars));
+        return new UserCollection(new WP_User_Query($this->queryVars), $this->modelClass);
     }
 
     /** @return UserCollection<TModel> */

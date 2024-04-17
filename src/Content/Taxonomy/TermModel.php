@@ -147,7 +147,7 @@ class TermModel extends OffbeatModel
             $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
         }
 
-        return (new PostQueryBuilder(PostModel::class))->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+        return (new PostQueryBuilder(PostModel::class))->wherePostType($postTypes)->whereTerm(static::TAXONOMY, [$this->getId()], 'term_id');
     }
 
     /** Retrieves the current term from the WordPress loop, provided the TermModel is or extends the TermModel class that it is called on. */

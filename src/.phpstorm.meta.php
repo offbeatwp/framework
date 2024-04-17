@@ -12,8 +12,6 @@ namespace PHPSTORM_META {
         'page' => \OffbeatWP\Support\Wordpress\Page::class,
         'taxonomy' => \OffbeatWP\Support\Wordpress\Taxonomy::class,
         'design' => \OffbeatWP\Support\Wordpress\Design::class,
-        'enqueue-script' => \OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder::class,
-        'enqueue-style' => \OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder::class,
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
         'assets' => \OffbeatWP\Assets\AssetsManager::class
@@ -30,8 +28,6 @@ namespace PHPSTORM_META {
         'page' => \OffbeatWP\Support\Wordpress\Page::class,
         'taxonomy' => \OffbeatWP\Support\Wordpress\Taxonomy::class,
         'design' => \OffbeatWP\Support\Wordpress\Design::class,
-        'enqueue-script' => \OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder::class,
-        'enqueue-style' => \OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder::class,
         'components' => \OffbeatWP\Components\ComponentRepository::class,
         'routes' => \OffbeatWP\Routes\RoutesManager::class,
         'assets' => \OffbeatWP\Assets\AssetsManager::class

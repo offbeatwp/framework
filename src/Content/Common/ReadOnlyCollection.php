@@ -10,14 +10,15 @@ use IteratorAggregate;
 use JsonSerializable;
 
 /**
- * @template TModel
+ * @template TModel of \OffbeatWP\Content\Common\OffbeatModel
  * @implements ArrayAccess<int, TModel>
+ * @implements IteratorAggregate<int, TModel>
  */
 abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     protected readonly array $items;
 
-    /** @param array<int, OffbeatModel> $items */
+    /** @param array<int, TModel> $items */
     public function __construct(array $items = [])
     {
         $this->items = $items;
@@ -61,13 +62,19 @@ abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAgg
         return array_keys($this->items);
     }
 
-    /** Get the first item from the collection. */
+    /**
+     * Get the first item from the collection.
+     * @phpstan-return TModel|null
+     */
     public function first(): ?OffbeatModel
     {
         return $this->items[0] ?? null;
     }
 
-    /** Get the last item from the collection. */
+    /**
+     * Get the last item from the collection.
+     * @phpstan-return TModel|null
+     */
     public function last(): ?OffbeatModel
     {
         return $this->items[count($this->items) - 1] ?? null;
@@ -91,6 +98,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAgg
     /**
      * Get an item at a given offset.
      * @param int $offset
+     * @phpstan-return TModel|null
      */
     public function offsetGet(mixed $offset): ?OffbeatModel
     {
