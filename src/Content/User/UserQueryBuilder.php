@@ -78,7 +78,7 @@ final class UserQueryBuilder
      * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
      * @return $this
      */
-    public function orderBy($properties, string $direction = ''): self
+    public function orderBy($properties, string $direction = '')
     {
         $this->queryVars['orderby'] = $properties;
 
@@ -111,7 +111,7 @@ final class UserQueryBuilder
      * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
      * @return $this
      */
-    public function withRoles(array $roles): self
+    public function withRoles(array $roles)
     {
         $this->queryVars['role'] = $roles;
         return $this;
@@ -121,7 +121,7 @@ final class UserQueryBuilder
      * @param string[] $roles An array of role names. Matched users must have at least one of these roles.
      * @return $this
      */
-    public function whereRoleIn(array $roles): self
+    public function whereRoleIn(array $roles)
     {
         $this->queryVars['role__in'] = $roles;
         return $this;
@@ -141,7 +141,7 @@ final class UserQueryBuilder
      * @param mixed[] $metaQueryArray
      * @return $this
      */
-    public function whereMeta(array $metaQueryArray): self
+    public function whereMeta(array $metaQueryArray)
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -156,7 +156,7 @@ final class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdIn($ids): self
+    public function whereIdIn($ids)
     {
         $this->skipOnInclude = !$ids;
         $this->queryVars['include'] = (array)$ids;
@@ -167,7 +167,7 @@ final class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this<TModel>
      */
-    public function whereIdNotIn($ids): self
+    public function whereIdNotIn($ids)
     {
         $this->queryVars['exclude'] = (array)$ids;
 
@@ -175,7 +175,7 @@ final class UserQueryBuilder
     }
 
     /** @return $this<TModel> */
-    public function limit(int $amount): self
+    public function limit(int $amount)
     {
         $this->skipOnLimit = ($amount <= 0);
         $this->queryVars['number'] = $amount;

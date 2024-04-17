@@ -8,39 +8,39 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Term_Query;
 
-/** @template TModel of TermModel */
-class TermQueryBuilder
+/** @template TModel of \OffbeatWP\Content\Taxonomy\TermModel */
+final class TermQueryBuilder
 {
     use OffbeatQueryTrait;
 
     /** @var mixed[] */
     protected array $queryVars = ['hide_empty' => false];
     /** @var class-string<TModel> */
-    protected string $model;
+    protected string $modelClass;
     protected string $taxonomy;
 
-    /** @param class-string<TModel> $model */
-    public function __construct(string $model)
+    /** @param class-string<TModel> $modelClass */
+    public function __construct(string $modelClass)
     {
-        $this->model = $model;
+        $this->modelClass = $modelClass;
 
-        if (defined("$model::TAXONOMY")) {
-            $this->taxonomy = $model::TAXONOMY;
-            $this->queryVars['taxonomy'] = $model::TAXONOMY;
+        if (defined("$modelClass::TAXONOMY")) {
+            $this->taxonomy = $modelClass::TAXONOMY;
+            $this->queryVars['taxonomy'] = $modelClass::TAXONOMY;
         }
 
-        if (method_exists($model, 'defaultQuery')) {
-            $model::defaultQuery($this);
+        if (method_exists($modelClass, 'defaultQuery')) {
+            $modelClass::defaultQuery($this);
         }
 
         $order = null;
-        if (defined("$model::ORDER")) {
-            $order = $model::ORDER;
+        if (defined("$modelClass::ORDER")) {
+            $order = $modelClass::ORDER;
         }
 
         $orderBy = null;
-        if (defined("$model::ORDER_BY")) {
-            $orderBy = $model::ORDER_BY;
+        if (defined("$modelClass::ORDER_BY")) {
+            $orderBy = $modelClass::ORDER_BY;
         }
 
         $this->order($orderBy, $order);
@@ -50,7 +50,7 @@ class TermQueryBuilder
      * @param int[] $ids Array of term IDs to include.
      * @return $this
      */
-    public function include(array $ids): self
+    public function include(array $ids)
     {
         $this->queryVars['include'] = $ids ?: [0];
         return $this;
@@ -60,7 +60,7 @@ class TermQueryBuilder
      * @param int[] $ids Array of term IDs to exclude.
      * @return $this
      */
-    public function exclude(array $ids): self
+    public function exclude(array $ids)
     {
         $this->queryVars['exclude'] = $ids;
         return $this;
@@ -70,7 +70,7 @@ class TermQueryBuilder
      * @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored
      * @return $this
      */
-    public function excludeTree(array $ids): self
+    public function excludeTree(array $ids)
     {
         $this->queryVars['exclude_tree'] = $ids;
         return $this;
@@ -80,7 +80,7 @@ class TermQueryBuilder
      * True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies.
      * @return $this
      */
-    public function childless(bool $childless = true): self
+    public function childless(bool $childless = true)
     {
         $this->queryVars['childless'] = true;
         return $this;
@@ -269,7 +269,7 @@ class TermQueryBuilder
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
-        return ($term) ? new $this->model($term) : null;
+        return ($term) ? new $this->modelClass($term) : null;
     }
 
     /**
@@ -292,7 +292,7 @@ class TermQueryBuilder
      * @param string[] $slugs Array of slugs to return term(s) for.
      * @return $this
      */
-    public function whereSlugIn(array $slugs): self
+    public function whereSlugIn(array $slugs)
     {
         $this->queryVars['slug'] = $slugs;
         return $this;
@@ -302,7 +302,7 @@ class TermQueryBuilder
      * @param int $parentId
      * @return $this
      */
-    public function whereParent(int $parentId): self
+    public function whereParent(int $parentId)
     {
         $this->queryVars['parent'] = $parentId;
         return $this;
@@ -314,7 +314,7 @@ class TermQueryBuilder
      * @param string $compare
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '='): self
+    public function whereMeta($key, $value = '', string $compare = '=')
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -339,14 +339,14 @@ class TermQueryBuilder
      * @param int|int[]|null $postIds
      * @return $this
      */
-    public function whereRelatedToPost($postIds): self
+    public function whereRelatedToPost($postIds)
     {
         $this->queryVars['object_ids'] = $postIds ?: [0];
         return $this;
     }
 
     /** @return $this */
-    public function excludeEmpty(bool $hideEmpty = true): self
+    public function excludeEmpty(bool $hideEmpty = true)
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
         return $this;

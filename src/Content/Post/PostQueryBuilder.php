@@ -21,7 +21,7 @@ final class PostQueryBuilder
     /** @var class-string<WP_Query|IWpQuerySubstitute> */
     private string $wpQueryClass = WP_Query::class;
 
-    /** @param class-string<\OffbeatWP\Content\Post\PostModel> $modelClass Class of the model that is used */
+    /** @param class-string<TModel> $modelClass Class of the model that is used */
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
@@ -35,7 +35,7 @@ final class PostQueryBuilder
      * One example where total post count is required is pagination.
      * @return $this
      */
-    public function noFoundRows(bool $noFoundRows): self
+    public function noFoundRows(bool $noFoundRows)
     {
         $this->queryVars['no_found_rows'] = $noFoundRows;
         return $this;
@@ -45,7 +45,7 @@ final class PostQueryBuilder
      * Shows all posts rather than paginating.
      * @return $this
      */
-    public function noPaging(): self
+    public function noPaging()
     {
         $this->queryVars['nopaging'] = true;
         unset($this->queryVars['paged']);
@@ -153,7 +153,7 @@ final class PostQueryBuilder
     }
 
     /** @return $this */
-    public function limit(int $amount): self
+    public function limit(int $amount)
     {
         if ($amount <= 0) {
             throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
@@ -204,7 +204,7 @@ final class PostQueryBuilder
      * @param class-string<WP_Query|IWpQuerySubstitute> $queryObjectClassName
      * @return $this
      */
-    public function useQuery(string $queryObjectClassName): self
+    public function useQuery(string $queryObjectClassName)
     {
         $this->wpQueryClass = $queryObjectClassName;
         return $this;
@@ -214,7 +214,7 @@ final class PostQueryBuilder
      * Note: Wordpress Pagination automatically handles offset, so using this method might interfere with that
      * @return $this
      */
-    public function offset(int $numberOfItems): self
+    public function offset(int $numberOfItems)
     {
         $this->queryVars['offset'] = $numberOfItems;
         return $this;
@@ -226,7 +226,7 @@ final class PostQueryBuilder
      * EG: 'pillow -sofa' will return posts containing 'pillow' but not 'sofa'.
      * @return $this
      */
-    public function search(string $searchString): self
+    public function search(string $searchString)
     {
         $this->queryVars['s'] = $searchString;
         return $this;
@@ -236,7 +236,7 @@ final class PostQueryBuilder
      * @param string $slug The post slug.
      * @return $this
      */
-    public function whereSlug(string $slug): self
+    public function whereSlug(string $slug)
     {
         $this->queryVars['name'] = $slug;
         return $this;
@@ -260,7 +260,7 @@ final class PostQueryBuilder
      * @param bool $includeChildren Whether or not to include children for hierarchical taxonomies. Defaults to true.
      * @return $this
      */
-    public function whereTerm(string $taxonomy, array $terms = [], string $field = 'slug', string $operator = 'IN', bool $includeChildren = true): self
+    public function whereTerm(string $taxonomy, array $terms = [], string $field = 'slug', string $operator = 'IN', bool $includeChildren = true)
     {
         if (!isset($this->queryVars['tax_query'])) {
             $this->queryVars['tax_query'] = [];
@@ -281,7 +281,7 @@ final class PostQueryBuilder
      * @param int[]|string[] $args
      * @return $this
      */
-    public function whereDate(array $args): self
+    public function whereDate(array $args)
     {
         if (!isset($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
@@ -309,7 +309,7 @@ final class PostQueryBuilder
      * @param string[] $postStatus Array containing the post statuses to include
      * @return $this
      */
-    public function wherePostStatus(array $postStatus): self
+    public function wherePostStatus(array $postStatus)
     {
         $this->queryVars['post_status'] = $postStatus;
         return $this;
@@ -322,7 +322,7 @@ final class PostQueryBuilder
      * @param "NUMERIC"|"BINARY"|"CHAR"|"DATE"|"DATETIME"|"DECIMAL"|"SIGNED"|"TIME"|"UNSIGNED" $type
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '=', string $type = 'CHAR'): self
+    public function whereMeta($key, $value = '', string $compare = '=', string $type = 'CHAR')
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -348,7 +348,7 @@ final class PostQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdNotIn($ids): self
+    public function whereIdNotIn($ids)
     {
         $this->queryVars['post__not_in'] = (array)$ids;
         return $this;
@@ -358,7 +358,7 @@ final class PostQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdIn($ids): self
+    public function whereIdIn($ids)
     {
         $this->queryVars['post__in'] = (array)$ids ?: [0];
         return $this;
@@ -368,7 +368,7 @@ final class PostQueryBuilder
      * @param int[] $ids
      * @return $this
      */
-    public function whereAuthorIdIn(array $ids): self
+    public function whereAuthorIdIn(array $ids)
     {
         $this->queryVars['author__in'] = $ids;
         return $this;
@@ -381,7 +381,7 @@ final class PostQueryBuilder
      * @param bool|int $paginated
      * @return $this
      */
-    public function paginated($paginated = true): self
+    public function paginated($paginated = true)
     {
         if ($paginated) {
             $this->noFoundRows(false);
@@ -400,7 +400,7 @@ final class PostQueryBuilder
     }
 
     /** @return $this */
-    public function suppressFilters(bool $suppress = true): self
+    public function suppressFilters(bool $suppress = true)
     {
         $this->queryVars['suppress_filters'] = $suppress;
         return $this;
@@ -412,7 +412,7 @@ final class PostQueryBuilder
      * @param bool $inverted Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    public function hasRelationshipWith(PostModel|PostCollection $postModelOrCollection, string $relationKey, bool $inverted = false): self
+    public function hasRelationshipWith(PostModel|PostCollection $postModelOrCollection, string $relationKey, bool $inverted = false)
     {
         $this->queryVars['relationships'] = [
             'id' => ($postModelOrCollection instanceof PostCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
@@ -429,7 +429,7 @@ final class PostQueryBuilder
      * @param bool $inverted Set to <i>true</i> to reverse the relation
      * @return $this
      */
-    public function whereRelatedTo(array $ids, string $relationKey, bool $inverted = false): self
+    public function whereRelatedTo(array $ids, string $relationKey, bool $inverted = false)
     {
         $this->queryVars['relationships'] = [
             'id' => $ids,
