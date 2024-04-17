@@ -134,18 +134,21 @@ final class PostCollection extends ReadOnlyCollection
      */
     public function offsetGet(mixed $offset): ?PostModel
     {
-        return parent::offsetGet($offset);
+        $item = parent::offsetGet($offset);
+        return $item;
     }
 
     /** Get the first item from the collection. */
     public function first(): ?PostModel
     {
-        return parent::first();
+        $item = parent::first();
+        return $item;
     }
 
     /** Get the last item from the collection. */
     public function last(): ?PostModel
     {
-        return parent::last();
+        $item = parent::last();
+        return $item;
     }
 }

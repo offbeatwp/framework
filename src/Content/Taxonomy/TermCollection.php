@@ -32,18 +32,21 @@ final class TermCollection extends ReadOnlyCollection
      */
     public function offsetGet(mixed $offset): ?TermModel
     {
-        return parent::offsetGet($offset);
+        $item = parent::offsetGet($offset);
+        return $item;
     }
 
     /** Get the first item from the collection. */
     public function first(): ?TermModel
     {
-        return parent::first();
+        $item = parent::first();
+        return $item;
     }
 
     /** Get the last item from the collection. */
     public function last(): ?TermModel
     {
-        return parent::last();
+        $item = parent::last();
+        return $item;
     }
 }

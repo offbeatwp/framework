@@ -497,6 +497,11 @@ class PostModel extends OffbeatModel
         return ['posts_per_page' => -1, 'post_status' => PostStatus::PUBLISHED];
     }
 
+    final public function edit(): PostBuilder
+    {
+        return PostBuilder::update($this->wpPost->ID);
+    }
+
     /** @return PostQueryBuilder<static> */
     final public static function query(): PostQueryBuilder
     {

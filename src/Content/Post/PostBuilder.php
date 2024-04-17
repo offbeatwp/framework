@@ -2,13 +2,18 @@
 
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Exceptions\PostBuilderException;;
+use OffbeatWP\Exceptions\PostBuilderException;
+
+use Serializable;
 use WP_Error;
 
+/** @TODO */
 final class PostBuilder
 {
     /** @var array{ID?: int, post_title?: string, post_name?: string} */
     private array $args;
+    private array $metaInput = [];
+    private array $metaToDelete = [];
 
     private function __construct(array $args)
     {
@@ -20,6 +25,24 @@ final class PostBuilder
     {
         $this->args['post_title'] = $title;
         return $this;
+    }
+
+    public function addMeta(string $key, string|int|float|bool|array|Serializable $value)
+    {
+        if (array_key_exists($key, $this->metaToDelete)) {
+            unset($this->metaToDelete[$key]);
+        }
+
+        $this->metaInput[$key] = $value;
+    }
+
+    public function deleteMeta(string $key)
+    {
+        if (array_key_exists($key, $this->metaInput)) {
+            unset($this->metaInput[$key]);
+        }
+
+        $this->metaToDelete[$key] = '';
     }
 
     /**
