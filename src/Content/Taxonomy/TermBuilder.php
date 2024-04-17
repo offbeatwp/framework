@@ -55,7 +55,7 @@ final class TermBuilder
 
     /**
      * Inserts or updates the term in the database.<br>
-     * Returns term ID on success, throws TermSaveException on failure.
+     * Returns term ID on success, throws TermBuilderException on failure.
      * @return positive-int
      * @throws TermBuilderException
      */
