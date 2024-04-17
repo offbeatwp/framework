@@ -2,23 +2,19 @@
 
 namespace OffbeatWP\Assets;
 
+use RuntimeException;
 use stdClass;
 
-class AssetsManager
+final class AssetsManager
 {
-    /** @var array{} */
-    public $actions = [];
-    /** @var null|stdClass|false */
-    public $manifest = null;
-    /** @var null|stdClass|false */
-    public $entrypoints = null;
+    public stdClass|null $manifest = null;
+    public stdClass|null $entrypoints = null;
 
-    /** @return false|string */
-    public function getUrl(string $filename)
+    public function getUrl(string $filename): string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
-        if ($path !== false) {
+        if ($path !== null) {
             if (str_starts_with($path, 'http')) {
                 return $path;
             }
@@ -26,73 +22,63 @@ class AssetsManager
             return $this->getAssetsUrl($path);
         }
 
-        trigger_error('Could not retrieve url from asset manifest: ' . $filename, E_USER_WARNING);
-        return false;
+        throw new RuntimeException('Could not retrieve url from asset manifest: ' . $filename);
     }
 
-    /** @return false|string */
-    public function getPath(string $filename)
+    public function getPath(string $filename): string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
-        if ($path !== false) {
+        if ($path !== null) {
             return $this->getAssetsPath($path);
         }
 
-        trigger_error('Could not retrieve path from asset manifest: ' . $filename, E_USER_WARNING);
-        return false;
+        throw new RuntimeException('Could not retrieve path from asset manifest: ' . $filename);
     }
 
-    /** @return string|false */
-    public function getEntryFromAssetsManifest(string $filename)
+    public function getEntryFromAssetsManifest(string $filename): ?string
     {
-        return $this->getAssetsManifest()->$filename ?? false;
+        return $this->getAssetsManifest()->$filename ?? null;
     }
 
-    /** @return stdClass|false|null */
-    public function getAssetsManifest()
+    /** @throws \JsonException */
+    public function getAssetsManifest(): stdClass
     {
         if ($this->manifest === null) {
             $path = $this->getAssetsPath('manifest.json', true);
 
             if (file_exists($path)) {
-                $this->manifest = json_decode(file_get_contents($path), false);
-
-                if ($this->manifest === false) {
-                    trigger_error('MANIFEST JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
-                }
+                $this->manifest = json_decode(file_get_contents($path), false, 512, JSON_THROW_ON_ERROR);
             }
         }
 
         return $this->manifest;
     }
 
-    /** @return stdClass|false|null */
-    public function getAssetsEntryPoints()
+    /** @throws \JsonException */
+    public function getAssetsEntryPoints(): stdClass
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
 
             if (file_exists($path)) {
-                $this->entrypoints = json_decode(file_get_contents($path), false);
-
-                if ($this->entrypoints === false) {
-                    trigger_error('ENTRYPOINT JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
-                }
+                $this->entrypoints = json_decode(file_get_contents($path), false, 512, JSON_THROW_ON_ERROR);
             }
         }
 
         return $this->entrypoints;
     }
 
-    /** @return string[]|false */
-    public function getAssetsByEntryPoint(string $entry, string $key)
+    /**
+     * @return string[]
+     * @throws \JsonException
+     */
+    public function getAssetsByEntryPoint(string $entry, string $key): array
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
         if (empty($entrypoints->entrypoints->$entry->$key)) {
-            trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
-            return false;
+            throw new RuntimeException('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.');
         }
 
         return $entrypoints->entrypoints->$entry->$key;
@@ -151,7 +137,10 @@ class AssetsManager
         return get_template_directory_uri() . '/assets' . $path;
     }
 
-    /** @param string[] $dependencies */
+    /**
+     * @param string[] $dependencies
+     * @throws \JsonException
+     */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
@@ -188,9 +177,8 @@ class AssetsManager
     }
 
     /**
-     * @param string $entry
      * @param string[] $dependencies
-     * @return WpScriptAsset
+     * @throws \JsonException
      */
     public function enqueueScripts(string $entry, array $dependencies = []): WpScriptAsset
     {
