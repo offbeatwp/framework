@@ -40,7 +40,7 @@ final class App
     public static function singleton(): App
     {
         if (!static::$instance) {
-            throw new Exception('Attempte to call App::singleton while Offbeat has not been bootstrapped yet.');
+            throw new Exception('Attempted to call App::singleton while Offbeat has not been bootstrapped yet.');
         }
 
         return static::$instance;
