@@ -24,13 +24,13 @@ final class AdminPage
 
             if ($callback) {
                 $callback = function () use ($callback) {
-                    offbeat()->container->call($callback);
+                    container()->call($callback);
                 };
             }
 
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capability, $callback) {
                 add_menu_page($title, $title, $capability, $slug, function () use ($callback) {
-                    offbeat()->container->call($callback);
+                    container()->call($callback);
                 }, $icon, $position);
             });
         }
@@ -53,7 +53,7 @@ final class AdminPage
 
             if ($callback) {
                 $callback = function () use ($callback) {
-                    offbeat()->container->call($callback);
+                    container()->call($callback);
                 };
             }
 

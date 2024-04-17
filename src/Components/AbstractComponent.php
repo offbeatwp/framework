@@ -54,9 +54,9 @@ abstract class AbstractComponent
         $this->view = $view;
         $this->context = $context;
 
-        if (!offbeat()->container->has(ComponentArrayCache::class)) {
+        if (!container()->has(ComponentArrayCache::class)) {
             // Just a simple lightweight cache if none is set
-            offbeat()->container->set(ComponentArrayCache::class, new ComponentArrayCache());
+            container()->set(ComponentArrayCache::class, new ComponentArrayCache());
         }
     }
 

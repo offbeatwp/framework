@@ -3,6 +3,7 @@
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Exceptions\NonexistentComponentException;
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Layout\ContextInterface;
 
 /** @final */
@@ -49,7 +50,7 @@ class ComponentRepository
      */
     public function registerShortcode($name, $componentClass)
     {
-        $app = offbeat();
+        $app = App::singleton();
 
         $tag = $componentClass::getSetting('shortcode');
 
@@ -96,7 +97,7 @@ class ComponentRepository
     {
         $componentClass = $this->get($name);
 
-        return offbeat()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
+        return container()->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
     /**
