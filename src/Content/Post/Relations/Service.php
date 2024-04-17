@@ -4,8 +4,8 @@ namespace OffbeatWP\Content\Post\Relations;
 use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
-use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
+use OffbeatWP\Support\Wordpress\Console;
 use WP_Query;
 
 final class Service extends AbstractService
@@ -17,8 +17,6 @@ final class Service extends AbstractService
         if (offbeat(Console::class)::isConsole()) {
             offbeat(Console::class)->register(Install::class);
         }
-
-        offbeat(Hooks::class)->addFilter('acf/load_field', LoadFieldIconsFilter::class);
     }
 
     /**
