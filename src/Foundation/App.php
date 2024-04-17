@@ -4,13 +4,13 @@ namespace OffbeatWP\Foundation;
 use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Helper\CreateDefinitionHelper;
+use ErrorException;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Services\AbstractService;
-use OffbeatWP\Support\Wordpress\Hooks;
 use OffbeatWP\Wordpress\WordpressService;
 use function DI\autowire;
 use function DI\create;
@@ -22,19 +22,19 @@ final class App
     /** @var AbstractService[] */
     private array $services = [];
     private ?Config $config = null;
-    public ?Container $container = null;
+    public readonly Container $container;
+
+    private function __construct(Container $container) {
+        $this->container = $container;
+    }
 
     public static function singleton(): App
     {
         if (!static::$instance) {
-            static::$instance = new static();
+            throw new ErrorException('Offbeat has not been bootstrapped.');
         }
 
         return static::$instance;
-    }
-
-    private function __construct() {
-        // App is a singleton and must instantiated via the App::singleton() method.
     }
 
     public function bootstrap(): void
@@ -45,11 +45,15 @@ final class App
         $this->initiateBaseServices($containerBuilder);
         $this->initiateServices($containerBuilder);
 
-        $this->container = $containerBuilder->build();
+        $container = $containerBuilder->build();
 
-        $this->registerServices();
+        foreach ($this->services as $service) {
+            $container->call([$service, 'register']);
+        }
 
-        offbeat(Hooks::class)->doAction('offbeat.ready');
+        do_action('offbeat.ready');
+
+        self::$instance = new static($container);
     }
 
     /** @return CreateDefinitionHelper[] */
@@ -96,15 +100,6 @@ final class App
             }
 
             $this->markServiceAsInitiated($service);
-        }
-    }
-
-    private function registerServices(): void
-    {
-        foreach ($this->services as $service) {
-            if (is_callable([$service, 'register'])) {
-                $this->container->call([$service, 'register']);
-            }
         }
     }
 
