@@ -1,9 +1,10 @@
 <?php
 namespace OffbeatWP\Services;
 
+use OffbeatWP\Contracts\SiteSettings;
+
 abstract class AbstractServicePageBuilder extends AbstractService {
-    /** @return void */
-    public function register()
+    public function register(SiteSettings $settings): void
     {
         if (method_exists($this, 'onRegisterComponent')) {
             offbeat('hooks')->addAction('offbeat.component.register', [$this, '_onRegisterComponent'], 10, 1);
@@ -14,11 +15,8 @@ abstract class AbstractServicePageBuilder extends AbstractService {
         }
     }
 
-    /**
-     * @param mixed[] $component
-     * @return void
-     */
-    public function _onRegisterComponent($component)
+    /** @param mixed[] $component */
+    public function _onRegisterComponent(array $component): void
     {
         $componentClass = $component['class'];
 

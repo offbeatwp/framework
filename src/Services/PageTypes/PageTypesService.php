@@ -2,24 +2,22 @@
 
 namespace OffbeatWP\Services\PageTypes;
 
-use OffbeatWP\Content\Taxonomy\TermModel;
+use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
 use WP_Post;
 use WP_Query;
 
-class PageTypesService extends AbstractService
+final class PageTypesService extends AbstractService
 {
     public const TAXONOMY = 'page-type';
     public const POST_TYPES = 'page';
 
     public bool $isPageTypeSaved = false;
 
-    /** @return void */
-    public function register()
+    public function register(SiteSettings $settings): void
     {
         offbeat('taxonomy')::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
-            ->metaBox([$this, 'metaBox'])
             ->model(PageTypeModel::class)
             ->showAdminColumn()
             ->set();
@@ -33,8 +31,7 @@ class PageTypesService extends AbstractService
         add_action('edit_form_top', [$this, 'showRequiredFieldErrorMsg']);
     }
 
-    /** @return void */
-    public function filterPostTypeByTaxonomy()
+    public function filterPostTypeByTaxonomy(): void
     {
         global $typenow;
 
@@ -56,11 +53,7 @@ class PageTypesService extends AbstractService
         }
     }
 
-    /**
-     * @param WP_Query $query
-     * @return void
-     */
-    public function converIdToTermInQuery($query)
+    public function converIdToTermInQuery(WP_Query $query): void
     {
         global $pagenow;
 
@@ -68,17 +61,13 @@ class PageTypesService extends AbstractService
         $taxonomy = self::TAXONOMY;
 
         $qVars = &$query->query_vars;
-        if (isset($qVars['post_type'], $qVars[$taxonomy]) && $pagenow === 'edit.php' && $qVars['post_type'] === $postType && is_numeric($qVars[$taxonomy]) && $qVars[$taxonomy] != 0) {
+        if (isset($qVars['post_type'], $qVars[$taxonomy]) && $pagenow === 'edit.php' && $qVars['post_type'] === $postType && is_numeric($qVars[$taxonomy]) && $qVars[$taxonomy]) {
             $term = get_term_by('id', $qVars[$taxonomy], $taxonomy);
             $qVars[$taxonomy] = $term->slug;
         }
     }
 
-    /**
-     * @param WP_Post $post
-     * @return void
-     */
-    public function showRequiredFieldErrorMsg($post)
+    public function showRequiredFieldErrorMsg(WP_Post $post): void
     {
         $taxonomy = self::TAXONOMY;
         $post_type = self::POST_TYPES;
@@ -94,11 +83,7 @@ class PageTypesService extends AbstractService
         }
     }
 
-    /**
-     * @param int $postId
-     * @return void
-     */
-    public function savePageType($postId)
+    public function savePageType(int $postId): void
     {
         if ((defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) || $this->isPageTypeSaved) {
             return;
@@ -127,34 +112,5 @@ class PageTypesService extends AbstractService
         }
 
         $this->isPageTypeSaved = true;
-    }
-
-    /** @return void */
-    public function metaBox()
-    {
-        $terms = PageTypeModel::query()->excludeEmpty(false)->order('term_id', 'ASC')->all();
-
-        if ($terms->isEmpty()) {
-            return;
-        }
-
-        $post = offbeat('post')->get();
-
-        $pagePageType = ($post) ? $post->getTerms(self::TAXONOMY)->all() : collect();
-
-        if ($pagePageType->isNotEmpty()) {
-            $slug = $pagePageType->first()->getSlug();
-        } else {
-            $slug = $terms->first()->getSlug();
-        }
-
-        $terms->each(function (TermModel $term) use ($slug) {
-            ?>
-            <label title='<?php esc_attr_e($term->getName()); ?>'>
-                <input type="radio" name="page_type" value="<?= $term->getSlug() ?>" <?php checked($term->getSlug(), $slug); ?>>
-                <span><?php esc_html_e($term->getName()); ?></span>
-            </label><br>
-            <?php
-        });
     }
 }
