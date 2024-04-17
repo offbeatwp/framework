@@ -2,11 +2,11 @@
 
 namespace OffbeatWP\Content\Post;
 
+use OffbeatWP\Support\Wordpress\PostType;
 use WP_Post;
 use WP_Query;
 
-/** @final */
-class PostTypeBuilder
+final class PostTypeBuilder
 {
     /** @var null|class-string<PostModel> */
     private ?string $modelClass = null;
@@ -21,7 +21,7 @@ class PostTypeBuilder
             'labels' => [
                 'name' => $pluralLabel,
                 'singular_name' => $singularLabel ?: $pluralLabel,
-            ],
+            ]
         ];
 
         return $this;
@@ -388,9 +388,9 @@ class PostTypeBuilder
     /**
      * @param string $key
      * @param scalar $value
-     * @return PostTypeBuilder
+     * @return $this
      */
-    public function setArgument(string $key, $value): self
+    public function setArgument(string $key, $value)
     {
         $this->postTypeArgs[$key] = $value;
         return $this;

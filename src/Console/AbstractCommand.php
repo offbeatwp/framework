@@ -13,7 +13,7 @@ abstract class AbstractCommand {
      * @param string[] $args
      * @param string[] $argsNamed
      */
-    abstract public function execute(array $args, array $argsNamed): mixed;
+    abstract public function execute(array $args, array $argsNamed): void;
 
     final public function error(Exception|string|Throwable|WP_Error $message): void
     {

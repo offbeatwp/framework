@@ -1,19 +1,19 @@
 <?php
 namespace OffbeatWP\Content\Post\Relations;
 
+use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
-class BelongsTo extends BelongsToOneOrMany
+final class BelongsTo extends BelongsToOneOrMany
 {
-    public function query()
+    public function query(): WpQueryBuilder
     {
-        return (new WpQueryBuilder())
+        return (new WpQueryBuilder(PostModel::POST_TYPE))
             ->where(['ignore_sticky_posts' => 1])
-            ->wherePostType('any')
-            ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
+            ->hasRelationshipWith($this->model, $this->relationKey, true);
     }
 
-    public function get()
+    public function get(): ?PostModel
     {
         return $this->query()->first();
     }

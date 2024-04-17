@@ -3,7 +3,8 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\Common\ReadOnlyCollection;
-use OffbeatWP\Contracts\IWpQuerySubstitute; d
+use OffbeatWP\Contracts\IWpQuerySubstitute;
+use OffbeatWP\Support\Wordpress\Post;
 use WP_Query;
 
 /**

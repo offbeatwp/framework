@@ -3,11 +3,11 @@ namespace OffbeatWP\Content\Post\Relations\Console;
 
 use OffbeatWP\Console\AbstractCommand;
 
-class Install extends AbstractCommand
+final class Install extends AbstractCommand
 {
     public const COMMAND = 'post-relations:install';
 
-    public function execute($args, $argsNamed)
+    public function execute(array $args, array $argsNamed): void
     {
         global $wpdb;
 
@@ -27,5 +27,4 @@ class Install extends AbstractCommand
 
         $this->success('Table installed');
     }
-
 }

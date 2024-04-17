@@ -10,7 +10,6 @@ final class HasOne extends HasOneOrMany {
     {
        return (new WpQueryBuilder(PostModel::class))
             ->where(['ignore_sticky_posts' => 1])
-            ->wherePostType(['any'])
             ->hasRelationshipWith($this->model, $this->relationKey);
     }
 
