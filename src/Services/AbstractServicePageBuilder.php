@@ -2,6 +2,7 @@
 namespace OffbeatWP\Services;
 
 use OffbeatWP\Contracts\SiteSettings;
+use OffbeatWP\Support\Wordpress\Hooks;
 
 abstract class AbstractServicePageBuilder extends AbstractService {
     public function register(SiteSettings $settings): void

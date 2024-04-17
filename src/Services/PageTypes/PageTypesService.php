@@ -5,6 +5,7 @@ namespace OffbeatWP\Services\PageTypes;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Post;
 use WP_Query;
 

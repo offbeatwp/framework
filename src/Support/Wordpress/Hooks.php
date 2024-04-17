@@ -28,7 +28,7 @@ final class Hooks
                 $callback = [$callback, 'action'];
             }
 
-            return container()->call($callback, $parameters);
+            container()->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
 

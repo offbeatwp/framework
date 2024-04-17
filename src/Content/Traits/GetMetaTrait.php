@@ -4,29 +4,16 @@ namespace OffbeatWP\Content\Traits;
 
 use Exception;
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
 trait GetMetaTrait
 {
-    /**
-     * @param string $key
-     * @param scalar|array|null $defaultValue
-     * @param bool $single
-     * @return mixed
-     * @internal
-     */
-    private function getRawMetaValue(string $key, $defaultValue, bool $single = true)
+    private function getRawMetaValue(string $key, string|int|float|bool|array|null $defaultValue, bool $single = true): mixed
     {
-        if (array_key_exists($key, $this->metaToUnset)) {
-            return $defaultValue;
-        }
-
-        if (array_key_exists($key, $this->metaInput)) {
-            return $this->metaInput[$key];
-        }
-
         $metas = $this->getMetas();
+
         if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
             return ($single) ? reset($metas[$key]) : $metas[$key];
         }
@@ -132,8 +119,6 @@ trait GetMetaTrait
     /**
      * Attempt to retrieve a meta value as a WpDateTimeImmuteable object.<br>
      * If no meta exists or if conversion fails, <i>null</i> will be returned.
-     * @param string $key Meta key.
-     * @return WpDateTimeImmutable|null
      */
     public function getMetaDateTimeImmuteable(string $key): ?WpDateTimeImmutable
     {

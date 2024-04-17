@@ -3,6 +3,7 @@
 namespace OffbeatWP\Support\Repository;
 
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Support\Wordpress\PostType;
 use WP_Post;
 
 final class PostRepository

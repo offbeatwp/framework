@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use OffbeatWP\Builders\Exceptions\TermBuilderException;
+use OffbeatWP\Exceptions\TermBuilderException;
 use WP_Error;
 
 final class TermBuilder

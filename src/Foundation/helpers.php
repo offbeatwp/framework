@@ -1,6 +1,7 @@
 <?php
 
 use DI\Container;
+use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
