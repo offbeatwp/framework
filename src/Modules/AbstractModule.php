@@ -11,7 +11,6 @@ abstract class AbstractModule extends AbstractService
 {
     public function __construct(App $app)
     {
-        $this->app = $app;
         parent::__construct($app);
 
         if (method_exists($this, 'boot')) {

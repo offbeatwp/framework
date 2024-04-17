@@ -6,7 +6,7 @@ use OffbeatWP\Foundation\App;
 if (!function_exists('offbeat')) {
     /**
      * @template T
-     * @param class-string<T>|string $service
+     * @param class-string<T> $service
      * @return T
      */
     function offbeat(string $service = '') {
@@ -30,7 +30,7 @@ if (!function_exists('config')) {
 if (!function_exists('container')) {
     /**
      * @template T
-     * @param class-string<T>|string $definition
+     * @param class-string<T> $definition
      * @return T
      */
     function container(string $definition = ''): mixed

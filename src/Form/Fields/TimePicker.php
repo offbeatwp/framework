@@ -1,10 +1,10 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class TimePicker extends AbstractField {
+final class TimePicker extends AbstractField {
     public const FIELD_TYPE = 'time_picker';
 
-    public function __construct () {
+    protected function __construct () {
         parent::__construct();
 
         $this->setAttribute('display_format', 'H:i:s');

@@ -9,6 +9,9 @@ use OffbeatWP\Form\Form;
 
 abstract class AbstractFieldsContainer implements FieldsContainerInterface, IteratorAggregate
 {
+    public const TYPE = '';
+    public const LEVEL = 0;
+
     private string $id;
     private string $label;
     private Form|FieldsContainerInterface|null $parent = null;

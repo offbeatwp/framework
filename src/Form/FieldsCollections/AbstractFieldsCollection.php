@@ -5,7 +5,7 @@ use ArrayIterator;
 use IteratorAggregate;
 use OffbeatWP\Form\Fields\FieldInterface;
 
-abstract class AbstractFieldsCollection implements FieldsCollectionInterface, IteratorAggregate
+abstract class AbstractFieldsCollection implements IteratorAggregate
 {
     /** @var array<int, FieldInterface> */
     protected array $fields = [];
@@ -15,7 +15,7 @@ abstract class AbstractFieldsCollection implements FieldsCollectionInterface, It
         $this->fields[] = $field;
     }
 
-    public function addFields(FieldsCollectionInterface $fieldsCollection): void
+    public function addFields(AbstractFieldsCollection $fieldsCollection): void
     {
         foreach ($fieldsCollection as $field) {
             $this->fields[] = $field;

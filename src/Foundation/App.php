@@ -49,9 +49,6 @@ final class App
         $this->registerServices();
 
         offbeat('hooks')->doAction('offbeat.ready');
-
-        add_action('init', [$this, 'addRoutes'], PHP_INT_MAX - 1);
-        add_action('wp', [$this, 'findRoute'], 1);
     }
 
     /** @return CreateDefinitionHelper[] */
@@ -152,7 +149,7 @@ final class App
 
     public function config(string $config): mixed
     {
-        if (!$this->config === null) {
+        if ($this->config === null) {
             $this->config = new Config($this);
         }
 

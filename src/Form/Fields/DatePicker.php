@@ -4,7 +4,7 @@ namespace OffbeatWP\Form\Fields;
 class DatePicker extends AbstractField {
     public const FIELD_TYPE = 'date_picker';
 
-    public function __construct () {
+    protected function __construct() {
         parent::__construct();
         
         $this->setAttribute('display_format', 'd/m/Y');
