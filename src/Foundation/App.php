@@ -3,7 +3,6 @@ namespace OffbeatWP\Foundation;
 
 use DI\Container;
 use DI\ContainerBuilder;
-use DI\Definition\Helper\CreateDefinitionHelper;
 use ErrorException;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
@@ -12,6 +11,7 @@ use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
+use RuntimeException;
 use function DI\autowire;
 use function DI\create;
 
@@ -19,7 +19,7 @@ final class App
 {
     private static ?App $instance = null;
 
-    /** @var AbstractService[] */
+    /** @var array<class-string<AbstractService>, AbstractService> */
     private array $services = [];
     private ?Config $config = null;
     public readonly Container $container;
@@ -41,10 +41,20 @@ final class App
     {
         $containerBuilder = new ContainerBuilder();
 
-        $containerBuilder->addDefinitions($this->baseBindings());
-        $this->initiateBaseServices($containerBuilder);
-        $this->initiateServices($containerBuilder);
+        // Base Bindings
+        $containerBuilder->addDefinitions([AssetsManager::class => create(AssetsManager::class)]);
 
+        // Initiate Base Services
+        foreach ([WordpressService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
+            $this->initiateService($service, $containerBuilder);
+        }
+
+        // Initiate Services
+        foreach ($this->config('services') as $service) {
+            $this->initiateService($service, $containerBuilder);
+        }
+
+        // Build container and register services
         $container = $containerBuilder->build();
 
         foreach ($this->services as $service) {
@@ -56,71 +66,41 @@ final class App
         self::$instance = new static($container);
     }
 
-    /** @return CreateDefinitionHelper[] */
-    private function baseBindings(): array
-    {
-        return [AssetsManager::class => create(AssetsManager::class)];
-    }
-
-    private function initiateBaseServices(ContainerBuilder $containerBuilder): void
-    {
-        foreach ([WordpressService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
-            $this->initiateService($service, $containerBuilder);
-        }
-    }
-
-    private function initiateServices(ContainerBuilder $containerBuilder): void
-    {
-        $services = config('services');
-
-        if (is_object($services) && $services->isNotEmpty()) {
-            $services->each(function ($service) use ($containerBuilder) {
-                $this->initiateService($service, $containerBuilder);
-            });
-        }
-    }
-
     private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
     {
-        if ($this->isServiceInitiated($serviceClass)) {
-            $this->getService($serviceClass);
-            return;
+        if (array_key_exists($serviceClass, $this->services)) {
+            throw new RuntimeException($serviceClass . ' was initiated twice.');
         }
 
         if (class_exists($serviceClass)) {
             $service = new $serviceClass($this);
 
-            if (property_exists($service, 'bindings') && !empty($service->bindings)) {
+            if (property_exists($service, 'bindings') && is_iterable($service->bindings)) {
                 foreach ($service->bindings as &$binding) {
                     if (is_string($binding)) {
                         $binding = autowire($binding);
+                    } else {
+                        throw new RuntimeException('Cannot autowire binding with type ' . gettype($binding));
                     }
                 }
+
+                unset($binding);
                 $containerBuilder->addDefinitions($service->bindings);
             }
 
-            $this->markServiceAsInitiated($service);
+            $this->services[$service::class] = $service;
+        } else {
+            throw new RuntimeException('Service class ' . $serviceClass . ' does not exist!');
         }
     }
 
-    /** @return null|false|AbstractService */
-    public function getService(string $serviceClass)
+    public function getService(string $serviceClass): AbstractService
     {
-        if ($this->isServiceInitiated($serviceClass)) {
+        if (array_key_exists($serviceClass, $this->services)) {
             return $this->services[$serviceClass];
         }
 
-        return false;
-    }
-
-    public function isServiceInitiated(string $serviceClass): bool
-    {
-        return (isset($this->services[$serviceClass]));
-    }
-
-    public function markServiceAsInitiated(object $service): void
-    {
-        $this->services[$service::class] = $service;
+        throw new RuntimeException('Cannot get service ' . $serviceClass . ' before initialisation.');
     }
 
     public function bind(string $abstract, mixed $concrete): void
