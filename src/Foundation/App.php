@@ -59,7 +59,7 @@ final class App
     /** @return CreateDefinitionHelper[] */
     private function baseBindings(): array
     {
-        return ['assets' => create(AssetsManager::class)];
+        return [AssetsManager::class => create(AssetsManager::class)];
     }
 
     private function initiateBaseServices(ContainerBuilder $containerBuilder): void

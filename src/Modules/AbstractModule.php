@@ -2,8 +2,10 @@
 
 namespace OffbeatWP\Modules;
 
+use OffbeatWP\Components\ComponentRepository;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Services\AbstractService;
+use OffbeatWP\Support\Wordpress\Hooks;
 use ReflectionClass;
 use RuntimeException;
 
@@ -43,7 +45,7 @@ abstract class AbstractModule extends AbstractService
 
         if ($registerableComponents) {
             foreach ($registerableComponents as $class) {
-                offbeat('components')->register($class::getSlug(), $class);
+                offbeat(ComponentRepository::class)->register($class::getSlug(), $class);
             }
         }
     }

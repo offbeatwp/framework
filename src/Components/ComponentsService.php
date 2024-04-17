@@ -7,9 +7,7 @@ use ReflectionClass;
 
 final class ComponentsService extends AbstractService
 {
-    public array $bindings = [
-        'components' => ComponentRepository::class
-    ];
+    public array $bindings = [ComponentRepository::class => ComponentRepository::class];
 
     public function register(SiteSettings $settings): void
     {
@@ -19,7 +17,7 @@ final class ComponentsService extends AbstractService
     public function registerComponents(): void
     {
         foreach ($this->registrableComponents() as $class) {
-            offbeat('components')->register($class::getSlug(), $class);
+            offbeat(ComponentRepository::class)->register($class::getSlug(), $class);
         }
     }
 

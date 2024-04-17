@@ -20,7 +20,7 @@ abstract class AbstractEnqueueBuilder
     /** @return $this */
     final public function setAsset(string $filename): self
     {
-        $this->src = offbeat('assets')->getUrl($filename) ?: '';
+        $this->src = offbeat(AssetsManager::class)->getUrl($filename) ?: '';
 
         if (!$this->src) {
             trigger_error('Could not find asset url for ' . $filename, E_USER_WARNING);

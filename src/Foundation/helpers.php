@@ -10,12 +10,9 @@ if (!function_exists('offbeat')) {
      * @param class-string<T> $service
      * @return T
      */
-    function offbeat(string $service = '') {
-        if ($service) {
-            return offbeat($service);
-        }
-
-        return App::singleton();
+    function offbeat(string $service)
+    {
+        return App::singleton()->container->get($service);
     }
 }
 
@@ -36,7 +33,7 @@ if (!function_exists('config')) {
 if (!function_exists('assetUrl')) {
     function assetUrl(string $file): ?string
     {
-        return offbeat('assets')->getUrl($file);
+        return offbeat(AssetsManager::class)->getUrl($file);
     }
 }
 
