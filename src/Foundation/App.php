@@ -32,7 +32,7 @@ final class App
 
     /** @var AbstractService[] */
     private array $services = [];
-    public ?Container $container = null;
+    public Container $container;
     protected ?Config $config = null;
     /** @var CallbackRoute|PathRoute|false|null */
     protected $route;
