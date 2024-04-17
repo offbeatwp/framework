@@ -2,6 +2,8 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
+use OffbeatWP\Foundation\App;
+
 class AdminPage
 {
     /**
@@ -29,13 +31,13 @@ class AdminPage
 
             if ($callback) {
                 $callback = function () use ($callback) {
-                    offbeat()->container->call($callback);
+                    App::singleton()->container->call($callback);
                 };
             }
 
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capability, $callback) {
                 add_menu_page($title, $title, $capability, $slug, function () use ($callback) {
-                    offbeat()->container->call($callback);
+                    App::singleton()->container->call($callback);
                 }, $icon, $position);
             });
         }
@@ -63,7 +65,7 @@ class AdminPage
 
             if ($callback) {
                 $callback = function () use ($callback) {
-                    offbeat()->container->call($callback);
+                    App::singleton()->container->call($callback);
                 };
             }
 
@@ -96,7 +98,7 @@ class AdminPage
     /** @return void */
     public function callbackController()
     {
-        offbeat()->findRoute();
-        offbeat()->run();
+        App::singleton()->findRoute();
+        App::singleton()->run();
     }
 }

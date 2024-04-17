@@ -14,6 +14,7 @@ if (!function_exists('offbeat')) {
             return container($service);
         }
 
+        error_log("Calling 'offbeat' without argument is deprecated.", E_USER_DEPRECATED);
         return App::singleton();
     }
 }
@@ -25,9 +26,7 @@ if (!function_exists('config')) {
      * @return mixed
      */
     function config(?string $config = null, $default = null) {
-        /** @var App $app */
-        $app = offbeat();
-        return $app->config($config, $default);
+        return App::singleton()->config($config, $default);
     }
 }
 
@@ -38,14 +37,11 @@ if (!function_exists('container')) {
      * @return T
      */
     function container(?string $definition = null) {
-        /** @var App $app */
-        $app = offbeat();
-
         if ($definition !== null) {
-            return $app->container->get($definition);
+            return App::singleton()->container->get($definition);
         }
 
-        return $app->container;
+        return App::singleton()->container;
     }
 }
 
