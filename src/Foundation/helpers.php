@@ -32,7 +32,7 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('assetUrl')) {
-    function assetUrl(string $file): ?string
+    function assetUrl(string $file): string
     {
         return offbeat(AssetsManager::class)->getUrl($file);
     }

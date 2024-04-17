@@ -172,16 +172,10 @@ class UserModel extends OffbeatModel
     }
 
     /** @return mixed[] */
-    public function getMetas(): ?array
+    public function getMetas(): array
     {
-        if ($this->metas === null && $this->getId() > 0) {
-            $metas = get_user_meta($this->getId());
-
-            if (is_array($metas)) {
-                $this->metas = $metas;
-            } else {
-                return null;
-            }
+        if ($this->metas === null) {
+            $this->metas = get_user_meta($this->getId()) ?: [];
         }
 
         return $this->metas;

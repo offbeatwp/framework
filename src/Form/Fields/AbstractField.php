@@ -4,14 +4,17 @@ namespace OffbeatWP\Form\Fields;
 
 abstract class AbstractField
 {
-    public string $id;
-    public string $label;
-    public bool $required;
-    /** @var mixed[] */
-    public array $attributes = [];
+    public const FIELD_TYPE = '';
 
-    public function __construct()
+    /** @var mixed[] */
+    private array $attributes = [];
+    private readonly string $id;
+    private string $label;
+    private bool $required;
+
+    final public function __construct(string $id)
     {
+        $this->id = $id;
         $this->init();
     }
 
@@ -21,19 +24,12 @@ abstract class AbstractField
         // Only exists to be overriden
     }
 
-    public static function make(string $id, string $label): static
+    final public static function make(string $id, string $label): static
     {
-        $field = new static();
-
-        $field->setId($id);
-        $field->setLabel($label);
+        $field = new static($id);
+        $field->label = $label;
 
         return $field;
-    }
-
-    public function setId(string $id): void
-    {
-        $this->id = $id;
     }
 
     public function setLabel(string $label): void

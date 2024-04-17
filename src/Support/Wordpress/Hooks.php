@@ -20,7 +20,7 @@ final class Hooks
         return apply_filters_ref_array($filter, $parameters);
     }
 
-    /** @param callable(mixed...): void $callback */
+    /** @param callable(mixed, mixed...): void $callback */
     public function addAction(string $action, callable $callback, int $priority = 10, int $acceptArguments = 1): void
     {
         add_action($action, function (...$parameters) use ($callback) {

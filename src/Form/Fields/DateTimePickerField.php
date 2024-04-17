@@ -5,9 +5,8 @@ final class DateTimePickerField extends AbstractField
 {
     public const FIELD_TYPE = 'date_time_picker';
 
-    protected function __construct() {
-        parent::__construct();
-
+    protected function init(): void
+    {
         $this->setAttribute('display_format', 'd/m/Y H:i:s');
         $this->setAttribute('return_format', 'd/m/Y H:i:s');
     }

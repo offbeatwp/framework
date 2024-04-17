@@ -39,16 +39,7 @@ trait GetMetaTrait
      */
     public function hasMeta(string $key): bool
     {
-        if (array_key_exists($key, $this->metaToUnset)) {
-            return false;
-        }
-
-        if (array_key_exists($key, $this->metaInput)) {
-            return true;
-        }
-
-        $metas = $this->getMetas();
-        return ($metas && array_key_exists($key, $metas));
+        return array_key_exists($key, $this->getMetas());
     }
 
     /**
