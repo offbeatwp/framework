@@ -20,7 +20,7 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('container')) {
-    function container(): ?Container
+    function container(): Container
     {
         return App::singleton()->container;
     }
@@ -29,9 +29,7 @@ if (!function_exists('container')) {
 if (!function_exists('config')) {
     function config(string $config = ''): mixed
     {
-        /** @var App $app */
-        $app = offbeat();
-        return $app->config($config);
+        return App::singleton()->config($config);
     }
 }
 
