@@ -1,8 +1,9 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class PostType extends AbstractField {
-    public const FIELD_TYPE = 'post_type';
+final class UsersField extends AbstractField
+{
+    public const FIELD_TYPE = 'users';
 
     public function getFieldType(): string
     {

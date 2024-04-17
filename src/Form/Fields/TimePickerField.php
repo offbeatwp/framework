@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-final class TimePicker extends AbstractField {
+final class TimePickerField extends AbstractField {
     public const FIELD_TYPE = 'time_picker';
 
     protected function __construct () {

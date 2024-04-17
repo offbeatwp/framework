@@ -1,20 +1,22 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Terms extends AbstractField {
+final class TermsField extends AbstractField
+{
     public const FIELD_TYPE = 'terms';
 
     /**
      * @param string|string[] $taxonomy
      * @return $this
      */
-    public function fromTaxonomy($taxonomy = [])
+    public function fromTaxonomy(string|array $taxonomy = [])
     {
         $this->setAttribute('taxonomy', $taxonomy);
         return $this;
     }
 
-    final public function multiSelect(): self
+    /** @return $this */
+    public function multiSelect()
     {
         $this->setAttribute('field_type', 'multi_select');
         return $this;

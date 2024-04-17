@@ -1,7 +1,8 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class DateTimePicker extends AbstractField {
+final class DateTimePickerField extends AbstractField
+{
     public const FIELD_TYPE = 'date_time_picker';
 
     protected function __construct() {

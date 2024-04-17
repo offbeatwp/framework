@@ -1,8 +1,9 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Email extends AbstractField {
-    public const FIELD_TYPE = 'email';
+final class ImageField extends AbstractField
+{
+    public const FIELD_TYPE = 'image';
 
     public function getFieldType(): string
     {

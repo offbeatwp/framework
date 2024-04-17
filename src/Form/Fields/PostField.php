@@ -1,12 +1,13 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Posts extends AbstractField {
-    public const FIELD_TYPE = 'posts';
+final class PostField extends AbstractField {
+    public const FIELD_TYPE = 'post';
 
-    public function fromPostTypes($postTypes = []) {
+    /** @return $this */
+    public function fromPostTypes(array $postTypes = [])
+    {
         $this->setAttribute('post_types', $postTypes);
-
         return $this;
     }
 

@@ -1,19 +1,19 @@
 <?php
 namespace OffbeatWP\Form\FieldsCollections;
 
-use OffbeatWP\Form\Fields\Select;
-use OffbeatWP\Form\Fields\Text;
+use OffbeatWP\Form\Fields\SelectField;
+use OffbeatWP\Form\Fields\TextField;
 
 final class Link extends AbstractFieldsCollection
 {
     public function __construct()
     {
-        $this->addField(Text::make('link_label', __('Link label', 'offbeatwp')));
-        $this->addField(Text::make('link_url', __('Link url', 'offbeatwp')));
+        $this->addField(TextField::make('link_label', __('Link label', 'offbeatwp')));
+        $this->addField(TextField::make('link_url', __('Link url', 'offbeatwp')));
 
-        $linkTargetField = Select::make('link_target', __('Link target', 'offbeatwp'));
+        $linkTargetField = SelectField::make('link_target', __('Link target', 'offbeatwp'));
         $linkTargetField
-            ->addOptions([
+            ->setOptions([
                 '_self' => __('Self', 'offbeatwp'),
                 '_blank' => __('Blank', 'offbeatwp'),
                 '_parent' => __('Parent', 'offbeatwp'),

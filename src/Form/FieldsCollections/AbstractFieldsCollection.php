@@ -3,14 +3,14 @@ namespace OffbeatWP\Form\FieldsCollections;
 
 use ArrayIterator;
 use IteratorAggregate;
-use OffbeatWP\Form\Fields\FieldInterface;
+use OffbeatWP\Form\Fields\AbstractField;
 
 abstract class AbstractFieldsCollection implements IteratorAggregate
 {
-    /** @var array<int, FieldInterface> */
+    /** @var array<int, AbstractField> */
     protected array $fields = [];
 
-    public function addField(FieldInterface $field): void
+    public function addField(AbstractField $field): void
     {
         $this->fields[] = $field;
     }

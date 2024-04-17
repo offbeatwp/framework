@@ -1,10 +1,12 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class File extends AbstractField {
+final class FileField extends AbstractField
+{
     public const FIELD_TYPE = 'file';
 
-    public function allowedFileTypes(string $allowedFileTypes): File
+    /** @return $this */
+    public function allowedFileTypes(string $allowedFileTypes)
     {
         $this->setAttribute('allowed_file_types', $allowedFileTypes);
         return $this;

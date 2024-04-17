@@ -3,7 +3,7 @@
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Form\Form;
-use OffbeatWP\Form\Fields\Select;
+use OffbeatWP\Form\Fields\SelectField;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\CssClassTrait;
@@ -244,7 +244,7 @@ abstract class AbstractComponent
 
         if ($form instanceof Form && isset($settings['variations'])) {
             $form->addField(
-                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
+                SelectField::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
             );
         }
 

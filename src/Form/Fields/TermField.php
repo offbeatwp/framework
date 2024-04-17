@@ -1,14 +1,15 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Term extends AbstractField {
+final class TermField extends AbstractField
+{
     public const FIELD_TYPE = 'term';
 
     /**
      * @param string[] $taxonomies
      * @return $this
      */
-    public function fromTaxonomies($taxonomies = []) {
+    public function fromTaxonomies(array $taxonomies = []) {
         $this->setAttribute('taxonomies', $taxonomies);
         return $this;
     }

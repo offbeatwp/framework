@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Form\Fields;
 
-abstract class AbstractField implements FieldInterface
+abstract class AbstractField
 {
     public string $id;
     public string $label;
@@ -10,11 +10,12 @@ abstract class AbstractField implements FieldInterface
     /** @var mixed[] */
     public array $attributes = [];
 
-    protected function __construct()
+    public function __construct()
     {
         $this->init();
     }
 
+    /** This method is executed when the field is constructed */
     protected function init(): void
     {
         // Only exists to be overriden

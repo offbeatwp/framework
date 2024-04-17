@@ -1,11 +1,11 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class HorizontalAlign extends Select {
-
-    public function __construct()
+final class HorizontalAlignField extends SelectField
+{
+    protected function init(): void
     {        
-        $this->addOptions([
+        $this->setOptions([
             ''              => __('Default', 'offbeatwp'),
             'left'          => __('Left', 'offbeatwp'),
             'center'        => __('Center', 'offbeatwp'),

@@ -1,10 +1,11 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class ButtonGroup extends AbstractField {
+final class ButtonGroupField extends AbstractField
+{
     public const FIELD_TYPE = 'button_group';
 
-    public $options = [];
+    public array $options = [];
 
     public function addOptions($options = []) {
         $this->options = $options;

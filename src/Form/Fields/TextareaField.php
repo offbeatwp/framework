@@ -1,10 +1,11 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class Textarea extends AbstractField {
+final class TextareaField extends AbstractField {
     public const FIELD_TYPE = 'textarea';
 
-    public function __construct () {
+    protected function init(): void
+    {
         $this->setAttribute('new_lines', 'br');
     }
 

@@ -1,7 +1,8 @@
 <?php
 namespace OffbeatWP\Form\Fields;
 
-class TrueFalse extends AbstractField {
+final class TrueFalseField extends AbstractField
+{
     public const FIELD_TYPE = 'true_false';
 
     public function stylisedUI(bool $useStylisedUI = true): self

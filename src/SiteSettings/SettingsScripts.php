@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\SiteSettings;
 
-use OffbeatWP\Form\Fields\Textarea;
+use OffbeatWP\Form\Fields\TextareaField;
 use OffbeatWP\Form\Form;
 
 class SettingsScripts
@@ -18,9 +18,9 @@ class SettingsScripts
     {
         $form = new Form();
 
-        $form->addField(Textarea::make('scripts_head', 'Head')->attribute('new_lines', 0));
-        $form->addField(Textarea::make('scripts_open_body', 'Body open')->attribute('new_lines', 0));
-        $form->addField(Textarea::make('scripts_footer', 'Footer')->attribute('new_lines', 0));
+        $form->addField(TextareaField::make('scripts_head', 'Head')->attribute('new_lines', 0));
+        $form->addField(TextareaField::make('scripts_open_body', 'Body open')->attribute('new_lines', 0));
+        $form->addField(TextareaField::make('scripts_footer', 'Footer')->attribute('new_lines', 0));
 
         return $form;
     }
