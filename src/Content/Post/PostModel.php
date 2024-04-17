@@ -38,7 +38,7 @@ class PostModel extends OffbeatModel
     /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
     protected array $data = [];
 
-    private function __construct(WP_Post $wpPost)
+    final private function __construct(WP_Post $wpPost)
     {
         if ($wpPost->ID <= 0) {
             throw new OffbeatInvalidModelException('Could not construct PostModel with invalid ID: ' . $wpPost->ID);
