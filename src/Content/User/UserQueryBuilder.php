@@ -15,11 +15,11 @@ final class UserQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var class-string<UserModel> */
-    protected string $modelClass;
+    private readonly string $modelClass;
     /** @var mixed[] */
-    protected array $queryVars = ['number' => 0];
-    protected bool $skipOnLimit = false;
-    protected bool $skipOnInclude = false;
+    private array $queryVars = ['number' => 0];
+    private bool $skipOnLimit = false;
+    private bool $skipOnInclude = false;
 
     /** @param class-string<TModel> $modelClass */
     public function __construct(string $modelClass)

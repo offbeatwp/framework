@@ -15,7 +15,7 @@ final class PostQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var class-string<\OffbeatWP\Content\Post\PostModel> */
-    private string $modelClass;
+    private readonly string $modelClass;
     /** @var mixed[] */
     private array $queryVars;
     /** @var class-string<WP_Query|IWpQuerySubstitute> */

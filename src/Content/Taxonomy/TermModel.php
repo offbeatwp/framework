@@ -17,6 +17,8 @@ class TermModel extends OffbeatModel
     use BaseModelTrait;
     use GetMetaTrait;
 
+    public const TAXONOMY = '';
+
     protected WP_Term $wpTerm;
     protected ?array $metas = null;
 

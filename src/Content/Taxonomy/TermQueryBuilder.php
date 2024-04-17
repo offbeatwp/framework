@@ -14,10 +14,10 @@ final class TermQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var mixed[] */
-    protected array $queryVars = ['hide_empty' => false];
+    private array $queryVars = ['hide_empty' => false];
     /** @var class-string<TModel> */
-    protected string $modelClass;
-    protected string $taxonomy;
+    private readonly string $modelClass;
+    private readonly string $taxonomy;
 
     /** @param class-string<TModel> $modelClass */
     public function __construct(string $modelClass)

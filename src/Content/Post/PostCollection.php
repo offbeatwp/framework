@@ -10,11 +10,14 @@ use WP_Query;
 final class PostCollection extends ReadOnlyCollection
 {
     private readonly IWpQuerySubstitute|WP_Query $query;
+    /** @var class-string<\OffbeatWP\Content\Post\PostModel> */
+    protected readonly string $modelClass;
 
-    public function __construct(IWpQuerySubstitute|WP_Query $query)
+    public function __construct(IWpQuerySubstitute|WP_Query $query, string $modelClass)
     {
         $postItems = [];
         $this->query = $query;
+        $this->modelClass = $modelClass;
 
         foreach ($query->posts as $post) {
             $postItems[] = offbeat(Post::class)->convertWpPostToModel($post);
