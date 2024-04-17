@@ -7,6 +7,7 @@ use DI\ContainerBuilder;
 use DI\Definition\Helper\CreateDefinitionHelper;
 use DI\Definition\Helper\DefinitionHelper;
 use ErrorException;
+use Exception;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
@@ -39,7 +40,7 @@ final class App
     public static function singleton(): App
     {
         if (!static::$instance) {
-            throw new ErrorException('Attempte to call App::singleton while Offbeat has not been bootstrapped yet.');
+            throw new Exception('Attempte to call App::singleton while Offbeat has not been bootstrapped yet.');
         }
 
         return static::$instance;
