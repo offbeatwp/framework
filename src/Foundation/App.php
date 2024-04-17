@@ -21,7 +21,7 @@ final class App
     /** @var array<class-string<AbstractService>, AbstractService> */
     private array $services = [];
     private ?Config $config = null;
-    public readonly Container $container;
+    private Container $container;
 
     private function __construct()
     {
@@ -35,6 +35,11 @@ final class App
         }
 
         return static::$instance;
+    }
+
+    public function getContainer(): Container
+    {
+        return $this->container;
     }
 
     public function bootstrap(): void

@@ -60,7 +60,7 @@ class ComponentRepository
         }
 
         add_shortcode($tag, static function ($atts, $content = '') use ($app, $componentClass) {
-            $shortcode = $app->container->make(GenericShortcode::class, ['componentClass' => $componentClass]);
+            $shortcode = $app->getContainer()->make(GenericShortcode::class, ['componentClass' => $componentClass]);
             return $shortcode->renderShortcode($atts, $content);
         });
     }

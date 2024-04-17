@@ -35,9 +35,4 @@ trait BaseModelTrait
 
         return static::query()->whereIdIn([$id])->exists();
     }
-
-    final public static function create(): static
-    {
-        return new static();
-    }
 }

@@ -12,7 +12,7 @@ abstract class AbstractServicePageBuilder extends AbstractService {
         }
 
         if (method_exists($this, 'afterRegister')) {
-            $this->app->container->call([$this, 'afterRegister']);
+            $this->app->getContainer()->call([$this, 'afterRegister']);
         }
     }
 

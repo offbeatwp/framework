@@ -13,14 +13,14 @@ if (!function_exists('offbeat')) {
      */
     function offbeat(string $service)
     {
-        return App::singleton()->container->get($service);
+        return App::singleton()->getContainer()->get($service);
     }
 }
 
 if (!function_exists('container')) {
     function container(): Container
     {
-        return App::singleton()->container;
+        return App::singleton()->getContainer();
     }
 }
 
