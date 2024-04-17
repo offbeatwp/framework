@@ -2,7 +2,7 @@
 namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\PostModel;
-use OffbeatWP\Content\Post\PostsCollection;
+use OffbeatWP\Content\Post\PostCollection;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
 final class HasMany extends HasOneOrMany
@@ -14,7 +14,7 @@ final class HasMany extends HasOneOrMany
             ->hasRelationshipWith($this->model, $this->relationKey);
     }
 
-    public function get(): PostsCollection
+    public function get(): PostCollection
     {
         return $this->query()->get();
     }

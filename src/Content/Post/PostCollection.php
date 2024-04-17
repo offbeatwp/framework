@@ -7,11 +7,7 @@ use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Support\Wordpress\Post;
 use WP_Query;
 
-/**
- * @template TModel
- * @implements \ArrayAccess<int, TModel>
- */
-final class PostsCollection extends ReadOnlyCollection
+final class PostCollection extends ReadOnlyCollection
 {
     private readonly IWpQuerySubstitute|WP_Query $query;
 

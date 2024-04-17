@@ -302,7 +302,7 @@ class PostModel extends OffbeatModel
     }
 
     /** Retrieves the children of this post. */
-    public function getChildren(): PostsCollection
+    public function getChildren(): PostCollection
     {
         return static::query()->where(['post_parent' => $this->getId()])->get();
     }

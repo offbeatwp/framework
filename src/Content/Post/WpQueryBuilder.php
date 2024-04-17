@@ -49,8 +49,8 @@ final class WpQueryBuilder
         return $this;
     }
 
-    /** @return PostsCollection<TModel> */
-    public function get(): PostsCollection
+    /** @return PostCollection<TModel> */
+    public function get(): PostCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
             $isPaged = (bool)($this->queryVars['paged'] ?? false);
@@ -59,7 +59,7 @@ final class WpQueryBuilder
 
         $query = $this->runQuery();
 
-        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
+        return apply_filters('offbeatwp/posts/query/get', new PostCollection($query), $this);
     }
 
     /** @return mixed[] */
@@ -76,8 +76,8 @@ final class WpQueryBuilder
         return $queryVars[$var] ?? null;
     }
 
-    /** @return PostsCollection<TModel> */
-    public function take(int $numberOfItems): PostsCollection
+    /** @return PostCollection<TModel> */
+    public function take(int $numberOfItems): PostCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
 
@@ -403,15 +403,15 @@ final class WpQueryBuilder
     }
 
     /**
-     * @param PostModel|PostsCollection<PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModel|PostCollection<PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
      * @param bool $inverted Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    public function hasRelationshipWith(PostModel|PostsCollection $postModelOrCollection, string $relationKey, bool $inverted = false): self
+    public function hasRelationshipWith(PostModel|PostCollection $postModelOrCollection, string $relationKey, bool $inverted = false): self
     {
         $this->queryVars['relationships'] = [
-            'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
+            'id' => ($postModelOrCollection instanceof PostCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
             'key' => $relationKey,
             'direction' => $inverted ? 'reverse' : null,
         ];

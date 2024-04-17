@@ -86,26 +86,26 @@ class TermQueryBuilder
         return $this;
     }
 
-    /** @return TermsCollection<TModel> */
-    public function get(): TermsCollection
+    /** @return TermCollection<TModel> */
+    public function get(): TermCollection
     {
-        return new TermsCollection($this->runQuery());
+        return new TermCollection($this->runQuery());
     }
 
     /**
      * Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms
-     * @return TermsCollection<TModel>
+     * @return TermCollection<TModel>
      */
-    public function all(): TermsCollection
+    public function all(): TermCollection
     {
         return $this->take(0);
     }
 
     /**
      * @param int $numberOfItems
-     * @return TermsCollection<TModel>
+     * @return TermCollection<TModel>
      */
-    public function take(int $numberOfItems): TermsCollection
+    public function take(int $numberOfItems): TermCollection
     {
         $this->queryVars['number'] = $numberOfItems;
         return $this->get();
