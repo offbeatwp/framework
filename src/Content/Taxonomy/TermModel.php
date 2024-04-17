@@ -150,7 +150,7 @@ class TermModel extends OffbeatModel
     /** Retrieves the current term from the WordPress loop, provided the TermModel is or extends the TermModel class that it is called on. */
     public static function current(): ?static
     {
-        $taxonomy = offbeat('taxonomy')->get();
+        $taxonomy = offbeat(Taxonomy::class)->get();
         return ($taxonomy instanceof static) ? $taxonomy : null;
     }
 

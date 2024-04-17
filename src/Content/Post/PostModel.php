@@ -41,7 +41,7 @@ class PostModel extends OffbeatModel
     private function __construct(WP_Post $wpPost)
     {
         if ($wpPost->ID <= 0) {
-            throw new OffbeatInvalidModelException('Could not construct ' . class_basename($this) . ' with invalid ID: ' . $wpPost->ID);
+            throw new OffbeatInvalidModelException('Could not construct PostModel with invalid ID: ' . $wpPost->ID);
         }
 
         $this->wpPost = $wpPost;
@@ -249,7 +249,7 @@ class PostModel extends OffbeatModel
 
     public function getTerms(string $taxonomy): TermQueryBuilder
     {
-        return offbeat('taxonomy')->getModelByTaxonomy($taxonomy)::query()->whereRelatedToPost($this->getId());
+        return offbeat(Taxonomy::class)->getModelByTaxonomy($taxonomy)::query()->whereRelatedToPost($this->getId());
     }
 
     /**
@@ -320,7 +320,7 @@ class PostModel extends OffbeatModel
 
         if ($this->getParentId()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
-                $ancestor = offbeat('post')->get($ancestorId);
+                $ancestor = offbeat(Post::class)->get($ancestorId);
                 if ($ancestor) {
                     $ancestors[] = $ancestor;
                 }
@@ -353,7 +353,7 @@ class PostModel extends OffbeatModel
         }
 
         if ($adjacentPost) {
-            return offbeat('post')->convertWpPostToModel($adjacentPost);
+            return offbeat(Post::class)->convertWpPostToModel($adjacentPost);
         }
 
         return null;
@@ -480,7 +480,7 @@ class PostModel extends OffbeatModel
 
     final public static function current(): ?static
     {
-        $post = offbeat('post')->get();
+        $post = offbeat(Post::class)->get();
         return ($post instanceof static) ? $post : null;
     }
 

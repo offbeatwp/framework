@@ -3,9 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\Common\ReadOnlyCollection;
-use OffbeatWP\Contracts\IWpQuerySubstitute;
-use TypeError;
-use WP_Post;
+use OffbeatWP\Contracts\IWpQuerySubstitute; d
 use WP_Query;
 
 /**
@@ -22,7 +20,7 @@ final class PostsCollection extends ReadOnlyCollection
         $this->query = $query;
 
         foreach ($query->posts as $post) {
-            $postItems[] = offbeat('post')->convertWpPostToModel($post);
+            $postItems[] = offbeat(Post::class)->convertWpPostToModel($post);
         }
 
         parent::__construct($postItems);

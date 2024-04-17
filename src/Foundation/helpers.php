@@ -1,5 +1,6 @@
 <?php
 
+use DI\Container;
 use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
@@ -11,10 +12,17 @@ if (!function_exists('offbeat')) {
      */
     function offbeat(string $service = '') {
         if ($service) {
-            return container($service);
+            return offbeat($service);
         }
 
         return App::singleton();
+    }
+}
+
+if (!function_exists('container')) {
+    function container(): ?Container
+    {
+        return App::singleton()->container;
     }
 }
 
@@ -24,25 +32,6 @@ if (!function_exists('config')) {
         /** @var App $app */
         $app = offbeat();
         return $app->config($config);
-    }
-}
-
-if (!function_exists('container')) {
-    /**
-     * @template T
-     * @param class-string<T> $definition
-     * @return T
-     */
-    function container(string $definition = ''): mixed
-    {
-        /** @var App $app */
-        $app = offbeat();
-
-        if ($definition) {
-            return $app->container->get($definition);
-        }
-
-        return $app->container;
     }
 }
 

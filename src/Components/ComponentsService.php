@@ -19,7 +19,7 @@ final class ComponentsService extends AbstractService
     public function registerComponents(): void
     {
         foreach ($this->registrableComponents() as $class) {
-            container('components')->register($class::getSlug(), $class);
+            offbeat('components')->register($class::getSlug(), $class);
         }
     }
 

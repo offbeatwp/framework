@@ -14,11 +14,11 @@ final class Service extends AbstractService
     {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
-        if (offbeat('console')::isConsole()) {
-            offbeat('console')->register(Install::class);
+        if (offbeat(Console::class)::isConsole()) {
+            offbeat(Console::class)->register(Install::class);
         }
 
-        offbeat('hooks')->addFilter('acf/load_field', LoadFieldIconsFilter::class);
+        offbeat(Hooks::class)->addFilter('acf/load_field', LoadFieldIconsFilter::class);
     }
 
     /**

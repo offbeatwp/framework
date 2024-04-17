@@ -18,22 +18,21 @@ final class WordpressService
 {
     /** @var class-string[] */
     public array $bindings = [
-        'admin-page'        => AdminPage::class,
-        'ajax'              => Ajax::class,
-        'rest-api'          => RestApi::class,
-        'console'           => Console::class,
-        'hooks'             => Hooks::class,
-        'post-type'         => PostType::class,
-        'post'              => Post::class,
-        'page'              => Page::class,
-        'taxonomy'          => Taxonomy::class,
-        'design'            => Design::class,
-        'enqueue-script'    => WpScriptEnqueueBuilder::class,
-        'enqueue-style'     => WpStyleEnqueueBuilder::class,
+        AdminPage::class                => AdminPage::class,
+        Ajax::class                     => Ajax::class,
+        RestApi::class                  => RestApi::class,
+        Console::class                  => Console::class,
+        Hooks::class                    => Hooks::class,
+        PostType::class                 => PostType::class,
+        Post::class                     => Post::class,
+        Page::class                     => Page::class,
+        Taxonomy::class                 => Taxonomy::class,
+        Design::class                   => Design::class,
+        WpScriptEnqueueBuilder::class   => WpScriptEnqueueBuilder::class,
+        WpStyleEnqueueBuilder::class    => WpStyleEnqueueBuilder::class,
     ];
 
-    /** @return void */
-    public function register()
+    public function register(): void
     {
         $this->registerMenus();
         $this->registerImageSizes();
@@ -79,7 +78,7 @@ final class WordpressService
     public function registerPageTemplate(): void
     {
         add_filter('theme_page_templates', function ($postTemplates) {
-            $pageTemplates = offbeat('page')->getPageTemplates();
+            $pageTemplates = offbeat(Page::class)->getPageTemplates();
 
             if (is_array($pageTemplates)) {
                 $postTemplates = array_merge($postTemplates, $pageTemplates);

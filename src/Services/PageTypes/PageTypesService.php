@@ -17,7 +17,7 @@ final class PageTypesService extends AbstractService
 
     public function register(SiteSettings $settings): void
     {
-        offbeat('taxonomy')::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
+        offbeat(Taxonomy::class)::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
             ->model(PageTypeModel::class)
             ->showAdminColumn()
             ->set();

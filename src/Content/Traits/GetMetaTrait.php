@@ -175,7 +175,7 @@ trait GetMetaTrait
 
         foreach ($this->getMetaArray($key) as $id) {
             if ($id) {
-                $model = offbeat('post')->get($id);
+                $model = offbeat(Post::class)->get($id);
 
                 if ($model) {
                     $models[] = $model;

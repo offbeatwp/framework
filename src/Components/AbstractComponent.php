@@ -163,13 +163,13 @@ abstract class AbstractComponent
 
     final protected function getCachedObject(string $id): ?string
     {
-        return container(ComponentArrayCache::class)->fetch($id);
+        return offbeat(ComponentArrayCache::class)->fetch($id);
     }
 
     final protected function setCachedObject(string $id, ?string $object): ?string
     {
         if ($object) {
-            container(ComponentArrayCache::class)->save($id, $object, 60);
+            offbeat(ComponentArrayCache::class)->save($id, $object, 60);
         }
 
         return $object;

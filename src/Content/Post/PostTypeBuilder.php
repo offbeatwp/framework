@@ -401,7 +401,7 @@ class PostTypeBuilder
         register_post_type($this->postType, $this->postTypeArgs);
 
         if ($this->modelClass !== null) {
-            offbeat('post-type')->registerPostModel($this->postType, $this->modelClass);
+            offbeat(PostType::class)->registerPostModel($this->postType, $this->modelClass);
         }
     }
 }

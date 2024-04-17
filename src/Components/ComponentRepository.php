@@ -31,7 +31,7 @@ class ComponentRepository
      */
     public function register($name, $componentClass)
     {
-        offbeat('hooks')->doAction('offbeat.component.register', [
+        offbeat(Hooks::class)->doAction('offbeat.component.register', [
             'name' => $name,
             'class' => $componentClass,
         ]);

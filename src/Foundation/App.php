@@ -10,6 +10,7 @@ use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Services\AbstractService;
+use OffbeatWP\Support\Wordpress\Hooks;
 use OffbeatWP\Wordpress\WordpressService;
 use function DI\autowire;
 use function DI\create;
@@ -48,7 +49,7 @@ final class App
 
         $this->registerServices();
 
-        offbeat('hooks')->doAction('offbeat.ready');
+        offbeat(Hooks::class)->doAction('offbeat.ready');
     }
 
     /** @return CreateDefinitionHelper[] */

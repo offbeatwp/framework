@@ -5,20 +5,19 @@ namespace OffbeatWP\Support\Wordpress;
 use OffbeatWP\Content\Post\PostModel;
 use WP_Post;
 
-class Post
+final class Post
 {
     public function convertWpPostToModel(WP_Post $post): ?PostModel
     {
-        $model = offbeat('post-type')->getModelByPostType($post->post_type);
-        $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
+        $model = offbeat(PostType::class)->getModelByPostType($post->post_type);
+        $model = offbeat(Hooks::class)->applyFilters('post_model', $model, $post);
 
         return new $model($post);
     }
 
-    /** @param null|int|numeric-string|WP_Post $id */
-    public function get($id = null): ?PostModel
+    public function get(int|WP_Post $id = 0): ?PostModel
     {
-        $post = get_post($id ?? get_the_ID());
+        $post = get_post($id ?: get_the_ID());
 
         if ($post) {
             return $this->convertWpPostToModel($post);

@@ -88,14 +88,7 @@ class TermQueryBuilder
     /** @return TermsCollection<TModel> */
     public function get(): TermsCollection
     {
-        $termModels = new TermsCollection();
-        $terms = $this->runQuery()->get_terms();
-
-        foreach ($terms as $term) {
-            $termModels->push(new $this->model($term));
-        }
-
-        return $termModels;
+        return new TermsCollection($this->runQuery());
     }
 
     /**
@@ -223,7 +216,7 @@ class TermQueryBuilder
         $result = $this->first();
 
         if (!$result) {
-            $model = offbeat('taxonomy')->getModelByTaxonomy($this->taxonomy);
+            $model = offbeat(Taxonomy::class)->getModelByTaxonomy($this->taxonomy);
             return new $model(null);
         }
 
@@ -365,10 +358,6 @@ class TermQueryBuilder
             $this->queryVars['object_ids'] = 0;
         }
 
-        $query = new WP_Term_Query($this->queryVars);
-
-        self::$lastRequest = $query->request;
-
-        return $query;
+        return new WP_Term_Query($this->queryVars);
     }
 }
