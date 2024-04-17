@@ -6,6 +6,7 @@ use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Helper\CreateDefinitionHelper;
 use DI\Definition\Helper\DefinitionHelper;
+use ErrorException;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
@@ -38,14 +39,15 @@ final class App
     public static function singleton(): App
     {
         if (!static::$instance) {
-            static::$instance = new static();
+            throw new ErrorException('Attempte to call App::singleton while Offbeat has not been bootstrapped yet.');
         }
 
         return static::$instance;
     }
 
-    private function __construct() {
-        // App is a singleton and must instantiated via the App::singleton() method.
+    /** App is a singleton and must instantiated via the App::singleton() method. */
+    private function __construct(Container $container) {
+        $this->container = $container;
     }
 
     public function bootstrap(): void
@@ -56,14 +58,20 @@ final class App
         $this->initiateBaseServices($containerBuilder);
         $this->initiateServices($containerBuilder);
 
-        $this->container = $containerBuilder->build();
+        $container = $containerBuilder->build();
 
-        $this->registerServices();
+        foreach ($this->services as $service) {
+            if (is_callable([$service, 'register'])) {
+                $container->call([$service, 'register']);
+            }
+        }
 
-        offbeat('hooks')->doAction('offbeat.ready');
+        do_action_ref_array('offbeat.ready', []);
 
         add_action('init', [$this, 'addRoutes'], PHP_INT_MAX - 1);
         add_action('wp', [$this, 'findRoute'], 1);
+
+        self::$instance = new App($container);
     }
 
     /** @return CreateDefinitionHelper[] */
@@ -115,15 +123,6 @@ final class App
             $this->markServiceAsInitiated($service);
         } else {
             trigger_error('Class for service "' . $serviceClass . '" could not be found.');
-        }
-    }
-
-    private function registerServices(): void
-    {
-        foreach ($this->services as $service) {
-            if (is_callable([$service, 'register'])) {
-                $this->container->call([$service, 'register']);
-            }
         }
     }
 
