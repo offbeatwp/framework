@@ -3,7 +3,6 @@ namespace OffbeatWP\Foundation;
 
 use DI\Container;
 use DI\ContainerBuilder;
-use ErrorException;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Components\ComponentsService;
@@ -24,14 +23,15 @@ final class App
     private ?Config $config = null;
     public readonly Container $container;
 
-    private function __construct(Container $container) {
-        $this->container = $container;
+    private function __construct()
+    {
+        // App is a singleton and must instantiated via the App::singleton() method.
     }
 
     public static function singleton(): App
     {
         if (!static::$instance) {
-            throw new ErrorException('Offbeat has not been bootstrapped.');
+            static::$instance = new static();
         }
 
         return static::$instance;
@@ -49,23 +49,26 @@ final class App
             $this->initiateService($service, $containerBuilder);
         }
 
-        // Initiate Services
+        // Initiate Config Services
         foreach ($this->config('services') as $service) {
             $this->initiateService($service, $containerBuilder);
         }
 
         // Build container and register services
-        $container = $containerBuilder->build();
+        $this->container = $containerBuilder->build();
 
         foreach ($this->services as $service) {
-            $container->call([$service, 'register']);
+            $this->container->call([$service, 'register']);
         }
 
         do_action_ref_array('offbeat.ready', []);
-
-        self::$instance = new static($container);
     }
 
+    /**
+     * @param class-string<AbstractService> $serviceClass
+     * @param \DI\ContainerBuilder $containerBuilder
+     * @return void
+     */
     private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
     {
         if (array_key_exists($serviceClass, $this->services)) {
@@ -75,7 +78,7 @@ final class App
         if (class_exists($serviceClass)) {
             $service = new $serviceClass($this);
 
-            if (property_exists($service, 'bindings') && is_iterable($service->bindings)) {
+            if ($service->bindings) {
                 foreach ($service->bindings as &$binding) {
                     if (is_string($binding)) {
                         $binding = autowire($binding);
