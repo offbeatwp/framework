@@ -5,7 +5,6 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
-use ReflectionClass;
 use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
@@ -15,8 +14,6 @@ final class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var class-string<TModel> */
-    private string $model;
     /** @var mixed[] */
     private array $queryVars;
     private string $wpQueryClass = WP_Query::class;
@@ -24,8 +21,7 @@ final class WpQueryBuilder
     /** @param class-string<PostModel> $modelClass Class of the model that is used */
     public function __construct(string $modelClass)
     {
-        $this->model = $modelClass;
-        $this->queryVars = $this->model::defaultQueryArgs();
+        $this->queryVars = $modelClass::defaultQueryArgs();
         $this->queryVars['post_type'] = (array)$modelClass::POST_TYPE;
     }
 
@@ -245,14 +241,9 @@ final class WpQueryBuilder
     /**
      * @param string[] $postTypes
      * @return $this
-     * @throws \ReflectionException
      */
     public function wherePostType(array $postTypes)
     {
-        if (!is_array($this->model::POST_TYPE) && $this->model::POST_TYPE !== 'any') {
-            throw new UnexpectedValueException("You cannot narrow the post type of " . (new ReflectionClass($this->model))->getShortName());
-        }
-
         $this->queryVars['post_type'] = $postTypes;
         return $this;
     }
