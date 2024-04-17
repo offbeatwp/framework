@@ -7,7 +7,7 @@ use WP_Error;
 
 final class TermBuilder
 {
-    /** @var array{name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
+    /** @var array{term_id?: int, name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
     private array $args;
 
     private function __construct(array $args)

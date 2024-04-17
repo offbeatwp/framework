@@ -2,6 +2,8 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use OffbeatWP\Support\Wordpress\Taxonomy;
+
 final class TaxonomyBuilder
 {
     private string $taxonomy;

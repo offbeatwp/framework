@@ -2,15 +2,19 @@
 
 namespace OffbeatWP\Content\Enqueue;
 
+use OffbeatWP\Assets\AssetsManager;
+
 abstract class AbstractEnqueueBuilder
 {
-    protected string $src = '';
     /** @var string[] */
     protected array $deps = [];
-    /** @var null|false|string */
-    protected $version = null;
+    protected string $src = '';
+    protected ?string $version = null;
 
-    /** @param string $src The file location. Starts in theme stylesheet directory. */
+    /**
+     * @param string $src The file location. Starts in theme stylesheet directory.
+     * @return $this
+     */
     final public function setSrc(string $src): self
     {
         $this->src = get_stylesheet_directory_uri() . '/' . $src;
@@ -18,7 +22,7 @@ abstract class AbstractEnqueueBuilder
     }
 
     /** @return $this */
-    final public function setAsset(string $filename): self
+    final public function setAsset(string $filename)
     {
         $this->src = offbeat(AssetsManager::class)->getUrl($filename) ?: '';
 
@@ -33,14 +37,17 @@ abstract class AbstractEnqueueBuilder
      * @param string $src The file location.
      * @return $this
      */
-    final public function setAbsoluteSrc(string $src): self
+    final public function setAbsoluteSrc(string $src)
     {
         $this->src = $src;
         return $this;
     }
 
-    /** @param string[] $deps An array of registered handles that this enqueue depends on. */
-    final public function setDeps(...$deps): self
+    /**
+     * @param string[] $deps An array of registered handles that this enqueue depends on.
+     * @return $this
+     */
+    final public function setDeps(...$deps)
     {
         if (count($deps) === 1 && is_array($deps[0])) {
             $this->deps = $deps[0];

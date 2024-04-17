@@ -5,6 +5,7 @@ namespace OffbeatWP\Components;
 use OffbeatWP\Exceptions\NonexistentComponentException;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Layout\ContextInterface;
+use OffbeatWP\Support\Wordpress\Hooks;
 
 /** @final */
 class ComponentRepository

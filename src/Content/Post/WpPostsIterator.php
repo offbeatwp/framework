@@ -23,7 +23,7 @@ final class WpPostsIterator extends ArrayIterator
     public function valid(): bool
     {
         if ($this->key() !== null) {
-            $post = $this->current()?->getWpPost();
+            $post = $this->current()->getWpPost();
 
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {

@@ -8,7 +8,7 @@ final class BelongsTo extends BelongsToOneOrMany
 {
     public function query(): WpQueryBuilder
     {
-        return (new WpQueryBuilder(PostModel::POST_TYPE))
+        return (new WpQueryBuilder(PostModel::class))
             ->where(['ignore_sticky_posts' => 1])
             ->hasRelationshipWith($this->model, $this->relationKey, true);
     }
