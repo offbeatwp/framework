@@ -3,7 +3,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\PostModel;
-use OffbeatWP\Content\Post\WpQueryBuilder;
+use OffbeatWP\Content\Post\PostQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\WpErrorException;
@@ -134,9 +134,9 @@ class TermModel extends OffbeatModel
 
     /**
      * @param string[] $postTypes
-     * @return WpQueryBuilder<PostModel>
+     * @return PostQueryBuilder<PostModel>
      */
-    public function getPosts(array $postTypes = []): WpQueryBuilder
+    public function getPosts(array $postTypes = []): PostQueryBuilder
     {
         // If no posttypes defined, get posttypes where the taxonomy is assigned to
         if (!$postTypes) {
@@ -144,7 +144,7 @@ class TermModel extends OffbeatModel
             $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
         }
 
-        return (new WpQueryBuilder(PostModel::class))->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+        return (new PostQueryBuilder(PostModel::class))->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
     }
 
     /** Retrieves the current term from the WordPress loop, provided the TermModel is or extends the TermModel class that it is called on. */

@@ -9,18 +9,22 @@ use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
 
-/** @template TModel of PostModel */
-final class WpQueryBuilder
+/** @template TModel of \OffbeatWP\Content\Post\PostModel */
+final class PostQueryBuilder
 {
     use OffbeatQueryTrait;
 
+    /** @var class-string<\OffbeatWP\Content\Post\PostModel> */
+    private string $modelClass;
     /** @var mixed[] */
     private array $queryVars;
+    /** @var class-string<WP_Query|IWpQuerySubstitute> */
     private string $wpQueryClass = WP_Query::class;
 
-    /** @param class-string<PostModel> $modelClass Class of the model that is used */
+    /** @param class-string<\OffbeatWP\Content\Post\PostModel> $modelClass Class of the model that is used */
     public function __construct(string $modelClass)
     {
+        $this->modelClass = $modelClass;
         $this->queryVars = $modelClass::defaultQueryArgs();
         $this->queryVars['post_type'] = (array)$modelClass::POST_TYPE;
     }
@@ -59,7 +63,7 @@ final class WpQueryBuilder
 
         $query = $this->runQuery();
 
-        return apply_filters('offbeatwp/posts/query/get', new PostCollection($query), $this);
+        return new PostCollection($query, $this->modelClass);
     }
 
     /** @return mixed[] */

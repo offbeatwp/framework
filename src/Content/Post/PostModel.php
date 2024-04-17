@@ -495,10 +495,10 @@ class PostModel extends OffbeatModel
         return $this->wpPost;
     }
 
-    /** @return WpQueryBuilder<static> */
-    final public static function query(): WpQueryBuilder
+    /** @return PostQueryBuilder<static> */
+    final public static function query(): PostQueryBuilder
     {
-        return new WpQueryBuilder(static::class);
+        return new PostQueryBuilder(static::class);
     }
 
     /** @pure */
