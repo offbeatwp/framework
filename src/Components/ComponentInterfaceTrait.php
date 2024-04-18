@@ -3,7 +3,7 @@
 namespace OffbeatWP\Components;
 
 trait ComponentInterfaceTrait {
-    public function render($settings)
+    public function render(array|object $settings): ?string
     {
         $component = container()->make($this->componentClass);
 

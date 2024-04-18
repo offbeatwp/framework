@@ -9,7 +9,49 @@ final class TaxonomyBuilder
     private string $taxonomy;
     /** @var string[] */
     private array $postTypes;
-    /** @phpstan-param array{labels?: string[], description?: string, public?: bool, publicly_queryable?: bool, hierarchical?: bool, show_ui?: bool, show_in_menu?: bool, show_in_nav_menus?: bool, show_in_rest?: bool, rest_base?: string, rest_namespace?: string, rest_controller_class?: string, show_tagcloud?: bool, show_in_quick_edit?: bool, show_admin_column?: bool, meta_box_cb?: bool|callable, meta_box_sanitize_cb?: callable, capabilities?: array{manage_terms?: string, edit_terms?: string, delete_terms?: string, assign_terms?: string}, rewrite?: bool|array{slug?: string, with_front?: bool, hierarchical?: bool, ep_mask?: int}, query_var?: string|bool, update_count_callback?: callable, default_term?: string|array{name?: string, slug?: string, description?: string}, sort?: bool, args?: array, _builtin?: bool} */
+    /**
+     * @phpstan-var array{
+     *   labels?: string[],
+     *   description?: string,
+     *   public?: bool,
+     *   publicly_queryable?: bool,
+     *   hierarchical?: bool,
+     *   show_ui?: bool,
+     *   show_in_menu?: bool,
+     *   show_in_nav_menus?: bool,
+     *   show_in_rest?: bool,
+     *   rest_base?: string,
+     *   rest_namespace?: string,
+     *   rest_controller_class?: string,
+     *   show_tagcloud?: bool,
+     *   show_in_quick_edit?: bool,
+     *   show_admin_column?: bool,
+     *   meta_box_cb?: bool|callable,
+     *   meta_box_sanitize_cb?: callable,
+     *   capabilities?: array{
+     *     manage_terms?: string,
+     *     edit_terms?: string,
+     *     delete_terms?: string,
+     *     assign_terms?: string,
+     *   },
+     *   rewrite?: bool|array{
+     *     slug?: string,
+     *     with_front?: bool,
+     *     hierarchical?: bool,
+     *     ep_mask?: int,
+     *   },
+     *   query_var?: string|bool,
+     *   update_count_callback?: callable,
+     *   default_term?: string|array{
+     *     name?: string,
+     *     slug?: string,
+     *     description?: string,
+     *   },
+     *   sort?: bool,
+     *   args?: array,
+     *   _builtin?: bool,
+     * }
+     */
     private array $args;
     /** @var class-string<TermModel>|null */
     private ?string $modelClass = null;

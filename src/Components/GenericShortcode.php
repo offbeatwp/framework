@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Components;
 
-class GenericShortcode
+final class GenericShortcode
 {
     use ComponentInterfaceTrait;
 

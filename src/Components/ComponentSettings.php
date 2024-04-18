@@ -10,7 +10,9 @@ use OffbeatWP\Support\Wordpress\WpDateTime;
 #[\AllowDynamicProperties]
 final class ComponentSettings implements JsonSerializable
 {
+    /** @var array<string, mixed> */
     private array $defaultValues;
+    /** @var array<string, mixed> */
     private array $attributes = [];
 
     /**

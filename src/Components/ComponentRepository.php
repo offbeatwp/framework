@@ -31,7 +31,7 @@ class ComponentRepository
      * @param string $name
      * @param class-string<AbstractComponent> $componentClass
      */
-    public function register($name, $componentClass)
+    public function register(string $name, string $componentClass): void
     {
         offbeat(Hooks::class)->doAction('offbeat.component.register', [
             'name' => $name,
@@ -49,7 +49,7 @@ class ComponentRepository
      * @param string $name
      * @param class-string<AbstractComponent> $componentClass
      */
-    public function registerShortcode($name, $componentClass)
+    public function registerShortcode(string $name, string $componentClass): void
     {
         $app = App::singleton();
 
@@ -101,22 +101,18 @@ class ComponentRepository
         return container()->make($componentClass, ['context' => $this->getLayoutContext()]);
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function exists($name): bool
+    final public function exists(string $name): bool
     {
-        return isset($this->components[$name]);
+        return array_key_exists($name, $this->components);
     }
 
     /**
      * @param string $name
-     * @param array|object $args
+     * @param mixed[]|object $args
      * @return string|null
      * @throws NonexistentComponentException
      */
-    public function render($name, $args = [])
+    public function render(string $name, array|object $args = []): ?string
     {
         $component = $this->make($name);
         $component->setRenderId($this->renderedComponents);
