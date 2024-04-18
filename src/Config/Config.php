@@ -48,7 +48,7 @@ final class Config {
     protected function loadConfigEnv(): void
     {
         foreach ($this->all() as $configKey => $configSet) {
-            if (array_is_list($configSet)) {
+            if (!is_array($configSet) || array_is_list($configSet)) {
                 continue;
             }
 
