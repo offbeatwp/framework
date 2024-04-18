@@ -6,6 +6,7 @@ use OffbeatWP\Content\Post\PostQueryBuilder;
 
 final class BelongsTo extends BelongsToOneOrMany
 {
+    /** @return PostQueryBuilder<PostModel> */
     public function query(): PostQueryBuilder
     {
         return (new PostQueryBuilder(PostModel::class))

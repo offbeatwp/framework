@@ -4,7 +4,10 @@ namespace OffbeatWP\Content\Post;
 
 use ArrayIterator;
 
-/** @template TModel of PostModel */
+/**
+ * @template TModel of PostModel
+ * @extends ArrayIterator<int, TModel>
+ */
 final class WpPostsIterator extends ArrayIterator
 {
     private mixed $originalPost;

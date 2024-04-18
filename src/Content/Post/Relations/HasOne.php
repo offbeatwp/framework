@@ -5,7 +5,7 @@ use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\PostQueryBuilder;
 
 final class HasOne extends HasOneOrMany {
-
+    /** @return PostQueryBuilder<PostModel> */
     public function query(): PostQueryBuilder
     {
        return (new PostQueryBuilder(PostModel::class))

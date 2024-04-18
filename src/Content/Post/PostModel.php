@@ -27,10 +27,11 @@ class PostModel extends AbstractOffbeatModel
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
      * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
      * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
-     * @see Relation
+     * @see AbstractRelation
      */
     public ?array $relationKeyMethods = null;
     protected readonly WP_Post $wpPost;
+    /** @var array<string, mixed>|null */
     private ?array $metas = null;
     /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
     private array $data = [];
@@ -157,7 +158,7 @@ class PostModel extends AbstractOffbeatModel
     /**
      * @param string $metaKey
      * @param int[]|string $size Image size. Accepts any registered image size name, or an array of width and height values in pixels (in that order). Default 'thumbnail'.
-     * @param array $attributes Attributes for the image markup. Default <i>thumbnail<i/>.
+     * @param array<string, string> $attributes Attributes for the image markup. Default <i>thumbnail<i/>.
      * @return string HTML image element or empty string on failure.
      */
     final public function getAttachmentImage(string $metaKey, $size = 'thumbnail', array $attributes = []): string
@@ -252,6 +253,10 @@ class PostModel extends AbstractOffbeatModel
         return $this->data['modified'];
     }
 
+    /**
+     * @param non-empty-string $taxonomy
+     * @return \OffbeatWP\Content\Taxonomy\TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel>
+     */
     final public function getTerms(string $taxonomy): TermQueryBuilder
     {
         return offbeat(Taxonomy::class)->getModelByTaxonomy($taxonomy)::query()->whereRelatedToPost($this->getId());
@@ -312,7 +317,10 @@ class PostModel extends AbstractOffbeatModel
         return static::find($this->getParentId());
     }
 
-    /** Retrieves the children of this post. */
+    /**
+     * Retrieves the children of this post.
+     * @return \OffbeatWP\Content\Post\PostCollection<\OffbeatWP\Content\Post\PostModel>
+     */
     public function getChildren(): PostCollection
     {
         return static::query()->where(['post_parent' => $this->getId()])->get();
@@ -431,7 +439,7 @@ class PostModel extends AbstractOffbeatModel
     //////////////////////
     /// Change Methods ///
     //////////////////////
-    final public function refreshMetas()
+    final public function refreshMetas(): void
     {
         $this->metas = null;
         $this->getMetas();

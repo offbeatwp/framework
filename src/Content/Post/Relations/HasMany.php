@@ -7,6 +7,7 @@ use OffbeatWP\Content\Post\PostQueryBuilder;
 
 final class HasMany extends HasOneOrMany
 {
+    /** @return PostQueryBuilder<PostModel> */
     public function query(): PostQueryBuilder
     {
         return (new PostQueryBuilder(PostModel::class))
@@ -14,6 +15,7 @@ final class HasMany extends HasOneOrMany
             ->hasRelationshipWith($this->model, $this->relationKey);
     }
 
+    /** @return PostCollection<PostModel> */
     public function get(): PostCollection
     {
         return $this->query()->get();
