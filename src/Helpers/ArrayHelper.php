@@ -128,4 +128,22 @@ final class ArrayHelper {
 
         return $array;
     }
+
+    /**
+     * @pure
+     * Checks if any values in two arrays intersects.<br>
+     * Does not check recursively.
+     */
+    public static function intersects(iterable $arrayA, iterable $arrayB): bool
+    {
+        foreach ($arrayA as $a) {
+            foreach ($arrayB as $b) {
+                if ($a === $b) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
