@@ -3,14 +3,14 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
-use OffbeatWP\Content\Taxonomy\TermModelAbstract;
+use OffbeatWP\Content\Taxonomy\TermModel;
 use WP_Term;
 
 final class Taxonomy
 {
-    public const DEFAULT_TERM_MODEL = TermModelAbstract::class;
+    public const DEFAULT_TERM_MODEL = TermModel::class;
 
-    /** @var class-string<TermModelAbstract>[] */
+    /** @var class-string<TermModel>[] */
     private array $taxonomyModels = [];
 
     /**
@@ -27,7 +27,7 @@ final class Taxonomy
 
     /**
      * @param string $taxonomy
-     * @param class-string<TermModelAbstract> $modelClass
+     * @param class-string<TermModel> $modelClass
      * @return void
      */
     public function registerTermModel(string $taxonomy, string $modelClass)
@@ -35,13 +35,13 @@ final class Taxonomy
         $this->taxonomyModels[$taxonomy] = $modelClass;
     }
 
-    /** @return class-string<TermModelAbstract> */
+    /** @return class-string<TermModel> */
     public function getModelByTaxonomy(string $taxonomy): string
     {
         return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
-    /** @return TermModelAbstract */
+    /** @return TermModel */
     public function convertWpTermToModel(WP_Term $term)
     {
         $model = $this->getModelByTaxonomy($term->taxonomy);
@@ -53,7 +53,7 @@ final class Taxonomy
      * Get a taxonomy by either the WP_TERM or the taxonomy's ID
      * Attempts to get the currently queried object if no parameter is passed
      * @param WP_Term|int|null $term
-     * @return TermModelAbstract|null
+     * @return TermModel|null
      */
     public function get($term = null)
     {

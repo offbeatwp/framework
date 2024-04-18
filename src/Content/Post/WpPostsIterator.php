@@ -4,14 +4,14 @@ namespace OffbeatWP\Content\Post;
 
 use ArrayIterator;
 
-/** @template TModel of PostModelAbstract */
+/** @template TModel of PostModel */
 final class WpPostsIterator extends ArrayIterator
 {
     private mixed $originalPost;
     private bool $globalPostWasChanged = false;
 
     /** @phpstan-return TModel */
-    public function current(): PostModelAbstract
+    public function current(): PostModel
     {
         return parent::current();
     }

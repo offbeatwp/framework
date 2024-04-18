@@ -17,7 +17,7 @@ use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use WP_Post;
 use WP_Post_Type;
 
-class PostModelAbstract extends AbstractOffbeatModel
+class PostModel extends AbstractOffbeatModel
 {
     public const POST_TYPE = 'any';
 
@@ -31,9 +31,9 @@ class PostModelAbstract extends AbstractOffbeatModel
      */
     public ?array $relationKeyMethods = null;
     protected readonly WP_Post $wpPost;
-    protected ?array $metas = null;
+    private ?array $metas = null;
     /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
-    protected array $data = [];
+    private array $data = [];
 
     final private function __construct(WP_Post $wpPost)
     {
@@ -293,7 +293,7 @@ class PostModelAbstract extends AbstractOffbeatModel
         return $this->wpPost->post_parent;
     }
 
-    public function getParent(): ?PostModelAbstract
+    public function getParent(): ?PostModel
     {
         return static::find($this->getParentId());
     }

@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Views;
 
-use OffbeatWP\Content\User\UserModelAbstract;
+use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
 use WP_Site;
@@ -442,9 +442,9 @@ class Wordpress
         return wp_is_mobile();
     }
 
-    public function getCurrentUser(): ?UserModelAbstract
+    public function getCurrentUser(): ?UserModel
     {
-        return UserModelAbstract::getCurrentUser();
+        return UserModel::getCurrentUser();
     }
 
     public function getBlockTemplatePart(string $part):string

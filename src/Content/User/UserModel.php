@@ -14,7 +14,7 @@ use UnexpectedValueException;
 use WP_Error;
 use WP_User;
 
-class UserModelAbstract extends AbstractOffbeatModel
+class UserModel extends AbstractOffbeatModel
 {
     protected WP_User $wpUser;
     /** @var mixed[]|null */
@@ -506,7 +506,7 @@ class UserModelAbstract extends AbstractOffbeatModel
      * @param string $userLogin User's username for logging in. Default to email if omitted.
      * @return static|null Returns the registered user if the user was registered successfully.
      */
-    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModelAbstract
+    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModel
     {
         $result = register_new_user($userLogin ?: $userEmail, $userEmail);
 
