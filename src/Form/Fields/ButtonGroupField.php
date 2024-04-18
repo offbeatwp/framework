@@ -5,24 +5,29 @@ final class ButtonGroupField extends AbstractField
 {
     public const FIELD_TYPE = 'button_group';
 
+    /** @var array<string, string> */
     public array $options = [];
 
-    public function addOptions($options = []) {
+    /**
+     * @param array<string, string> $options
+     * @return $this
+     */
+    public function addOptions(array $options = [])
+    {
         $this->options = $options;
-
         return $this;
     }
 
-    public function addOption($key, $value) {
+    /** @return $this */
+    public function addOption(string $key, string $value)
+    {
         $this->options[$key] = $value;
-
         return $this;
     }
 
-    public function getOptions() {
-        if (is_callable($this->options)) {
-            return call_user_func($this->options);
-        }
+    /** @return array<string, string> */
+    public function getOptions(): array
+    {
         return $this->options;
     }
 

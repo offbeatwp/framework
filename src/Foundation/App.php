@@ -71,8 +71,7 @@ final class App
 
     /**
      * @param class-string<AbstractService> $serviceClass
-     * @param \DI\ContainerBuilder $containerBuilder
-     * @return void
+     * @param \DI\ContainerBuilder<Container> $containerBuilder
      */
     private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
     {

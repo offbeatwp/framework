@@ -12,6 +12,7 @@ use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 use Traversable;
 
+/** @implements IteratorAggregate<int, AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form> */
 final class Form implements IteratorAggregate
 {
     public const LEVEL = 0;
@@ -156,10 +157,11 @@ final class Form implements IteratorAggregate
         return $this->fieldPrefix;
     }
 
-    /** @param string $fieldPrefix */
-    public function setFieldPrefix($fieldPrefix)
+    /** @return $this */
+    public function setFieldPrefix(string $fieldPrefix)
     {
         $this->fieldPrefix = $fieldPrefix;
+        return $this;
     }
 
     public function toArray(): array

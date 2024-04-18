@@ -2,6 +2,7 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
+use function _PHPStan_5473b6701\RingCentral\Psr7\str;
 
 final class Design
 {
@@ -90,6 +91,7 @@ final class Design
         return $rowThemesList;
     }
 
+    /** @return string[] */
     public function getMarginsList(mixed $context = null): array
     {
         $margins = config('design.margins');
@@ -99,12 +101,13 @@ final class Design
         }
 
         if (is_array($margins)) {
-            return array_map(fn($item) => $item['label'], $margins);
+            return array_map(fn($item) => (string)$item['label'], $margins);
         }
 
         return [];
     }
 
+    /** @return string[] */
     public function getPaddingsList(mixed $context = null): array
     {
         $paddings = config('design.paddings');
@@ -114,7 +117,7 @@ final class Design
         }
 
         if (is_array($paddings)) {
-            return array_map(fn($item) => $item['label'], $paddings);
+            return array_map(fn($item) => (string)$item['label'], $paddings);
         }
 
         return [];

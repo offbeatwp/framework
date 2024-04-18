@@ -5,10 +5,13 @@ final class PostsField extends AbstractField
 {
     public const FIELD_TYPE = 'posts';
 
-    public function fromPostTypes($postTypes = [])
+    /**
+     * @param string[] $postTypes
+     * @return $this
+     */
+    public function fromPostTypes(array $postTypes = [])
     {
         $this->setAttribute('post_types', $postTypes);
-
         return $this;
     }
 
