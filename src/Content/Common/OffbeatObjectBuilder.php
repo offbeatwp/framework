@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Common;
 
-use RuntimeException;
 use Serializable;
 use UnexpectedValueException;
 
@@ -13,9 +12,14 @@ abstract class OffbeatObjectBuilder
     protected array $metaToSet = [];
     /** @var array<string, array<int, string|int|float|bool|array|Serializable>> */
     protected array $metaToAdd = [];
-    /** @var array<string, mixed> */
+    /** @var array<string, string|int|float|bool|array|Serializable|null> */
     protected array $metaToDelete = [];
 
+    /**
+     * @param non-empty-string $key
+     * @param string|int|float|bool|mixed[]|\Serializable $value
+     * @return $this
+     */
     final public function addMeta(string $key, string|int|float|bool|array|Serializable $value)
     {
         if (!$key) {
@@ -31,8 +35,15 @@ abstract class OffbeatObjectBuilder
         }
 
         $this->metaToAdd[$key][] = $value;
+
+        return $this;
     }
 
+    /**
+     * @param non-empty-string $key
+     * @param string|int|float|bool|mixed[]|\Serializable $value
+     * @return $this
+     */
     final public function setMeta(string $key, string|int|float|bool|array|Serializable $value)
     {
         if (!$key) {
@@ -46,8 +57,15 @@ abstract class OffbeatObjectBuilder
         }
 
         $this->metaToSet[$key] = $value;
+
+        return $this;
     }
 
+    /**
+     * @param non-empty-string $key
+     * @param string|int|float|bool|mixed[]|\Serializable|null $value
+     * @return $this
+     */
     final public function deleteMeta(string $key, string|int|float|bool|array|Serializable|null $value = null)
     {
         if (!$key) {
@@ -67,9 +85,11 @@ abstract class OffbeatObjectBuilder
         }
 
         $this->metaToDelete[$key] = $value;
+
+        return $this;
     }
 
-    final protected function saveMeta(int $id)
+    final protected function saveMeta(int $id): void
     {
         $type = $this->getObjectType()->value;
 
