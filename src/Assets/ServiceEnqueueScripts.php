@@ -2,11 +2,12 @@
 namespace OffbeatWP\Assets;
 
 use OffbeatWP\Contracts\SiteSettings;
+use OffbeatWP\Contracts\View;
 use OffbeatWP\Services\AbstractService;
 
 final class ServiceEnqueueScripts extends AbstractService
 {
-    public function register(SiteSettings $settings): void
+    public function register(SiteSettings $settings, View $view): void
     {
         if (is_admin()) {
             return;

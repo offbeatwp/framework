@@ -3,6 +3,7 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Contracts\SiteSettings;
+use OffbeatWP\Contracts\View;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Support\Wordpress\Console;
@@ -10,7 +11,7 @@ use WP_Query;
 
 final class Service extends AbstractService
 {
-    public function register(SiteSettings $settings): void
+    public function register(SiteSettings $settings, View $view): void
     {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 

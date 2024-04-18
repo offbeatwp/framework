@@ -2,6 +2,7 @@
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Contracts\SiteSettings;
+use OffbeatWP\Contracts\View;
 use OffbeatWP\Services\AbstractService;
 use ReflectionClass;
 
@@ -9,7 +10,7 @@ final class ComponentsService extends AbstractService
 {
     public array $bindings = [ComponentRepository::class => ComponentRepository::class];
 
-    public function register(SiteSettings $settings): void
+    public function register(SiteSettings $settings, View $view): void
     {
         add_action('offbeat.ready', [$this, 'registerComponents']);
     }
