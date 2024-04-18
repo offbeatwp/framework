@@ -8,7 +8,7 @@ use WP_Query;
 
 final class PostTypeBuilder
 {
-    /** @var null|class-string<PostModel> */
+    /** @var null|class-string<PostModelAbstract> */
     private ?string $modelClass = null;
     private ?string $postType = null;
     /** @var mixed[] */
@@ -112,9 +112,9 @@ final class PostTypeBuilder
 
     /**
      * Define the model primarily associated with this post type.
-     * @see PostModel
-     * @param class-string<PostModel> $modelClass The class of the model. Must extend PostModel.
+     * @param class-string<PostModelAbstract> $modelClass The class of the model. Must extend PostModel.
      * @return PostTypeBuilder
+     *@see PostModelAbstract
      */
     public function model(string $modelClass): self
     {

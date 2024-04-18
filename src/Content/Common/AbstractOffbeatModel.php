@@ -1,15 +1,20 @@
 <?php
 
-namespace OffbeatWP\Content\Traits;
+namespace OffbeatWP\Content\Common;
 
 use Exception;
-use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Content\Post\PostModelAbstract;
+use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
-trait GetMetaTrait
+/** @interal */
+abstract class AbstractOffbeatModel
 {
+    /** @return positive-int */
+    abstract public function getId(): int;
+
     private function getRawMetaValue(string $key, string|int|float|bool|array|null $defaultValue, bool $single = true): mixed
     {
         $metas = $this->getMetas();
@@ -144,7 +149,7 @@ trait GetMetaTrait
         return ($single && is_serialized($value)) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
     }
 
-    /** @return PostModel[] */
+    /** @return PostModelAbstract[] */
     public function getMetaPostModels(string $key): array
     {
         $models = [];
@@ -160,5 +165,35 @@ trait GetMetaTrait
         }
 
         return $models;
+    }
+
+    public static function find(?int $id): ?static
+    {
+        return ($id) ? static::query()->findById($id) : null;
+    }
+
+    final public static function first(): ?static
+    {
+        return static::query()->first();
+    }
+
+    final public static function findOrFail(int $id): ?static
+    {
+        $item = static::find($id);
+        if (!$item) {
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' model with id ' . $id);
+        }
+
+        return $item;
+    }
+
+    /** Checks if a model with the given ID exists. */
+    final public static function exists(?int $id): bool
+    {
+        if ($id <= 0) {
+            return false;
+        }
+
+        return static::query()->whereIdIn([$id])->exists();
     }
 }

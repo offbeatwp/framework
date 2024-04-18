@@ -10,7 +10,7 @@ final class TaxonomyBuilder
     /** @var string[] */
     private array $postTypes;
     private array $args = [];
-    /** @var class-string<TermModel>|null */
+    /** @var class-string<TermModelAbstract>|null */
     private ?string $modelClass = null;
 
     /**
@@ -110,7 +110,7 @@ final class TaxonomyBuilder
     }
 
     /**
-     * @param class-string<TermModel> $modelClass
+     * @param class-string<TermModelAbstract> $modelClass
      * @return TaxonomyBuilder
      */
     public function model(string $modelClass): self

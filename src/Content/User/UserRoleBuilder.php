@@ -7,7 +7,7 @@ use OffbeatWP\Support\Wordpress\UserRole;
 
 final class UserRoleBuilder
 {
-    /** @var class-string<UserModel>|null */
+    /** @var class-string<UserModelAbstract>|null */
     private ?string $modelClass = null;
     private string $roleName;
     private string $roleDisplayName;
@@ -21,12 +21,12 @@ final class UserRoleBuilder
     }
 
     /**
-     * @param class-string<UserModel> $modelClass
+     * @param class-string<UserModelAbstract> $modelClass
      * @return UserRoleBuilder
      */
     public function model(string $modelClass): UserRoleBuilder
     {
-        if (!is_a($modelClass, UserModel::class, true)) {
+        if (!is_a($modelClass, UserModelAbstract::class, true)) {
             throw new InvalidArgumentException($modelClass . ' does not extend UserModel.');
         }
 

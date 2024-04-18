@@ -9,7 +9,7 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
 use WP_User_Query;
 
-/** @template TModel of \OffbeatWP\Content\User\UserModel */
+/** @template TModel of \OffbeatWP\Content\User\UserModelAbstract */
 final class UserQueryBuilder
 {
     use OffbeatQueryTrait;
@@ -45,13 +45,13 @@ final class UserQueryBuilder
     }
 
     /** @phpstan-return TModel|null */
-    public function first(): ?UserModel
+    public function first(): ?UserModelAbstract
     {
         return $this->take(1)->first();
     }
 
     /** @phpstan-return TModel|null */
-    public function findById(?int $id): ?UserModel
+    public function findById(?int $id): ?UserModelAbstract
     {
         if ($id <= 0) {
             return null;
@@ -62,7 +62,7 @@ final class UserQueryBuilder
     }
 
     /** @phpstan-return TModel */
-    public function findByIdOrFail(int $id): UserModel
+    public function findByIdOrFail(int $id): UserModelAbstract
     {
         $result = $this->findById($id);
 

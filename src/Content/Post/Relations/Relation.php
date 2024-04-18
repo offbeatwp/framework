@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
-use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Content\Post\PostModelAbstract;
 
 /** @abstract */
 class Relation
@@ -12,7 +12,7 @@ class Relation
 
     /**
      * @final
-     * @param PostModel $model
+     * @param PostModelAbstract $model
      * @param string $relationKey
      */
     public function __construct($model, $relationKey)

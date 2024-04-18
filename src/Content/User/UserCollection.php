@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\User;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_User_Query;
 
-/** @template TModel of \OffbeatWP\Content\User\UserModel */
+/** @template TModel of \OffbeatWP\Content\User\UserModelAbstract */
 final class UserCollection extends ReadOnlyCollection
 {
     protected readonly WP_User_Query $query;
@@ -29,7 +29,7 @@ final class UserCollection extends ReadOnlyCollection
      * @param int $offset
      * @phpstan-return TModel|null
      */
-    public function offsetGet(mixed $offset): ?UserModel
+    public function offsetGet(mixed $offset): ?UserModelAbstract
     {
         /** @var TModel|null $item */
         $item = parent::offsetGet($offset);
@@ -40,7 +40,7 @@ final class UserCollection extends ReadOnlyCollection
      * Get the first item from the collection.
      * @phpstan-return TModel|null
      */
-    public function first(): ?UserModel
+    public function first(): ?UserModelAbstract
     {
         /** @var TModel|null $item */
         $item = parent::first();
@@ -51,7 +51,7 @@ final class UserCollection extends ReadOnlyCollection
      * Get the last item from the collection.
      * @phpstan-return TModel|null
      */
-    public function last(): ?UserModel
+    public function last(): ?UserModelAbstract
     {
         /** @var TModel|null $item */
         $item = parent::last();

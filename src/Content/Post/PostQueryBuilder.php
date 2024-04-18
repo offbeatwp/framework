@@ -9,12 +9,12 @@ use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
 
-/** @template TModel of \OffbeatWP\Content\Post\PostModel */
+/** @template TModel of \OffbeatWP\Content\Post\PostModelAbstract */
 final class PostQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var class-string<\OffbeatWP\Content\Post\PostModel> */
+    /** @var class-string<\OffbeatWP\Content\Post\PostModelAbstract> */
     private readonly string $modelClass;
     /** @var mixed[] */
     private array $queryVars;
@@ -88,12 +88,12 @@ final class PostQueryBuilder
         return $this->get();
     }
 
-    public function first(): ?PostModel
+    public function first(): ?PostModelAbstract
     {
         return $this->take(1)->first();
     }
 
-    public function firstOrFail(): PostModel
+    public function firstOrFail(): PostModelAbstract
     {
         $result = $this->first();
 
@@ -104,7 +104,7 @@ final class PostQueryBuilder
         return $result;
     }
 
-    public function findById(?int $id): ?PostModel
+    public function findById(?int $id): ?PostModelAbstract
     {
         if ($id <= 0) {
             return null;
@@ -116,7 +116,7 @@ final class PostQueryBuilder
     }
 
 
-    public function findByIdOrFail(int $id): PostModel
+    public function findByIdOrFail(int $id): PostModelAbstract
     {
         $result = $this->findById($id);
 
@@ -127,12 +127,12 @@ final class PostQueryBuilder
         return $result;
     }
 
-    public function findBySlug(string $slug): ?PostModel
+    public function findBySlug(string $slug): ?PostModelAbstract
     {
         return $this->whereSlug($slug)->first();
     }
 
-    public function findBySlugOrFail(string $slug): PostModel
+    public function findBySlugOrFail(string $slug): PostModelAbstract
     {
         $result = $this->findBySlug($slug);
 
@@ -407,12 +407,12 @@ final class PostQueryBuilder
     }
 
     /**
-     * @param PostModel|PostCollection<PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModelAbstract|PostCollection<PostModelAbstract> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
      * @param bool $inverted Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    public function hasRelationshipWith(PostModel|PostCollection $postModelOrCollection, string $relationKey, bool $inverted = false)
+    public function hasRelationshipWith(PostModelAbstract|PostCollection $postModelOrCollection, string $relationKey, bool $inverted = false)
     {
         $this->queryVars['relationships'] = [
             'id' => ($postModelOrCollection instanceof PostCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),

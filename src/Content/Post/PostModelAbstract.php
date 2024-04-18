@@ -3,14 +3,12 @@
 namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
-use OffbeatWP\Content\Common\OffbeatModel;
+use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
-use OffbeatWP\Content\Traits\BaseModelTrait;
-use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\Post;
@@ -19,11 +17,8 @@ use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use WP_Post;
 use WP_Post_Type;
 
-class PostModel extends OffbeatModel
+class PostModelAbstract extends AbstractOffbeatModel
 {
-    use BaseModelTrait;
-    use GetMetaTrait;
-
     public const POST_TYPE = 'any';
 
     /**
@@ -298,7 +293,7 @@ class PostModel extends OffbeatModel
         return $this->wpPost->post_parent;
     }
 
-    public function getParent(): ?PostModel
+    public function getParent(): ?PostModelAbstract
     {
         return static::find($this->getParentId());
     }

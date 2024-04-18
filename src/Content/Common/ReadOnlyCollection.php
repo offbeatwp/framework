@@ -10,7 +10,7 @@ use IteratorAggregate;
 use JsonSerializable;
 
 /**
- * @template TModel of \OffbeatWP\Content\Common\OffbeatModel
+ * @template TModel of \OffbeatWP\Content\Common\AbstractOffbeatModel
  * @implements ArrayAccess<int, TModel>
  * @implements IteratorAggregate<int, TModel>
  */
@@ -66,7 +66,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAgg
      * Get the first item from the collection.
      * @phpstan-return TModel|null
      */
-    public function first(): ?OffbeatModel
+    public function first(): ?AbstractOffbeatModel
     {
         return $this->items[0] ?? null;
     }
@@ -75,7 +75,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAgg
      * Get the last item from the collection.
      * @phpstan-return TModel|null
      */
-    public function last(): ?OffbeatModel
+    public function last(): ?AbstractOffbeatModel
     {
         return $this->items[count($this->items) - 1] ?? null;
     }
@@ -100,7 +100,7 @@ abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAgg
      * @param int $offset
      * @phpstan-return TModel|null
      */
-    public function offsetGet(mixed $offset): ?OffbeatModel
+    public function offsetGet(mixed $offset): ?AbstractOffbeatModel
     {
         return $this->items[$offset] ?? null;
     }

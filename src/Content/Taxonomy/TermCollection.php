@@ -30,21 +30,21 @@ final class TermCollection extends ReadOnlyCollection
      * @param int $offset
      * @phpstan-return TModel|null
      */
-    public function offsetGet(mixed $offset): ?TermModel
+    public function offsetGet(mixed $offset): ?TermModelAbstract
     {
         $item = parent::offsetGet($offset);
         return $item;
     }
 
     /** Get the first item from the collection. */
-    public function first(): ?TermModel
+    public function first(): ?TermModelAbstract
     {
         $item = parent::first();
         return $item;
     }
 
     /** Get the last item from the collection. */
-    public function last(): ?TermModel
+    public function last(): ?TermModelAbstract
     {
         $item = parent::last();
         return $item;

@@ -1,8 +1,6 @@
 <?php
 namespace OffbeatWP\Wordpress;
 
-use OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder;
-use OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder;
 use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
@@ -27,9 +25,7 @@ final class WordpressService
         Post::class                     => Post::class,
         Page::class                     => Page::class,
         Taxonomy::class                 => Taxonomy::class,
-        Design::class                   => Design::class,
-        WpScriptEnqueueBuilder::class   => WpScriptEnqueueBuilder::class,
-        WpStyleEnqueueBuilder::class    => WpStyleEnqueueBuilder::class,
+        Design::class                   => Design::class
     ];
 
     public function register(): void

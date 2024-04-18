@@ -10,7 +10,7 @@ use WP_Query;
 final class PostCollection extends ReadOnlyCollection
 {
     private readonly IWpQuerySubstitute|WP_Query $query;
-    /** @var class-string<\OffbeatWP\Content\Post\PostModel> */
+    /** @var class-string<\OffbeatWP\Content\Post\PostModelAbstract> */
     protected readonly string $modelClass;
 
     public function __construct(IWpQuerySubstitute|WP_Query $query, string $modelClass)
@@ -125,28 +125,28 @@ final class PostCollection extends ReadOnlyCollection
      */
     public function getIds(): array
     {
-        return array_map(static fn(PostModel $model) => $model->getId() ?: 0, $this->items);
+        return array_map(static fn(PostModelAbstract $model) => $model->getId() ?: 0, $this->items);
     }
 
     /**
      * @param int $offset
      * @phpstan-return TModel|null
      */
-    public function offsetGet(mixed $offset): ?PostModel
+    public function offsetGet(mixed $offset): ?PostModelAbstract
     {
         $item = parent::offsetGet($offset);
         return $item;
     }
 
     /** Get the first item from the collection. */
-    public function first(): ?PostModel
+    public function first(): ?PostModelAbstract
     {
         $item = parent::first();
         return $item;
     }
 
     /** Get the last item from the collection. */
-    public function last(): ?PostModel
+    public function last(): ?PostModelAbstract
     {
         $item = parent::last();
         return $item;

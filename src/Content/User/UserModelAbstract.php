@@ -4,9 +4,7 @@ namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
 use InvalidArgumentException;
-use OffbeatWP\Content\Common\OffbeatModel;
-use OffbeatWP\Content\Traits\BaseModelTrait;
-use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
@@ -16,7 +14,7 @@ use UnexpectedValueException;
 use WP_Error;
 use WP_User;
 
-class UserModel extends OffbeatModel
+class UserModelAbstract extends AbstractOffbeatModel
 {
     protected WP_User $wpUser;
     /** @var mixed[]|null */
@@ -27,9 +25,6 @@ class UserModel extends OffbeatModel
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
     private bool $isInitialised = false;
-
-    use BaseModelTrait;
-    use GetMetaTrait;
 
     /** @param WP_User|null $user */
     final private function __construct($user = null)
@@ -511,7 +506,7 @@ class UserModel extends OffbeatModel
      * @param string $userLogin User's username for logging in. Default to email if omitted.
      * @return static|null Returns the registered user if the user was registered successfully.
      */
-    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModel
+    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModelAbstract
     {
         $result = register_new_user($userLogin ?: $userEmail, $userEmail);
 

@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\User\UserModel;
+use OffbeatWP\Content\User\UserModelAbstract;
 use WP_User;
 
 class User
@@ -11,10 +11,10 @@ class User
      * Convert a user to the <b>first</b> matching UserModel which also matches/extends the preferred model
      * <b>Beware:</b> It is possible that this method will NOT always return a class that extends the prefferred class, as it can return the default User Model.
      * @param WP_User $user
-     * @param class-string<UserModel> $preferredModel
-     * @return UserModel
+     * @param class-string<UserModelAbstract> $preferredModel
+     * @return UserModelAbstract
      */
-    public static function convertWpUserToModel(WP_User $user, string $preferredModel = UserModel::class): UserModel
+    public static function convertWpUserToModel(WP_User $user, string $preferredModel = UserModelAbstract::class): UserModelAbstract
     {
         $modelClass = null;
 
@@ -38,9 +38,9 @@ class User
 
     /**
      * @param int|WP_User $id
-     * @param class-string<UserModel> $preferredModel
+     * @param class-string<UserModelAbstract> $preferredModel
      */
-    public static function get($id, string $preferredModel = UserModel::class): ?UserModel
+    public static function get($id, string $preferredModel = UserModelAbstract::class): ?UserModelAbstract
     {
         $user = is_int($id) ? get_userdata($id) : $id;
 

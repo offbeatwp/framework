@@ -2,13 +2,13 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Post\PostTypeBuilder;
-use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Content\Post\PostModelAbstract;
 
 class PostType
 {
-    public const DEFAULT_POST_MODEL = PostModel::class;
+    public const DEFAULT_POST_MODEL = PostModelAbstract::class;
 
-    /** @var class-string<PostModel>[] */
+    /** @var class-string<PostModelAbstract>[] */
     private array $postTypeModels = [];
 
     /**
@@ -25,20 +25,20 @@ class PostType
 
     /**
      * @param string $postType
-     * @param class-string<PostModel> $modelClass
+     * @param class-string<PostModelAbstract> $modelClass
      */
     public function registerPostModel(string $postType, string $modelClass): void
     {
         $this->postTypeModels[$postType] = $modelClass;
     }
 
-    /** @return class-string<PostModel> */
+    /** @return class-string<PostModelAbstract> */
     public function getModelByPostType(string $postType): ?string
     {
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
 
-    /** @param class-string<PostModel> $modelClass */
+    /** @param class-string<PostModelAbstract> $modelClass */
     public function getPostTypeByModel(string $modelClass): string
     {
         return array_search($modelClass, $this->postTypeModels, true);
@@ -50,7 +50,7 @@ class PostType
         return array_keys($this->postTypeModels);
     }
 
-    /** @return class-string<PostModel>[] */
+    /** @return class-string<PostModelAbstract>[] */
     public function getPostTypeModels(): array
     {
         return $this->postTypeModels;

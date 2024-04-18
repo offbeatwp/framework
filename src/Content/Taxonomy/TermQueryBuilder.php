@@ -8,7 +8,7 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Term_Query;
 
-/** @template TModel of \OffbeatWP\Content\Taxonomy\TermModel */
+/** @template TModel of \OffbeatWP\Content\Taxonomy\TermModelAbstract */
 final class TermQueryBuilder
 {
     use OffbeatQueryTrait;
@@ -187,13 +187,13 @@ final class TermQueryBuilder
     }
 
     /** @phpstan-return TModel|null */
-    public function first(): ?TermModel
+    public function first(): ?TermModelAbstract
     {
         return $this->take(1)->first();
     }
 
     /** @phpstan-return TModel */
-    public function firstOrFail(): TermModel
+    public function firstOrFail(): TermModelAbstract
     {
         $result = $this->first();
 
@@ -205,7 +205,7 @@ final class TermQueryBuilder
     }
 
     /** @phpstan-return TModel */
-    public function firstOrNew(): TermModel
+    public function firstOrNew(): TermModelAbstract
     {
         $result = $this->first();
 
@@ -218,37 +218,37 @@ final class TermQueryBuilder
     }
 
     /** @phpstan-return TModel|null */
-    public function findById(?int $id): ?TermModel
+    public function findById(?int $id): ?TermModelAbstract
     {
         return ($id > 0) ? $this->findBy('id', $id) : null;
     }
 
     /** @phpstan-return TModel */
-    public function findByIdOrFail(int $id): TermModel
+    public function findByIdOrFail(int $id): TermModelAbstract
     {
         return $this->findByOrFail('id', $id);
     }
 
     /** @phpstan-return TModel|null */
-    public function findBySlug(string $slug): ?TermModel
+    public function findBySlug(string $slug): ?TermModelAbstract
     {
         return $this->findBy('slug', $slug);
     }
 
     /** @phpstan-return TModel */
-    public function findBySlugOrFail(string $slug): TermModel
+    public function findBySlugOrFail(string $slug): TermModelAbstract
     {
         return $this->findByOrFail('slug', $slug);
     }
 
     /** @phpstan-return TModel|null */
-    public function findByName(string $name): ?TermModel
+    public function findByName(string $name): ?TermModelAbstract
     {
         return $this->findBy('name', $name);
     }
 
     /** @phpstan-return TModel */
-    public function findByNameOrFail(string $name): TermModel
+    public function findByNameOrFail(string $name): TermModelAbstract
     {
         return $this->findByOrFail('name', $name);
     }
@@ -258,7 +258,7 @@ final class TermQueryBuilder
      * @param string|int $value
      * @phpstan-return TModel|null
      */
-    public function findBy(string $field, $value): ?TermModel
+    public function findBy(string $field, $value): ?TermModelAbstract
     {
         $term = get_term_by($field, $value, $this->taxonomy);
 
@@ -270,7 +270,7 @@ final class TermQueryBuilder
      * @param string|int $value
      * @phpstan-return TModel
      */
-    public function findByOrFail(string $field, $value): TermModel
+    public function findByOrFail(string $field, $value): TermModelAbstract
     {
         $result = $this->findBy($field, $value);
 
