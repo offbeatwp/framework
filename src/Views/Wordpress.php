@@ -455,7 +455,8 @@ class Wordpress
         return ob_get_clean();
     }
 
-    public function getTemplatePart(string $slug, $tagName = null, $className = null) {
+    public function getTemplatePart(string $slug, string $tagName = '', string $className = ''): string
+    {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
 

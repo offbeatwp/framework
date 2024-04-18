@@ -69,6 +69,7 @@ abstract class AbstractModule extends AbstractService
         return get_stylesheet_directory_uri() . str_replace(get_stylesheet_directory(), '', $this->getDirectory());
     }
 
+    /** @return string[] */
     private function getRegisterableObjects(string $path): array
     {
         if (!is_dir($path)) {

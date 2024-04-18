@@ -5,22 +5,28 @@ class SelectField extends AbstractField
 {
     public const FIELD_TYPE = 'select';
 
+    /** @var array<string, string> */
     private array $options = [];
 
-    final public function setOptions(array|callable $options = [])
+    /**
+     * @param array<string, string> $options
+     * @return $this
+     */
+    final public function setOptions(array $options)
     {
         $this->options = $options;
-
         return $this;
     }
 
-    final public function addOption(string|int $key, mixed $value)
+    /** @return $this */
+    final public function addOption(string $key, string $value)
     {
         $this->options[$key] = $value;
 
         return $this;
     }
 
+    /** @return array<string, string> */
     final public function getOptions(): array
     {
         return $this->options;

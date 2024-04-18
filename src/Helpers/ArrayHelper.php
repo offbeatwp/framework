@@ -133,6 +133,9 @@ final class ArrayHelper {
      * @pure
      * Checks if any values in two arrays intersects.<br>
      * Does not check recursively.
+     * @param iterable<mixed> $arrayA
+     * @param iterable<mixed> $arrayB
+     * @return bool
      */
     public static function intersects(iterable $arrayA, iterable $arrayB): bool
     {
