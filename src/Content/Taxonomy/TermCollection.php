@@ -4,7 +4,10 @@ namespace OffbeatWP\Content\Taxonomy;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_Term_Query;
 
-/** @template TModel of \OffbeatWP\Content\Taxonomy\TermModel */
+/**
+ * @template TModel of \OffbeatWP\Content\Taxonomy\TermModel
+ * @property \OffbeatWP\Content\Taxonomy\TermModel[] $items
+ */
 final class TermCollection extends ReadOnlyCollection
 {
     /** @var class-string<TModel> */

@@ -5,7 +5,10 @@ namespace OffbeatWP\Content\User;
 use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_User_Query;
 
-/** @template TModel of \OffbeatWP\Content\User\UserModel */
+/**
+ * @template TModel of \OffbeatWP\Content\User\UserModel
+ * @property \OffbeatWP\Content\User\UserModel[] $items
+ */
 final class UserCollection extends ReadOnlyCollection
 {
     /** @var class-string<TModel> $modelClass */

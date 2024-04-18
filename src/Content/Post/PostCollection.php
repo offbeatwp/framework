@@ -7,7 +7,10 @@ use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Support\Wordpress\Post;
 use WP_Query;
 
-/** @template TModel of \OffbeatWP\Content\Post\PostModel */
+/**
+ * @template TModel of \OffbeatWP\Content\Post\PostModel
+ * @property \OffbeatWP\Content\Post\PostModel[] $items
+ */
 final class PostCollection extends ReadOnlyCollection
 {
     /** @var class-string<TModel> */
