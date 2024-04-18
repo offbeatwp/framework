@@ -8,6 +8,7 @@ use WP_User_Query;
 /**
  * @template TModel of \OffbeatWP\Content\User\UserModel
  * @property \OffbeatWP\Content\User\UserModel[] $items
+ * @extends ReadOnlyCollection<TModel>
  */
 final class UserCollection extends ReadOnlyCollection
 {

@@ -12,6 +12,7 @@ class GenericShortcode
         $this->componentClass = $componentClass;
     }
 
+    /** @param mixed[] $atts */
     public function renderShortcode(array $atts, string $content = ''): string
     {
         if ($content) {

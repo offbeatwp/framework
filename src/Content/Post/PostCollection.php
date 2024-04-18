@@ -10,6 +10,7 @@ use WP_Query;
 /**
  * @template TModel of \OffbeatWP\Content\Post\PostModel
  * @property \OffbeatWP\Content\Post\PostModel[] $items
+ * @extends ReadOnlyCollection<TModel>
  */
 final class PostCollection extends ReadOnlyCollection
 {

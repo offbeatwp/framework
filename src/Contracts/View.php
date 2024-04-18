@@ -3,7 +3,8 @@ namespace OffbeatWP\Contracts;
 
 interface View
 {
-    public function render(string $template, array|object $data = []);
+    /** @param mixed[]|object $data */
+    public function render(string $template, array|object $data = []): ?string;
     public function registerGlobal(string $namespace, mixed $value): void;
     public function addTemplatePath(string $path): void;
 }

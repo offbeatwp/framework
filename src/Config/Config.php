@@ -87,17 +87,15 @@ final class Config {
         return ArrayHelper::getValueFromDottedKey($key, $this->config ?: []);
     }
 
-    /**
-     * @param array-key $key
-     * @param mixed $value
-     */
-    public function set($key, $value): void
+    /** @param mixed $value */
+    public function set(string $key, $value): void
     {
         $this->config[$key] = $value;
     }
 
+    /** @return mixed[] */
     public function all(): array
     {
-        return (array)$this->config;
+        return $this->config ?: [];
     }
 }

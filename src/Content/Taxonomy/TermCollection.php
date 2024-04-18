@@ -7,6 +7,7 @@ use WP_Term_Query;
 /**
  * @template TModel of \OffbeatWP\Content\Taxonomy\TermModel
  * @property \OffbeatWP\Content\Taxonomy\TermModel[] $items
+ * @extends ReadOnlyCollection<TModel>
  */
 final class TermCollection extends ReadOnlyCollection
 {
