@@ -31,7 +31,6 @@ final class PostCollection extends ReadOnlyCollection
         parent::__construct($postItems);
     }
 
-    /** @phpstan-return WpPostsIterator<TModel>|TModel[] */
     public function getIterator(): WpPostsIterator
     {
         return new WpPostsIterator($this->items);
