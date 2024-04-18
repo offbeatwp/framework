@@ -167,6 +167,7 @@ class TermModel extends AbstractOffbeatModel
         return TermBuilder::update($this->wpTerm->term_id, $this->wpTerm->taxonomy);
     }
 
+    /** @return mixed[] */
     public static function defaultQueryArgs(): array
     {
         return ['hide_empty' => false];

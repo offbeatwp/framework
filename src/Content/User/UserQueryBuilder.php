@@ -17,7 +17,7 @@ final class UserQueryBuilder
     /** @var class-string<TModel> */
     private readonly string $modelClass;
     /** @var mixed[] */
-    private array $queryVars = ['number' => 0];
+    private array $queryVars;
     private bool $skipOnLimit = false;
     private bool $skipOnInclude = false;
 
@@ -25,8 +25,9 @@ final class UserQueryBuilder
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
+        $this->queryVars = $this->modelClass::defaultQueryArgs();
 
-        if ($this->modelClass::definedUserRoles() !== null) {
+        if ($this->modelClass::definedUserRoles()) {
             $this->whereRoleIn($this->modelClass::definedUserRoles());
         }
     }

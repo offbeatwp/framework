@@ -2,15 +2,9 @@
 
 namespace OffbeatWP\Content\User;
 
-use BadMethodCallException;
-use InvalidArgumentException;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
-use OffbeatWP\Exceptions\OffbeatInvalidModelException;
-use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
-use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
-use UnexpectedValueException;
 use WP_Error;
 use WP_User;
 
@@ -19,39 +13,11 @@ class UserModel extends AbstractOffbeatModel
     protected WP_User $wpUser;
     /** @var mixed[]|null */
     protected ?array $metas = null;
-    /** @var mixed[] */
-    protected array $metaInput = [];
-    /** @var ("")[] */
-    protected array $metaToUnset = [];
-    private string $newUserLogin = '';
-    private bool $isInitialised = false;
 
-    /** @param WP_User|null $user */
-    final private function __construct($user = null)
+    final private function __construct(WP_User $user)
     {
-        if ($user === null) {
-            $user = new WP_User();
-            $this->metas = [];
-        }
-
-        if (is_int($user)) {
-            trigger_error('Constructed UserModel with integer. Use UserModel::find instead.', E_USER_DEPRECATED);
-            $userData = get_userdata($user);
-
-            if (!$userData) {
-                throw new OffbeatModelNotFoundException('Could not find WP_User with ID ' . $user);
-            }
-
-            $user = $userData;
-        }
-
-        if (!$user instanceof WP_User) {
-            throw new UserModelException('UserModel constructor requires a WP_User as parameter, or an integer representing the ID of an existing user.');
-        }
-
         $this->wpUser = $user;
         $this->init();
-        $this->isInitialised = true;
     }
 
     /** This method is called at the end of the UserModel constructor */
@@ -63,94 +29,6 @@ class UserModel extends AbstractOffbeatModel
     public function __clone()
     {
         $this->wpUser = clone $this->wpUser;
-    }
-
-    ///////////////
-    /// Setters ///
-    ///////////////
-    /** The user's email address. <b>Setting this is required.</b> */
-    final public function setEmail(string $email): self
-    {
-        $this->wpUser->user_email = $email;
-        return $this;
-    }
-
-    final public function setNickname(string $nickname): self
-    {
-        $this->wpUser->nickname = $nickname;
-        return $this;
-    }
-
-    final public function setDisplayName(string $displayName): self
-    {
-        $this->wpUser->display_name = $displayName;
-        return $this;
-    }
-
-    final public function setFirstName(string $firstName): self
-    {
-        $this->wpUser->first_name = $firstName;
-        return $this;
-    }
-
-    final public function setLastName(string $lastName): self
-    {
-        $this->wpUser->last_name = $lastName;
-        return $this;
-    }
-
-    final public function setLogin(string $userLogin): self
-    {
-        if (!$userLogin) {
-            throw new InvalidArgumentException('Username cannot be empty');
-        }
-
-        if (strlen($userLogin) > 60) {
-            throw new InvalidArgumentException('Username cannot be longer than 60 characters');
-        }
-
-        $username = wp_strip_all_tags($userLogin);
-        $username = remove_accents($username);
-        $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
-        $username = preg_replace('/&.+?;/', '', $username);
-
-        if ($userLogin !== $username) {
-            throw new InvalidArgumentException($userLogin . ' is not a valid username. You could instead use: ' . $username);
-        }
-
-        if ($this->wpUser->user_login !== $userLogin) {
-            $this->newUserLogin = $userLogin;
-        }
-
-        return $this;
-    }
-
-    final public function setUrl(string $url): self
-    {
-        $this->wpUser->user_url = $url;
-        return $this;
-    }
-
-    /**
-     * @param string $key Metadata name.
-     * @param mixed $value The new metadata value.
-     * @return $this
-     */
-    final public function setMeta(string $key, $value): self
-    {
-        $this->metaInput[$key] = $value;
-        unset($this->metaToUnset[$key]);
-
-        return $this;
-    }
-
-    final public function unsetMeta(string $key): self
-    {
-        $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
-        return $this;
     }
 
     ///////////////
@@ -167,7 +45,7 @@ class UserModel extends AbstractOffbeatModel
     }
 
     /** @return mixed[] */
-    public function getMetas(): array
+    final public function getMetas(): array
     {
         if ($this->metas === null) {
             $this->metas = get_user_meta($this->getId()) ?: [];
@@ -176,8 +54,7 @@ class UserModel extends AbstractOffbeatModel
         return $this->metas;
     }
 
-    /** @return mixed|null */
-    public function getMeta(string $key, bool $single = true)
+    final public function getMeta(string $key, bool $single = true): mixed
     {
         $metas = $this->getMetas();
 
@@ -191,7 +68,7 @@ class UserModel extends AbstractOffbeatModel
     /** The user's login username. */
     final public function getLogin(): string
     {
-        return $this->newUserLogin ?: $this->wpUser->user_login;
+        return $this->wpUser->user_login;
     }
 
     /** The URL-friendly user name. Defaults to first name + last name. */
@@ -268,7 +145,10 @@ class UserModel extends AbstractOffbeatModel
         return get_edit_user_link($this->getId());
     }
 
-    /** Date the user registered as a Carbon Date. */
+    /**
+     * Date the user registered as a Carbon Date.
+     * @throws \Exception
+     */
     final public function getRegistrationDate(): ?WpDateTimeImmutable
     {
         return ($this->wpUser->user_registered) ? new WpDateTimeImmutable($this->wpUser->user_registered) : null;
@@ -298,123 +178,44 @@ class UserModel extends AbstractOffbeatModel
         return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
     }
 
-    public function hasCapability(string $capabilityName): bool
+    final public function hasCapability(string $capabilityName): bool
     {
         return $this->wpUser->has_cap($capabilityName);
     }
 
     /** @return string[] Returns the user's roles */
-    public function getRoles(): array
+    final public function getRoles(): array
     {
         return $this->wpUser->roles;
     }
 
     /** @return string[] */
-    public function getRoleLabels(): array
+    final public function getRoleNames(): array
     {
-        $roles = [];
-
-        foreach ($this->wpUser->roles as $role) {
-            $roles[] = wp_roles()->role_names[$role] ?? '';
-        }
-
-        return $roles;
+        return array_map(fn($r) => wp_roles()->role_names[$r] ?? '', $this->wpUser->roles);
     }
 
     /**  Returns the role at the specified index, or null if no role exists at the specified index. */
-    public function getRole(int $index): ?string
+    final public function getRole(int $index): ?string
     {
         return $this->getRoles()[$index] ?? null;
     }
 
-    public function getRoleLabel(int $index): string
+    final public function getRoleLabel(int $index): ?string
     {
-        return wp_roles()->role_names[$this->getRole($index)] ?? '';
+        return wp_roles()->role_names[$this->getRole($index)] ?? null;
     }
 
-    public function hasRole(string $role): bool
+    final public function hasRole(string $role): bool
     {
         return in_array($role, $this->getRoles(), true);
-    }
-
-    ///////////////////////
-    /// Special Methods ///
-    ///////////////////////
-    private function _save(): int|WP_Error
-    {
-        if (!$this->isInitialised) {
-            throw new BadMethodCallException('The save method cannot be called before a model is initialised.');
-        }
-
-        if (!$this->wpUser->user_email) {
-            throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
-        }
-
-        if (!$this->wpUser->user_login) {
-            $this->wpUser->user_login = $this->wpUser->user_email;
-        }
-
-        if (!$this->wpUser->user_pass) {
-            $this->wpUser->user_pass = wp_generate_password(32);
-        }
-
-        $userData = $this->wpUser->to_array();
-        $userData['meta_input'] = $this->metaInput;
-
-        if ($this->getId()) {
-            $userId = wp_update_user($userData);
-
-            // Surprise, wp_update_user ignores updates to user_login!
-            if (is_int($userId) && $this->newUserLogin) {
-                global $wpdb;
-                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
-                $this->newUserLogin = '';
-            }
-        } else {
-            $userId = wp_insert_user($userData);
-        }
-
-        if (!is_int($userId)) {
-            return $userId;
-        }
-
-        $wpUser = get_user_by('id', $userId);
-        if ($wpUser) {
-            $this->wpUser = $wpUser;
-        }
-
-        $roles = static::definedUserRoles();
-        if ($roles) {
-            foreach ($roles as $role) {
-                $this->wpUser->set_role($role);
-            }
-        }
-
-        return $userId;
-    }
-
-    final public function save(): int
-    {
-        $result = $this->_save();
-        return is_int($result) ? $result : 0;
-    }
-
-    final public function saveOrFail(): int
-    {
-        $result = $this->_save();
-
-        if (!is_int($result)) {
-            throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
-        }
-
-        return $result;
     }
 
     /**
      * Log in as this user. Only works if used is not already logged in.
      * @return bool <b>true</b> on success, <b>false</b> if the user is already logged in.
      */
-    public function loginAsUser(): bool
+    final public function loginAsUser(): bool
     {
         if (!is_user_logged_in() && $this->getId()) {
             wp_clear_auth_cookie();
@@ -427,7 +228,7 @@ class UserModel extends AbstractOffbeatModel
     }
 
     /** Handles sending a password retrieval email to a user. */
-    public function retrievePassword(): ?WP_Error
+    final public function retrievePassword(): ?WP_Error
     {
         $error = retrieve_password($this->getLogin());
         return ($error instanceof WP_Error) ? $error : null;
@@ -436,27 +237,26 @@ class UserModel extends AbstractOffbeatModel
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    /** @return static|null Returns the user that is currently logged in, or null if no user is logged in. */
-    public static function getCurrentUser()
+    /** Returns the user that is currently logged in, or null if no user is logged in. */
+    final public static function getCurrentUser(): ?static
     {
         return self::query()->findById(get_current_user_id());
     }
 
-    /** @return static Returns the user that is currently logged in, or throws an exception if no user is logged in. */
-    public static function getCurrentUserOrFail()
+    /** Returns the user that is currently logged in, or throws an exception if no user is logged in. */
+    final public static function getCurrentUserOrFail(): static
     {
         return self::query()->findByIdOrFail(get_current_user_id());
     }
 
-    /** @return static|null Returns a user with the specified email address */
-    public static function findByEmail(string $email)
+    /** Returns a user with the specified email address */
+    final public static function findByEmail(string $email): ?static
     {
         $wpUser = get_user_by('email', $email);
 
         if ($wpUser) {
             $user = User::convertWpUserToModel($wpUser);
 
-            /** @noinspection PhpConditionAlreadyCheckedInspection */
             if ($user instanceof static) {
                 return $user;
             }
@@ -465,31 +265,25 @@ class UserModel extends AbstractOffbeatModel
         return null;
     }
 
-    public function isUsingDefaultPassword(): bool
+    final public function isUsingDefaultPassword(): bool
     {
         return $this->getMetaBool('default_password_nag');
     }
 
     /**
      * Only users that match at least one of these roles will be queried.<br/>
-     * Generally, you'll only want to return <b>one</b> role unless the model class is abstract.<br/>
-     * Default return value is null.
-     * @return string[]|null
+     * Generally, you'll only want to return <b>one</b> role unless the model class is abstract.
+     * @return string[]
      */
-    public static function definedUserRoles(): ?array
-    {
-        return null;
-    }
-
-    /** @return UserCollection<static> */
-    public static function all(): UserCollection
-    {
-        return static::query()->get();
-    }
-
-    public static function defaultQueryArgs(): array
+    public static function definedUserRoles(): array
     {
         return [];
+    }
+
+    /** @return mixed[] */
+    public static function defaultQueryArgs(): array
+    {
+        return ['number' => 0];
     }
 
     /** @return UserQueryBuilder<static> */
@@ -519,7 +313,7 @@ class UserModel extends AbstractOffbeatModel
             $wpUser = get_user_by('ID', $result);
             $wpUser->set_role('');
 
-            foreach(static::definedUserRoles() as $role) {
+            foreach (static::definedUserRoles() as $role) {
                 $wpUser->add_role($role);
             }
 
@@ -527,14 +321,5 @@ class UserModel extends AbstractOffbeatModel
         }
 
         return static::find($result);
-    }
-
-    final public function delete(?int $reassign = null): bool
-    {
-        if ($this->getId()) {
-            return wp_delete_user($this->getId(), $reassign);
-        }
-
-        return false;
     }
 }
