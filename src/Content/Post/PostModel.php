@@ -328,7 +328,7 @@ class PostModel extends AbstractOffbeatModel
         if ($this->getParentId()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
                 $ancestor = offbeat(Post::class)->get($ancestorId);
-                if ($ancestor) {
+                if ($ancestor instanceof static) {
                     $ancestors[] = $ancestor;
                 }
             }
@@ -360,7 +360,11 @@ class PostModel extends AbstractOffbeatModel
         }
 
         if ($adjacentPost) {
-            return offbeat(Post::class)->convertWpPostToModel($adjacentPost);
+            $post = offbeat(Post::class)->convertWpPostToModel($adjacentPost);
+
+            if ($post instanceof static) {
+                return $post;
+            }
         }
 
         return null;

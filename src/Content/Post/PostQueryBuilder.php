@@ -70,7 +70,7 @@ final class PostQueryBuilder
     }
 
     /** @return scalar|mixed[]|null */
-    public function getQueryVar(string $var)
+    public function getQueryVar(string $var): int|float|string|bool|null|array
     {
         $queryVars = $this->getQueryVars();
 
