@@ -38,17 +38,10 @@ final class UserQueryBuilder
         return new UserCollection(new WP_User_Query($this->queryVars), $this->modelClass);
     }
 
-    /** @return UserCollection<TModel> */
-    public function take(int $numberOfUsers): UserCollection
-    {
-        $this->queryVars['number'] = $numberOfUsers;
-        return $this->get();
-    }
-
     /** @phpstan-return TModel|null */
     public function first(): ?UserModel
     {
-        return $this->take(1)->first();
+        return $this->limit(1)->get()[0];
     }
 
     /** @phpstan-return TModel|null */

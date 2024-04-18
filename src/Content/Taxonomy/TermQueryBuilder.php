@@ -86,25 +86,6 @@ final class TermQueryBuilder
     }
 
     /**
-     * Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms
-     * @return TermCollection<TModel>
-     */
-    public function all(): TermCollection
-    {
-        return $this->take(0);
-    }
-
-    /**
-     * @param int $numberOfItems
-     * @return TermCollection<TModel>
-     */
-    public function take(int $numberOfItems): TermCollection
-    {
-        $this->queryVars['number'] = $numberOfItems;
-        return $this->get();
-    }
-
-    /**
      * @param int $amount
      * @return $this
      */
@@ -189,7 +170,7 @@ final class TermQueryBuilder
     /** @phpstan-return TModel|null */
     public function first(): ?TermModel
     {
-        return $this->take(1)->first();
+        return $this->limit(1)->get()[0] ?? null;
     }
 
     /** @phpstan-return TModel */
