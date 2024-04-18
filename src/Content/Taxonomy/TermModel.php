@@ -129,7 +129,7 @@ class TermModel extends AbstractOffbeatModel
      * @param string[] $postTypes
      * @return PostQueryBuilder<PostModel>
      */
-    public function getPosts(array $postTypes = []): PostQueryBuilder
+    final public function getPosts(array $postTypes = []): PostQueryBuilder
     {
         // If no posttypes defined, get posttypes where the taxonomy is assigned to
         if (!$postTypes) {
@@ -141,13 +141,13 @@ class TermModel extends AbstractOffbeatModel
     }
 
     /** Retrieves the current term from the WordPress loop, provided the TermModel is or extends the TermModel class that it is called on. */
-    public static function current(): ?static
+    final public static function current(): ?static
     {
         $taxonomy = offbeat(Taxonomy::class)->get();
         return ($taxonomy instanceof static) ? $taxonomy : null;
     }
 
-    public function getTaxonomyObject(): WP_Taxonomy
+    final public function getTaxonomyObject(): WP_Taxonomy
     {
         $tax = get_taxonomy($this->wpTerm->taxonomy);
         if (!$tax) {
@@ -157,12 +157,12 @@ class TermModel extends AbstractOffbeatModel
         return $tax;
     }
 
-    public function count(): int
+    final public function count(): int
     {
         return $this->wpTerm->count;
     }
 
-    public function edit(): TermBuilder
+    final public function edit(): TermBuilder
     {
         return TermBuilder::update($this->wpTerm->term_id, $this->wpTerm->taxonomy);
     }

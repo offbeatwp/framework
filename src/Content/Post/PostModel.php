@@ -10,10 +10,10 @@ use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
-use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use RuntimeException;
 use WP_Post;
 use WP_Post_Type;
 
@@ -53,13 +53,21 @@ class PostModel extends AbstractOffbeatModel
         return $this->wpPost->ID;
     }
 
-    public function getTitle(): string
+    final public function getTitle(bool $formatted = true): string
     {
-        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+        if ($formatted) {
+            return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
+        }
+
+        return $this->wpPost->post_title;
     }
 
-    public function getContent(): string
+    final public function getContent(bool $formatted = true): string
     {
+        if (!$formatted) {
+            return $this->wpPost->post_content;
+        }
+
         if ($this->isPasswordRequired()) {
             return $this->getPasswordForm();
         }
@@ -88,38 +96,45 @@ class PostModel extends AbstractOffbeatModel
         return $content;
     }
 
-    public function getPostName(): string
+    final public function getPostName(): string
     {
         return $this->wpPost->post_name;
     }
 
-    public function getSlug(): string
+    final public function getSlug(): string
     {
         return $this->getPostName();
     }
 
-    /**
-     * Retrieves the full permalink for the current post or post ID.
-     * @return string|null The permalink URL. Null if the post does not exist.
-     */
-    public function getPermalink(): ?string
+    /** Retrieves the full permalink for the current post or post ID. */
+    final public function getPermalink(): string
     {
         if (!array_key_exists('permalink', $this->data)) {
-            $this->data['permalink'] = get_permalink($this->getId()) ?: null;
+            $permalink = get_permalink($this->getId());
+            if ($permalink === false) {
+                throw new RuntimeException("Failed to get permalink as post {$this->getId()} does not exist!");
+            }
+
+            $this->data['permalink'] = $permalink;
         }
 
         return $this->data['permalink'];
     }
 
-    public function getPostType(): string
+    final public function getPostType(): string
     {
         return $this->wpPost->post_type;
     }
 
-    public function getPostTypeObject(): ?WP_Post_Type
+    final public function getPostTypeObject(): ?WP_Post_Type
     {
         if (!array_key_exists('post_type_object', $this->data)) {
-            $this->data['post_type_object'] = get_post_type_object(get_post_type($this->wpPost));
+            $postType = get_post_type($this->wpPost);
+            if (!$postType) {
+                throw new RuntimeException("Failed to get post type object from post {$this->getId()} because it has no post type!");
+            }
+
+            $this->data['post_type_object'] = get_post_type_object($postType);
         }
 
         return $this->data['post_type_object'];
@@ -129,9 +144,10 @@ class PostModel extends AbstractOffbeatModel
      * @param string $metaKey The ID stored in this meta-field will be used to retrieve the attachment.
      * @return string|null The attachment url or <i>null</i> if the attachment could not be found.
      */
-    public function getAttachmentUrl(string $metaKey): ?string
+    final public function getAttachmentUrl(string $metaKey): ?string
     {
-        return wp_get_attachment_url($this->getMeta($metaKey)) ?: null;
+        $url = wp_get_attachment_url($this->getMeta($metaKey));
+        return ($url === false) ? null : $url;
     }
 
     /**
@@ -140,51 +156,51 @@ class PostModel extends AbstractOffbeatModel
      * @param array $attributes Attributes for the image markup. Default <i>thumbnail<i/>.
      * @return string HTML image element or empty string on failure.
      */
-    public function getAttachmentImage(string $metaKey, $size = 'thumbnail', array $attributes = []): string
+    final public function getAttachmentImage(string $metaKey, $size = 'thumbnail', array $attributes = []): string
     {
         return wp_get_attachment_image($this->getMetaInt($metaKey), $size, false, $attributes);
     }
 
-    public function getPostStatus(): string
+    final public function getPostStatus(): string
     {
         return $this->wpPost->post_status;
     }
 
-    public function isPostType(string $postType): bool
+    final public function isPostType(string $postType): bool
     {
         return $this->getPostType() === $postType;
     }
 
-    public function getExcerpt(bool $formatted = true): ?string
+    final public function getExcerpt(bool $formatted = true): ?string
     {
-        if ($formatted) {
-            $currentPost = $GLOBALS['post'] ?? null;
-
-            $GLOBALS['post'] = $this->wpPost;
-
-            ob_start();
-            the_excerpt();
-            $excerpt = ob_get_clean();
-
-            $GLOBALS['post'] = $currentPost;
-
-            return $excerpt ?: null;
-        }
-
         if (!array_key_exists('excerpt', $this->data)) {
-            $this->data['excerpt'] = get_the_excerpt($this->wpPost);
+            if ($formatted) {
+                $currentPost = $GLOBALS['post'] ?? null;
+
+                $GLOBALS['post'] = $this->wpPost;
+
+                ob_start();
+                the_excerpt();
+                $excerpt = ob_get_clean();
+
+                $GLOBALS['post'] = $currentPost;
+
+                $this->data['excerpt'] = $excerpt;
+            } else {
+                $this->data['excerpt'] = get_the_excerpt($this->wpPost);
+            }
         }
 
         return $this->data['excerpt'];
     }
 
-    public function getAuthorId(): int
+    final public function getAuthorId(): int
     {
         return (int)$this->wpPost->post_author;
     }
 
     /** @return mixed[] */
-    public function getMetas(): array
+    final public function getMetas(): array
     {
         if ($this->metas === null) {
             $this->metas = get_post_meta($this->getId()) ?: [];
@@ -193,7 +209,7 @@ class PostModel extends AbstractOffbeatModel
         return $this->metas;
     }
 
-    public function getMeta(string $key, bool $single = true): mixed
+    final public function getMeta(string $key, bool $single = true): mixed
     {
         if (isset($this->getMetas()[$key])) {
             return $single && is_array($this->getMetas()[$key]) ? reset($this->getMetas()[$key]) : $this->getMetas()[$key];
@@ -203,7 +219,7 @@ class PostModel extends AbstractOffbeatModel
     }
 
     /** Retrieves the WP Admin edit link for this post. <br>Returns <i>null</i> if the post type does not exist or does not allow an editing UI. */
-    public function getEditLink(): ?string
+    final public function getEditLink(): ?string
     {
         if (!array_key_exists('edit_post_link', $this->data)) {
             $this->data['edit_post_link'] = get_edit_post_link($this->getId());
@@ -212,7 +228,7 @@ class PostModel extends AbstractOffbeatModel
         return $this->data['edit_post_link'];
     }
 
-    public function getPostDateTime(): ?WpDateTimeImmutable
+    final public function getPostDateTime(): ?WpDateTimeImmutable
     {
         if (!array_key_exists('date', $this->data)) {
             $gmt = get_post_datetime($this->getId(), 'date', 'gmt');
@@ -222,7 +238,7 @@ class PostModel extends AbstractOffbeatModel
         return $this->data['date'];
     }
 
-    public function getModifiedDateTime(): ?WpDateTimeImmutable
+    final public function getModifiedDateTime(): ?WpDateTimeImmutable
     {
         if (!array_key_exists('modified', $this->data)) {
             $gmt = get_post_datetime($this->getId(), 'modified', 'gmt');
@@ -232,34 +248,22 @@ class PostModel extends AbstractOffbeatModel
         return $this->data['modified'];
     }
 
-    /** @throws PostMetaNotFoundException */
-    public function getMetaOrFail(string $key): string
-    {
-        $result = $this->getMeta($key);
-
-        if ($result === null) {
-            throw new PostMetaNotFoundException('PostMeta with key ' . $key . ' could not be found on post with ID ' . $this->wpPost->ID);
-        }
-
-        return $result;
-    }
-
-    public function getTerms(string $taxonomy): TermQueryBuilder
+    final public function getTerms(string $taxonomy): TermQueryBuilder
     {
         return offbeat(Taxonomy::class)->getModelByTaxonomy($taxonomy)::query()->whereRelatedToPost($this->getId());
     }
 
     /**
      * @param int[]|string[]|int|string $term
-     * @param string $taxonomy
+     * @param non-empty-string $taxonomy
      * @return bool
      */
-    public function hasTerm(array|int|string $term, string $taxonomy): bool
+    final public function hasTerm(array|int|string $term, string $taxonomy): bool
     {
         return has_term($term, $taxonomy, $this->getId());
     }
 
-    public function hasThumbnail(): bool
+    final public function hasThumbnail(): bool
     {
         return has_post_thumbnail($this->wpPost);
     }
@@ -269,7 +273,7 @@ class PostModel extends AbstractOffbeatModel
      * @param int[]|string[]|string $attr
      * @return string The post thumbnail image tag.
      */
-    public function getFeaturedImage(array|string $size = 'thumbnail', array|string $attr = []): string
+    final public function getFeaturedImage(array|string $size = 'thumbnail', array|string $attr = []): string
     {
         return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
@@ -278,17 +282,23 @@ class PostModel extends AbstractOffbeatModel
      * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @return null|string The post thumbnail URL or NULL if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
-    public function getFeaturedImageUrl(array|string $size = 'thumbnail'): ?string
+    final public function getThumbnailUrl(array|string $size = 'thumbnail'): ?string
     {
-        return get_the_post_thumbnail_url($this->wpPost, $size) ?: null;
+        $url = get_the_post_thumbnail_url($this->wpPost, $size);
+        return ($url === false) ? null : $url;
     }
 
-    public function getThumbnailId(): int
+    final public function getThumbnailId(): int
     {
-        return (int)get_post_thumbnail_id($this->wpPost);
+        $id = get_post_thumbnail_id($this->wpPost);
+        if ($id === false) {
+            throw new RuntimeException("Failed to get thumbnail ID as post {$this->getId()} does not exist!");
+        }
+
+        return get_post_thumbnail_id($this->wpPost);
     }
 
-    public function getParentId(): int
+    final public function getParentId(): int
     {
         return $this->wpPost->post_parent;
     }
@@ -305,7 +315,7 @@ class PostModel extends AbstractOffbeatModel
     }
 
     /** @return int[] Retrieves the IDs of the ancestors of a post. */
-    public function getAncestorIds(): array
+    final public function getAncestorIds(): array
     {
         return get_post_ancestors($this->getId());
     }
@@ -327,12 +337,12 @@ class PostModel extends AbstractOffbeatModel
         return $ancestors;
     }
 
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
+    final public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
+    final public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
@@ -360,24 +370,29 @@ class PostModel extends AbstractOffbeatModel
      * Whether post requires password and correct password has been provided.
      * @return bool <i>false</i> if a password is not required or the correct password cookie is present, <i>true</i> otherwise.
      */
-    public function isPasswordRequired(): bool
+    final public function isPasswordRequired(): bool
     {
         return post_password_required($this->wpPost);
     }
 
     /** Retrieve protected post password form content. */
-    public function getPasswordForm(): string
+    final public function getPasswordForm(): string
     {
         return get_the_password_form($this->wpPost);
     }
 
-    /** @return non-empty-string|null The page template slug used by this post or <i>null</i> if it is not found. */
-    public function getPageTemplate(): ?string
+    /** Gets the specific template filename for a given post. */
+    final public function getPageTemplate(): string
     {
-        return get_page_template_slug($this->wpPost) ?: null;
+        $slug = get_page_template_slug($this->wpPost);
+        if ($slug === false) {
+            throw new RuntimeException("Failed to get slug as post {$this->getId()} does not exist!");
+        }
+
+        return $slug;
     }
 
-    public function getPostObject(): WP_Post
+    final public function getPostObject(): WP_Post
     {
         return $this->wpPost;
     }
@@ -408,30 +423,7 @@ class PostModel extends AbstractOffbeatModel
     //////////////////////
     /// Change Methods ///
     //////////////////////
-    /**
-     * When the post and page is permanently deleted, everything that is tied to it is deleted also.
-     * This includes comments, post meta fields, and terms associated with the post.
-     * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
-     * @param bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
-     */
-    public function delete(bool $force = true): ?WP_Post
-    {
-        return wp_delete_post($this->getId(), $force) ?: null;
-    }
-
-    /** Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted. */
-    public function trash(): ?WP_Post
-    {
-        return wp_trash_post($this->getId()) ?: null;
-    }
-
-    /** Restores a post from the Trash. */
-    public function untrash(): ?WP_Post
-    {
-        return wp_untrash_post($this->getId()) ?: null;
-    }
-
-    public function refreshMetas()
+    final public function refreshMetas()
     {
         $this->metas = null;
         $this->getMetas();
@@ -440,7 +432,7 @@ class PostModel extends AbstractOffbeatModel
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    public function getMethodByRelationKey(string $relationKey): ?string
+    final public function getMethodByRelationKey(string $relationKey): ?string
     {
         $method = $relationKey;
 
@@ -479,11 +471,6 @@ class PostModel extends AbstractOffbeatModel
     {
         $post = offbeat(Post::class)->get();
         return ($post instanceof static) ? $post : null;
-    }
-
-    final public function getWpPost(): WP_Post
-    {
-        return $this->wpPost;
     }
 
     /** @return mixed[] */
