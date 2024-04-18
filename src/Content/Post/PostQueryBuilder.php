@@ -53,7 +53,6 @@ final class PostQueryBuilder
         return $this;
     }
 
-    /** @return PostCollection<TModel> */
     public function get(): PostCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
@@ -61,9 +60,7 @@ final class PostQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
-        $query = $this->runQuery();
-
-        return new PostCollection($query, $this->modelClass);
+        return new PostCollection($this->runQuery(), $this->modelClass);
     }
 
     /** @return mixed[] */
@@ -80,17 +77,9 @@ final class PostQueryBuilder
         return $queryVars[$var] ?? null;
     }
 
-    /** @return PostCollection<TModel> */
-    public function take(int $numberOfItems): PostCollection
-    {
-        $this->queryVars['posts_per_page'] = $numberOfItems;
-
-        return $this->get();
-    }
-
     public function first(): ?PostModel
     {
-        return $this->take(1)->first();
+        return $this->limit(1)->get()[0] ?? null;
     }
 
     public function firstOrFail(): PostModel

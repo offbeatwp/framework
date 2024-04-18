@@ -13,6 +13,8 @@ abstract class AbstractOffbeatModel
     /** @return positive-int */
     abstract public function getId(): int;
 
+    abstract public function getMetas(): array;
+
     private function getRawMetaValue(string $key, string|int|float|bool|array|null $defaultValue, bool $single = true): mixed
     {
         $metas = $this->getMetas();
@@ -123,7 +125,7 @@ abstract class AbstractOffbeatModel
 
         try {
             return WpDateTimeImmutable::make($datetime);
-        } catch (Exception)  {
+        } catch (Exception) {
             return null;
         }
     }
@@ -176,4 +178,6 @@ abstract class AbstractOffbeatModel
 
         return static::query()->whereIdIn([$id])->exists();
     }
+
+    abstract public static function query();
 }

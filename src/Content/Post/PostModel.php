@@ -80,7 +80,7 @@ class PostModel extends AbstractOffbeatModel
         $hasRestoreWpautopHook = has_filter('the_content', '_restore_wpautop_hook');
         $didManualRestoreWpAutopHook = false;
         if ($hasRestoreWpautopHook) {
-            _restore_wpautop_hook(null);
+            _restore_wpautop_hook('');
 
             $didManualRestoreWpAutopHook = true;
         }
