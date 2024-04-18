@@ -9,9 +9,10 @@ use WP_Error;
 
 final class TermBuilder extends OffbeatObjectBuilder
 {
-    /** @var array{term_id?: int, name?: string, taxonomy?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
+    /** @var array{taxonomy: string, term_id?: int, name?: string, alias_of?: string, description?: string, parent?: int, slug?: string} */
     private array $args;
 
+    /** @param array{taxonomy: string, name?: string} $args */
     private function __construct(array $args)
     {
         $this->args = $args;

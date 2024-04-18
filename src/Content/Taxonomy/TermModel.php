@@ -17,6 +17,7 @@ class TermModel extends AbstractOffbeatModel
     public const TAXONOMY = '';
 
     protected readonly WP_Term $wpTerm;
+    /** @var array<string, mixed>|null */
     private ?array $metas = null;
 
     final private function __construct(WP_Term $term)
@@ -110,6 +111,7 @@ class TermModel extends AbstractOffbeatModel
         return array_map(fn(int $ancestorId) => static::find($ancestorId), $this->getAncestorIds());
     }
 
+    /** @return array<string, mixed> */
     final public function getMetas(): array
     {
         if ($this->metas === null) {

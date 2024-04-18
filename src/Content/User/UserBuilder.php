@@ -10,8 +10,10 @@ use WP_Error;
 
 final class UserBuilder extends OffbeatObjectBuilder
 {
+    /** @var array{ID?: int, user_email?: string, nickname?: string, display_name?: string, first_name?: string, last_name?: string, user_url?: string, user_login?: string, user_pass?: string} */
     private array $args;
 
+    /** @param array{ID?: int} $args */
     private function __construct(array $args) {
         $this->args = $args;
     }
