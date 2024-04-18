@@ -4,7 +4,7 @@ namespace OffbeatWP\Exceptions;
 
 use Exception;
 
-final class PostBuilderException extends Exception
+final class OffbeatBuilderException extends Exception
 {
 
 }

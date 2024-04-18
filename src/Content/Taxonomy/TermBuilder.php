@@ -3,7 +3,8 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\Common\OffbeatObjectBuilder;
-use OffbeatWP\Exceptions\TermBuilderException;
+use OffbeatWP\Content\Common\WpObjectTypeEnum;
+use OffbeatWP\Exceptions\OffbeatBuilderException;
 use WP_Error;
 
 final class TermBuilder extends OffbeatObjectBuilder
@@ -56,9 +57,9 @@ final class TermBuilder extends OffbeatObjectBuilder
 
     /**
      * Inserts or updates the term in the database.<br>
-     * Returns term ID on success, throws TermBuilderException on failure.
+     * Returns term ID on success, throws OffbeatBuilderException on failure.
      * @return positive-int
-     * @throws TermBuilderException
+     * @throws OffbeatBuilderException
      */
     public function save(): int
     {
@@ -78,10 +79,15 @@ final class TermBuilder extends OffbeatObjectBuilder
         }
 
         if ($result instanceof WP_Error) {
-            throw new TermBuilderException('TermBuilder ' . ($termId ? 'UPDATE' : 'INSERT') . ' failed: ' . $result->get_error_message());
+            throw new OffbeatBuilderException('TermBuilder ' . ($termId ? 'UPDATE' : 'INSERT') . ' failed: ' . $result->get_error_message());
         }
 
         return $result['term_id'];
+    }
+
+    protected function getObjectType(): WpObjectTypeEnum
+    {
+        Return WpObjectTypeEnum::TERM;
     }
 
     /////////////////////
@@ -101,12 +107,12 @@ final class TermBuilder extends OffbeatObjectBuilder
      * @pure
      * @param positive-int $termId The ID of the term.
      * @param string $taxonomy The taxonomy of the term.
-     * @throws TermBuilderException
+     * @throws OffbeatBuilderException
      */
     public static function update(int $termId, string $taxonomy): TermBuilder
     {
         if ($termId <= 0) {
-            throw new TermBuilderException('Termbuilder update failed, invalid ID: ' . $termId);
+            throw new OffbeatBuilderException('Termbuilder update failed, invalid ID: ' . $termId);
         }
 
         return new TermBuilder(['taxonomy' => $taxonomy]);

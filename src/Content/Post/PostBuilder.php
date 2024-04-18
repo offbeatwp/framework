@@ -3,7 +3,8 @@
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Content\Common\OffbeatObjectBuilder;
-use OffbeatWP\Exceptions\PostBuilderException;
+use OffbeatWP\Content\Common\WpObjectTypeEnum;
+use OffbeatWP\Exceptions\OffbeatBuilderException;
 
 use WP_Error;
 
@@ -30,16 +31,16 @@ final class PostBuilder extends OffbeatObjectBuilder
      * Will throw a PostBuilderException if given string is empty or not a valid post slug
      * @param non-empty-string $slug
      * @return $this
-     * @throws \OffbeatWP\Exceptions\PostBuilderException
+     * @throws \OffbeatWP\Exceptions\OffbeatBuilderException
      */
     public function slug(string $slug)
     {
         if (!$slug) {
-            throw new PostBuilderException('Post slug cannot be empty.');
+            throw new OffbeatBuilderException('Post slug cannot be empty.');
         }
 
         if ($slug !== sanitize_title($slug)) {
-            throw new PostBuilderException('Invalid post slug: ' . $slug);
+            throw new OffbeatBuilderException('Invalid post slug: ' . $slug);
         }
 
         $this->args['post_name'] = $slug;
@@ -50,30 +51,37 @@ final class PostBuilder extends OffbeatObjectBuilder
      * Inserts or updates the post in the database.<br>
      * Returns post ID on success, throws PostBuilderException on failure.
      * @return positive-int
-     * @throws PostBuilderException
+     * @throws OffbeatBuilderException
      */
     public function save(): int
     {
         // Determine post id (if update)
         if (empty($this->args['ID'])) {
-            $postId = null;
+            $idToUpdate = null;
         } else {
-            $postId = $this->args['ID'];
+            $idToUpdate = $this->args['ID'];
             unset($this->args['ID']);
         }
 
         // Either insert or update the post
-        if ($postId) {
-            $result = wp_update_post($this->args, true);
+        if ($idToUpdate) {
+            $resultId = wp_update_post($this->args, true);
         } else {
-            $result = wp_insert_post($this->args, true);
+            $resultId = wp_insert_post($this->args, true);
         }
 
-        if ($result instanceof WP_Error) {
-            throw new PostBuilderException('PostBuilder ' . ($postId ? 'UPDATE' : 'INSERT') . ' failed: ' . $result->get_error_message());
+        if ($resultId instanceof WP_Error) {
+            throw new OffbeatBuilderException('PostBuilder ' . ($idToUpdate ? 'UPDATE' : 'INSERT') . ' failed: ' . $resultId->get_error_message());
         }
 
-        return $result;
+        $this->saveMeta($resultId);
+
+        return $resultId;
+    }
+
+    protected function getObjectType(): WpObjectTypeEnum
+    {
+        Return WpObjectTypeEnum::POST;
     }
 
     /////////////////////
@@ -88,12 +96,12 @@ final class PostBuilder extends OffbeatObjectBuilder
     /**
      * @pure
      * @param positive-int $postId The ID of the post.
-     * @throws PostBuilderException
+     * @throws OffbeatBuilderException
      */
     public static function update(int $postId): PostBuilder
     {
         if ($postId <= 0) {
-            throw new PostBuilderException('PostBuilder update failed, invalid ID: ' . $postId);
+            throw new OffbeatBuilderException('PostBuilder update failed, invalid ID: ' . $postId);
         }
 
         return new PostBuilder(['ID' => $postId]);

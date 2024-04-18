@@ -3,16 +3,17 @@
 namespace OffbeatWP\Content\User;
 
 use InvalidArgumentException;
-use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use OffbeatWP\Content\Common\OffbeatObjectBuilder;
+use OffbeatWP\Content\Common\WpObjectTypeEnum;
+use OffbeatWP\Exceptions\OffbeatBuilderException;
 use UnexpectedValueException;
+use WP_Error;
 use WP_User;
 
-final class UserBuilder
+final class UserBuilder extends OffbeatObjectBuilder
 {
     private readonly WP_User $wpUser;
     private ?string $newUserLogin = null;
-    private array $metaInput = [];
-    private array $metaToUnset = [];
 
     public function __construct(WP_User $wpUser) {
         $this->wpUser = $wpUser;
@@ -81,28 +82,6 @@ final class UserBuilder
         return $this;
     }
 
-    /**
-     * @param string $key Metadata name.
-     * @param mixed $value The new metadata value.
-     * @return $this
-     */
-    public function setMeta(string $key, $value)
-    {
-        $this->metaInput[$key] = $value;
-        unset($this->metaToUnset[$key]);
-
-        return $this;
-    }
-
-    public function unsetMeta(string $key)
-    {
-        $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
-        return $this;
-    }
-
     /** @return int|\WP_Error */
     private function _save()
     {
@@ -119,7 +98,6 @@ final class UserBuilder
         }
 
         $userData = $this->wpUser->to_array();
-        $userData['meta_input'] = $this->metaInput;
 
         if ($this->wpUser->ID) {
             $userId = wp_update_user($userData);
@@ -138,7 +116,6 @@ final class UserBuilder
             return $userId;
         }
 
-        $wpUser = get_user_by('id', $userId);
         foreach ($this->wpUser->roles as $role) {
             $this->wpUser->set_role($role);
         }
@@ -146,20 +123,55 @@ final class UserBuilder
         return $userId;
     }
 
-    final public function save(): int
+    protected function getObjectType(): WpObjectTypeEnum
     {
-        $result = $this->_save();
-        return is_int($result) ? $result : 0;
+        Return WpObjectTypeEnum::USER;
     }
 
-    final public function saveOrFail(): int
+    final public function save(): int
     {
-        $result = $this->_save();
-
-        if (!is_int($result)) {
-            throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
+        if (!$this->wpUser->user_email) {
+            throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
         }
 
-        return $result;
+        if (!$this->wpUser->user_login) {
+            $this->wpUser->user_login = $this->wpUser->user_email;
+        }
+
+        if (!$this->wpUser->user_pass) {
+            $this->wpUser->user_pass = wp_generate_password(32);
+        }
+
+        $userData = $this->wpUser->to_array();
+
+        if ($this->wpUser->ID) {
+            $resultId = wp_update_user($userData);
+
+            // Surprise, wp_update_user ignores updates to user_login!
+            if (is_int($resultId) && $this->newUserLogin) {
+                global $wpdb;
+                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
+                $this->newUserLogin = '';
+            }
+        } else {
+            $resultId = wp_insert_user($userData);
+        }
+
+        if ($resultId instanceof WP_Error) {
+            throw new OffbeatBuilderException('UserBuilder ' . ($this->wpUser->ID ? 'UPDATE' : 'INSERT') . ' failed: ' . $resultId->get_error_message());
+        }
+
+        if ($this->wpUser->ID) {
+            // Surprise, wp_update_user ignores updates to user_login!
+            global $wpdb;
+            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
+            $this->newUserLogin = '';
+        }
+
+        foreach ($this->wpUser->roles as $role) {
+            $this->wpUser->set_role($role);
+        }
+
+        return is_int($userId) ? $userId : 0;
     }
 }
