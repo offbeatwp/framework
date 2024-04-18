@@ -17,7 +17,7 @@ class TermModel extends AbstractOffbeatModel
     public const TAXONOMY = '';
 
     protected readonly WP_Term $wpTerm;
-    protected ?array $metas = null;
+    private ?array $metas = null;
 
     final private function __construct(WP_Term $term)
     {

@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\User;
 
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
+use OffbeatWP\Helpers\ArrayHelper;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use WP_Error;
@@ -13,12 +14,16 @@ class UserModel extends AbstractOffbeatModel
 {
     protected readonly WP_User $wpUser;
     /** @var mixed[]|null */
-    protected ?array $metas = null;
+    private ?array $metas = null;
 
     final private function __construct(WP_User $user)
     {
         if ($user->ID <= 0) {
-            throw new InvalidArgumentException('Cannot create PostModel object: Invalid ID ' . $user->ID);
+            throw new InvalidArgumentException('Cannot create UserModel object: Invalid ID ' . $user->ID);
+        }
+
+        if (!ArrayHelper::intersects($user->roles, self::definedUserRoles())) {
+            throw new InvalidArgumentException('Cannot create UserModel object: User does not have the necessary role');
         }
 
         $this->wpUser = $user;
@@ -295,36 +300,5 @@ class UserModel extends AbstractOffbeatModel
     final public static function query(): UserQueryBuilder
     {
         return new UserQueryBuilder(static::class);
-    }
-
-    /**
-     * Inserts a new user into the WordPress database.<br>
-     * This function is used when a new user registers through WordPress’ Login Page.<br>
-     * It requires a valid username and email address but doesn’t allow to choose a password, generating a random one using wp_generate_password().
-     * @param string $userEmail User's email address to send password.
-     * @param string $userLogin User's username for logging in. Default to email if omitted.
-     * @return static|null Returns the registered user if the user was registered successfully.
-     */
-    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModel
-    {
-        $result = register_new_user($userLogin ?: $userEmail, $userEmail);
-
-        if (!is_int($result)) {
-            return null;
-        }
-
-        // Assign the appropriate roles defined by this class.
-        if (static::definedUserRoles()) {
-            $wpUser = get_user_by('ID', $result);
-            $wpUser->set_role('');
-
-            foreach (static::definedUserRoles() as $role) {
-                $wpUser->add_role($role);
-            }
-
-            return new static($wpUser);
-        }
-
-        return static::find($result);
     }
 }
