@@ -39,11 +39,6 @@ class TermModel extends AbstractOffbeatModel
         // Does nothing unless overriden by parent
     }
 
-    public function __clone()
-    {
-        $this->wpTerm = clone $this->wpTerm;
-    }
-
     final public function getId(): int
     {
         return $this->wpTerm->term_id;

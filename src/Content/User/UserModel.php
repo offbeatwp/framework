@@ -36,11 +36,6 @@ class UserModel extends AbstractOffbeatModel
         // Does nothing unless overriden by parent
     }
 
-    public function __clone()
-    {
-        $this->wpUser = clone $this->wpUser;
-    }
-
     ///////////////
     /// Getters ///
     ///////////////
