@@ -35,27 +35,27 @@ class TermModelAbstract extends AbstractOffbeatModel
         $this->wpTerm = clone $this->wpTerm;
     }
 
-    public function getId(): int
+    final public function getId(): int
     {
         return $this->wpTerm->term_id;
     }
 
-    public function getName(): string
+    final public function getName(): string
     {
         return $this->wpTerm->name;
     }
 
-    public function getSlug(): string
+    final public function getSlug(): string
     {
         return $this->wpTerm->slug ?? '';
     }
 
-    public function getDescription(): string
+    final public function getDescription(): string
     {
         return $this->wpTerm->description;
     }
 
-    public function getLink(): string
+    final public function getLink(): string
     {
         $link = get_term_link($this->wpTerm);
 
@@ -66,17 +66,17 @@ class TermModelAbstract extends AbstractOffbeatModel
         return $link;
     }
 
-    public function getTaxonomy(): string
+    final public function getTaxonomy(): string
     {
         return $this->wpTerm->taxonomy;
     }
 
-    public function getParentId(): ?int
+    final public function getParentId(): int
     {
-        return ($this->wpTerm->parent) ?: null;
+        return $this->wpTerm->parent;
     }
 
-    public function getParent(): ?static
+    final public function getParent(): ?static
     {
         if ($this->getParentId()) {
             return static::query()->findById($this->getParentId()) ?: null;
@@ -86,7 +86,7 @@ class TermModelAbstract extends AbstractOffbeatModel
     }
 
     /** @return int[] */
-    public function getAncestorIds(): array
+    final public function getAncestorIds(): array
     {
         return get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy');
     }
@@ -95,18 +95,18 @@ class TermModelAbstract extends AbstractOffbeatModel
      * Retrieves the URL for editing a given term.
      * @return string|null The edit term link URL for the given term, or null on failure.
      */
-    public function getEditLink(): ?string
+    final public function getEditLink(): ?string
     {
         return get_edit_term_link($this->wpTerm);
     }
 
     /** @return static[] */
-    public function getAncestors(): array
+    final public function getAncestors(): array
     {
         return array_map(fn(int $ancestorId) => static::find($ancestorId), $this->getAncestorIds());
     }
 
-    public function getMetas(): array
+    final public function getMetas(): array
     {
         if ($this->metas === null) {
             $meta = get_term_meta($this->getId());
@@ -120,14 +120,9 @@ class TermModelAbstract extends AbstractOffbeatModel
         return $this->metas;
     }
 
-    public function getMeta(string $key, bool $single = true): mixed
+    final public function getMeta(string $key, bool $single = true): mixed
     {
         return $this->getMetas()[$key] ?? null;
-    }
-
-    public function hasMeta(string $key): bool
-    {
-        return array_key_exists($key, $this->getMetas());
     }
 
     /**

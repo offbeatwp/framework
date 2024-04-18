@@ -3,9 +3,7 @@
 namespace OffbeatWP\Content\Common;
 
 use Exception;
-use OffbeatWP\Content\Post\PostModelAbstract;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
-use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
@@ -33,7 +31,7 @@ abstract class AbstractOffbeatModel
      * @param string $key
      * @return mixed
      */
-    public function getMetaValue(string $key)
+    final public function getMetaValue(string $key)
     {
         return $this->getRawMetaValue($key, null);
     }
@@ -42,7 +40,7 @@ abstract class AbstractOffbeatModel
      * Check if a meta value exists at all.
      * @return bool True if the meta key exists, regardless of it's value. False if the meta key does not exist.
      */
-    public function hasMeta(string $key): bool
+    final public function hasMeta(string $key): bool
     {
         return array_key_exists($key, $this->getMetas());
     }
@@ -51,7 +49,7 @@ abstract class AbstractOffbeatModel
      * Retrieve a meta value as a string.<br>
      * If the meta value does not exist then an <b>empty string</b> is returned.
      */
-    public function getMetaString(string $key): string
+    final public function getMetaString(string $key): string
     {
         return (string)$this->getRawMetaValue($key, '');
     }
@@ -60,7 +58,7 @@ abstract class AbstractOffbeatModel
      * Retrieve a meta value as an integer.<br>
      * If the meta value does not exist then <b>0</b> is returned.
      */
-    public function getMetaInt(string $key): int
+    final public function getMetaInt(string $key): int
     {
         return (int)$this->getRawMetaValue($key, 0);
     }
@@ -69,7 +67,7 @@ abstract class AbstractOffbeatModel
      * Retrieve a meta value as a floating point number.<br>
      * If the meta value does not exist then <b>0</b> is returned.
      */
-    public function getMetaFloat(string $key): float
+    final public function getMetaFloat(string $key): float
     {
         return (float)$this->getRawMetaValue($key, 0);
     }
@@ -80,7 +78,7 @@ abstract class AbstractOffbeatModel
      * @param string $format The date format. If not specified, will default to the date_format WordPress option.
      * @return string <b>Formatted date string</b> if the meta key exists and is a valid date. Otherwise, an <b>empty string</b> is returned.
      */
-    public function getMetaDate(string $key, string $format = ''): string
+    final public function getMetaDate(string $key, string $format = ''): string
     {
         $strDate = strtotime($this->getMetaString($key));
 
@@ -98,7 +96,7 @@ abstract class AbstractOffbeatModel
      * @param string $key Meta key.
      * @return WpDateTime|null
      */
-    public function getMetaDateTime(string $key): ?WpDateTime
+    final public function getMetaDateTime(string $key): ?WpDateTime
     {
         $datetime = $this->getMetaString($key);
         if (!$datetime) {
@@ -116,7 +114,7 @@ abstract class AbstractOffbeatModel
      * Attempt to retrieve a meta value as a WpDateTimeImmuteable object.<br>
      * If no meta exists or if conversion fails, <i>null</i> will be returned.
      */
-    public function getMetaDateTimeImmuteable(string $key): ?WpDateTimeImmutable
+    final public function getMetaDateTimeImmuteable(string $key): ?WpDateTimeImmutable
     {
         $datetime = $this->getMetaString($key);
         if (!$datetime) {
@@ -134,7 +132,7 @@ abstract class AbstractOffbeatModel
      * Retrieve a meta value as a boolean.<br>
      * If the meta value does not exist then <b>false</b> is returned.
      */
-    public function getMetaBool(string $key): bool
+    final public function getMetaBool(string $key): bool
     {
         return (bool)$this->getRawMetaValue($key, false);
     }
@@ -143,31 +141,13 @@ abstract class AbstractOffbeatModel
      * Retrieve a meta value as an array.<br>
      * If the meta value does not exist then <b>an empty array</b> is returned.
      */
-    public function getMetaArray(string $key, bool $single = true): array
+    final public function getMetaArray(string $key, bool $single = true): array
     {
         $value = $this->getRawMetaValue($key, [], $single);
         return ($single && is_serialized($value)) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
     }
 
-    /** @return PostModelAbstract[] */
-    public function getMetaPostModels(string $key): array
-    {
-        $models = [];
-
-        foreach ($this->getMetaArray($key) as $id) {
-            if ($id) {
-                $model = offbeat(Post::class)->get($id);
-
-                if ($model) {
-                    $models[] = $model;
-                }
-            }
-        }
-
-        return $models;
-    }
-
-    public static function find(?int $id): ?static
+    final public static function find(int $id): ?static
     {
         return ($id) ? static::query()->findById($id) : null;
     }
@@ -188,7 +168,7 @@ abstract class AbstractOffbeatModel
     }
 
     /** Checks if a model with the given ID exists. */
-    final public static function exists(?int $id): bool
+    final public static function exists(int $id): bool
     {
         if ($id <= 0) {
             return false;
