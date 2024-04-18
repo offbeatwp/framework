@@ -136,20 +136,29 @@ final class PostCollection extends ReadOnlyCollection
      */
     public function offsetGet(mixed $offset): ?PostModel
     {
+        /** @phpstan-var TModel|null $item */
         $item = parent::offsetGet($offset);
         return $item;
     }
 
-    /** Get the first item from the collection. */
+    /**
+     * Get the first item from the collection.
+     * @phpstan-return TModel|null
+     */
     public function first(): ?PostModel
     {
+        /** @phpstan-var TModel|null $item */
         $item = parent::first();
         return $item;
     }
 
-    /** Get the last item from the collection. */
+    /**
+     * Get the last item from the collection.
+     * @phpstan-return TModel|null
+     */
     public function last(): ?PostModel
     {
+        /** @phpstan-var TModel|null $item */
         $item = parent::last();
         return $item;
     }

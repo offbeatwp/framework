@@ -15,6 +15,7 @@ final class TermCollection extends ReadOnlyCollection
     public function __construct(WP_Term_Query $query, string $modelClass)
     {
         $this->query = $query;
+        $this->modelClass = $modelClass;
         parent::__construct($this->query->terms);
     }
 
@@ -36,20 +37,29 @@ final class TermCollection extends ReadOnlyCollection
      */
     public function offsetGet(mixed $offset): ?TermModel
     {
+        /** @phpstan-var TModel|null $item */
         $item = parent::offsetGet($offset);
         return $item;
     }
 
-    /** Get the first item from the collection. */
+    /**
+     * Get the first item from the collection.
+     * @phpstan-return TModel|null
+     */
     public function first(): ?TermModel
     {
+        /** @phpstan-var TModel|null $item */
         $item = parent::first();
         return $item;
     }
 
-    /** Get the last item from the collection. */
+    /**
+     * Get the last item from the collection.
+     * @phpstan-return TModel|null
+     */
     public function last(): ?TermModel
     {
+        /** @phpstan-var TModel|null $item */
         $item = parent::last();
         return $item;
     }

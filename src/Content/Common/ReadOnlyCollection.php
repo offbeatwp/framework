@@ -16,6 +16,7 @@ use JsonSerializable;
  */
 abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
+    /** @var TModel[] */
     protected readonly array $items;
 
     /** @param array<int, TModel> $items */
