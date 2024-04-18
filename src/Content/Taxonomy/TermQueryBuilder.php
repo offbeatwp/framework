@@ -82,7 +82,7 @@ final class TermQueryBuilder
     /** @return TermCollection<TModel> */
     public function get(): TermCollection
     {
-        return new TermCollection($this->runQuery());
+        return new TermCollection($this->runQuery(), $this->modelClass);
     }
 
     /**

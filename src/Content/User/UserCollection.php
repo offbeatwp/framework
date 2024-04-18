@@ -8,14 +8,11 @@ use WP_User_Query;
 /** @template TModel of \OffbeatWP\Content\User\UserModel */
 final class UserCollection extends ReadOnlyCollection
 {
-    protected readonly WP_User_Query $query;
     /** @var class-string<TModel> $modelClass */
     protected readonly string $modelClass;
+    protected readonly WP_User_Query $query;
 
-    /**
-     * @param \WP_User_Query $query
-     * @param class-string<TModel> $modelClass
-     */
+    /** @param class-string<TModel> $modelClass */
     public function __construct(WP_User_Query $query, string $modelClass)
     {
         $this->query = $query;

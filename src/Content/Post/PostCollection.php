@@ -7,12 +7,14 @@ use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Support\Wordpress\Post;
 use WP_Query;
 
+/** @template TModel of \OffbeatWP\Content\Post\PostModel */
 final class PostCollection extends ReadOnlyCollection
 {
-    private readonly IWpQuerySubstitute|WP_Query $query;
-    /** @var class-string<\OffbeatWP\Content\Post\PostModel> */
+    /** @var class-string<TModel> */
     protected readonly string $modelClass;
+    protected readonly IWpQuerySubstitute|WP_Query $query;
 
+    /** @param class-string<TModel> $modelClass */
     public function __construct(IWpQuerySubstitute|WP_Query $query, string $modelClass)
     {
         $postItems = [];
