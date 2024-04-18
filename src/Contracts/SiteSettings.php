@@ -3,12 +3,23 @@
 namespace OffbeatWP\Contracts;
 
 interface SiteSettings {
-    /** @param class-string $class */
-    public function addPage(string $class): void;
+    /**
+     * @param class-string $class
+     * @return void
+     */
+    public function addPage($class);
 
-    /** @param string $key */
-    public function get(string $key): mixed;
+    /**
+     * @param non-empty-string $key
+     * @return mixed
+     */
+    public function get($key);
 
-    /** Should return <b>true</b> on successful update, <b>false</b> on failure */
-    public function update(string $key, mixed $value): bool;
+    /**
+     * Should return <b>true</b> on successful update, <b>false</b> on failure
+     * @param non-empty-string $key
+     * @param mixed $value
+     * @return bool
+     */
+    public function update($key, $value);
 }
