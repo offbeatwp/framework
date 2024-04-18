@@ -7,7 +7,6 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
-/** @interal */
 abstract class AbstractOffbeatModel
 {
     /** @return positive-int */
@@ -187,6 +186,6 @@ abstract class AbstractOffbeatModel
         return static::query()->whereIdIn([$id])->exists();
     }
 
-    /** @return \OffbeatWP\Content\Post\PostQueryBuilder|\OffbeatWP\Content\Taxonomy\TermQueryBuilder|\OffbeatWP\Content\User\UserQueryBuilder */
+    /** @return \OffbeatWP\Content\Post\PostQueryBuilder<static>|\OffbeatWP\Content\Taxonomy\TermQueryBuilder<static>|\OffbeatWP\Content\User\UserQueryBuilder<static> */
     abstract public static function query();
 }

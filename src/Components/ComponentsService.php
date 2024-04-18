@@ -1,4 +1,4 @@
-    <?php
+<?php
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Contracts\SiteSettings;

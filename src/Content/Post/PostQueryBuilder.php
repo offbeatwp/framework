@@ -53,6 +53,7 @@ final class PostQueryBuilder
         return $this;
     }
 
+    /** @return \OffbeatWP\Content\Post\PostCollection<TModel> */
     public function get(): PostCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
