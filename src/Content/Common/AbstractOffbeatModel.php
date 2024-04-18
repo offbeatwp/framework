@@ -13,8 +13,15 @@ abstract class AbstractOffbeatModel
     /** @return positive-int */
     abstract public function getId(): int;
 
+    /** @return mixed[] */
     abstract public function getMetas(): array;
 
+    /**
+     * @param string $key
+     * @param string|int|float|bool|mixed[]|null $defaultValue
+     * @param bool $single
+     * @return mixed
+     */
     private function getRawMetaValue(string $key, string|int|float|bool|array|null $defaultValue, bool $single = true): mixed
     {
         $metas = $this->getMetas();
@@ -142,6 +149,7 @@ abstract class AbstractOffbeatModel
     /**
      * Retrieve a meta value as an array.<br>
      * If the meta value does not exist then <b>an empty array</b> is returned.
+     * @return mixed[]
      */
     final public function getMetaArray(string $key, bool $single = true): array
     {
@@ -179,5 +187,6 @@ abstract class AbstractOffbeatModel
         return static::query()->whereIdIn([$id])->exists();
     }
 
+    /** @return \OffbeatWP\Content\Post\PostQueryBuilder|\OffbeatWP\Content\Taxonomy\TermQueryBuilder|\OffbeatWP\Content\User\UserQueryBuilder */
     abstract public static function query();
 }
