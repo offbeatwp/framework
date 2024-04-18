@@ -6,50 +6,55 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatObjectBuilder;
 use OffbeatWP\Content\Common\WpObjectTypeEnum;
 use OffbeatWP\Exceptions\OffbeatBuilderException;
-use UnexpectedValueException;
 use WP_Error;
-use WP_User;
 
 final class UserBuilder extends OffbeatObjectBuilder
 {
-    private readonly WP_User $wpUser;
-    private ?string $newUserLogin = null;
+    private array $args;
 
-    public function __construct(WP_User $wpUser) {
-        $this->wpUser = $wpUser;
+    private function __construct(array $args) {
+        $this->args = $args;
     }
 
-    /** The user's email address. <b>Setting this is required.</b> */
+    /**
+     * The user's email address. <b>Setting this is required.</b>
+     * @return $this
+     */
     public function setEmail(string $email)
     {
-        $this->wpUser->user_email = $email;
+        $this->args['user_email'] = $email;
         return $this;
     }
 
+    /** @return $this */
     public function setNickname(string $nickname)
     {
-        $this->wpUser->nickname = $nickname;
+        $this->args['nickname'] = $nickname;
         return $this;
     }
 
+    /** @return $this */
     public function setDisplayName(string $displayName)
     {
-        $this->wpUser->display_name = $displayName;
+        $this->args['display_name'] = $displayName;
         return $this;
     }
 
+    /** @return $this */
     public function setFirstName(string $firstName)
     {
-        $this->wpUser->first_name = $firstName;
+        $this->args['first_name'] = $firstName;
         return $this;
     }
 
+    /** @return $this */
     public function setLastName(string $lastName)
     {
-        $this->wpUser->last_name = $lastName;
+        $this->args['last_name'] = $lastName;
         return $this;
     }
 
+    /** @return $this */
     public function setLogin(string $userLogin)
     {
         if (!$userLogin) {
@@ -69,58 +74,47 @@ final class UserBuilder extends OffbeatObjectBuilder
             throw new InvalidArgumentException($userLogin . ' is not a valid username. You could instead use: ' . $username);
         }
 
-        if ($this->wpUser->user_login !== $userLogin) {
-            $this->newUserLogin = $userLogin;
-        }
+        $this->args['user_login'] = $userLogin;
 
         return $this;
     }
 
+    /** @return $this */
     public function setUrl(string $url)
     {
-        $this->wpUser->user_url = $url;
+        $this->args['user_url'] = $url;
         return $this;
     }
 
-    /** @return int|\WP_Error */
-    private function _save()
+    public function save(): int
     {
-        if (!$this->wpUser->user_email) {
-            throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
+        if (!$this->args['user_email']) {
+            throw new OffbeatBuilderException('A user cannot be registered without an e-mail address.');
         }
 
-        if (!$this->wpUser->user_login) {
-            $this->wpUser->user_login = $this->wpUser->user_email;
+        if (!$this->args['user_login']) {
+            $this->args['user_login'] = $this->args['user_email'];
         }
 
-        if (!$this->wpUser->user_pass) {
-            $this->wpUser->user_pass = wp_generate_password(32);
+        if (!$this->args['user_pass']) {
+            $this->args['user_pass'] = wp_generate_password(32);
         }
 
-        $userData = $this->wpUser->to_array();
+        $isUpdate = array_key_exists('ID', $this->args);
+        $resultId = $isUpdate ? wp_update_user($this->args) : wp_insert_user($this->args);
+        if ($resultId instanceof WP_Error) {
+            throw new OffbeatBuilderException('UserBuilder ' . ($isUpdate ? 'UPDATE' : 'INSERT') . ' failed: ' . $resultId->get_error_message());
+        }
 
-        if ($this->wpUser->ID) {
-            $userId = wp_update_user($userData);
-
+        if ($isUpdate && array_key_exists('user_login', $this->args)) {
             // Surprise, wp_update_user ignores updates to user_login!
-            if (is_int($userId) && $this->newUserLogin) {
-                global $wpdb;
-                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
-                $this->newUserLogin = '';
-            }
-        } else {
-            $userId = wp_insert_user($userData);
+            global $wpdb;
+            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->args['user_login'], $resultId));
         }
 
-        if (!is_int($userId)) {
-            return $userId;
-        }
+        $this->saveMeta($resultId);
 
-        foreach ($this->wpUser->roles as $role) {
-            $this->wpUser->set_role($role);
-        }
-
-        return $userId;
+        return $resultId;
     }
 
     protected function getObjectType(): WpObjectTypeEnum
@@ -128,50 +122,26 @@ final class UserBuilder extends OffbeatObjectBuilder
         Return WpObjectTypeEnum::USER;
     }
 
-    final public function save(): int
+    /////////////////////
+    // Factory methods //
+    /////////////////////
+    /** @pure */
+    public static function create(): UserBuilder
     {
-        if (!$this->wpUser->user_email) {
-            throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
+        return new UserBuilder([]);
+    }
+
+    /**
+     * @pure
+     * @param positive-int $userId The ID of the user.
+     * @throws OffbeatBuilderException
+     */
+    public static function update(int $userId): UserBuilder
+    {
+        if ($userId <= 0) {
+            throw new OffbeatBuilderException('UserBuilder update failed, invalid ID: ' . $userId);
         }
 
-        if (!$this->wpUser->user_login) {
-            $this->wpUser->user_login = $this->wpUser->user_email;
-        }
-
-        if (!$this->wpUser->user_pass) {
-            $this->wpUser->user_pass = wp_generate_password(32);
-        }
-
-        $userData = $this->wpUser->to_array();
-
-        if ($this->wpUser->ID) {
-            $resultId = wp_update_user($userData);
-
-            // Surprise, wp_update_user ignores updates to user_login!
-            if (is_int($resultId) && $this->newUserLogin) {
-                global $wpdb;
-                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
-                $this->newUserLogin = '';
-            }
-        } else {
-            $resultId = wp_insert_user($userData);
-        }
-
-        if ($resultId instanceof WP_Error) {
-            throw new OffbeatBuilderException('UserBuilder ' . ($this->wpUser->ID ? 'UPDATE' : 'INSERT') . ' failed: ' . $resultId->get_error_message());
-        }
-
-        if ($this->wpUser->ID) {
-            // Surprise, wp_update_user ignores updates to user_login!
-            global $wpdb;
-            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->users} SET user_login = %s WHERE ID = %d;", $this->newUserLogin, $userId));
-            $this->newUserLogin = '';
-        }
-
-        foreach ($this->wpUser->roles as $role) {
-            $this->wpUser->set_role($role);
-        }
-
-        return is_int($userId) ? $userId : 0;
+        return new UserBuilder(['ID' => $userId]);
     }
 }
