@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
+use InvalidArgumentException;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -10,12 +11,16 @@ use WP_User;
 
 class UserModel extends AbstractOffbeatModel
 {
-    protected WP_User $wpUser;
+    protected readonly WP_User $wpUser;
     /** @var mixed[]|null */
     protected ?array $metas = null;
 
     final private function __construct(WP_User $user)
     {
+        if ($user->ID <= 0) {
+            throw new InvalidArgumentException('Cannot create PostModel object: Invalid ID ' . $user->ID);
+        }
+
         $this->wpUser = $user;
         $this->init();
     }

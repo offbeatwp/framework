@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Taxonomy;
 
+use InvalidArgumentException;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\PostQueryBuilder;
@@ -15,11 +16,19 @@ class TermModel extends AbstractOffbeatModel
 {
     public const TAXONOMY = '';
 
-    protected WP_Term $wpTerm;
+    protected readonly WP_Term $wpTerm;
     protected ?array $metas = null;
 
     final private function __construct(WP_Term $term)
     {
+        if ($term->term_id <= 0) {
+            throw new InvalidArgumentException('Cannot create TermModel object: Invalid ID ' . $term->term_id);
+        }
+
+        if (!in_array($term->taxonomy, (array)static::TAXONOMY, true)) {
+            throw new InvalidArgumentException('Cannot create TermModel object: Invalid Post Type');
+        }
+
         $this->wpTerm = $term;
         $this->init();
     }

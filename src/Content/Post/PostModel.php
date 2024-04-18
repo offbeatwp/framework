@@ -3,13 +3,13 @@
 namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
+use InvalidArgumentException;
 use OffbeatWP\Content\Common\AbstractOffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
-use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -35,13 +35,17 @@ class PostModel extends AbstractOffbeatModel
     /** @var array{permalink?: string, post_type_object?: WP_Post_Type, excerpt?: string, edit_post_link?: string, date?: WpDateTimeImmutable|null, modified?: WpDateTimeImmutable|null} */
     private array $data = [];
 
-    final private function __construct(WP_Post $wpPost)
+    final private function __construct(WP_Post $post)
     {
-        if ($wpPost->ID <= 0) {
-            throw new OffbeatInvalidModelException('Could not construct PostModel with invalid ID: ' . $wpPost->ID);
+        if ($post->ID <= 0) {
+            throw new InvalidArgumentException('Cannot create PostModel object: Invalid ID ' . $post->ID);
         }
 
-        $this->wpPost = $wpPost;
+        if (!in_array($post->post_type, (array)static::POST_TYPE, true)) {
+            throw new InvalidArgumentException('Cannot create PostModel object: Invalid Post Type');
+        }
+
+        $this->wpPost = $post;
     }
 
     ///////////////
