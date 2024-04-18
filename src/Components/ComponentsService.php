@@ -1,4 +1,4 @@
-<?php
+    <?php
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Contracts\SiteSettings;
@@ -21,8 +21,13 @@ final class ComponentsService extends AbstractService
         }
     }
 
+    /**
+     * @return array<string, string>
+     * @throws \ReflectionException
+     */
     public function registrableComponents(): array
     {
+        /** @var string[] $activeComponents */
         $activeComponents = [];
         $componentsDirectory = $this->getComponentsDirectory();
 
@@ -32,7 +37,8 @@ final class ComponentsService extends AbstractService
 
         $handle = opendir($componentsDirectory);
         if ($handle) {
-            while (($entry = readdir($handle)) !== false) {
+            $entry = readdir($handle);
+            while ($entry !== false) {
                 if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) {
                     continue;
                 }
