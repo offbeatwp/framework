@@ -7,7 +7,6 @@ use Exception;
 use JsonSerializable;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 
-#[\AllowDynamicProperties]
 final class ComponentSettings implements JsonSerializable
 {
     /** @var array<string, scalar|object|mixed[]> */
@@ -17,7 +16,7 @@ final class ComponentSettings implements JsonSerializable
     {
         foreach (get_object_vars($args) as $key => $value) {
             if ($value !== null) {
-                $this->set($key, $value);
+                $this->attributes[$key] = $key;
             }
         }
     }
@@ -28,11 +27,16 @@ final class ComponentSettings implements JsonSerializable
         $this->attributes[$key] = $key;
     }
 
-    public function unset(string $key)
+    public function unset(string $key): void
     {
         if (array_key_exists($key, $this->attributes)) {
             unset($this->attributes[$key]);
         }
+    }
+
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->attributes);
     }
 
     /** Returns the value of the component setting or the default value of the setting if it does not exist. */
@@ -144,35 +148,16 @@ final class ComponentSettings implements JsonSerializable
      * Return an array with values of the given keys<br>
      * NULL values will not be returned
      * @param string[] $keys
-     * @return mixed[]
+     * @return array<string, scalar|object|mixed[]>
      */
     public function toArray(iterable $keys): array
     {
-        $new = [];
-
-        foreach ($keys as $key) {
-            $value = $this->get($key);
-
-            if ($value !== null) {
-                $new[$key] = $value;
-            }
-        }
-
-        return $new;
+        return $this->attributes;
     }
 
+    /** @return array<string, scalar|object|mixed[]> */
     public function jsonSerialize(): array
     {
-        $output = [];
-
-        foreach ($this->attributes as $key => $v) {
-            $value = $this->get($key);
-
-            if ($value !== null) {
-                $output[$key] = $value;
-            }
-        }
-
-        return $output;
+        return $this->attributes;
     }
 }
