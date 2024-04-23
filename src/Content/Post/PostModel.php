@@ -483,6 +483,7 @@ class PostModel extends AbstractOffbeatModel
         return new BelongsToMany($this, $relationKey);
     }
 
+    /** @deprecated */
     final public static function current(): ?static
     {
         $post = offbeat(Post::class)->get();
@@ -498,6 +499,10 @@ class PostModel extends AbstractOffbeatModel
     final public function edit(): PostBuilder
     {
         return PostBuilder::update($this->wpPost->ID);
+    }
+
+    private function test() {
+        $post = $this->edit()->slug('slugma')->title('Blabla')->setMeta('metakey', '123')->save();
     }
 
     /** @return PostQueryBuilder<static> */
