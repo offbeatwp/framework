@@ -8,38 +8,18 @@ use IteratorAggregate;
 /** @implements IteratorAggregate<int, string|int|bool> */
 final class OffbeatImageSrc implements IteratorAggregate
 {
-    private string $url;
-    private int $width;
-    private int $height;
-    private bool $resized;
+    public readonly string $url;
+    public readonly int $width;
+    public readonly int $height;
+    public readonly bool $resized;
 
-    /** @param string[]|int[]|bool[] $imgData */
+    /** @param array{0: string, 1: int, 2: int, 3: bool} $imgData */
     public function __construct(array $imgData)
     {
         $this->url = $imgData[0];
         $this->width = $imgData[1];
         $this->height = $imgData[2];
         $this->resized = $imgData[3];
-    }
-
-    public function getUrl(): string
-    {
-        return $this->url;
-    }
-
-    public function getWidth(): int
-    {
-        return $this->width;
-    }
-
-    public function getHeight(): int
-    {
-        return $this->height;
-    }
-
-    public function isResized(): bool
-    {
-        return $this->resized;
     }
 
     /** @return ArrayIterator<int, string|int|bool> */

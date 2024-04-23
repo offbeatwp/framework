@@ -10,93 +10,86 @@ use OffbeatWP\Support\Wordpress\WpDateTime;
 #[\AllowDynamicProperties]
 final class ComponentSettings implements JsonSerializable
 {
-    /** @var array<string, mixed> */
-    private array $defaultValues;
-    /** @var array<string, mixed> */
+    /** @var array<string, scalar|object|mixed[]> */
     private array $attributes = [];
 
-    /**
-     * @param object $args
-     * @param mixed[] $defaultValues
-     */
-    public function __construct($args, array $defaultValues = [])
+    public function __construct(object $args)
     {
         foreach (get_object_vars($args) as $key => $value) {
-            $this->$key = $value;
+            if ($value !== null) {
+                $this->set($key, $value);
+            }
         }
-
-        $this->defaultValues = $defaultValues;
     }
 
-    /**
-     * Set a value manually.
-     * @param string $index
-     * @param mixed $value
-     */
-    public function set(string $index, $value): void
+    /** Set a value manually. */
+    public function set(string $key, string|bool|int|float|object|array $value): void
     {
-        $this->attributes[$index] = $value;
+        $this->attributes[$key] = $key;
     }
 
-    /**
-     * Returns the value of the component setting or the default value of the setting if it does not exist.
-     * @param string $index The index of the value to retrieve.
-     * @return mixed
-     */
-    public function get(string $index)
+    public function unset(string $key)
     {
-        if (array_key_exists($index, $this->attributes)) {
-            return $this->attributes[$index];
+        if (array_key_exists($key, $this->attributes)) {
+            unset($this->attributes[$key]);
+        }
+    }
+
+    /** Returns the value of the component setting or the default value of the setting if it does not exist. */
+    public function get(string $key): string|bool|int|float|object|array|null
+    {
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
         }
 
-        return $this->defaultValues[$index] ?? null;
+        return $this->defaultValues[$key] ?? null;
     }
 
     /**
      * Returns the value of the component setting and casts it to a boolean.
-     * @param string $index The index of the value to retrieve.
+     * @param string $key The index of the value to retrieve.
      * @param bool $default Value to return if the value does not exist or is non-scalar.
      * @return bool
      */
-    public function getBool(string $index, bool $default = false): bool
+    public function getBool(string $key, bool $default = false): bool
     {
-        $value = $this->get($index);
+        $value = $this->get($key);
         return is_scalar($value) ? (bool)$value : $default;
     }
 
     /**
      * Returns the value of the component setting and casts it to a string.
-     * @param string $index
+     * @param string $key
      * @param string $default Value to return if the value does not exist or is non-scalar.
      * @return string
      */
-    public function getString(string $index, string $default = ''): string
+    public function getString(string $key, string $default = ''): string
     {
-        $value = $this->get($index);
+        $value = $this->get($key);
         return is_scalar($value) ? (string)$value : $default;
     }
 
     /**
      * Returns the value of the component setting and casts it to a float.
-     * @param string $index
+     * @param string $key
      * @param float $default Value to return if the value does not exist or is non-numeric.
      * @return float
      */
-    public function getFloat(string $index, float $default = 0): float
+    public function getFloat(string $key, float $default = 0): float
     {
-        $value = $this->get($index);
+        $value = $this->get($key);
         return is_numeric($value) ? (float)$value : $default;
     }
 
     /**
      * Returns the value of the component setting and casts it to an int.
-     * @param string $index
+     * @param string $key
      * @param int $default Value to return if the value does not exist or is non-numeric.
      * @return int
      */
-    public function getInt(string $index, int $default = 0): int
+    public function getInt(string $key, int $default = 0): int
     {
-        $value = $this->get($index);
+        $value = $this->get($key);
         return is_numeric($value) ? (int)$value : $default;
     }
 
@@ -105,9 +98,9 @@ final class ComponentSettings implements JsonSerializable
      * Timezone will default to <b>UTC</b> if not specified in the second parameter.<br>
      * Will return <i>NULL</i> if DateTime is not valid.
      */
-    public function getDateTime(string $index, ?DateTimeZone $timeZone = null): ?WpDateTime
+    public function getDateTime(string $key, ?DateTimeZone $timeZone = null): ?WpDateTime
     {
-        $datetime = $this->getString($index);
+        $datetime = $this->getString($key);
         if (!$datetime) {
             return null;
         }
@@ -117,17 +110,6 @@ final class ComponentSettings implements JsonSerializable
         } catch (Exception) {
             return null;
         }
-    }
-
-    /**
-     * Return the value form a url param.
-     * If the url param does not exist, the component setting value is returned instead.
-     * @param string $index
-     * @return mixed
-     */
-    public function getUrlParam(string $index)
-    {
-        return $_GET[$index] ?? $this->get($index);
     }
 
     /**
@@ -146,10 +128,8 @@ final class ComponentSettings implements JsonSerializable
             $str = '';
             if (is_scalar($item)) {
                 $str = urlencode($item);
-            } elseif (is_array($item)) {
-                $str = implode(',', array_map('urlencode', $item));
-            } elseif ($item !== null) {
-                trigger_error($key . ' could not be parsed to URL param!', E_USER_WARNING);
+            } elseif (is_array($item) || is_object($item)) {
+                $str = implode(',', array_map('urlencode', (array)$item));
             }
 
             if ($str) {

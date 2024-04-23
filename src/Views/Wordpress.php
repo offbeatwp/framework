@@ -4,22 +4,20 @@ namespace OffbeatWP\Views;
 
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
-use WP_Post;
+use RuntimeException;
 use WP_Site;
 use WP_Term;
 
-class Wordpress
+final class Wordpress
 {
-    /** @return false|string */
-    public function head()
+    public function head(): string
     {
         ob_start();
         wp_head();
         return ob_get_clean();
     }
 
-    /** @return false|string */
-    public function footer()
+    public function footer(): string
     {
         ob_start();
         wp_footer();
@@ -41,14 +39,16 @@ class Wordpress
         return get_language_attributes();
     }
 
-    /**
-     * Retrieves the permalink for a post type archive.
-     * @param string|null $postType
-     * @return false|string
-     */
-    public function archiveUrl(?string $postType = 'post')
+    /** Retrieves the permalink for a post type archive. */
+    public function archiveUrl(string $postType): string
     {
-        return get_post_type_archive_link($postType);
+        $url = get_post_type_archive_link($postType);
+
+        if ($url === false) {
+            throw new RuntimeException('Post type ' . $postType . ' does not exist or does not have an archive.');
+        }
+
+        return $url;
     }
 
     /**
@@ -90,7 +90,7 @@ class Wordpress
      * @phpstan-param null|array{menu?: int|string|WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
      * @return false|string|null
      */
-    public function navMenu(?array $args = [])
+    public function navMenu(array $args = [])
     {
         $args['echo'] = false;
         return wp_nav_menu($args);
@@ -109,10 +109,8 @@ class Wordpress
     /**
      * Retrieves the URL for a given site where WordPress application files (e.g. wp-blog-header.php or the wp-admin/ folder) are accessible.<br>
      * Returns the 'site_url' option with the appropriate protocol, 'https' if is_ssl() and 'http' otherwise.
-     * @param int|null $id
-     * @return string
      */
-    public function blogUrl(?int $id = null): string
+    public function blogUrl(int $id): string
     {
         return get_site_url($id);
     }
@@ -208,23 +206,13 @@ class Wordpress
      * Searches content for shortcodes and filter shortcodes through their hooks.<br>
      * If there are no shortcode tags defined, then the content will be returned without any filtering.<br>
      * This might cause issues when plugins are disabled but the shortcode will still show up in the post or content.
-     * @param string|null $code
-     * @return string
      */
-    public function shortcode(?string $code): ?string
+    public function shortcode(string $code): string
     {
-        if ($code === null) {
-            trigger_error('Wordpress::shortcode expects a string as parameter but received NULL.', E_USER_DEPRECATED);
-        }
-
         return do_shortcode($code);
     }
 
-    /**
-     * @param int|string $name
-     * @return false|string
-     */
-    public function sidebar($name)
+    public function sidebar(int|string $name): string
     {
         ob_start();
         dynamic_sidebar($name);
@@ -232,32 +220,12 @@ class Wordpress
     }
 
     /**
-     * @param int|null $postId
-     * @return false|mixed
-     */
-    public function getAllPostMeta(?int $postId = null)
-    {
-        if ($postId) {
-            return get_post_meta($postId);
-        }
-
-        /** @global WP_Post $post */
-        global $post;
-
-        if (!$post) {
-            return false;
-        }
-
-        return get_post_meta($post->ID);
-    }
-
-    /**
      * @param int $attachmentId Image attachment ID.
-     * @param string|int[] $size Optional. Image size. Accepts any registered image size name, or an array of width and height values in pixels (in that order). Default 'thumbnail'.
+     * @param string $size Optional. Image size. Accepts any registered image size name. Default 'thumbnail'.
      * @param bool $icon Optional. Whether the image should fall back to a mime type icon. Default false.
      * @return OffbeatImageSrc|null
      */
-    public function getAttachmentImageSrc(int $attachmentId, $size = 'thumbnail', bool $icon = false): ?OffbeatImageSrc
+    public function getAttachmentImageSrc(int $attachmentId, string $size = 'thumbnail', bool $icon = false): ?OffbeatImageSrc
     {
         $attachment = wp_get_attachment_image_src($attachmentId, $size, $icon);
         return ($attachment) ? new OffbeatImageSrc($attachment) : null;
@@ -267,19 +235,12 @@ class Wordpress
      * Retrieves an attachment URL.
      * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
-     * @param int|null $attachmentID
-     * @param string|int[] $size
-     * @return false|string
      */
-    public function attachmentUrl(?int $attachmentID, $size = 'full')
+    public function attachmentUrl(int $attachmentID, string $size = 'full'): ?string
     {
-        if ($attachmentID === null) {
-            trigger_error('Wordpress::attachmentUrl expects an integer as parameter, but received NULL.', E_USER_DEPRECATED);
-        }
-
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
-        if (!$attachment) {
-            return false;
+        if ($attachment === false) {
+            return null;
         }
 
         return $attachment[0];
@@ -324,12 +285,8 @@ class Wordpress
      * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string|false} $attributes $attributes
      * @return string
      */
-    public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
+    public function getAttachmentImage(int $attachmentID, string $size = 'thumbnail', array $classes = ['img-fluid'], array $attributes = []): string
     {
-        if (!is_int($attachmentID)) {
-            trigger_error('Wordpress::getAttachmentImage expects an integer as parameter, but received ' . gettype($attachmentID) .'.', E_USER_DEPRECATED);
-        }
-
         if (!isset($attributes['class']) && !empty($classes)) {
             $attributes['class'] = implode(' ', $classes);
         }
@@ -339,10 +296,10 @@ class Wordpress
 
     /**
      * @param int $attachmentId
-     * @param int[][]|string[] $sizes
+     * @param string[] $sizes
      * @return string
      */
-    public function getAttachmentImageSrcSet(int $attachmentId, $sizes = ['thumbnail']): string
+    public function getAttachmentImageSrcSet(int $attachmentId, array $sizes = ['thumbnail']): string
     {
         $srcSet = [];
 
@@ -350,7 +307,7 @@ class Wordpress
             $imageSrc = $this->getAttachmentImageSrc($attachmentId, $size);
 
             if ($imageSrc) {
-                $srcSet[] = $imageSrc->getUrl() . ' ' . $imageSrc->getWidth() . 'w';
+                $srcSet[] = $imageSrc->url . ' ' . $imageSrc->width . 'w';
             }
         }
 
@@ -376,11 +333,11 @@ class Wordpress
         return is_front_page();
     }
 
-    public function templateUrl(?string $path = null): string
+    public function templateUrl(string $path = ''): string
     {
         $url = untrailingslashit(get_template_directory_uri());
 
-        if ($path !== null) {
+        if ($path) {
             $url .= $path;
         }
 
@@ -447,7 +404,7 @@ class Wordpress
         return UserModel::getCurrentUser();
     }
 
-    public function getBlockTemplatePart(string $part):string
+    public function getBlockTemplatePart(string $part): string
     {
         ob_start();
         block_template_part($part);
