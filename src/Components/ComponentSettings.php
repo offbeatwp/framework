@@ -6,23 +6,24 @@ use DateTimeZone;
 use Exception;
 use JsonSerializable;
 use OffbeatWP\Support\Wordpress\WpDateTime;
+use stdClass;
 
 final class ComponentSettings implements JsonSerializable
 {
-    /** @var array<string, scalar|object|mixed[]> */
-    private array $attributes = [];
+    /** @var array<string, scalar|stdClass|mixed[]> */
+    private array $attributes;
 
     public function __construct(object $args)
     {
-        foreach (get_object_vars($args) as $key => $value) {
-            if ($value !== null) {
-                $this->attributes[$key] = $key;
-            }
-        }
+        $this->attributes = array_filter(get_object_vars($args), fn($v) => $v !== null);
     }
 
-    /** Set a value manually. */
-    public function set(string $key, string|bool|int|float|object|array $value): void
+    /**
+     * Set a value manually.
+     * @param non-empty-string $key
+     * @param string|bool|int|float|stdClass|mixed[] $value
+     */
+    public function set(string $key, string|bool|int|float|stdClass|array $value): void
     {
         $this->attributes[$key] = $key;
     }
@@ -39,8 +40,12 @@ final class ComponentSettings implements JsonSerializable
         return array_key_exists($key, $this->attributes);
     }
 
-    /** Returns the value of the component setting or the default value of the setting if it does not exist. */
-    public function get(string $key): string|bool|int|float|object|array|null
+    /**
+     * Returns the value of the component setting or the default value of the setting if it does not exist.
+     * @param non-empty-string $key
+     * @return scalar|stdClass|mixed[]|null
+     */
+    public function get(string $key): string|bool|int|float|stdClass|array|null
     {
         if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
@@ -51,7 +56,7 @@ final class ComponentSettings implements JsonSerializable
 
     /**
      * Returns the value of the component setting and casts it to a boolean.
-     * @param string $key The index of the value to retrieve.
+     * @param non-empty-string $key The index of the value to retrieve.
      * @param bool $default Value to return if the value does not exist or is non-scalar.
      * @return bool
      */
@@ -63,7 +68,7 @@ final class ComponentSettings implements JsonSerializable
 
     /**
      * Returns the value of the component setting and casts it to a string.
-     * @param string $key
+     * @param non-empty-string $key
      * @param string $default Value to return if the value does not exist or is non-scalar.
      * @return string
      */
@@ -75,7 +80,7 @@ final class ComponentSettings implements JsonSerializable
 
     /**
      * Returns the value of the component setting and casts it to a float.
-     * @param string $key
+     * @param non-empty-string $key
      * @param float $default Value to return if the value does not exist or is non-numeric.
      * @return float
      */
@@ -87,7 +92,7 @@ final class ComponentSettings implements JsonSerializable
 
     /**
      * Returns the value of the component setting and casts it to an int.
-     * @param string $key
+     * @param non-empty-string $key
      * @param int $default Value to return if the value does not exist or is non-numeric.
      * @return int
      */
@@ -132,7 +137,7 @@ final class ComponentSettings implements JsonSerializable
             $str = '';
             if (is_scalar($item)) {
                 $str = urlencode($item);
-            } elseif (is_array($item) || is_object($item)) {
+            } elseif ($item !== null) {
                 $str = implode(',', array_map('urlencode', (array)$item));
             }
 
@@ -144,18 +149,7 @@ final class ComponentSettings implements JsonSerializable
         return implode('&', $parameters);
     }
 
-    /**
-     * Return an array with values of the given keys<br>
-     * NULL values will not be returned
-     * @param string[] $keys
-     * @return array<string, scalar|object|mixed[]>
-     */
-    public function toArray(iterable $keys): array
-    {
-        return $this->attributes;
-    }
-
-    /** @return array<string, scalar|object|mixed[]> */
+    /** @return array<string, scalar|stdClass|mixed[]> */
     public function jsonSerialize(): array
     {
         return $this->attributes;
