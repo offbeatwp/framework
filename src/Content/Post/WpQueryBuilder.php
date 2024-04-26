@@ -171,10 +171,9 @@ class WpQueryBuilder
         return $query;
     }
 
-    /** @return $this */
     public function limit(int $amount): self
     {
-        if ($amount <= 0) {
+        if ($amount < 0 && $amount !== -1) {
             throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
         }
 
