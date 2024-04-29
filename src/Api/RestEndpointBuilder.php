@@ -7,6 +7,7 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Server;
 
+/** @final */
 class RestEndpointBuilder
 {
     public string $namespace;
@@ -33,7 +34,10 @@ class RestEndpointBuilder
         return $this;
     }
 
-    /** @param callable(string, WP_Rest_Request<mixed[]>, string): bool $callback */
+    /**
+     * Validate a particular endpoint argument against a callback.
+     * @param callable(string, WP_Rest_Request<mixed[]>, string): bool $callback
+     */
     public function validate(string $key, callable $callback): self
     {
         if (!isset($this->args[$key])) {
@@ -45,13 +49,19 @@ class RestEndpointBuilder
         return $this;
     }
 
+    /** @deprecated Use permission instead. */
     public function capability(string $capability): self
     {
         $this->permission(fn() => current_user_can($capability));
         return $this;
     }
 
-    /** @param callable(WP_Rest_Request<mixed[]>): (bool|WP_Error) $callback */
+    /**
+     * Adds a callback that checks if the user can perform the action (reading, updating, etc) before the real callback is called.<br>
+     * This allows the API to tell the client what actions they can perform on a given URL without needing to attempt the request first.<br>
+     * The permissions callback is run after remote authentication, which sets the current user.
+     * @param callable(WP_Rest_Request<mixed[]>): (bool|WP_Error) $callback
+     */
     public function permission(callable $callback): self
     {
         $this->permissionCallback = $callback;
