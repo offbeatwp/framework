@@ -25,9 +25,7 @@ if (!function_exists('config')) {
      * @return mixed
      */
     function config(?string $config = null, $default = null) {
-        /** @var App $app */
-        $app = offbeat();
-        return $app->config($config, $default);
+        return App::singleton()->config($config, $default);
     }
 }
 
@@ -38,8 +36,7 @@ if (!function_exists('container')) {
      * @return T
      */
     function container(?string $definition = null) {
-        /** @var App $app */
-        $app = offbeat();
+        $app = App::singleton();
 
         if ($definition !== null) {
             return $app->container->get($definition);
