@@ -3,6 +3,7 @@ namespace OffbeatWP\Routes\Routes;
 
 use Closure;
 use OffbeatWP\Exceptions\InvalidRouteException;
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Routes\IMiddleware;
 use OffbeatWP\Routes\WpRedirect;
 use OffbeatWP\Routes\RouteRequest;
@@ -67,7 +68,7 @@ class Route extends SymfonyRoute
             $actionCallback = $actionCallback();
         }
 
-        return container()->call($actionCallback, $this->getParameters());
+        return App::singleton()->container->call($actionCallback, $this->getParameters());
     }
 
     public function hasValidActionCallback(): bool

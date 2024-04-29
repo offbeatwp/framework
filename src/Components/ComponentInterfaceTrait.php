@@ -2,16 +2,18 @@
 
 namespace OffbeatWP\Components;
 
+use OffbeatWP\Foundation\App;
+
 trait ComponentInterfaceTrait {
     public function render($settings)
     {
-        $component = container()->make($this->componentClass);
+        $component = App::singleton()->container->make($this->componentClass);
 
         if (is_array($settings)) {
             $settings = (object)$settings;
         }
 
-        return container()->call([$component, 'render'], [$settings]);
+        return App::singleton()->container->call([$component, 'render'], [$settings]);
 
     }    
 }

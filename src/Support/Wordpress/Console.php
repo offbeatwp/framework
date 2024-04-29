@@ -2,6 +2,7 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Console\AbstractCommand;
+use OffbeatWP\Foundation\App;
 use WP_CLI;
 
 class Console
@@ -19,7 +20,7 @@ class Console
         $command = $commandClass::COMMAND;
 
         WP_CLI::add_command($command, function ($args, $argsNamed) use ($commandClass) {
-            container()->call([$commandClass, 'execute'], ['args' => $args, 'argsNamed' => $argsNamed]);
+            App::singleton()->container->call([$commandClass, 'execute'], ['args' => $args, 'argsNamed' => $argsNamed]);
         });
     }
 

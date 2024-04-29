@@ -131,7 +131,7 @@ abstract class AbstractComponent
 
         static::_enqueueAssets();
 
-        $output = container()->call([$this, 'render'], [
+        $output = App::singleton()->container->call([$this, 'render'], [
             'settings' => new ComponentSettings($filteredSettings, $defaultValues)
         ]);
 

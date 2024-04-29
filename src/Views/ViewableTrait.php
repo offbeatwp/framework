@@ -3,6 +3,7 @@
 namespace OffbeatWP\Views;
 
 use OffbeatWP\Contracts\View;
+use OffbeatWP\Foundation\App;
 use ReflectionClass;
 
 trait ViewableTrait
@@ -19,7 +20,7 @@ trait ViewableTrait
      */
     public function view(string $name, array $data = [])
     {
-        $view = container()->get(View::class);
+        $view = App::singleton()->container->get(View::class);
         $this->view = $view;
 
         $this->setTemplatePaths();
@@ -48,8 +49,8 @@ trait ViewableTrait
 
         $moduleClass = $matches[0] . '\\' . $matches[1];
 
-        if (container()->has($moduleClass)) {
-            $module = container()->get($moduleClass);
+        if (App::singleton()->container->has($moduleClass)) {
+            $module = App::singleton()->container->get($moduleClass);
 
             $this->view->addTemplatePath($module->getViewsDirectory());
         }

@@ -1,6 +1,8 @@
 <?php
 namespace OffbeatWP\Support\Wordpress;
 
+use OffbeatWP\Foundation\App;
+
 class Ajax {
     public static function isAjaxRequest(): bool
     {
@@ -15,14 +17,14 @@ class Ajax {
 
         if ($priv) {
             add_action("wp_ajax_{$action}", function () use ($ajaxClass) {
-                container()->call([$ajaxClass, 'execute']);
+                App::singleton()->container->call([$ajaxClass, 'execute']);
                 wp_die();
             });
         }
 
         if ($noPriv) {
             add_action("wp_ajax_nopriv_{$action}", function () use ($ajaxClass) {
-                container()->call([$ajaxClass, 'execute']);
+                App::singleton()->container->call([$ajaxClass, 'execute']);
                 wp_die();
             });
         }
