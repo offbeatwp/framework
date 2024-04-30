@@ -87,7 +87,7 @@ class TermModel implements TermModelInterface
         }
         
         if (method_exists(TermQueryBuilder::class, $method)) {
-            trigger_error('Called a QueryBuilder method on a model instance through magic method.', E_USER_DEPRECATED);
+            trigger_error('Called TermQueryBuilder method on a model instance through magic method. Please use the static TermModel::query method instead.', E_USER_DEPRECATED);
             return static::query()->$method(...$parameters);
         }
 
