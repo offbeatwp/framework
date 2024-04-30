@@ -184,7 +184,11 @@ class PostModel implements PostModelInterface
         return $this->wpPost->ID ?? null;
     }
 
-    /** @return string */
+    /**
+     * Return the title.<br>
+     * Applies the <b>the_title</b> filter.
+     * @return string
+     */
     public function getTitle()
     {
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
@@ -195,6 +199,11 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_title;
     }
 
+    /**
+     * Returns the post content.<br>
+     * Applies the <b>the_content</b> and <b>post_password_required</b> filters.<br>
+     * @return string
+     */
     public function getContent(): string
     {
         if ($this->isPasswordRequired()) {

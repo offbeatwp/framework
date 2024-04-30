@@ -6,7 +6,7 @@ use OffbeatWP\Helpers\ArrayHelper;
 
 class Config {
     /** @var App */
-    private $app;
+    private App $app;
     /** @var mixed[]|null */
     protected $config = null;
 
