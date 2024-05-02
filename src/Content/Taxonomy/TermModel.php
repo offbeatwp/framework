@@ -27,7 +27,7 @@ class TermModel extends AbstractOffbeatModel
         }
 
         if (!in_array($term->taxonomy, (array)static::TAXONOMY, true)) {
-            throw new InvalidArgumentException('Cannot create TermModel object: Invalid Post Type');
+            throw new InvalidArgumentException('Cannot create TermModel object: Invalid Taxonomy');
         }
 
         $this->wpTerm = $term;
