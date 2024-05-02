@@ -156,7 +156,6 @@ final class PostQueryBuilder
     /** @return int[] */
     public function ids(): array
     {
-        $this->queryVars['posts_per_page'] = $this->queryVars['posts_per_page'] ?? -1;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
@@ -183,7 +182,6 @@ final class PostQueryBuilder
 
     public function count(): int
     {
-        $this->queryVars['posts_per_page'] = -1;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 

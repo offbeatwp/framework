@@ -102,7 +102,6 @@ final class TermQueryBuilder
     /** @return int[] */
     public function ids(): array
     {
-        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
@@ -115,7 +114,6 @@ final class TermQueryBuilder
      */
     public function parentIds(): array
     {
-        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'id=>parent';
         $this->queryVars['no_found_rows'] = true;
 
@@ -124,7 +122,6 @@ final class TermQueryBuilder
 
     public function count(): int
     {
-        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'count';
         $this->queryVars['no_found_rows'] = true;
 
@@ -137,7 +134,6 @@ final class TermQueryBuilder
      */
     public function names(bool $indexById): array
     {
-        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = ($indexById) ? 'id=>name' : 'names';
         $this->queryVars['no_found_rows'] = true;
 
@@ -155,7 +151,6 @@ final class TermQueryBuilder
      */
     public function slugs(bool $indexById): array
     {
-        $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = ($indexById) ? 'id=>slug' : 'slugs';
         $this->queryVars['no_found_rows'] = true;
 
