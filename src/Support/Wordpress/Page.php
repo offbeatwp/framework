@@ -6,13 +6,13 @@ final class Page
     /** @var string[] */
     protected static array $pageTemplates = [];
 
-    public function registerTemplate(string $label, string $template): void
+    public static function registerTemplate(string $label, string $template): void
     {
         self::$pageTemplates[$template] = $label;
     }
 
     /** @return string[] */
-    public function getPageTemplates(): array
+    public static function getPageTemplates(): array
     {
         return self::$pageTemplates;
     }
