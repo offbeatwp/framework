@@ -11,7 +11,7 @@ final class Taxonomy
     public const DEFAULT_TERM_MODEL = TermModel::class;
 
     /** @var class-string<TermModel>[] */
-    private array $taxonomyModels = [];
+    private static array $taxonomyModels = [];
 
     /**
      * @param string $name Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long.
@@ -30,21 +30,21 @@ final class Taxonomy
      * @param class-string<TermModel> $modelClass
      * @return void
      */
-    public function registerTermModel(string $taxonomy, string $modelClass)
+    public static function registerTermModel(string $taxonomy, string $modelClass)
     {
-        $this->taxonomyModels[$taxonomy] = $modelClass;
+        self::$taxonomyModels[$taxonomy] = $modelClass;
     }
 
     /** @return class-string<TermModel> */
-    public function getModelByTaxonomy(string $taxonomy): string
+    public static function getModelByTaxonomy(string $taxonomy): string
     {
-        return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
+        return self::$taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
     /** @return TermModel */
-    public function convertWpTermToModel(WP_Term $term)
+    public static function convertWpTermToModel(WP_Term $term)
     {
-        $model = $this->getModelByTaxonomy($term->taxonomy);
+        $model = self::getModelByTaxonomy($term->taxonomy);
 
         return new $model($term);
     }
@@ -55,16 +55,16 @@ final class Taxonomy
      * @param WP_Term|int|null $term
      * @return TermModel|null
      */
-    public function get($term = null)
+    public static function get($term = null)
     {
         if ($term instanceof WP_Term) {
-            return $this->convertWpTermToModel($term);
+            return self::convertWpTermToModel($term);
         }
 
         if ($term === null && (is_tax() || is_tag() || is_category())) {
             $obj = get_queried_object();
             if ($obj instanceof WP_Term) {
-                return $this->convertWpTermToModel($obj);
+                return self::convertWpTermToModel($obj);
             }
         }
 
@@ -72,7 +72,7 @@ final class Taxonomy
             $retrievedTerm = get_term($term);
 
             if ($retrievedTerm instanceof WP_Term) {
-                return $this->convertWpTermToModel($retrievedTerm);
+                return self::convertWpTermToModel($retrievedTerm);
             }
         }
 
