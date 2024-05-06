@@ -183,9 +183,6 @@ final class AssetsManager
     public function enqueueScripts(string $entry, array $dependencies = []): WpScriptAsset
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
-        if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
-            $dependencies[] = 'jquery';
-        }
 
         $dependencies = array_unique($dependencies);
         $enqueueNow = false;
