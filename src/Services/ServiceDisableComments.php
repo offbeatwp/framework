@@ -2,12 +2,9 @@
 
 namespace OffbeatWP\Services;
 
-use OffbeatWP\Contracts\SiteSettings;
-use OffbeatWP\Contracts\View;
-
 final class ServiceDisableComments extends AbstractService
 {
-    public function register(SiteSettings $settings, View $view): void
+    public function register(): void
     {
         if (!is_admin()) {
             return;

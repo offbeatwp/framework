@@ -63,6 +63,7 @@ final class App
         $this->container = $containerBuilder->build();
 
         foreach ($this->services as $service) {
+            $service->register();
             $this->container->call([$service, 'register']);
         }
 

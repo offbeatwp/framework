@@ -2,8 +2,6 @@
 
 namespace OffbeatWP\Services\PageTypes;
 
-use OffbeatWP\Contracts\SiteSettings;
-use OffbeatWP\Contracts\View;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Services\PageTypes\Models\PageTypeModel;
 use OffbeatWP\Support\Wordpress\Taxonomy;
@@ -17,7 +15,7 @@ final class PageTypesService extends AbstractService
 
     public bool $isPageTypeSaved = false;
 
-    public function register(SiteSettings $settings, View $view): void
+    public function register(): void
     {
         offbeat(Taxonomy::class)::make(self::TAXONOMY, self::POST_TYPES, 'Page types', 'Page type')
             ->model(PageTypeModel::class)
