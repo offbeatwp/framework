@@ -3,11 +3,10 @@
 namespace OffbeatWP\Api;
 
 use Closure;
-use WP_Error;
 use WP_REST_Request;
 use WP_REST_Server;
 
-class RestEndpointBuilder
+final class RestEndpointBuilder
 {
     public string $namespace;
     public string $route;
@@ -16,10 +15,10 @@ class RestEndpointBuilder
     public string $method = WP_REST_Server::READABLE;
     /** @var Closure[] */
     public array $args = [];
-    /** @var callable(WP_Rest_Request<mixed[]>): (bool|WP_Error) */
+    /** @var callable(WP_Rest_Request<mixed[]>): (bool|\WP_Error) */
     public $permissionCallback = '__return_true';
 
-    /** @param callable(WP_REST_Request<mixed[]>): mixed $callback */
+    /** @param callable(WP_REST_Request<mixed[]>): (\WP_REST_Response|\WP_Error) $callback */
     final public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
@@ -27,14 +26,18 @@ class RestEndpointBuilder
         $this->callback = $callback;
     }
 
-    public function method(string $method): self
+    /** @return $this */
+    final public function method(string $method)
     {
         $this->method = $method;
         return $this;
     }
 
-    /** @param callable(string, WP_Rest_Request<mixed[]>, string): bool $callback */
-    public function validate(string $key, callable $callback): self
+    /**
+     * @param callable(string, WP_Rest_Request<mixed[]>, string): bool $callback
+     * @return $this
+     */
+    final public function validate(string $key, callable $callback)
     {
         if (!isset($this->args[$key])) {
             $this->args[$key] = [];
@@ -45,20 +48,24 @@ class RestEndpointBuilder
         return $this;
     }
 
-    public function capability(string $capability): self
+    /** @return $this */
+    final public function capability(string $capability)
     {
         $this->permission(fn() => current_user_can($capability));
         return $this;
     }
 
-    /** @param callable(WP_Rest_Request<mixed[]>): (bool|WP_Error) $callback */
-    public function permission(callable $callback): self
+    /**
+     * @param callable(WP_Rest_Request<mixed[]>): (bool|\WP_Error) $callback
+     * @return $this
+     */
+    final public function permission(callable $callback)
     {
         $this->permissionCallback = $callback;
         return $this;
     }
 
-    public function set(): void
+    final public function set(): void
     {
         $thisEndpoint = $this;
 
@@ -76,7 +83,7 @@ class RestEndpointBuilder
      * @pure
      * @param callable(WP_REST_Request<mixed[]>): mixed $callback
      */
-    final public static function get(string $namespace, string $route, callable $callback): self
+    final public static function get(string $namespace, string $route, callable $callback): static
     {
         return new static($namespace, $route, $callback);
     }
@@ -85,7 +92,7 @@ class RestEndpointBuilder
      * @pure
      * @param callable(WP_REST_Request<mixed[]>): mixed $callback
      */
-    final public static function post(string $namespace, string $route, callable $callback): self
+    final public static function post(string $namespace, string $route, callable $callback): static
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
@@ -94,7 +101,7 @@ class RestEndpointBuilder
      * @pure
      * @param callable(WP_REST_Request<mixed[]>): mixed $callback
      */
-    final public static function delete(string $namespace, string $route, callable $callback): self
+    final public static function delete(string $namespace, string $route, callable $callback): static
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
     }
