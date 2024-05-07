@@ -4,35 +4,23 @@ namespace OffbeatWP\Components;
 
 final class ComponentArrayCache
 {
-    /** @phpstan-var array<string|null, array{mixed, int<0, max>}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
+    /** @phpstan-var array<string, array{string, int<0, max>}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private array $data = [];
-    private string $namespace = '';
 
-    protected function doContains(string $namespacedId): bool
+    public function contains(string $id): bool
     {
-        if (!isset($this->data[$namespacedId])) {
+        if (!array_key_exists($id, $this->data)) {
             return false;
         }
 
-        $expiration = $this->data[$namespacedId][1];
+        $expiration = $this->data[$id][1];
 
         if ($expiration && $expiration < time()) {
-            $this->doDelete($namespacedId);
+            $this->delete($id);
             return false;
         }
 
         return true;
-    }
-
-    /** @param int<0, max> $lifeTime */
-    protected function doSave(string $namespacedId, string $data, int $lifeTime = 0): void
-    {
-        $this->data[$namespacedId] = [$data, $lifeTime ? time() + $lifeTime : false];
-    }
-
-    protected function doDelete(string $namespacedId): void
-    {
-        unset($this->data[$namespacedId]);
     }
 
     /**
@@ -42,13 +30,11 @@ final class ComponentArrayCache
      */
     public function fetch(string $id): ?string
     {
-        $namespacedId = $this->getNamespacedId($id);
-
-        if (!$this->doContains($namespacedId)) {
+        if (!$this->contains($id)) {
             return null;
         }
 
-        return $this->data[$namespacedId][0];
+        return $this->data[$id][0];
     }
 
     /**
@@ -60,7 +46,7 @@ final class ComponentArrayCache
      */
     public function save(string $id, string $data, int $lifeTime = 0): void
     {
-        $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        $this->data[$id] = [$data, $lifeTime ? time() + $lifeTime : 0];
     }
 
     /**
@@ -70,11 +56,6 @@ final class ComponentArrayCache
      */
     public function delete(string $id): void
     {
-        $this->doDelete($this->getNamespacedId($id));
-    }
-
-    private function getNamespacedId(string $id): string
-    {
-        return $this->namespace . '['. $id. ']';
+        unset($this->data[$id]);
     }
 }

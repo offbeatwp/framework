@@ -5,6 +5,7 @@ namespace OffbeatWP\Components;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\CssClassTrait;
 use OffbeatWP\Views\ViewableTrait;
@@ -61,9 +62,9 @@ abstract class AbstractComponent
         $this->view = $view;
         $this->context = $context;
 
-        if (!offbeat()->container->has('componentCache')) {
+        if (!App::singleton()->container->has('componentCache')) {
             // Just a simple lightweight cache if none is set
-            offbeat()->container->set('componentCache', new ComponentArrayCache());
+            App::singleton()->container->set('componentCache', new ComponentArrayCache());
         }
     }
 
