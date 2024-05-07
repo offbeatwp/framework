@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\CssClassTrait;
 use OffbeatWP\Views\ViewableTrait;
@@ -62,9 +63,9 @@ abstract class AbstractComponent
         $this->view = $view;
         $this->context = $context;
 
-        if (!offbeat()->container->has('componentCache')) {
+        if (!App::singleton()->container->has('componentCache')) {
             // Just a simple lightweight cache if none is set
-            offbeat()->container->set('componentCache', new ArrayCache());
+            App::singleton()->container->set('componentCache', new ArrayCache());
         }
     }
 
@@ -130,7 +131,7 @@ abstract class AbstractComponent
 
         static::_enqueueAssets();
 
-        $output = container()->call([$this, 'render'], [
+        $output = App::singleton()->container->call([$this, 'render'], [
             'settings' => new ComponentSettings($filteredSettings, $defaultValues)
         ]);
 

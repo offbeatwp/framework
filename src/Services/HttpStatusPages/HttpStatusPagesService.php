@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Services\HttpStatusPages;
 
+use OffbeatWP\Foundation\App;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Contracts\SiteSettings;
 
@@ -40,6 +41,6 @@ class HttpStatusPagesService extends AbstractService
 
         $route = offbeat('routes')->findCallbackRoute();
 
-        return offbeat()->runRoute($route);
+        return App::singleton()->runRoute($route);
     }
 }

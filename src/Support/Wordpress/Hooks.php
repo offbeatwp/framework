@@ -1,6 +1,8 @@
 <?php
 namespace OffbeatWP\Support\Wordpress;
 
+use OffbeatWP\Foundation\App;
+
 class Hooks
 {
     /**
@@ -18,7 +20,7 @@ class Hooks
                 $callback = [$callback, 'filter'];
             }
                 
-            return container()->call($callback, $parameters);
+            return App::singleton()->container->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
 
@@ -46,7 +48,7 @@ class Hooks
                 $callback = [$callback, 'action'];
             }
 
-            return container()->call($callback, $parameters);
+            return App::singleton()->container->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
 
