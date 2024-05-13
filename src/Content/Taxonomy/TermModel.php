@@ -241,11 +241,11 @@ class TermModel implements TermModelInterface
     final public static function from(WP_Term $wpTerm)
     {
         if ($wpTerm->term_id <= 0) {
-            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_Term object: Invalid ID');
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid ID');
         }
 
         if (defined(static::class . '::POST_TYPE') && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
-            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_Term object: Invalid Taxonomy');
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid Taxonomy');
         }
 
         return new static($wpTerm);
