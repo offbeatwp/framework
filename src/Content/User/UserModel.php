@@ -536,7 +536,7 @@ class UserModel
     final public static function from(WP_User $wpUser)
     {
         if ($wpUser->ID <= 0) {
-            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_User object: Invalid User ID');
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User object: Invalid User ID');
         }
 
         foreach (static::definedUserRoles() as $expectedRole) {
