@@ -98,7 +98,6 @@ class AdminPage
     /** @return void */
     public function callbackController()
     {
-        App::singleton()->findRoute();
         App::singleton()->run();
     }
 }
