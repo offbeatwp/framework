@@ -4,8 +4,7 @@ namespace OffbeatWP\Api;
 
 use WP_REST_Server;
 
-/** @final */
-class RestEndpointBuilder
+final class RestEndpointBuilder
 {
     public string $namespace;
     public string $route;

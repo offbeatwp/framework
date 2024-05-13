@@ -10,7 +10,7 @@ use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 
-class Form extends Collection
+final class Form extends Collection
 {
     private string $fieldPrefix = '';
     /** @var string[] */

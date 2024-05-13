@@ -3,7 +3,7 @@ namespace OffbeatWP\Helpers;
 
 use InvalidArgumentException;
 
-class ArrayHelper {
+final class ArrayHelper {
     /**
      * @pure
      * @param mixed $input
