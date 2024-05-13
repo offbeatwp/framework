@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
@@ -26,6 +25,8 @@ use WP_User;
 
 class PostModel implements PostModelInterface
 {
+    public const POST_TYPE = 'any';
+
     private const DEFAULT_POST_STATUS = 'publish';
     private const DEFAULT_COMMENT_STATUS = 'closed';
     private const DEFAULT_PING_STATUS = 'closed';
@@ -460,32 +461,6 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /** @deprecated Use getPostDateTime instead. */
-    public function getCreatedAt(): Carbon
-    {
-        trigger_error('The getCreatedAt method is deprecated.', E_USER_DEPRECATED);
-        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$creationDate) {
-            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($creationDate);
-    }
-
-    /** @deprecated Use getModifiedDateTime instead. */
-    public function getUpdatedAt(): Carbon
-    {
-        trigger_error('The getUpdatedAt method is deprecated.', E_USER_DEPRECATED);
-        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$updateDate) {
-            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($updateDate);
-    }
-
     /** @throws PostMetaNotFoundException */
     public function getMetaOrFail(string $key): string
     {
@@ -617,16 +592,6 @@ class PostModel implements PostModelInterface
         $ancestors = $this->getAncestors();
         $this->getAncestors()->last();
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
-    }
-
-    /**
-     * @deprecated Use getChildren instead
-     * @see getChildren
-     */
-    public function getChilds(): PostsCollection
-    {
-        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
-        return $this->getChildren();
     }
 
     /** @return PostsCollection<static> Retrieves the children of this post. */
