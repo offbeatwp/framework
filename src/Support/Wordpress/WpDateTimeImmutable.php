@@ -17,15 +17,6 @@ final class WpDateTimeImmutable extends DateTimeImmutable
 {
     use WpDateTimeTrait;
 
-    public function __construct(string $datetime = 'now', ?DateTimeZone $timezone = null)
-    {
-        if (!$timezone && apply_filters('offbeatwp/date/wpdatetime_defaults_to_wp_timezone', true)) {
-            $timezone = wp_timezone();
-        }
-
-        parent::__construct($datetime, $timezone);
-    }
-
     public static function createFromInterface(DateTimeInterface $object): WpDateTimeImmutable
     {
         return new static($object->format('Y-m-d H:i:s.u'), $object->getTimezone() ?: null);
@@ -66,14 +57,4 @@ final class WpDateTimeImmutable extends DateTimeImmutable
 
         return $result;
     }
-
-//    public function sub(DateInterval $interval): WpDateTimeImmutable
-//    {
-//        $result = parent::sub($interval);
-//        if (!$result) {
-//            throw static::getLastDateException();
-//        }
-//
-//        return $result;
-//    }
 }
