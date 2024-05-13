@@ -4,7 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\User\UserModel;
 
-class UserRole
+final class UserRole
 {
     /** @var class-string<UserModel>[] */
     private static array $userModels = [];

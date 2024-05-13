@@ -4,7 +4,7 @@ namespace OffbeatWP\Config;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
-class Config {
+final class Config {
     /** @var App */
     private $app;
     /** @var mixed[]|null */

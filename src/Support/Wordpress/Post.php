@@ -6,7 +6,7 @@ use OffbeatWP\Content\Post\PostModel;
 use Symfony\Component\HttpFoundation\Request;
 use WP_Post;
 
-class Post
+final class Post
 {
     public function convertWpPostToModel(WP_Post $post): ?PostModel
     {

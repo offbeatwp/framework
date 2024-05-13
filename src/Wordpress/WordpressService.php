@@ -15,10 +15,10 @@ use OffbeatWP\Support\Wordpress\PostType;
 use OffbeatWP\Support\Wordpress\RestApi;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 
-class WordpressService
+final class WordpressService
 {
     /** @var class-string[] */
-    public $bindings = [
+    public array $bindings = [
         'admin-page'        => AdminPage::class,
         'ajax'              => Ajax::class,
         'rest-api'          => RestApi::class,
@@ -33,8 +33,7 @@ class WordpressService
         'enqueue-style'     => WpStyleEnqueueBuilder::class,
     ];
 
-    /** @return void */
-    public function register()
+    public function register(): void
     {
         $this->registerMenus();
         $this->registerImageSizes();
@@ -45,8 +44,7 @@ class WordpressService
         add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10 ,2);
     }
 
-    /** @return void */
-    public function registerMenus()
+    public function registerMenus(): void
     {
         $menus = config('menus');
 
@@ -55,8 +53,7 @@ class WordpressService
         }
     }
 
-    /** @return void */
-    public function registerImageSizes()
+    public function registerImageSizes(): void
     {
         $images = config('images');
 
@@ -67,8 +64,7 @@ class WordpressService
         }
     }
 
-    /** @return void */
-    public function registerSidebars()
+    public function registerSidebars(): void
     {
         $sidebars = config('sidebars');
 
@@ -80,8 +76,7 @@ class WordpressService
         }
     }
 
-    /** @return void */
-    public function registerPageTemplate()
+    public function registerPageTemplate(): void
     {
         add_filter('theme_page_templates', function ($postTemplates) {
             $pageTemplates = offbeat('page')->getPageTemplates();
