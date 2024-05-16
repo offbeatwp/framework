@@ -10,7 +10,7 @@ use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
  * @method OffbeatRoute[] all()
  * @method OffbeatRoute|null get(string $name)
  */
-class RouteCollection extends SymfonyRouteCollection
+final class RouteCollection extends SymfonyRouteCollection
 {
     /** @param OffbeatRoute[] $routes */
     public function __construct (array $routes = [])
@@ -42,7 +42,7 @@ class RouteCollection extends SymfonyRouteCollection
     public function where($whereKey, $whereValue): RouteCollection
     {
         $routes = array_filter($this->all(), static function ($route) use ($whereKey, $whereValue) {
-            return $whereKey === 'type' && get_class($route) === $whereValue;
+            return $whereKey === 'type' && $route::class === $whereValue;
         });
 
         $filteredRouteCollection = new self($routes);

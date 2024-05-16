@@ -4,14 +4,9 @@ namespace OffbeatWP\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class Http
+final class Http
 {
-    /**
-     * @param int $code
-     * @param string $description
-     * @return mixed
-     */
-    public function abort(int $code, string $description = '')
+    public function abort(int $code, string $description = ''): mixed
     {
         status_header($code, $description);
 
