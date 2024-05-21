@@ -86,7 +86,7 @@ final class WordpressService
             }
 
             return $postTemplates;
-        }, 10, 1);
+        });
     }
 
     /**
