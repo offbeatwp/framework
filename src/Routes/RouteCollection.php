@@ -1,12 +1,10 @@
 <?php
 namespace OffbeatWP\Routes;
 
-use IteratorAggregate;
 use OffbeatWP\Routes\Routes\Route as OffbeatRoute;
 use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 
 /**
- * @implements IteratorAggregate<string, OffbeatRoute>
  * @method OffbeatRoute[] all()
  * @method OffbeatRoute|null get(string $name)
  */
