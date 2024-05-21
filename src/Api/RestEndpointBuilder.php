@@ -17,7 +17,7 @@ final class RestEndpointBuilder
     public $permissionCallback = '__return_true';
 
     /** @param callable(\WP_REST_Request): mixed $callback */
-    final public function __construct(string $namespace, string $route, callable $callback)
+    public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
         $this->route = $route;
