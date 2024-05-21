@@ -245,7 +245,7 @@ class TermModel implements TermModelInterface
         }
 
         if (defined(static::class . '::TAXONOMY') && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
-            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_Term object: Invalid Taxonomy');
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid Taxonomy');
         }
 
         return new static($wpTerm);
