@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Components;
 
-use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
