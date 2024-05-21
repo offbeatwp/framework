@@ -5,18 +5,12 @@ use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
 final class Config {
-    /** @var App */
-    private $app;
-    /** @var mixed[]|null */
-    protected $config = null;
+    private App $app;
+    private array $config = [];
 
-    /** @param App $app */
-    public function __construct($app) {
+    public function __construct(App $app) {
         $this->app = $app;
-
-        if ($this->config === null) {
-            $this->loadConfig();
-        }
+        $this->loadConfig();
     }
 
     private function loadConfig(): void
