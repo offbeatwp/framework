@@ -271,7 +271,7 @@ class WpQueryBuilder
      */
     public function wherePostType($postTypes): self
     {
-        if (!isset($this->queryVars['post_type'])) {
+        if (!isset($this->queryVars['post_type']) || $this->queryVars['post_type'] === PostModel::POST_TYPE) {
             $this->queryVars['post_type'] = [];
         }
 
