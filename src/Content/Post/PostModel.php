@@ -378,16 +378,9 @@ class PostModel implements PostModelInterface
         return get_userdata($authorId);
     }
 
-    /** @return false|int|numeric-string */
-    public function getAuthorId()
+    public function getAuthorId(): int
     {
-        $authorId = $this->wpPost->post_author;
-
-        if (!$authorId) {
-            return false;
-        }
-
-        return $authorId;
+        return (int)$this->wpPost->post_author;
     }
 
     /** @return false|mixed[]|string */
