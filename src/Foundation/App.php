@@ -243,7 +243,7 @@ final class App
             }
 
             echo $output;
-        } catch (InvalidRouteException $e) {
+        } catch (InvalidRouteException) {
             // Find new route
             $this->findRoute();
             $this->run($config);

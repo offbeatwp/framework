@@ -126,7 +126,7 @@ trait GetMetaTrait
 
         try {
             return WpDateTime::make($datetime);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -146,7 +146,7 @@ trait GetMetaTrait
 
         try {
             return WpDateTimeImmutable::make($datetime);
-        } catch (Exception $e)  {
+        } catch (Exception)  {
             return null;
         }
     }
