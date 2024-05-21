@@ -79,19 +79,19 @@ final class RestEndpointBuilder
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    final public static function get(string $namespace, string $route, callable $callback): self
+    public static function get(string $namespace, string $route, callable $callback): self
     {
         return new static($namespace, $route, $callback);
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    final public static function post(string $namespace, string $route, callable $callback): self
+    public static function post(string $namespace, string $route, callable $callback): self
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    final public static function delete(string $namespace, string $route, callable $callback): self
+    public static function delete(string $namespace, string $route, callable $callback): self
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
     }
