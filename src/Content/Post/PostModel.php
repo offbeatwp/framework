@@ -764,7 +764,7 @@ class PostModel implements PostModelInterface
             }
         } else {
             // Update post
-            $updatedPostId = wp_update_post($this->wpPost);
+            $updatedPostId = wp_update_post((array)$this->wpPost);
 
             // Unset Meta
             if ($updatedPostId && is_int($updatedPostId)) {
