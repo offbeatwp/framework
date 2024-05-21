@@ -173,7 +173,7 @@ class PostsCollection extends OffbeatModelCollection
             // Replace href with data-page
             $chunks = explode('>', $links);
             for ($i = 0, $l = count($chunks); $i < $l; $i++) {
-                if (strpos($chunks[$i], '<button') !== false) {
+                if (str_contains($chunks[$i], '<button')) {
                     $chunks[$i] = preg_replace_callback('/href=".*(\/page\/(\d*+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $chunks[$i]);
                 }
             }

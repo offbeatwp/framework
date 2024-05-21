@@ -19,7 +19,7 @@ class Design
 
         $subId = null;
 
-        if (strpos($id, '**') !== false) {
+        if (str_contains($id, '**')) {
             $ids   = explode('**', $id);
             $id    = $ids[0];
             $subId = $ids[1];

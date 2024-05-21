@@ -2,12 +2,13 @@
 
 namespace OffbeatWP\Components;
 
+use AllowDynamicProperties;
 use DateTimeZone;
 use Exception;
 use Illuminate\Support\Collection;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 
-#[\AllowDynamicProperties]
+#[AllowDynamicProperties]
 final class ComponentSettings
 {
     private array $defaultValues;

@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Post;
 use ArrayIterator;
 
 /** @template TModel of PostModel */
-class WpPostsIterator extends ArrayIterator
+final class WpPostsIterator extends ArrayIterator
 {
     /** @var \WP_Post|null */
     private $originalPost;
@@ -15,8 +15,7 @@ class WpPostsIterator extends ArrayIterator
      * @return PostModel|false
      * @phpstan-return TModel|false
      */
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         return parent::current();
     }
