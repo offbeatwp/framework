@@ -343,7 +343,7 @@ final class RoutesManager
             $route->addDefaults($parameters);
 
             return $route;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

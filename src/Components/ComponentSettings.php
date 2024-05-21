@@ -122,7 +122,7 @@ final class ComponentSettings
 
         try {
             return WpDateTime::make($datetime, $timeZone ?? new DateTimeZone('UTC'));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
