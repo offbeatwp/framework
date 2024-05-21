@@ -5,7 +5,7 @@
   "type": "library",
   "require": {
     "php": "^8.0",
-    "php-di/php-di": "^5.4.6",
+    "php-di/php-di": "^6.4.0",
     "illuminate/collections": "^v8.83.27",
     "illuminate/macroable": "^v8.83.27",
     "symfony/routing": "^v5.4.39",
