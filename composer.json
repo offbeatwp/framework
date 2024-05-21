@@ -9,7 +9,7 @@
     "illuminate/collections": "^v8.83.27",
     "illuminate/macroable": "^v8.83.27",
     "symfony/routing": "^v5.4.39",
-    "symfony/http-foundation": "^v6.4.7",
+    "symfony/http-foundation": "^v5.4.39",
     "ext-dom": "*"
   },
   "autoload": {
