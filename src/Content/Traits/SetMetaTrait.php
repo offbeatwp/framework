@@ -2,6 +2,9 @@
 
 namespace OffbeatWP\Content\Traits;
 
+use Serializable;
+use stdClass;
+
 trait SetMetaTrait
 {
     /**
@@ -9,7 +12,7 @@ trait SetMetaTrait
      * @param string|int|float|bool|mixed[]|\stdClass|\Serializable $value The new metadata value.
      * @return $this
      */
-    final public function setMeta(string $key, $value)
+    final public function setMeta(string $key, string|int|float|bool|array|stdClass|Serializable $value)
     {
         $this->metaInput[$key] = $value;
 
