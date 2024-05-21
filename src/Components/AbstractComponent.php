@@ -64,7 +64,7 @@ abstract class AbstractComponent
 
         if (!App::singleton()->container->has('componentCache')) {
             // Just a simple lightweight cache if none is set
-            App::singleton()->container->set('componentCache', new ArrayCache());
+            App::singleton()->container->set('componentCache', new ComponentArrayCache());
         }
     }
 
