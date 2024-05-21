@@ -7,7 +7,7 @@ final class ComponentArrayCache
     /** @phpstan-var array<string|null, array{mixed, int<0, max>}>> $data each element being a tuple of [$data, $expiration], where the expiration is int */
     private array $data = [];
 
-    public function contains(string $id): bool
+    public function has(string $id): bool
     {
         if (!isset($this->data[$id])) {
             return false;
@@ -30,7 +30,7 @@ final class ComponentArrayCache
      */
     public function fetch(string $id): ?string
     {
-        if (!$this->contains($id)) {
+        if (!$this->has($id)) {
             return null;
         }
 
