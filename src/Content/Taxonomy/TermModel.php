@@ -7,9 +7,8 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
-use Serializable;
-use stdClass;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -18,6 +17,7 @@ class TermModel implements TermModelInterface
     public const TAXONOMY = '';
 
     use BaseModelTrait;
+    use SetMetaTrait;
     use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
@@ -30,6 +30,7 @@ class TermModel implements TermModelInterface
     protected array $metaInput = [];
     protected array $metaToUnset = [];
     private ?array $meta = null;
+    /** @var array{slug?: string, description?: string, parent?: int} */
     private array $args = [];
 
     /**
@@ -117,6 +118,11 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->name;
     }
 
+    final public function setSlug(string $slug): void
+    {
+        $this->args['slug'] = $slug;
+    }
+
     public function getSlug(): string
     {
         if (array_key_exists('slug', $this->args)) {
@@ -124,6 +130,11 @@ class TermModel implements TermModelInterface
         }
 
         return $this->wpTerm->slug ?? '';
+    }
+
+    final public function setDescription(string $description): void
+    {
+        $this->args['description'] = $description;
     }
 
     public function getDescription(): string
@@ -144,6 +155,11 @@ class TermModel implements TermModelInterface
     public function getTaxonomy(): string
     {
         return $this->wpTerm->taxonomy;
+    }
+
+    final public function setParentId(int $parentId): void
+    {
+        $this->args['parent'] = $parentId;
     }
 
     final public function getParentId(): ?int
@@ -195,11 +211,6 @@ class TermModel implements TermModelInterface
     final public function getMeta(string $key, bool $single = true): mixed
     {
         return $this->getMetas()[$key] ?? null;
-    }
-
-    final public function setMeta(string $key, string|int|float|bool|array|stdClass|Serializable $value): void
-    {
-        $this->metaInput[$key] = $value;
     }
 
     /**

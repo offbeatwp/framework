@@ -33,9 +33,9 @@ class PostModel implements PostModelInterface
     public const DEFAULT_PING_STATUS = 'closed';
 
     public WP_Post|stdClass|null $wpPost;
-    private array $metaInput = [];
-    private array $metaToUnset = [];
-    private ?array $metas = null;
+    protected array $metaInput = [];
+    protected array $metaToUnset = [];
+    protected ?array $metas = null;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
 
