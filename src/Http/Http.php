@@ -57,6 +57,5 @@ final class Http
 
         // Redirect to the parent url
         $this->redirect($url, $status);
-        exit;
     }
 }

@@ -5,9 +5,9 @@
   "type": "library",
   "require": {
     "php": "^8.0",
-    "php-di/php-di": "^6.4.0",
-    "illuminate/collections": "^v10.48.9",
-    "illuminate/macroable": "^v10.48.10",
+    "php-di/php-di": "^5.4.6",
+    "illuminate/collections": "^v8.83.27",
+    "illuminate/macroable": "^v8.83.27",
     "symfony/routing": "^v6.4.7",
     "symfony/http-foundation": "^v6.4.7",
     "ext-dom": "*"
