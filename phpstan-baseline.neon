@@ -31,21 +31,6 @@ parameters:
 			path: src/Content/Post/PostModel.php
 
 		-
-			message: "#^Class OffbeatWP\\\\Content\\\\Post\\\\PostsCollection @implements tag contains incompatible type Illuminate\\\\Support\\\\Enumerable&iterable\\<\\(int\\|string\\), TModel\\>\\.$#"
-			count: 1
-			path: src/Content/Post/PostsCollection.php
-
-		-
-			message: "#^Class OffbeatWP\\\\Content\\\\Post\\\\PostsCollection has @implements tag, but does not implement any interface\\.$#"
-			count: 1
-			path: src/Content/Post/PostsCollection.php
-
-		-
-			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Content\\\\Taxonomy\\\\TermModel\\)\\:\\:TAXONOMY\\.$#"
-			count: 4
-			path: src/Content/Taxonomy/TermModel.php
-
-		-
 			message: "#^Method OffbeatWP\\\\Content\\\\Taxonomy\\\\TermQueryBuilder\\:\\:count\\(\\) should return int but returns array\\<int\\|string\\|WP_Term\\>\\|string\\.$#"
 			count: 1
 			path: src/Content/Taxonomy/TermQueryBuilder.php
@@ -86,11 +71,6 @@ parameters:
 			path: src/Form/FieldsContainers/AbstractFieldsContainer.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Form/Form.php
-
-		-
 			message: "#^Template type T of function container\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Foundation/helpers.php
@@ -99,11 +79,6 @@ parameters:
 			message: "#^Template type T of function offbeat\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Foundation/helpers.php
-
-		-
-			message: "#^Class OffbeatWP\\\\Routes\\\\RouteCollection has @implements tag, but does not implement any interface\\.$#"
-			count: 1
-			path: src/Routes/RouteCollection.php
 
 		-
 			message: "#^Access to undefined constant class\\-string\\<OffbeatWP\\\\Console\\\\AbstractCommand\\>\\|OffbeatWP\\\\Console\\\\AbstractCommand\\:\\:COMMAND\\.$#"
