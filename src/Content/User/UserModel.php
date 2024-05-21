@@ -76,7 +76,7 @@ class UserModel
      */
     public function __call($method, $parameters)
     {
-        $className = get_class($this);
+        $className = $this::class;
 
         if (static::hasMacro($method)) {
             trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);

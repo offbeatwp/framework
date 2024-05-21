@@ -168,7 +168,7 @@ abstract class AbstractComponent
     protected function getCacheId($settings): string
     {
         $prefix = $this->context ? $this->context->getCacheId() : '';
-        return md5($prefix . get_class($this) . json_encode($settings));
+        return md5($prefix . $this::class . json_encode($settings));
     }
 
     /**
