@@ -40,8 +40,8 @@ final class Form extends Collection
         }
 
         // If item is of the same type as the active item move back to parent
-        $itemClass = get_class($item);
-        if ($itemClass === get_class($this->getActiveItem()) && $itemClass !== self::class) {
+        $itemClass = $item::class;
+        if ($itemClass === $this->getActiveItem()::class && $itemClass !== self::class) {
             $this->closeField();
         }
 

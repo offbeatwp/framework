@@ -144,7 +144,7 @@ final class App
 
     public function markServiceAsInitiated(object $service): void
     {
-        $this->services[get_class($service)] = $service;
+        $this->services[$service::class] = $service;
     }
 
     /**
