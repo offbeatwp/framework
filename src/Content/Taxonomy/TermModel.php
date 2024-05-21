@@ -7,6 +7,9 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use Serializable;
+use stdClass;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -23,6 +26,7 @@ class TermModel implements TermModelInterface
 
     public ?WP_Term $wpTerm = null;
     public ?int $id = null;
+    /** @var array<string, mixed> */
     protected array $metaInput = [];
     protected array $metaToUnset = [];
     private ?array $meta = null;
@@ -190,7 +194,7 @@ class TermModel implements TermModelInterface
         return $this->getMetas()[$key] ?? null;
     }
 
-    final public function setMeta(string $key, mixed $value): void
+    final public function setMeta(string $key, string|int|float|bool|array|stdClass|Serializable $value): void
     {
         $this->metaInput[$key] = $value;
     }
@@ -261,6 +265,17 @@ class TermModel implements TermModelInterface
         }
 
         return $newId;
+    }
+
+    final public function saveOrFail(): int
+    {
+        $result = $this->save();
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save ' . static::class);
+        }
+
+        return $result;
     }
 
     final public static function from(WP_Term $wpTerm): static
