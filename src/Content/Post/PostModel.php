@@ -19,6 +19,7 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use stdClass;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
@@ -27,20 +28,17 @@ class PostModel implements PostModelInterface
 {
     public const POST_TYPE = 'any';
 
-    private const DEFAULT_POST_STATUS = 'publish';
-    private const DEFAULT_COMMENT_STATUS = 'closed';
-    private const DEFAULT_PING_STATUS = 'closed';
+    public const DEFAULT_POST_STATUS = 'publish';
+    public const DEFAULT_COMMENT_STATUS = 'closed';
+    public const DEFAULT_PING_STATUS = 'closed';
 
-    /** @var WP_Post|object|null */
-    public $wpPost;
-    /** @var mixed[] */
-    public $metaInput = [];
-    /** @var mixed[] */
-    protected $metaToUnset = [];
-    /** @var mixed[]|false|string */
-    protected $metas = false;
+    public WP_Post|stdClass|null $wpPost;
+    private array $metaInput = [];
+    private array $metaToUnset = [];
+    private ?array $metas = null;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
+
     /**
      * @var string[]|null
      * This should be an associative string array<br>
@@ -67,10 +65,10 @@ class PostModel implements PostModelInterface
     {
         if ($post === null) {
             $this->wpPost = (object)[];
-            $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
-            $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
-            $this->wpPost->comment_status = self::DEFAULT_COMMENT_STATUS;
-            $this->wpPost->ping_status = self::DEFAULT_PING_STATUS;
+            $this->wpPost->post_type = static::POST_TYPE;
+            $this->wpPost->post_status = static::DEFAULT_POST_STATUS;
+            $this->wpPost->comment_status = static::DEFAULT_COMMENT_STATUS;
+            $this->wpPost->ping_status = static::DEFAULT_PING_STATUS;
         } elseif ($post instanceof WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
@@ -383,11 +381,10 @@ class PostModel implements PostModelInterface
         return (int)$this->wpPost->post_author;
     }
 
-    /** @return false|mixed[]|string */
-    public function getMetas()
+    final public function getMetas(): array
     {
-        if ($this->metas === false) {
-            $this->metas = get_post_meta($this->getId());
+        if ($this->metas === null) {
+            $this->metas = get_post_meta($this->getId()) ?: [];
         }
 
         return $this->metas;
@@ -824,7 +821,7 @@ class PostModel implements PostModelInterface
 
     public function refreshMetas()
     {
-        $this->metas = false;
+        $this->metas = null;
         $this->getMetas();
     }
 
