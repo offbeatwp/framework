@@ -244,8 +244,8 @@ class TermModel implements TermModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid ID');
         }
 
-        if (defined(static::class . '::POST_TYPE') && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid Taxonomy');
+        if (defined(static::class . '::TAXONOMY') && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
+            throw new InvalidArgumentException('Cannot create ' . class_basename(static::class) . ' from WP_Term object: Invalid Taxonomy');
         }
 
         return new static($wpTerm);
