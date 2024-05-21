@@ -3,7 +3,7 @@ namespace OffbeatWP\Api;
 
 use WP_REST_Request;
 
-/** @template T */
+/** @template T of array */
 abstract class AbstractRestEndpoint
 {
     /** @var WP_REST_Request<T> */
