@@ -893,7 +893,7 @@ class PostModel implements PostModelInterface
      * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
      * @return static|null
      */
-    public static function current()
+    final public static function current(): ?static
     {
         $post = offbeat('post')->get();
         return ($post instanceof static) ? $post : null;
