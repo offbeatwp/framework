@@ -6,10 +6,10 @@ trait SetMetaTrait
 {
     /**
      * @param string $key Metadata name.
-     * @param scalar|mixed[] $value The new metadata value.
+     * @param string|int|float|bool|mixed[]|\stdClass|\Serializable $value The new metadata value.
      * @return $this
      */
-    public function setMeta(string $key, $value): self
+    final public function setMeta(string $key, $value)
     {
         $this->metaInput[$key] = $value;
 
@@ -22,7 +22,7 @@ trait SetMetaTrait
      * @param string $key Metadata name.
      * @return $this
      */
-    public function unsetMeta(string $key): self
+    final public function unsetMeta(string $key)
     {
         $this->metaToUnset[$key] = '';
 
