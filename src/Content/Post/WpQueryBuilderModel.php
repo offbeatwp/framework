@@ -11,7 +11,7 @@ use WP_Post;
 final class WpQueryBuilderModel extends WpQueryBuilder
 {
     /** @var class-string<TModel> */
-    protected string $model;
+    protected string $modelClass;
 
     /**
      * @throws OffbeatInvalidModelException
@@ -19,7 +19,7 @@ final class WpQueryBuilderModel extends WpQueryBuilder
      */
     public function __construct(string $modelClass)
     {
-        $this->model = $modelClass;
+        $this->modelClass = $modelClass;
 
         if ($modelClass::POST_TYPE) {
             $this->wherePostType($modelClass::POST_TYPE);
@@ -42,7 +42,7 @@ final class WpQueryBuilderModel extends WpQueryBuilder
     /** @phpstan-return TModel|PostModel */
     public function firstOrNew(): PostModel
     {
-        return $this->first() ?: new $this->model(null);
+        return $this->first() ?: new $this->modelClass(null);
     }
 
     /**
@@ -51,11 +51,11 @@ final class WpQueryBuilderModel extends WpQueryBuilder
      */
     public function postToModel($post)
     {
-        if ($this->model === PostModel::class) {
+        if ($this->modelClass === PostModel::class) {
             return parent::postToModel($post);
         }
 
-        return new $this->model($post);
+        return new $this->modelClass($post);
     }
 
     /** @phpstan-return TModel|null */

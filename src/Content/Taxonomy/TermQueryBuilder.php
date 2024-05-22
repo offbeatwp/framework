@@ -14,14 +14,14 @@ final class TermQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var class-string<TModel> */
-    protected string $model;
+    protected string $modelClass;
     protected string $taxonomy;
     protected array $queryVars = [];
 
     /** @param class-string<TModel> $model */
     public function __construct(string $model)
     {
-        $this->model = $model;
+        $this->modelClass = $model;
         $this->taxonomy = $model::TAXONOMY;
 
         if ($this->taxonomy) {
@@ -94,7 +94,7 @@ final class TermQueryBuilder
         foreach ($terms as $term) {
             $model = offbeat('taxonomy')->convertWpTermToModel($term);
 
-            if ($this->model && !$model instanceof $this->model) {
+            if ($this->modelClass && !$model instanceof $this->modelClass) {
                 throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
             }
 
