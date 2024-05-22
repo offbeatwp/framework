@@ -7,6 +7,8 @@ use WP_CLI;
 use WP_Error;
 
 abstract class AbstractCommand {
+    public const COMMAND = '';
+
     /**
      * @param string[] $args
      * @param string[] $argsNamed

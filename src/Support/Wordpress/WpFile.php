@@ -129,7 +129,7 @@ final class WpFile
             throw new Exception('Could not get remote filename.');
         }
 
-        $headers = get_headers($url, 1);
+        $headers = get_headers($url, true);
 
         if (!$headers || !isset($headers['Content-Type'])) {
             throw new Exception('Could not determine content type of file.');
