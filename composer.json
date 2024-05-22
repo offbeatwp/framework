@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "library",
   "require": {
-    "php": "8.*",
+    "php": "^8.0",
     "php-di/php-di": "^7.0.6",
     "illuminate/collections": "^v10.48.11",
     "illuminate/macroable": "^v10.48.11",
