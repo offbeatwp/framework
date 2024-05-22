@@ -232,7 +232,12 @@ final class TermQueryBuilder
     /** @phpstan-return TModel|null */
     private function _getTermById(?int $id): ?TermModel
     {
-        return ($id > 0) ? $this->include([$id])->first() : null;
+        if ($id <= 0) {
+            return null;
+        }
+
+        $this->queryVars['term_taxonomy_id'] = [$id];
+        return $this->first();
     }
 
     /** @phpstan-return TModel|null */
