@@ -18,7 +18,8 @@ abstract class AbstractComponent
         ViewableTrait::view as protected traitView;
     }
 
-    public View $view;
+    /** @var View */
+    public $view;
     public ?Form $form = null;
     protected ?ContextInterface $context;
     protected bool $assetsEnqueued = false;
