@@ -21,7 +21,7 @@ final class WpQueryBuilderModel extends WpQueryBuilder
     {
         $this->model = $modelClass;
 
-        if (defined("{$modelClass}::POST_TYPE")) {
+        if ($modelClass::POST_TYPE) {
             $this->wherePostType($modelClass::POST_TYPE);
         }
 

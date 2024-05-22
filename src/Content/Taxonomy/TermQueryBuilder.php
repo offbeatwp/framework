@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\Taxonomy;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use UnexpectedValueException;
 use WP_Term_Query;
 
 /** @template TModel of TermModel */
@@ -91,7 +92,13 @@ final class TermQueryBuilder
         $terms = $this->runQuery()->get_terms();
 
         foreach ($terms as $term) {
-            $termModels->push(new $this->model($term));
+            $model = offbeat('taxonomy')->convertWpTermToModel($term);
+
+            if ($model instanceof static) {
+                $termModels->push(new $this->model($term));
+            } else {
+                throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
+            }
         }
 
         return $termModels;
