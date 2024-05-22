@@ -6,7 +6,7 @@ use ReflectionClass;
 
 class ComponentsService extends AbstractService
 {
-    public $bindings = [
+    public array $bindings = [
         'components' => ComponentRepository::class
     ];
 
@@ -15,7 +15,7 @@ class ComponentsService extends AbstractService
         offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents']);
     }
 
-    public function registerComponents()
+    public function registerComponents(): void
     {
         $components = $this->registrableComponents();
 
@@ -26,7 +26,11 @@ class ComponentsService extends AbstractService
         }
     }
 
-    public function registrableComponents()
+    /**
+     * @return string[]|null
+     * @throws \ReflectionException
+     */
+    public function registrableComponents(): ?array
     {
         $activeComponents = [];
         $componentsDirectory = $this->getComponentsDirectory();
@@ -35,13 +39,12 @@ class ComponentsService extends AbstractService
             return null;
         }
 
-        if ($handle = opendir($componentsDirectory)) {
+        $handle = opendir($componentsDirectory);
+        if ($handle) {
             while (($entry = readdir($handle)) !== false) {
-                if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) {
-                    continue;
+                if (is_dir($componentsDirectory . '/' . $entry) && !preg_match('/^(_|\.)/', $entry)) {
+                    $activeComponents[] = $entry;
                 }
-
-                $activeComponents[] = $entry;
             }
 
             closedir($handle);
@@ -53,17 +56,15 @@ class ComponentsService extends AbstractService
             $compomentClass = "Components\\" . $activeComponent . "\\" . $activeComponent;
             $compomentReflectionClass = new ReflectionClass($compomentClass);
 
-            if ($compomentReflectionClass->isAbstract()) {
-                continue;
+            if (!$compomentReflectionClass->isAbstract()) {
+                $components[$activeComponent] = $compomentClass;
             }
-
-            $components[$activeComponent] = $compomentClass;
         }
 
         return array_unique($components);
     }
 
-    public function getComponentsDirectory()
+    public function getComponentsDirectory(): string
     {
         return $this->app->componentsPath();
     }

@@ -10,7 +10,7 @@ use TypeError;
 use WP_User;
 
 /**
- * @template TModel extends UserModel
+ * @template TModel of UserModel
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
  * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
@@ -55,7 +55,10 @@ class UserCollection extends OffbeatModelCollection
         return array_map(static fn(UserModel $model) => $model->getId() ?: 0, $this->items);
     }
 
-    /** @return UserModel[] */
+    /**
+     * @return UserModel[]
+     * @phpstan-return TModel[]
+     */
     public function toArray()
     {
         return $this->toCollection()->toArray();
@@ -88,7 +91,7 @@ class UserCollection extends OffbeatModelCollection
     }
 
     /**
-     * @template T
+     * @template T of \OffbeatWP\Content\User\UserModel
      * @deprecated
      * @param class-string<T> $className
      * @return UserCollection<T>
@@ -111,7 +114,7 @@ class UserCollection extends OffbeatModelCollection
      * Push a model onto the beginning of the user collection.
      * @param int|WP_User|UserModel $value
      * @param array-key $key
-     * @return UserCollection<TModel>
+     * @return $this
      */
     public function prepend($value, $key = null)
     {
@@ -121,7 +124,7 @@ class UserCollection extends OffbeatModelCollection
     /**
      * Add a model to the user collection.
      * @param int|WP_User|UserModel $item
-     * @return UserCollection<TModel>
+     * @return $this
      */
     public function add($item)
     {
@@ -130,7 +133,7 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * @param int|WP_User|UserModel $item
-     * @return TModel|null
+     * @phpstan-return  TModel|null
      */
     protected function createValidUserModel($item): ?UserModel
     {

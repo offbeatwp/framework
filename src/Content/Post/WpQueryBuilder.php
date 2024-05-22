@@ -15,7 +15,7 @@ class WpQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var mixed[] */
-    protected array $queryVars = [];
+    protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
 
     /** @return PostsCollection<TModel> */
@@ -108,6 +108,7 @@ class WpQueryBuilder
         return $result;
     }
 
+    /** @phpstan-return TModel|null */
     public function findById(?int $id): ?PostModel
     {
         if ($id <= 0) {
@@ -119,7 +120,7 @@ class WpQueryBuilder
         return $this->first();
     }
 
-
+    /** @phpstan-return TModel */
     public function findByIdOrFail(int $id): PostModel
     {
         $result = $this->findById($id);
@@ -271,7 +272,7 @@ class WpQueryBuilder
      */
     public function wherePostType($postTypes): self
     {
-        if (!isset($this->queryVars['post_type'])) {
+        if (!isset($this->queryVars['post_type']) || $this->queryVars['post_type'] === PostModel::POST_TYPE) {
             $this->queryVars['post_type'] = [];
         }
 

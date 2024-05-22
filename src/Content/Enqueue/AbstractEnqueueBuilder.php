@@ -40,14 +40,9 @@ abstract class AbstractEnqueueBuilder
     }
 
     /** @param string[] $deps An array of registered handles that this enqueue depends on. */
-    final public function setDeps(...$deps): self
+    final public function setDeps(array $deps): self
     {
-        if (count($deps) === 1 && is_array($deps[0])) {
-            $this->deps = $deps[0];
-        } else {
-            $this->deps = $deps;
-        }
-
+        $this->deps = $deps;
         return $this;
     }
 

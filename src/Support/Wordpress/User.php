@@ -5,7 +5,7 @@ namespace OffbeatWP\Support\Wordpress;
 use OffbeatWP\Content\User\UserModel;
 use WP_User;
 
-class User
+final class User
 {
     /**
      * Convert a user to the <b>first</b> matching UserModel which also matches/extends the preferred model

@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Post;
 
-use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Macroable;
@@ -20,26 +19,26 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use stdClass;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
 
 class PostModel implements PostModelInterface
 {
-    private const DEFAULT_POST_STATUS = 'publish';
-    private const DEFAULT_COMMENT_STATUS = 'closed';
-    private const DEFAULT_PING_STATUS = 'closed';
+    public const POST_TYPE = 'any';
 
-    /** @var WP_Post|object|null */
-    public $wpPost;
-    /** @var mixed[] */
-    public $metaInput = [];
-    /** @var mixed[] */
-    protected $metaToUnset = [];
-    /** @var mixed[]|false|string */
-    protected $metas = false;
+    public const DEFAULT_POST_STATUS = 'publish';
+    public const DEFAULT_COMMENT_STATUS = 'closed';
+    public const DEFAULT_PING_STATUS = 'closed';
+
+    public WP_Post|stdClass|null $wpPost;
+    protected array $metaInput = [];
+    protected array $metaToUnset = [];
+    protected ?array $metas = null;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
+
     /**
      * @var string[]|null
      * This should be an associative string array<br>
@@ -66,10 +65,10 @@ class PostModel implements PostModelInterface
     {
         if ($post === null) {
             $this->wpPost = (object)[];
-            $this->wpPost->post_type = offbeat('post-type')->getPostTypeByModel(static::class);
-            $this->wpPost->post_status = self::DEFAULT_POST_STATUS;
-            $this->wpPost->comment_status = self::DEFAULT_COMMENT_STATUS;
-            $this->wpPost->ping_status = self::DEFAULT_PING_STATUS;
+            $this->wpPost->post_type = static::POST_TYPE;
+            $this->wpPost->post_status = static::DEFAULT_POST_STATUS;
+            $this->wpPost->comment_status = static::DEFAULT_COMMENT_STATUS;
+            $this->wpPost->ping_status = static::DEFAULT_PING_STATUS;
         } elseif ($post instanceof WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
@@ -210,7 +209,7 @@ class PostModel implements PostModelInterface
         $hasRestoreWpautopHook = has_filter('the_content', '_restore_wpautop_hook');
         $didManualRestoreWpAutopHook = false;
         if ($hasRestoreWpautopHook) {
-            _restore_wpautop_hook(null);
+            _restore_wpautop_hook('');
 
             $didManualRestoreWpAutopHook = true;
         }
@@ -377,23 +376,15 @@ class PostModel implements PostModelInterface
         return get_userdata($authorId);
     }
 
-    /** @return false|int|numeric-string */
-    public function getAuthorId()
+    public function getAuthorId(): int
     {
-        $authorId = $this->wpPost->post_author;
-
-        if (!$authorId) {
-            return false;
-        }
-
-        return $authorId;
+        return (int)$this->wpPost->post_author;
     }
 
-    /** @return false|mixed[]|string */
-    public function getMetas()
+    final public function getMetas(): array
     {
-        if ($this->metas === false) {
-            $this->metas = get_post_meta($this->getId());
+        if ($this->metas === null) {
+            $this->metas = get_post_meta($this->getId()) ?: [];
         }
 
         return $this->metas;
@@ -458,32 +449,6 @@ class PostModel implements PostModelInterface
         }
 
         return null;
-    }
-
-    /** @deprecated Use getPostDateTime instead. */
-    public function getCreatedAt(): Carbon
-    {
-        trigger_error('The getCreatedAt method is deprecated.', E_USER_DEPRECATED);
-        $creationDate = get_the_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$creationDate) {
-            throw new OffbeatInvalidModelException('Unable to find the creation date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($creationDate);
-    }
-
-    /** @deprecated Use getModifiedDateTime instead. */
-    public function getUpdatedAt(): Carbon
-    {
-        trigger_error('The getUpdatedAt method is deprecated.', E_USER_DEPRECATED);
-        $updateDate = get_the_modified_date('Y-m-d H:i:s', $this->wpPost);
-
-        if (!$updateDate) {
-            throw new OffbeatInvalidModelException('Unable to find the update date of post with ID: ' . $this->wpPost->ID);
-        }
-
-        return Carbon::parse($updateDate);
     }
 
     /** @throws PostMetaNotFoundException */
@@ -617,16 +582,6 @@ class PostModel implements PostModelInterface
         $ancestors = $this->getAncestors();
         $this->getAncestors()->last();
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
-    }
-
-    /**
-     * @deprecated Use getChildren instead
-     * @see getChildren
-     */
-    public function getChilds(): PostsCollection
-    {
-        trigger_error('Deprecated getChilds called in PostModel. Use getChildren instead.', E_USER_DEPRECATED);
-        return $this->getChildren();
     }
 
     /** @return PostsCollection<static> Retrieves the children of this post. */
@@ -809,7 +764,7 @@ class PostModel implements PostModelInterface
             }
         } else {
             // Update post
-            $updatedPostId = wp_update_post($this->wpPost);
+            $updatedPostId = wp_update_post((array)$this->wpPost);
 
             // Unset Meta
             if ($updatedPostId && is_int($updatedPostId)) {
@@ -866,7 +821,7 @@ class PostModel implements PostModelInterface
 
     public function refreshMetas()
     {
-        $this->metas = false;
+        $this->metas = null;
         $this->getMetas();
     }
 
@@ -935,7 +890,7 @@ class PostModel implements PostModelInterface
      * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
      * @return static|null
      */
-    public static function current()
+    final public static function current(): ?static
     {
         $post = offbeat('post')->get();
         return ($post instanceof static) ? $post : null;

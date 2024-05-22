@@ -7,6 +7,7 @@ use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
+use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
@@ -29,6 +30,7 @@ class UserModel
     private bool $isInitialised = false;
 
     use BaseModelTrait;
+    use SetMetaTrait;
     use GetMetaTrait;
     use Macroable {
         Macroable::__call as macroCall;
@@ -76,7 +78,7 @@ class UserModel
      */
     public function __call($method, $parameters)
     {
-        $className = get_class($this);
+        $className = $this::class;
 
         if (static::hasMacro($method)) {
             trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);
@@ -159,28 +161,6 @@ class UserModel
     final public function setUrl(string $url): self
     {
         $this->wpUser->user_url = $url;
-        return $this;
-    }
-
-    /**
-     * @param string $key Metadata name.
-     * @param mixed $value The new metadata value.
-     * @return $this
-     */
-    final public function setMeta(string $key, $value): self
-    {
-        $this->metaInput[$key] = $value;
-        unset($this->metaToUnset[$key]);
-
-        return $this;
-    }
-
-    final public function unsetMeta(string $key): self
-    {
-        $this->metaToUnset[$key] = '';
-
-        unset($this->metaInput[$key]);
-
         return $this;
     }
 

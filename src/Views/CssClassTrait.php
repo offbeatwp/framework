@@ -40,6 +40,6 @@ trait CssClassTrait
 
     protected function getCssClassesAsString(): string
     {
-        return implode(' ', array_filter(array_unique($this->cssClasses, SORT_STRING)));
+        return implode(' ', array_filter(array_unique($this->cssClasses)));
     }
 }

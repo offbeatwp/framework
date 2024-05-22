@@ -5,11 +5,8 @@ use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Form\Fields\Text;
 
 class Heading extends AbstractFieldsCollection {
-    /**
-     * @param string $defaultHeading
-     * @param bool $includeLead
-     */
-    public function __construct($defaultHeading = 'h3', $includeLead = false)
+    /** @param string $defaultHeading */
+    public function __construct($defaultHeading = 'h3')
     {
         parent::__construct();
         $this->addField(Text::make('heading_title', __('Title', 'offbeatwp')));

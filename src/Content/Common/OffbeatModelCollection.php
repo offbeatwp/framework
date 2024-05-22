@@ -4,6 +4,10 @@ namespace OffbeatWP\Content\Common;
 
 use Illuminate\Support\Collection;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 abstract class OffbeatModelCollection extends Collection
 {
     /** Convert this typed collection to a basic Collection */
@@ -33,10 +37,12 @@ abstract class OffbeatModelCollection extends Collection
     }
 
     /**
-     * Run an associative map over each of the items. This will return a basic Collection.
-     * The callback should return an associative array with a single key/value pair.
-     * @param callable(mixed): (mixed[]) $callback
-     * @return Collection
+     * Run a map over each of the items.
+     *
+     * @template TMapValue
+     *
+     * @param  callable(TValue, TKey): TMapValue  $callback
+     * @return Collection<TKey, TMapValue>
      */
     public function mapWithKeys(callable $callback)
     {
@@ -44,9 +50,12 @@ abstract class OffbeatModelCollection extends Collection
     }
 
     /**
-     * Run a map over each of the items. This will return a basic Collection.
-     * @param callable(mixed): mixed $callback
-     * @return Collection
+     * Run a map over each of the items.
+     *
+     * @template TMapValue
+     *
+     * @param  callable(TValue, TKey): TMapValue  $callback
+     * @return Collection<TKey, TMapValue>
      */
     public function map(callable $callback): Collection
     {

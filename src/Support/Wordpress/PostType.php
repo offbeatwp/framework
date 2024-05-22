@@ -4,7 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 use OffbeatWP\Content\Post\PostTypeBuilder;
 use OffbeatWP\Content\Post\PostModel;
 
-class PostType
+final class PostType
 {
     public const DEFAULT_POST_MODEL = PostModel::class;
 

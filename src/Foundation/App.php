@@ -144,7 +144,7 @@ final class App
 
     public function markServiceAsInitiated(object $service): void
     {
-        $this->services[get_class($service)] = $service;
+        $this->services[$service::class] = $service;
     }
 
     /**
@@ -174,17 +174,16 @@ final class App
 
     /**
      * @param string|null $config
-     * @param null $default
      * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
      */
-    public function config(?string $config, $default)
+    public function config(?string $config)
     {
         if ($this->config === null) {
             $this->config = new Config($this);
         }
 
         if ($config !== null) {
-            return $this->config->get($config, $default);
+            return $this->config->get($config);
         }
 
         return $this->config;
@@ -243,7 +242,7 @@ final class App
             }
 
             echo $output;
-        } catch (InvalidRouteException $e) {
+        } catch (InvalidRouteException) {
             // Find new route
             $this->findRoute();
             $this->run($config);

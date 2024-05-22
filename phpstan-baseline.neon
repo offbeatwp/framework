@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to deprecated method registerWidget\\(\\) of class OffbeatWP\\\\Components\\\\ComponentRepository\\.$#"
+			count: 1
+			path: src/Components/ComponentRepository.php
+
+		-
 			message: "#^Call to static method get\\(\\) on an unknown class OffbeatWP\\\\AcfCore\\\\ComponentFields\\.$#"
 			count: 1
 			path: src/Components/GenericWidget.php
@@ -16,56 +21,6 @@ parameters:
 			path: src/Components/GenericWidget.php
 
 		-
-			message: "#^Property OffbeatWP\\\\Content\\\\Enqueue\\\\AbstractEnqueueBuilder\\:\\:\\$deps \\(array\\<string\\>\\) does not accept array\\<int\\|string, array\\<string\\>\\>\\.$#"
-			count: 1
-			path: src/Content/Enqueue/AbstractEnqueueBuilder.php
-
-		-
-			message: "#^Method OffbeatWP\\\\Content\\\\Post\\\\PostModel\\:\\:find\\(\\) should return static\\(OffbeatWP\\\\Content\\\\Post\\\\PostModel\\)\\|null but returns OffbeatWP\\\\Content\\\\Post\\\\PostModel\\|null\\.$#"
-			count: 1
-			path: src/Content/Post/PostModel.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of function _restore_wpautop_hook expects string, null given\\.$#"
-			count: 1
-			path: src/Content/Post/PostModel.php
-
-		-
-			message: "#^Class OffbeatWP\\\\Content\\\\Post\\\\PostsCollection @implements tag contains incompatible type Illuminate\\\\Support\\\\Enumerable&iterable\\<\\(int\\|string\\), TModel\\>\\.$#"
-			count: 1
-			path: src/Content/Post/PostsCollection.php
-
-		-
-			message: "#^Class OffbeatWP\\\\Content\\\\Post\\\\PostsCollection has @implements tag, but does not implement any interface\\.$#"
-			count: 1
-			path: src/Content/Post/PostsCollection.php
-
-		-
-			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Content\\\\Taxonomy\\\\TermModel\\)\\:\\:TAXONOMY\\.$#"
-			count: 4
-			path: src/Content/Taxonomy/TermModel.php
-
-		-
-			message: "#^Method OffbeatWP\\\\Content\\\\Taxonomy\\\\TermQueryBuilder\\:\\:count\\(\\) should return int but returns array\\<int\\|string\\|WP_Term\\>\\|string\\.$#"
-			count: 1
-			path: src/Content/Taxonomy/TermQueryBuilder.php
-
-		-
-			message: "#^Method OffbeatWP\\\\Content\\\\User\\\\UserCollection\\:\\:as\\(\\) should return OffbeatWP\\\\Content\\\\User\\\\UserCollection\\<T\\> but returns OffbeatWP\\\\Content\\\\User\\\\UserCollection\\<OffbeatWP\\\\Content\\\\User\\\\UserModel&T\\>\\.$#"
-			count: 1
-			path: src/Content/User/UserCollection.php
-
-		-
-			message: "#^PHPDoc tag @return with type TModel\\|null is not subtype of native type OffbeatWP\\\\Content\\\\User\\\\UserModel\\|null\\.$#"
-			count: 1
-			path: src/Content/User/UserCollection.php
-
-		-
-			message: "#^Method OffbeatWP\\\\Content\\\\User\\\\UserModel\\:\\:allAsArray\\(\\) should return array\\<static\\(OffbeatWP\\\\Content\\\\User\\\\UserModel\\)\\> but returns array\\<OffbeatWP\\\\Content\\\\User\\\\UserModel\\>\\.$#"
-			count: 1
-			path: src/Content/User/UserModel.php
-
-		-
 			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\Fields\\\\AbstractField\\)\\:\\:FIELD_TYPE\\.$#"
 			count: 1
 			path: src/Form/Fields/AbstractField.php
@@ -76,21 +31,6 @@ parameters:
 			path: src/Form/Fields/AbstractField.php
 
 		-
-			message: "#^Constructor of class OffbeatWP\\\\Form\\\\FieldsCollections\\\\Heading has an unused parameter \\$includeLead\\.$#"
-			count: 1
-			path: src/Form/FieldsCollections/Heading.php
-
-		-
-			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\FieldsContainers\\\\AbstractFieldsContainer\\)\\:\\:TYPE\\.$#"
-			count: 1
-			path: src/Form/FieldsContainers/AbstractFieldsContainer.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Form/Form.php
-
-		-
 			message: "#^Template type T of function container\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Foundation/helpers.php
@@ -99,18 +39,3 @@ parameters:
 			message: "#^Template type T of function offbeat\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Foundation/helpers.php
-
-		-
-			message: "#^Class OffbeatWP\\\\Routes\\\\RouteCollection has @implements tag, but does not implement any interface\\.$#"
-			count: 1
-			path: src/Routes/RouteCollection.php
-
-		-
-			message: "#^Access to undefined constant class\\-string\\<OffbeatWP\\\\Console\\\\AbstractCommand\\>\\|OffbeatWP\\\\Console\\\\AbstractCommand\\:\\:COMMAND\\.$#"
-			count: 1
-			path: src/Support/Wordpress/Console.php
-
-		-
-			message: "#^Parameter \\#2 \\$associative of function get_headers expects bool, int given\\.$#"
-			count: 1
-			path: src/Support/Wordpress/WpFile.php
