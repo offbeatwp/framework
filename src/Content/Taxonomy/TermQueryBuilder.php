@@ -14,8 +14,8 @@ final class TermQueryBuilder
 
     /** @var class-string<TModel> */
     protected string $model;
-    protected array $queryVars = [];
     protected string $taxonomy;
+    protected array $queryVars = [];
 
     /** @param class-string<TModel> $model */
     public function __construct($model)
