@@ -4,10 +4,10 @@
   "license": "MIT",
   "type": "library",
   "require": {
-    "php": "^8.0",
+    "php": "8.*",
     "php-di/php-di": "^6.4.0",
-    "illuminate/collections": "^v9.52.16",
-    "illuminate/macroable": "^v9.52.16",
+    "illuminate/collections": "^v10.48.11",
+    "illuminate/macroable": "^v10.48.11",
     "symfony/routing": "^v5.4.39",
     "symfony/http-foundation": "^v5.4.39",
     "ext-dom": "*"
