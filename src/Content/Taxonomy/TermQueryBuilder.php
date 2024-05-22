@@ -8,16 +8,14 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use WP_Term_Query;
 
 /** @template TModel of TermModel */
-class TermQueryBuilder
+final class TermQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var mixed[] */
-    protected $queryVars = [];
     /** @var class-string<TModel> */
-    protected $model;
-    /** @var string */
-    protected $taxonomy;
+    protected string $model;
+    protected array $queryVars = [];
+    protected string $taxonomy;
 
     /** @param class-string<TModel> $model */
     public function __construct($model)
@@ -232,9 +230,15 @@ class TermQueryBuilder
     }
 
     /** @phpstan-return TModel|null */
+    private function _getTermById(?int $id): ?TermModel
+    {
+        return ($id > 0) ? $this->include([$id])->first() : null;
+    }
+
+    /** @phpstan-return TModel|null */
     public function findById(?int $id): ?TermModel
     {
-        return ($id > 0) ? $this->findBy('id', $id) : null;
+        return $this->_getTermById($id);
     }
 
     /** @phpstan-return TModel */
@@ -272,11 +276,26 @@ class TermQueryBuilder
      * @param string|int $value
      * @phpstan-return TModel|null
      */
-    public function findBy(string $field, $value): ?TermModel
+    public function findBy(string $field, string|int $value): ?TermModel
     {
-        $term = get_term_by($field, $value, $this->taxonomy);
+        if ($field === 'id' || $field === 'ID' || $field === 'term_id') {
+            return $this->_getTermById((int)$value);
+        }
 
-        return ($term) ? new $this->model($term) : null;
+        if ($field === 'slug' || $field === 'name') {
+            if (!$value) {
+                return null;
+            }
+
+            $this->queryVars[$field] = $value;
+        } elseif ($field === 'term_taxonomy_id') {
+            $this->queryVars['term_taxonomy_id'] = $value;
+            unset($this->queryVars['taxonomy']);
+        } else {
+            throw new InvalidArgumentException('TermQueryBuilder::findBy recieved invalid field value ' . $field);
+        }
+
+        return $this->first();
     }
 
     /**

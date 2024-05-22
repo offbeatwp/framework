@@ -8,10 +8,10 @@ use WP_Post;
  * @template TModel of PostModel
  * @extends WpQueryBuilder<TModel>
  */
-class WpQueryBuilderModel extends WpQueryBuilder
+final class WpQueryBuilderModel extends WpQueryBuilder
 {
     /** @var class-string<TModel> */
-    protected $model;
+    protected string $model;
 
     /**
      * @throws OffbeatInvalidModelException
@@ -39,7 +39,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
-    /** @return TModel|PostModel */
+    /** @phpstan-return TModel|PostModel */
     public function firstOrNew(): PostModel
     {
         return $this->first() ?: new $this->model(null);
@@ -47,7 +47,7 @@ class WpQueryBuilderModel extends WpQueryBuilder
 
     /**
      * @param WP_Post|int|null $post
-     * @return TModel|PostModel|null
+     * @phpstan-return TModel|PostModel|null
      */
     public function postToModel($post)
     {
@@ -58,13 +58,13 @@ class WpQueryBuilderModel extends WpQueryBuilder
         return new $this->model($post);
     }
 
-    /** @return TModel|null */
+    /** @phpstan-return TModel|null */
     public function first(): ?PostModel
     {
         return parent::first();
     }
 
-    /** @return TModel */
+    /** @phpstan-return TModel */
     public function firstOrFail(): PostModel
     {
         return parent::firstOrFail();
