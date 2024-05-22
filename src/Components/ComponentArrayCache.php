@@ -5,18 +5,18 @@ namespace OffbeatWP\Components;
 final class ComponentArrayCache
 {
     /** @phpstan-var array<string|null, array{mixed, int<0, max>}>> $data each element being a tuple of [$data, $expiration], where the expiration is int */
-    private array $data = [];
+    private static array $data = [];
 
-    public function contains(string $id): bool
+    public static function contains(string $id): bool
     {
-        if (!isset($this->data[$id])) {
+        if (!isset(self::$data[$id])) {
             return false;
         }
 
-        $expiration = $this->data[$id][1];
+        $expiration = self::$data[$id][1];
 
         if ($expiration && $expiration < time()) {
-            $this->delete($id);
+            self::delete($id);
             return false;
         }
 
@@ -28,25 +28,24 @@ final class ComponentArrayCache
      * @param string $id The id of the cache entry to fetch.
      * @return string|null The cached data or <i>NULL</i>, if no cache entry exists for the given id.
      */
-    public function fetch(string $id): ?string
+    public static function fetch(string $id): ?string
     {
-        if (!$this->contains($id)) {
+        if (!self::contains($id)) {
             return null;
         }
 
-        return $this->data[$id][0];
+        return self::$data[$id][0];
     }
 
     /**
      * Puts data into the cache.
-     *
      * @param string $id The cache id.
      * @param string $data The cache entry/data.
      * @param int<0, max> $lifeTime The lifetime. If != 0, sets a specific lifetime for this cache entry. (0 => infinite lifeTime)
      */
-    public function save(string $id, string $data, int $lifeTime = 0): void
+    public static function save(string $id, string $data, int $lifeTime = 0): void
     {
-        $this->data[$id] = [$data, $lifeTime ? time() + $lifeTime : 0];
+        self::$data[$id] = [$data, $lifeTime ? time() + $lifeTime : 0];
     }
 
     /**
@@ -54,8 +53,8 @@ final class ComponentArrayCache
      * @param string $id The cache id.
      * @return void
      */
-    public function delete(string $id): void
+    public static function delete(string $id): void
     {
-        unset($this->data[$id]);
+        unset(self::$data[$id]);
     }
 }

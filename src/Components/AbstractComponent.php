@@ -18,18 +18,13 @@ abstract class AbstractComponent
         ViewableTrait::view as protected traitView;
     }
 
-    /** @var View */
-    public $view;
-    /** @var Form|null */
-    public $form = null;
-    /** @var ContextInterface|null */
-    protected $context;
+    public View $view;
+    public ?Form $form = null;
+    protected ?ContextInterface $context;
+    protected bool $assetsEnqueued = false;
+    private ?int $renderId = null;
     /** @var string[] */
-    private $cssClasses = [];
-    /** @var int|null */
-    private $renderId = null;
-    /** @var bool */
-    protected $assetsEnqueued = false;
+    private array $cssClasses = [];
 
     /** @return Form|null */
     public static function form()
@@ -61,11 +56,6 @@ abstract class AbstractComponent
     {
         $this->view = $view;
         $this->context = $context;
-
-        if (!App::singleton()->container->has('componentCache')) {
-            // Just a simple lightweight cache if none is set
-            App::singleton()->container->set('componentCache', new ComponentArrayCache());
-        }
     }
 
     /**
@@ -170,25 +160,20 @@ abstract class AbstractComponent
         return md5($prefix . $this::class . json_encode($settings));
     }
 
-    /**
-     * @param string $id
-     * @return false|string
-     */
-    protected function getCachedComponent($id)
+    protected function getCachedComponent(string $id): ?string
     {
         return $this->getCachedObject($id);
     }
 
-    /** @return false|string */
-    protected function getCachedObject(string $id)
+    protected function getCachedObject(string $id): ?string
     {
-        return container('componentCache')->fetch($id);
+        return ComponentArrayCache::fetch($id);
     }
 
     protected function setCachedObject(string $id, ?string $object): ?string
     {
         if ($object) {
-            container('componentCache')->save($id, $object, 60);
+            ComponentArrayCache::save($id, $object, 60);
         }
 
         return $object;
