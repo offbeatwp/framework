@@ -94,11 +94,11 @@ final class TermQueryBuilder
         foreach ($terms as $term) {
             $model = offbeat('taxonomy')->convertWpTermToModel($term);
 
-            if ($model instanceof static) {
-                $termModels->push(new $this->model($term));
-            } else {
+            if ($this->model && !$model instanceof $this->model) {
                 throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
             }
+
+            $termModels->push($model);
         }
 
         return $termModels;
