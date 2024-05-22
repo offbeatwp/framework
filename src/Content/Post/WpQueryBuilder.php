@@ -108,6 +108,7 @@ class WpQueryBuilder
         return $result;
     }
 
+    /** @phpstan-return TModel|null */
     public function findById(?int $id): ?PostModel
     {
         if ($id <= 0) {
@@ -119,7 +120,7 @@ class WpQueryBuilder
         return $this->first();
     }
 
-
+    /** @phpstan-return TModel */
     public function findByIdOrFail(int $id): PostModel
     {
         $result = $this->findById($id);

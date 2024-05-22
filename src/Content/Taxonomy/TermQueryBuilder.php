@@ -161,7 +161,7 @@ class TermQueryBuilder
         $this->queryVars['fields'] = 'count';
         $this->queryVars['no_found_rows'] = true;
 
-        return $this->runQuery()->get_terms();
+        return (int)$this->runQuery()->get_terms();
     }
 
     /**
