@@ -23,8 +23,7 @@ final class RoutesManager
     protected Collection $actions;
     protected RouteCollection $routeCollection;
     protected int $routeIterator = 0;
-    /** @var PathRoute|CallbackRoute|false */
-    protected $lastMatchRoute;
+    protected PathRoute|CallbackRoute|false|null $lastMatchRoute;
 
     protected string $priorityMode = self::PRIORITY_HIGH;
     protected bool $routesAdded = false;
@@ -190,9 +189,9 @@ final class RoutesManager
      */
     public function patch($route, $actionCallback, $parameters = [], array $requirements = [], array $options = []): Route
     {
-        $route = $this->createPatchRoute($route, $actionCallback, $parameters, $requirements, $options);
-        $this->addRoute($route);
-        return $route;
+        $routeObj = $this->createPatchRoute($route, $actionCallback, $parameters, $requirements, $options);
+        $this->addRoute($routeObj);
+        return $routeObj;
     }
 
     /**
@@ -235,7 +234,7 @@ final class RoutesManager
      * @param string|null $condition
      * @return PathRoute|CallbackRoute
      */
-    public function createRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): Route
+    public function createRoute($target, $actionCallback, $defaults, array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = ''): PathRoute|CallbackRoute
     {
         $name = $this->getNextRouteName();
 
@@ -321,8 +320,7 @@ final class RoutesManager
         return $route;
     }
 
-    /** @return PathRoute|null|false */
-    public function findPathRoute()
+    public function findPathRoute(): PathRoute|null|false
     {
         // $request = Request::createFromGlobals(); // Disabled, gave issues with uploads
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'] ?? 'GET', $_REQUEST, $_COOKIE, [], $_SERVER);
@@ -363,11 +361,7 @@ final class RoutesManager
         return false;
     }
 
-    /**
-     * @param Route $route
-     * @return void
-     */
-    public function removeRoute($route)
+    public function removeRoute(CallbackRoute|PathRoute $route): void
     {
         if ($route instanceof Route) {
             $routeName = $route->getName();

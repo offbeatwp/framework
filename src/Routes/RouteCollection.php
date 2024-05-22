@@ -18,7 +18,8 @@ final class RouteCollection extends SymfonyRouteCollection
         }
     }
 
-    public function removeAll(): self
+    /** @return $this */
+    public function removeAll()
     {
         foreach ($this->all() as $route) {
             $this->remove($route->getName());
