@@ -102,7 +102,7 @@ abstract class AbstractComponent
         $cachedId = $this->getCacheId($settings);
         $object = $this->getCachedComponent($cachedId);
 
-        if ($object !== false) {
+        if ($object !== null) {
             return $object;
         }
 
