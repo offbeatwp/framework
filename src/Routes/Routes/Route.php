@@ -41,14 +41,13 @@ class Route extends SymfonyRoute
      * @param callable $actionCallback
      * @return $this
      */
-    public function setActionCallback($actionCallback)
+    final public function setActionCallback($actionCallback)
     {
         $this->actionCallback = $actionCallback;
         return $this;
     }
 
-    /** @return callable(mixed[]): mixed */
-    public function getActionCallback()
+    final public function getActionCallback(): mixed
     {
         $actionCallback = $this->actionCallback;
 
@@ -59,8 +58,7 @@ class Route extends SymfonyRoute
         return $actionCallback;
     }
 
-    /** @return mixed */
-    public function doActionCallback()
+    final public function doActionCallback(): mixed
     {
         $actionCallback = $this->getActionCallback();
 
@@ -71,13 +69,13 @@ class Route extends SymfonyRoute
         return App::singleton()->container->call($actionCallback, $this->getParameters());
     }
 
-    public function hasValidActionCallback(): bool
+    final public function hasValidActionCallback(): bool
     {
         return is_callable($this->actionCallback) || (is_array($this->actionCallback) && method_exists($this->actionCallback[0], $this->actionCallback[1]));
     }
 
     /** @return mixed[] */
-    public function getParameters()
+    final public function getParameters()
     {
         $parameters = $this->getDefaults();
 
@@ -92,14 +90,14 @@ class Route extends SymfonyRoute
      * @param string $name
      * @return $this
      */
-    public function setName($name)
+    final public function setName($name)
     {
         $this->name = $name;
         return $this;
     }
 
     /** @return string */
-    public function getName()
+    final public function getName()
     {
         return $this->name;
     }
@@ -108,13 +106,13 @@ class Route extends SymfonyRoute
      * @param string[] $classNames
      * @return $this
      */
-    public function middleware(array $classNames): self
+    final public function middleware(array $classNames)
     {
         $this->middleware = $classNames;
         return $this;
     }
 
-    public function runMiddleware(): Route
+    final public function runMiddleware(): Route
     {
         $request = new RouteRequest($this);
 

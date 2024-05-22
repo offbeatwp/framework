@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Routes\Routes;
 
-class PathRoute extends Route
+final class PathRoute extends Route
 {
     public function __construct(string $name, string $path, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', $schemes = [], $methods = [], ?string $condition = '') {
         $this->setName($name);

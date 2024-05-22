@@ -3,7 +3,7 @@ namespace OffbeatWP\Routes\Routes;
 
 use Closure;
 
-class CallbackRoute extends Route
+final class CallbackRoute extends Route
 {
     /** @var callable(): bool */
     private $matchCallback;
