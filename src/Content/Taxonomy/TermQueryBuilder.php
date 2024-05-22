@@ -244,7 +244,13 @@ final class TermQueryBuilder
     /** @phpstan-return TModel */
     public function findByIdOrFail(int $id): TermModel
     {
-        return $this->findByOrFail('id', $id);
+        $result = $this->findById($id);
+
+        if (!$result) {
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' where id has a value of ' . $id);
+        }
+
+        return $result;
     }
 
     /** @phpstan-return TModel|null */
