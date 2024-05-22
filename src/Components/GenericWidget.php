@@ -51,7 +51,6 @@ class GenericWidget extends WP_Widget
         echo $args['after_widget'];
     }
 
-    /** @deprecated */
     public function getFieldValues()
     {
         $settings = (object)[];
@@ -73,7 +72,6 @@ class GenericWidget extends WP_Widget
         return $settings;
     }
 
-    /** @deprecated */
     public function get_field($key)
     {
         return get_field($key, $this->widgetId);
@@ -92,7 +90,6 @@ class GenericWidget extends WP_Widget
         echo '<br>';
     }
 
-    /** @deprecated */
     public function the_field($key)
     {
         echo $this->get_field($key);

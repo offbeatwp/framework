@@ -13,10 +13,7 @@ class Config {
     /** @param App $app */
     public function __construct($app) {
         $this->app = $app;
-
-        if ($this->config === null) {
-            $this->loadConfig();
-        }
+        $this->loadConfig();
     }
 
     private function loadConfig(): void
