@@ -78,10 +78,9 @@ final class Config {
 
     /**
      * @param string $key
-     * @param null $default Unused
      * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
      */
-    public function get(string $key, $default = null)
+    public function get(string $key)
     {
         $config = $this->config;
         $return = ArrayHelper::getValueFromDottedKey($key, $config ?: []);

@@ -21,11 +21,10 @@ if (!function_exists('offbeat')) {
 if (!function_exists('config')) {
     /**
      * @param string|null $config
-     * @param null $default Unused
      * @return mixed
      */
-    function config(?string $config = null, $default = null) {
-        return App::singleton()->config($config, $default);
+    function config(?string $config = null) {
+        return App::singleton()->config($config);
     }
 }
 
