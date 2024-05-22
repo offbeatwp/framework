@@ -4,8 +4,7 @@ namespace OffbeatWP\Content\Traits;
 
 trait OffbeatQueryTrait
 {
-    /** @var string */
-    protected static $lastRequest = '';
+    protected static string $lastRequest = '';
 
     /**
      * Get objects where the meta value is equal to the given value.
