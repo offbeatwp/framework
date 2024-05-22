@@ -18,7 +18,7 @@ final class TermQueryBuilder
     protected array $queryVars = [];
 
     /** @param class-string<TModel> $model */
-    public function __construct($model)
+    public function __construct(string $model)
     {
         $this->model = $model;
         $this->taxonomy = $model::TAXONOMY;
@@ -48,7 +48,7 @@ final class TermQueryBuilder
      * @param int[] $ids Array of term IDs to include.
      * @return $this
      */
-    public function include(array $ids): self
+    public function include(array $ids)
     {
         $this->queryVars['include'] = $ids ?: [0];
         return $this;
@@ -58,7 +58,7 @@ final class TermQueryBuilder
      * @param int[] $ids Array of term IDs to exclude.
      * @return $this
      */
-    public function exclude(array $ids): self
+    public function exclude(array $ids)
     {
         $this->queryVars['exclude'] = $ids;
         return $this;
@@ -68,7 +68,7 @@ final class TermQueryBuilder
      * @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored
      * @return $this
      */
-    public function excludeTree(array $ids): self
+    public function excludeTree(array $ids)
     {
         $this->queryVars['exclude_tree'] = $ids;
         return $this;
@@ -78,7 +78,7 @@ final class TermQueryBuilder
      * True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies.
      * @return $this
      */
-    public function childless(bool $childless = true): self
+    public function childless(bool $childless = true)
     {
         $this->queryVars['childless'] = true;
         return $this;
@@ -284,7 +284,6 @@ final class TermQueryBuilder
 
     /**
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
-     * @param string|int $value
      * @phpstan-return TModel|null
      */
     public function findBy(string $field, string|int $value): ?TermModel
@@ -311,10 +310,9 @@ final class TermQueryBuilder
 
     /**
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
-     * @param string|int $value
      * @phpstan-return TModel
      */
-    public function findByOrFail(string $field, $value): TermModel
+    public function findByOrFail(string $field, string|int $value): TermModel
     {
         $result = $this->findBy($field, $value);
 
@@ -329,7 +327,7 @@ final class TermQueryBuilder
      * @param string[] $slugs Array of slugs to return term(s) for.
      * @return $this
      */
-    public function whereSlugIn(array $slugs): self
+    public function whereSlugIn(array $slugs)
     {
         $this->queryVars['slug'] = $slugs;
         return $this;
@@ -339,7 +337,7 @@ final class TermQueryBuilder
      * @param int $parentId
      * @return $this
      */
-    public function whereParent(int $parentId): self
+    public function whereParent(int $parentId)
     {
         $this->queryVars['parent'] = $parentId;
         return $this;
@@ -351,7 +349,7 @@ final class TermQueryBuilder
      * @param string $compare
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '='): self
+    public function whereMeta($key, $value = '', string $compare = '=')
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -376,14 +374,14 @@ final class TermQueryBuilder
      * @param int|int[]|null $postIds
      * @return $this
      */
-    public function whereRelatedToPost($postIds): self
+    public function whereRelatedToPost(int|array|null $postIds)
     {
         $this->queryVars['object_ids'] = $postIds ?: [0];
         return $this;
     }
 
     /** @return $this */
-    public function excludeEmpty(bool $hideEmpty = true): self
+    public function excludeEmpty(bool $hideEmpty = true)
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
         return $this;
