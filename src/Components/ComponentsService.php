@@ -35,13 +35,12 @@ class ComponentsService extends AbstractService
             return null;
         }
 
-        if ($handle = opendir($componentsDirectory)) {
+        $handle = opendir($componentsDirectory);
+        if ($handle) {
             while (($entry = readdir($handle)) !== false) {
-                if (!is_dir($componentsDirectory . '/' . $entry) || preg_match('/^(_|\.)/', $entry)) {
-                    continue;
+                if (is_dir($componentsDirectory . '/' . $entry) && !preg_match('/^(_|\.)/', $entry)) {
+                    $activeComponents[] = $entry;
                 }
-
-                $activeComponents[] = $entry;
             }
 
             closedir($handle);
@@ -53,11 +52,9 @@ class ComponentsService extends AbstractService
             $compomentClass = "Components\\" . $activeComponent . "\\" . $activeComponent;
             $compomentReflectionClass = new ReflectionClass($compomentClass);
 
-            if ($compomentReflectionClass->isAbstract()) {
-                continue;
+            if (!$compomentReflectionClass->isAbstract()) {
+                $components[$activeComponent] = $compomentClass;
             }
-
-            $components[$activeComponent] = $compomentClass;
         }
 
         return array_unique($components);
