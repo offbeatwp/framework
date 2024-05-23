@@ -243,7 +243,9 @@ final class TermQueryBuilder
             return null;
         }
 
+        $this->queryVars['limit'] = 1;
         $this->queryVars['term_taxonomy_id'] = [$id];
+
         return $this->first();
     }
 
@@ -266,7 +268,9 @@ final class TermQueryBuilder
             return null;
         }
 
+        $this->queryVars['limit'] = 1;
         $this->queryVars['slug'] = $slug;
+
         return $this->first();
     }
 
@@ -289,7 +293,9 @@ final class TermQueryBuilder
             return null;
         }
 
+        $this->queryVars['limit'] = 1;
         $this->queryVars['name'] = $name;
+
         return $this->first();
     }
 
