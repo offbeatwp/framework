@@ -243,7 +243,10 @@ final class TermQueryBuilder
             return null;
         }
 
-        $this->queryVars['limit'] = 1;
+        if (!array_key_exists('hide_empty', $this->queryVars)) {
+            $this->queryVars['hide_empty'] = false;
+        }
+
         $this->queryVars['term_taxonomy_id'] = [$id];
 
         return $this->first();
@@ -268,7 +271,10 @@ final class TermQueryBuilder
             return null;
         }
 
-        $this->queryVars['limit'] = 1;
+        if (!array_key_exists('hide_empty', $this->queryVars)) {
+            $this->queryVars['hide_empty'] = false;
+        }
+
         $this->queryVars['slug'] = $slug;
 
         return $this->first();
@@ -293,7 +299,10 @@ final class TermQueryBuilder
             return null;
         }
 
-        $this->queryVars['limit'] = 1;
+        if (!array_key_exists('hide_empty', $this->queryVars)) {
+            $this->queryVars['hide_empty'] = false;
+        }
+
         $this->queryVars['name'] = $name;
 
         return $this->first();
@@ -312,7 +321,7 @@ final class TermQueryBuilder
     }
 
     /**
-     * @deprecated
+     * @deprecated Use findById, findBySlug or findByName instead
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @phpstan-return TModel|null
      */
@@ -330,11 +339,11 @@ final class TermQueryBuilder
             return $this->findByName($value);
         }
 
-        throw new InvalidArgumentException('TermQueryBuilder::findBy recieved invalid field value ' . $field);
+        throw new InvalidArgumentException('TermQueryBuilder::findBy received invalid field value ' . $field);
     }
 
     /**
-     * @deprecated
+     * @deprecated Use findByIdOrFail, findBySlugOrFail or findByNameOrFail instead
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @phpstan-return TModel
      */
