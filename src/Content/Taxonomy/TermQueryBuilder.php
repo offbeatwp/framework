@@ -237,7 +237,7 @@ final class TermQueryBuilder
     }
 
     /** @phpstan-return TModel|null */
-    private function _getTermById(?int $id): ?TermModel
+    public function findById(?int $id): ?TermModel
     {
         if ($id <= 0) {
             return null;
@@ -247,19 +247,13 @@ final class TermQueryBuilder
         return $this->first();
     }
 
-    /** @phpstan-return TModel|null */
-    public function findById(?int $id): ?TermModel
-    {
-        return $this->_getTermById($id);
-    }
-
     /** @phpstan-return TModel */
     public function findByIdOrFail(int $id): TermModel
     {
         $result = $this->findById($id);
 
         if (!$result) {
-            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' where id has a value of ' . $id);
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' with id ' . $id);
         }
 
         return $result;
@@ -268,54 +262,73 @@ final class TermQueryBuilder
     /** @phpstan-return TModel|null */
     public function findBySlug(string $slug): ?TermModel
     {
-        return $this->findBy('slug', $slug);
+        if (!$slug) {
+            return null;
+        }
+
+        $this->queryVars['slug'] = $slug;
+        return $this->first();
     }
 
     /** @phpstan-return TModel */
     public function findBySlugOrFail(string $slug): TermModel
     {
-        return $this->findByOrFail('slug', $slug);
+        $result = $this->findBySlug($slug);
+
+        if (!$result) {
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' with slug ' . $slug);
+        }
+
+        return $result;
     }
 
     /** @phpstan-return TModel|null */
     public function findByName(string $name): ?TermModel
     {
-        return $this->findBy('name', $name);
+        if (!$name) {
+            return null;
+        }
+
+        $this->queryVars['name'] = $name;
+        return $this->first();
     }
 
     /** @phpstan-return TModel */
     public function findByNameOrFail(string $name): TermModel
     {
-        return $this->findByOrFail('name', $name);
+        $result = $this->findByName($name);
+
+        if (!$result) {
+            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' with name ' . $name);
+        }
+
+        return $result;
     }
 
     /**
+     * @deprecated
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @phpstan-return TModel|null
      */
     public function findBy(string $field, string|int $value): ?TermModel
     {
-        if ($field === 'id' || $field === 'ID' || $field === 'term_id') {
-            return $this->_getTermById((int)$value);
+        if ($field === 'id' || $field === 'ID' || $field === 'term_id' || $field === 'term_taxonomy_id') {
+            return $this->findById($value);
         }
 
-        if ($field === 'slug' || $field === 'name') {
-            if (!$value) {
-                return null;
-            }
-
-            $this->queryVars[$field] = $value;
-        } elseif ($field === 'term_taxonomy_id') {
-            $this->queryVars['term_taxonomy_id'] = $value;
-            unset($this->queryVars['taxonomy']);
-        } else {
-            throw new InvalidArgumentException('TermQueryBuilder::findBy recieved invalid field value ' . $field);
+        if ($field === 'slug') {
+            return $this->findBySlug($value);
         }
 
-        return $this->first();
+        if ($field === 'name') {
+            return $this->findByName($value);
+        }
+
+        throw new InvalidArgumentException('TermQueryBuilder::findBy recieved invalid field value ' . $field);
     }
 
     /**
+     * @deprecated
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
      * @phpstan-return TModel
      */
