@@ -273,10 +273,6 @@ class WpQueryBuilder
      */
     final public function wherePostType(string|array $postTypes)
     {
-        if (is_string($postTypes)) {
-            $postTypes = [$postTypes];
-        }
-
         $this->queryVars['post_type'] = is_string($postTypes) ? [$postTypes] : $postTypes;
 
         return $this;
