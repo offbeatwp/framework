@@ -92,12 +92,12 @@ class WpQueryBuilder
         return $this->get();
     }
 
-    final public function first(): ?PostModel
+    public function first(): ?PostModel
     {
         return $this->take(1)->first();
     }
 
-    final public function firstOrFail(): PostModel
+    public function firstOrFail(): PostModel
     {
         $result = $this->first();
 
