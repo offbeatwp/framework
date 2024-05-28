@@ -236,7 +236,10 @@ final class TermQueryBuilder
         return $result;
     }
 
-    /** @phpstan-return TModel|null */
+    /**
+     * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
+     * @phpstan-return TModel|null
+     */
     public function findById(?int $id): ?TermModel
     {
         if ($id <= 0) {
@@ -252,7 +255,10 @@ final class TermQueryBuilder
         return $this->first();
     }
 
-    /** @phpstan-return TModel */
+    /**
+     * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
+     * @phpstan-return TModel
+     */
     public function findByIdOrFail(int $id): TermModel
     {
         $result = $this->findById($id);
@@ -264,7 +270,10 @@ final class TermQueryBuilder
         return $result;
     }
 
-    /** @phpstan-return TModel|null */
+    /**
+     * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
+     * @phpstan-return TModel|null
+     */
     public function findBySlug(string $slug): ?TermModel
     {
         if (!$slug) {
@@ -280,7 +289,10 @@ final class TermQueryBuilder
         return $this->first();
     }
 
-    /** @phpstan-return TModel */
+    /**
+     * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
+     * @phpstan-return TModel
+     */
     public function findBySlugOrFail(string $slug): TermModel
     {
         $result = $this->findBySlug($slug);
@@ -292,7 +304,10 @@ final class TermQueryBuilder
         return $result;
     }
 
-    /** @phpstan-return TModel|null */
+    /**
+     * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
+     * @phpstan-return TModel|null
+     */
     public function findByName(string $name): ?TermModel
     {
         if (!$name) {
@@ -308,7 +323,10 @@ final class TermQueryBuilder
         return $this->first();
     }
 
-    /** @phpstan-return TModel */
+    /**
+     * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
+     * @phpstan-return TModel
+     */
     public function findByNameOrFail(string $name): TermModel
     {
         $result = $this->findByName($name);
