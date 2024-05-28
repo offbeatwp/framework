@@ -8,6 +8,9 @@ use OffbeatWP\Form\Form;
 
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
+    public const LEVEL = 0;
+    public const TYPE = '';
+
     /** @var string */
     public $id;
     /** @var string */

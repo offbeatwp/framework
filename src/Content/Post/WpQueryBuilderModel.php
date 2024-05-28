@@ -8,10 +8,10 @@ use WP_Post;
  * @template TModel of PostModel
  * @extends WpQueryBuilder<TModel>
  */
-class WpQueryBuilderModel extends WpQueryBuilder
+final class WpQueryBuilderModel extends WpQueryBuilder
 {
     /** @var class-string<TModel> */
-    protected $model;
+    protected string $modelClass;
 
     /**
      * @throws OffbeatInvalidModelException
@@ -19,9 +19,9 @@ class WpQueryBuilderModel extends WpQueryBuilder
      */
     public function __construct(string $modelClass)
     {
-        $this->model = $modelClass;
+        $this->modelClass = $modelClass;
 
-        if (defined("{$modelClass}::POST_TYPE")) {
+        if ($modelClass::POST_TYPE) {
             $this->wherePostType($modelClass::POST_TYPE);
         }
 
@@ -39,32 +39,32 @@ class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
-    /** @return TModel|PostModel */
+    /** @phpstan-return TModel|PostModel */
     public function firstOrNew(): PostModel
     {
-        return $this->first() ?: new $this->model(null);
+        return $this->first() ?: new $this->modelClass(null);
     }
 
     /**
      * @param WP_Post|int|null $post
-     * @return TModel|PostModel|null
+     * @phpstan-return TModel|PostModel|null
      */
     public function postToModel($post)
     {
-        if ($this->model === PostModel::class) {
+        if ($this->modelClass === PostModel::class) {
             return parent::postToModel($post);
         }
 
-        return new $this->model($post);
+        return new $this->modelClass($post);
     }
 
-    /** @return TModel|null */
+    /** @phpstan-return TModel|null */
     public function first(): ?PostModel
     {
         return parent::first();
     }
 
-    /** @return TModel */
+    /** @phpstan-return TModel */
     public function firstOrFail(): PostModel
     {
         return parent::firstOrFail();

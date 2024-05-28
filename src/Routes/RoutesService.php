@@ -50,7 +50,7 @@ class RoutesService extends AbstractService
             }
 
             return $url;
-        }, 20, 1);
+        }, 20);
 
         add_action('parse_query', static function ($query) {
             if ($query->is_main_query()) {

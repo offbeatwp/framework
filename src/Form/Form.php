@@ -10,15 +10,13 @@ use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 
-class Form extends Collection
+final class Form extends Collection
 {
-    private string $fieldPrefix = '';
     /** @var string[] */
     private array $fieldKeys = [];
-    /** @var Form|AbstractFieldsContainer */
-    private Collection $activeItem;
-    /** @var Form|AbstractFieldsContainer|null */
-    public ?Collection $parent = null;
+    private string $fieldPrefix = '';
+    private AbstractFieldsContainer|Form $activeItem;
+    public Form|AbstractFieldsContainer|null $parent = null;
 
     public function __construct()
     {
@@ -40,8 +38,8 @@ class Form extends Collection
         }
 
         // If item is of the same type as the active item move back to parent
-        $itemClass = get_class($item);
-        if ($itemClass === get_class($this->getActiveItem()) && $itemClass !== self::class) {
+        $itemClass = $item::class;
+        if ($itemClass === $this->getActiveItem()::class && $itemClass !== self::class) {
             $this->closeField();
         }
 

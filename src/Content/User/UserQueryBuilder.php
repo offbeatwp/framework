@@ -10,19 +10,18 @@ use UnexpectedValueException;
 use WP_User_Query;
 
 /** @template TModel of UserModel */
-class UserQueryBuilder
+final class UserQueryBuilder
 {
     use OffbeatQueryTrait;
 
     /** @var class-string<UserModel> */
     protected string $modelClass;
-    /** @var mixed[] */
     protected array $queryVars = ['number' => 0];
     protected bool $skipOnLimit = false;
     protected bool $skipOnInclude = false;
 
     /** @param class-string<TModel> $modelClass */
-    final public function __construct(string $modelClass)
+    public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
 
@@ -57,13 +56,13 @@ class UserQueryBuilder
         return $this->get();
     }
 
-    /** @return TModel|null */
+    /** @phpstan-return TModel|null */
     public function first(): ?UserModel
     {
         return $this->take(1)->first();
     }
 
-    /** @return TModel|null */
+    /** @phpstan-return TModel|null */
     public function findById(?int $id): ?UserModel
     {
         if ($id <= 0) {
@@ -74,7 +73,7 @@ class UserQueryBuilder
         return $this->first();
     }
 
-    /** @return TModel */
+    /** @phpstan-return TModel */
     public function findByIdOrFail(int $id): UserModel
     {
         $result = $this->findById($id);

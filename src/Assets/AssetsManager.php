@@ -5,22 +5,17 @@ namespace OffbeatWP\Assets;
 use InvalidArgumentException;
 use stdClass;
 
-class AssetsManager
+final class AssetsManager
 {
-    /** @var array{} */
-    public $actions = [];
-    /** @var null|stdClass|false */
-    public $manifest = null;
-    /** @var null|stdClass|false */
-    public $entrypoints = null;
+    public stdClass|null|false $manifest = null;
+    public stdClass|null|false $entrypoints = null;
 
-    /** @return false|string */
-    public function getUrl(string $filename)
+    public function getUrl(string $filename): false|string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
         if ($path !== false) {
-            if (strpos($path, 'http') === 0) {
+            if (str_starts_with($path, 'http')) {
                 return $path;
             }
 
@@ -31,8 +26,7 @@ class AssetsManager
         return false;
     }
 
-    /** @return false|string */
-    public function getPath(string $filename)
+    public function getPath(string $filename): false|string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
@@ -44,14 +38,12 @@ class AssetsManager
         return false;
     }
 
-    /** @return string|false */
-    public function getEntryFromAssetsManifest(string $filename)
+    public function getEntryFromAssetsManifest(string $filename): false|string
     {
         return $this->getAssetsManifest()->$filename ?? false;
     }
 
-    /** @return stdClass|false|null */
-    public function getAssetsManifest()
+    public function getAssetsManifest(): stdClass|false|null
     {
         if ($this->manifest === null) {
             $path = $this->getAssetsPath('manifest.json', true);
@@ -68,8 +60,7 @@ class AssetsManager
         return $this->manifest;
     }
 
-    /** @return stdClass|false|null */
-    public function getAssetsEntryPoints()
+    public function getAssetsEntryPoints(): stdClass|false|null
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
@@ -87,7 +78,7 @@ class AssetsManager
     }
 
     /** @return string[]|false */
-    public function getAssetsByEntryPoint(string $entry, string $key)
+    public function getAssetsByEntryPoint(string $entry, string $key): array|false
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
@@ -130,7 +121,7 @@ class AssetsManager
 
     public function getAssetsUrl(string $path = ''): string
     {
-        if (strpos($path, 'http') === 0) {
+        if (str_starts_with($path, 'http')) {
             return $path;
         }
 
@@ -247,7 +238,7 @@ class AssetsManager
      * Retrieves the <b>primary</b> asset url for the given handle.
      * @param string $handle The handle
      * @param string $assetType The type. Either <b>js</b> or <b>css</b>.
-     * @return non-empty-string
+     * @return non-empty-string|null
      */
     public function getAssetUrlByHandle(string $handle, string $assetType): ?string
     {

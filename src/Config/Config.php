@@ -4,14 +4,11 @@ namespace OffbeatWP\Config;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
-class Config {
-    /** @var App */
-    private $app;
-    /** @var mixed[]|null */
-    protected $config = null;
+final class Config {
+    private App $app;
+    private array $config = [];
 
-    /** @param App $app */
-    public function __construct($app) {
+    public function __construct(App $app) {
         $this->app = $app;
         $this->loadConfig();
     }
@@ -81,10 +78,9 @@ class Config {
 
     /**
      * @param string $key
-     * @param null $default Unused
      * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
      */
-    public function get(string $key, $default = null)
+    public function get(string $key)
     {
         $config = $this->config;
         $return = ArrayHelper::getValueFromDottedKey($key, $config ?: []);

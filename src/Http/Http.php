@@ -4,20 +4,16 @@ namespace OffbeatWP\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class Http
+final class Http
 {
-    /**
-     * @param int $code
-     * @param string $description
-     * @return mixed
-     */
-    public function abort(int $code, string $description = '')
+    public function abort(int $code, string $description = ''): mixed
     {
         status_header($code, $description);
 
         return apply_filters('offbeatwp/http_status', null, $code);
     }
 
+    /** @return never-returns */
     public function redirect(string $url, int $status = 301): void
     {
         wp_redirect($url, $status);
@@ -61,6 +57,5 @@ class Http
 
         // Redirect to the parent url
         $this->redirect($url, $status);
-        exit;
     }
 }

@@ -21,7 +21,7 @@ class HttpStatusPagesSettings
 
         $httpStatusPagesCodes = config('app.http_status_pages_codes');
         if (!$httpStatusPagesCodes instanceof Collection) {
-            $httpStatusPagesCodes = collect('404');
+            $httpStatusPagesCodes = collect(['404']);
         }
 
         $httpStatusPagesCodes->each(function($statusCode) use ($form) {

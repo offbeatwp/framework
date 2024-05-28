@@ -6,7 +6,7 @@ use ReflectionClass;
 
 class ComponentsService extends AbstractService
 {
-    public $bindings = [
+    public array $bindings = [
         'components' => ComponentRepository::class
     ];
 
@@ -15,7 +15,7 @@ class ComponentsService extends AbstractService
         offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents']);
     }
 
-    public function registerComponents()
+    public function registerComponents(): void
     {
         $components = $this->registrableComponents();
 
@@ -26,7 +26,11 @@ class ComponentsService extends AbstractService
         }
     }
 
-    public function registrableComponents()
+    /**
+     * @return string[]|null
+     * @throws \ReflectionException
+     */
+    public function registrableComponents(): ?array
     {
         $activeComponents = [];
         $componentsDirectory = $this->getComponentsDirectory();
@@ -60,7 +64,7 @@ class ComponentsService extends AbstractService
         return array_unique($components);
     }
 
-    public function getComponentsDirectory()
+    public function getComponentsDirectory(): string
     {
         return $this->app->componentsPath();
     }

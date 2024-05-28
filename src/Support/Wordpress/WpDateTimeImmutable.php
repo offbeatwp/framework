@@ -66,14 +66,4 @@ final class WpDateTimeImmutable extends DateTimeImmutable
 
         return $result;
     }
-
-//    public function sub(DateInterval $interval): WpDateTimeImmutable
-//    {
-//        $result = parent::sub($interval);
-//        if (!$result) {
-//            throw static::getLastDateException();
-//        }
-//
-//        return $result;
-//    }
 }

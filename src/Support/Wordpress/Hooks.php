@@ -48,7 +48,7 @@ class Hooks
                 $callback = [$callback, 'action'];
             }
 
-            return App::singleton()->container->call($callback, $parameters);
+            App::singleton()->container->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
 

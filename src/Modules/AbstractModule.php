@@ -3,7 +3,6 @@
 namespace OffbeatWP\Modules;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Commands\Commands;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Services\AbstractService;
 use ReflectionClass;
@@ -56,7 +55,7 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
-    /** @return false|string */
+    /** @return string */
     public function getNamespace()
     {
         $classInfo = new ReflectionClass($this);
@@ -93,7 +92,7 @@ abstract class AbstractModule extends AbstractService
 
         $paths = glob($path . '/*', GLOB_ONLYDIR);
         $objects = collect($paths)->filter(function($path) {
-            return !preg_match('/^_/', basename($path));
+            return !str_starts_with(basename($path), '_');
         })->mapWithKeys(function ($path) {
             $baseName = basename($path);
             

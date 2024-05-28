@@ -4,8 +4,7 @@ namespace OffbeatWP\Api;
 
 use WP_REST_Server;
 
-/** @final */
-class RestEndpointBuilder
+final class RestEndpointBuilder
 {
     public string $namespace;
     public string $route;
@@ -18,7 +17,7 @@ class RestEndpointBuilder
     public $permissionCallback = '__return_true';
 
     /** @param callable(\WP_REST_Request): mixed $callback */
-    final public function __construct(string $namespace, string $route, callable $callback)
+    public function __construct(string $namespace, string $route, callable $callback)
     {
         $this->namespace = $namespace;
         $this->route = $route;
@@ -80,19 +79,19 @@ class RestEndpointBuilder
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    final public static function get(string $namespace, string $route, callable $callback): self
+    public static function get(string $namespace, string $route, callable $callback): self
     {
         return new static($namespace, $route, $callback);
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    final public static function post(string $namespace, string $route, callable $callback): self
+    public static function post(string $namespace, string $route, callable $callback): self
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    final public static function delete(string $namespace, string $route, callable $callback): self
+    public static function delete(string $namespace, string $route, callable $callback): self
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
     }

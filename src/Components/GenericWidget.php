@@ -5,7 +5,6 @@ namespace OffbeatWP\Components;
 use OffbeatWP\AcfCore\ComponentFields;
 use WP_Widget;
 
-/** @deprecated */
 class GenericWidget extends WP_Widget
 {
     use ComponentInterfaceTrait;

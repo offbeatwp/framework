@@ -7,7 +7,7 @@ use OffbeatWP\Content\Taxonomy\TermModel;
 use Symfony\Component\HttpFoundation\Request;
 use WP_Term;
 
-class Taxonomy
+final class Taxonomy
 {
     public const DEFAULT_TERM_MODEL = TermModel::class;
 
@@ -108,7 +108,6 @@ class Taxonomy
             }
 
             offbeat('http')->redirect($url);
-            exit;
         }
     }
 }
