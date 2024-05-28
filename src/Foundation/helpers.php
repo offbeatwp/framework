@@ -41,6 +41,7 @@ if (!function_exists('container')) {
             return $app->container->get($definition);
         }
 
+        trigger_error('Calling the container function without argument is deprecated.', E_USER_DEPRECATED);
         return $app->container;
     }
 }
