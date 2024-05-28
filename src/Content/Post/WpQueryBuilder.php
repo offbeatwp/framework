@@ -14,7 +14,7 @@ class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var mixed[] */
+    /** @var array<string, mixed|mixed[]> */
     protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
 
