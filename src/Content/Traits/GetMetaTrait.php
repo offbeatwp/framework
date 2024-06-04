@@ -188,7 +188,10 @@ trait GetMetaTrait
         return $models;
     }
 
-    /** Retrieve a meta value as a collection.<br> */
+    /**
+     * @deprecated Use collect($model->getMetas()) instead
+     * Retrieve a meta value as a collection.
+     */
     public function getMetaCollection(string $key): Collection
     {
         return collect($this->getMetaArray($key));
