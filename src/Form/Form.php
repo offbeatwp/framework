@@ -179,7 +179,7 @@ final class Form extends Collection
     }
 
     /** @param string $fieldPrefix */
-    public function setFieldPrefix($fieldPrefix)
+    public function setFieldPrefix($fieldPrefix): void
     {
         $this->fieldPrefix = $fieldPrefix;
     }
