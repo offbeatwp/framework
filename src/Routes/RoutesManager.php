@@ -4,7 +4,6 @@ namespace OffbeatWP\Routes;
 
 use Closure;
 use Exception;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Routes\Routes\CallbackRoute;
@@ -20,7 +19,6 @@ final class RoutesManager
     public const PRIORITY_HIGH = 'high';
     public const PRIORITY_FIXED = 'fixed';
 
-    protected Collection $actions;
     protected RouteCollection $routeCollection;
     protected int $routeIterator = 0;
     protected PathRoute|CallbackRoute|false|null $lastMatchRoute;
@@ -37,7 +35,6 @@ final class RoutesManager
     public function __construct()
     {
         $this->routeCollection = new RouteCollection();
-        $this->actions = collect();
     }
 
     public function getRouteCollection(): RouteCollection
@@ -363,15 +360,13 @@ final class RoutesManager
 
     public function removeRoute(CallbackRoute|PathRoute $route): void
     {
-        if ($route instanceof Route) {
-            $routeName = $route->getName();
+        $routeName = $route->getName();
 
-            if ($route->getOption('persistent') === true) {
-                return;
-            }
-
-            $this->getRouteCollection()->remove($routeName);
+        if ($route->getOption('persistent') === true) {
+            return;
         }
+
+        $this->getRouteCollection()->remove($routeName);
     }
 
     /** @return PathRoute|CallbackRoute|false */
