@@ -1,7 +1,7 @@
 <?php
 namespace OffbeatWP\Support\Wordpress;
 
-class Page
+final class Page
 {
     /** @var string[] */
     protected $pageTemplates = [];

@@ -3,7 +3,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Foundation\App;
 
-class Ajax {
+final class Ajax {
     public static function isAjaxRequest(): bool
     {
         return wp_doing_ajax();

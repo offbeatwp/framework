@@ -4,7 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 use OffbeatWP\Api\RestEndpointBuilder;
 use WP_REST_Request;
 
-class RestApi {
+final class RestApi {
     public static function isRestApiRequest(): bool
     {
         return defined('REST_REQUEST');
