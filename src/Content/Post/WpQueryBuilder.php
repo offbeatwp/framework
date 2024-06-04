@@ -480,4 +480,27 @@ class WpQueryBuilder
 
         return $this;
     }
+
+    /**
+     * Display password-protected posts?<br>
+     * <i>true</i> for posts with passwords<br>
+     * <i>false</i> for posts without passwords<br>
+     * <i>null</i> for all posts with and without passwords
+     * @return $this
+     */
+    final public function hasPassword(?bool $hasPassword)
+    {
+        $this->queryVars['has_password'] = $hasPassword;
+        return $this;
+    }
+
+    /**
+     * Display posts with a particular password.
+     * @return $this
+     */
+    final public function postPassword(string $password)
+    {
+        $this->queryVars['post_password'] = $password;
+        return $this;
+    }
 }
