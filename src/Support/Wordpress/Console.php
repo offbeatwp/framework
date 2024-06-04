@@ -5,7 +5,7 @@ use OffbeatWP\Console\AbstractCommand;
 use OffbeatWP\Foundation\App;
 use WP_CLI;
 
-class Console
+final class Console
 {
     /**
      * @param AbstractCommand|class-string<AbstractCommand> $commandClass

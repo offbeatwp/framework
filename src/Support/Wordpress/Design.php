@@ -4,7 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 use Closure;
 use Illuminate\Support\Collection;
 
-class Design
+final class Design
 {
     /**
      * @param string $id

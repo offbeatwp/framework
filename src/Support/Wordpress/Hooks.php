@@ -3,7 +3,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Foundation\App;
 
-class Hooks
+final class Hooks
 {
     /**
      * @param string $filter

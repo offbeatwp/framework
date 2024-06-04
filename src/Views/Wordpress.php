@@ -8,7 +8,7 @@ use WP_Post;
 use WP_Site;
 use WP_Term;
 
-class Wordpress
+final class Wordpress
 {
     /** @return false|string */
     public function head()
@@ -471,6 +471,12 @@ class Wordpress
         return ob_get_clean();
     }
 
+    /**
+     * @param string $slug
+     * @param string|null $tagName
+     * @param string|null $className
+     * @return string
+     */
     public function getTemplatePart(string $slug, $tagName = null, $className = null) {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
