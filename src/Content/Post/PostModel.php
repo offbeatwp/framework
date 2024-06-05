@@ -225,20 +225,25 @@ class PostModel implements PostModelInterface
         return $content;
     }
 
-    public function setId(?int $id): self
+    /** @return $this */
+    public function setId(?int $id)
     {
         $this->wpPost->ID = $id;
         return $this;
     }
 
-    /** Set the (unfiltered) post content. */
-    public function setContent(string $content): self
+    /**
+     * Set the (unfiltered) post content.
+     * @return $this
+     */
+    public function setContent(string $content)
     {
         $this->wpPost->post_content = $content;
         return $this;
     }
 
-    public function setAuthor(int $authorId): self
+    /** @return $this */
+    public function setAuthor(int $authorId)
     {
         $this->wpPost->post_author = $authorId;
         return $this;
@@ -248,9 +253,9 @@ class PostModel implements PostModelInterface
      * @param string|string[]|int[] $terms An array of terms to set for the post, or a string of term slugs separated by commas.<br>Hierarchical taxonomies must always pass IDs rather than slugs.
      * @param string $taxonomy Taxonomy name of the term(s) to set.
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
-     * @return self
+     * @return $this
      */
-    public function setTerms($terms, string $taxonomy, bool $append = false): self
+    public function setTerms($terms, string $taxonomy, bool $append = false)
     {
         $this->termsToSet[] = ['termIds' => $terms, 'taxonomy' => $taxonomy, 'append' => $append];
         return $this;
@@ -318,8 +323,11 @@ class PostModel implements PostModelInterface
         return $this->wpPost->post_status;
     }
 
-    /** @see PostStatus */
-    public function setPostStatus(string $newStatus): self
+    /**
+     * @see PostStatus
+     * @return $this
+     */
+    public function setPostStatus(string $newStatus)
     {
         $this->wpPost->post_status = $newStatus;
         return $this;
@@ -463,7 +471,8 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    public function setMetas(iterable $metadata): self
+    /** @return $this */
+    public function setMetas(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
             $this->setMeta($key, $value);
@@ -536,19 +545,22 @@ class PostModel implements PostModelInterface
         return get_post_thumbnail_id($this->wpPost) ?: false;
     }
 
-    public function setExcerpt(string $excerpt): self
+    /** @return $this */
+    public function setExcerpt(string $excerpt)
     {
         $this->wpPost->post_excerpt = $excerpt;
         return $this;
     }
 
-    public function setTitle(string $title): self
+    /** @return $this */
+    public function setTitle(string $title)
     {
         $this->wpPost->post_title = $title;
         return $this;
     }
 
-    public function setPostName(string $postName): self
+    /** @return $this */
+    public function setPostName(string $postName)
     {
         $this->wpPost->post_name = $postName;
         return $this;
