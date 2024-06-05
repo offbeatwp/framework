@@ -24,7 +24,8 @@ final class RestEndpointBuilder
         $this->callback = $callback;
     }
 
-    public function method(string $method): self
+    /** @return $this */
+    public function method(string $method)
     {
         $this->method = $method;
         return $this;
@@ -33,8 +34,9 @@ final class RestEndpointBuilder
     /**
      * Validate a particular endpoint argument against a callback.
      * @param callable(string, \WP_REST_Request, string): bool $callback
+     * @return $this
      */
-    public function validate(string $key, callable $callback): self
+    public function validate(string $key, callable $callback)
     {
         if (!isset($this->args[$key])) {
             $this->args[$key] = [];
@@ -45,8 +47,11 @@ final class RestEndpointBuilder
         return $this;
     }
 
-    /** @deprecated Use permission instead. */
-    public function capability(string $capability): self
+    /**
+     * @deprecated Use permission instead.
+     * @return $this
+     */
+    public function capability(string $capability)
     {
         $this->permission(fn() => current_user_can($capability));
         return $this;
@@ -57,8 +62,9 @@ final class RestEndpointBuilder
      * This allows the API to tell the client what actions they can perform on a given URL without needing to attempt the request first.<br>
      * The permissions callback is run after remote authentication, which sets the current user.
      * @param callable(\WP_REST_Request): (bool|\WP_Error) $callback
+     * @return $this
      */
-    public function permission(callable $callback): self
+    public function permission(callable $callback)
     {
         $this->permissionCallback = $callback;
         return $this;
@@ -79,19 +85,19 @@ final class RestEndpointBuilder
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    public static function get(string $namespace, string $route, callable $callback): self
+    public static function get(string $namespace, string $route, callable $callback): static
     {
         return new static($namespace, $route, $callback);
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    public static function post(string $namespace, string $route, callable $callback): self
+    public static function post(string $namespace, string $route, callable $callback): static
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::CREATABLE);
     }
 
     /** @param callable(\WP_REST_Request): (\WP_REST_Response|\WP_Error) $callback */
-    public static function delete(string $namespace, string $route, callable $callback): self
+    public static function delete(string $namespace, string $route, callable $callback): static
     {
         return (new static($namespace, $route, $callback))->method(WP_REST_Server::DELETABLE);
     }

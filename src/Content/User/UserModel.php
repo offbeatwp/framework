@@ -101,38 +101,46 @@ class UserModel
     ///////////////
     /// Setters ///
     ///////////////
-    /** The user's email address. <b>Setting this is required.</b> */
-    final public function setEmail(string $email): self
+    /**
+     * The user's email address. <b>Setting this is required.</b>
+     * @return $this
+     */
+    final public function setEmail(string $email)
     {
         $this->wpUser->user_email = $email;
         return $this;
     }
 
-    final public function setNickname(string $nickname): self
+    /** @return $this */
+    final public function setNickname(string $nickname)
     {
         $this->wpUser->nickname = $nickname;
         return $this;
     }
 
-    final public function setDisplayName(string $displayName): self
+    /** @return $this */
+    final public function setDisplayName(string $displayName)
     {
         $this->wpUser->display_name = $displayName;
         return $this;
     }
 
-    final public function setFirstName(string $firstName): self
+    /** @return $this */
+    final public function setFirstName(string $firstName)
     {
         $this->wpUser->first_name = $firstName;
         return $this;
     }
 
-    final public function setLastName(string $lastName): self
+    /** @return $this */
+    final public function setLastName(string $lastName)
     {
         $this->wpUser->last_name = $lastName;
         return $this;
     }
 
-    final public function setLogin(string $userLogin): self
+    /** @return $this */
+    final public function setLogin(string $userLogin)
     {
         if (!$userLogin) {
             throw new InvalidArgumentException('Username cannot be empty');
@@ -158,7 +166,8 @@ class UserModel
         return $this;
     }
 
-    final public function setUrl(string $url): self
+    /** @return $this */
+    final public function setUrl(string $url)
     {
         $this->wpUser->user_url = $url;
         return $this;

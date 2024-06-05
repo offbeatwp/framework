@@ -140,7 +140,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
      * @param array{field: string, operator: string, value?: string|int}[][] $logic
      * @return $this
      */
-    public function conditionalLogic(array $logic): self
+    public function conditionalLogic(array $logic)
     {
         $this->attributes['conditional_logic'] = $logic;
         return $this;

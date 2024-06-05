@@ -22,8 +22,9 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
      * @param string $varName Must be alphanumeric.
      * @param scalar|mixed[]|object|null $varValue Will be encoded with json_encode.
      * @param bool $includeAfter When true, the variable will included after the script.
+     * @return $this
      */
-    public function addVariable(string $varName, $varValue, bool $includeAfter = false): self
+    public function addVariable(string $varName, $varValue, bool $includeAfter = false)
     {
         if (!ctype_alnum($varName)) {
             throw new InvalidArgumentException('AddBinding requires a alphanumeric variable name.');
@@ -41,16 +42,20 @@ final class WpScriptEnqueueBuilder extends AbstractEnqueueBuilder
      * Localize a script.<br>
      * Works only if the script has already been registered.
      * @param mixed[] $l10n
+     * @return $this
      */
-    public function localize(array $l10n, string $objectName = 'tl'): self
+    public function localize(array $l10n, string $objectName = 'tl')
     {
         $this->l10nData = $l10n;
         $this->l10nName = $objectName;
         return $this;
     }
 
-    /** Whether to enqueue the script before BODY instead of in the HEAD. */
-    public function setInFooter(bool $value = true): self
+    /**
+     * Whether to enqueue the script before BODY instead of in the HEAD.
+     * @return $this
+     */
+    public function setInFooter(bool $value = true)
     {
         $this->inFooter = $value;
         return $this;

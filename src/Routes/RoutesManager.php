@@ -43,7 +43,7 @@ final class RoutesManager
     }
 
     /** @return $this */
-    public function setPriorityMode(string $mode): self
+    public function setPriorityMode(string $mode)
     {
         if (!in_array($mode, [self::PRIORITY_LOW, self::PRIORITY_HIGH])) {
             throw new InvalidArgumentException('Cannot set priority mode');
@@ -254,7 +254,7 @@ final class RoutesManager
      * @param ""|"low"|"high"|"fixed" $priority
      * @return $this
      */
-    public function addRoute(Route $route, string $priority = ''): self
+    public function addRoute(Route $route, string $priority = '')
     {
         if (!$priority) {
             $priority = $this->priorityMode;
@@ -274,7 +274,7 @@ final class RoutesManager
     }
 
     /** @return $this */
-    public function addRoutes(): self
+    public function addRoutes()
     {
         if ($this->routesAdded) {
             return $this;

@@ -9,8 +9,9 @@ final class WpStyleEnqueueBuilder extends AbstractEnqueueBuilder
     /**
      * The media for which this stylesheet has been defined. Default 'all'.<br>
      * Accepts media types like 'all', 'print' and 'screen', or media queries like '(orientation: portrait)' and '(max-width: 640px)'
+     * @return $this
      */
-    public function setMedia(string $media): self
+    public function setMedia(string $media)
     {
         $this->media = $media;
         return $this;

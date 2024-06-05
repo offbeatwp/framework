@@ -10,15 +10,18 @@ abstract class AbstractEnqueueBuilder
     /** @var null|false|string */
     protected $version = null;
 
-    /** @param string $src The file location. Starts in theme stylesheet directory. */
-    final public function setSrc(string $src): self
+    /**
+     * @param string $src The file location. Starts in theme stylesheet directory.
+     * @return $this
+     */
+    final public function setSrc(string $src)
     {
         $this->src = get_stylesheet_directory_uri() . '/' . $src;
         return $this;
     }
 
     /** @return $this */
-    final public function setAsset(string $filename): self
+    final public function setAsset(string $filename)
     {
         $this->src = offbeat('assets')->getUrl($filename) ?: '';
 
@@ -33,14 +36,17 @@ abstract class AbstractEnqueueBuilder
      * @param string $src The file location.
      * @return $this
      */
-    final public function setAbsoluteSrc(string $src): self
+    final public function setAbsoluteSrc(string $src)
     {
         $this->src = $src;
         return $this;
     }
 
-    /** @param string[] $deps An array of registered handles that this enqueue depends on. */
-    final public function setDeps(array $deps): self
+    /**
+     * @param string[] $deps An array of registered handles that this enqueue depends on.
+     * @return $this
+     */
+    final public function setDeps(array $deps)
     {
         $this->deps = $deps;
         return $this;
@@ -50,18 +56,18 @@ abstract class AbstractEnqueueBuilder
      * @param string $version String specifying stylesheet version number, if it has one, which is added to the URL as a query string for cache busting purposes
      * @return $this
      */
-    final public function setVersion(string $version): self
+    final public function setVersion(string $version)
     {
         $this->version = $version;
         return $this;
     }
 
     /**
-     * @deprecated
      * Add version number for cache busting equal to current installed WordPress version<br>
-     * This makes it easy for attackers to find the WordPress version and thus should not be used
+     * Beware that this might make it easier for attackers to find your currently installed WordPress version.
+     * @return $this
      */
-    final public function setVersionToWpVersion(): self
+    final public function setVersionToWpVersion()
     {
         $this->version = false;
         return $this;
