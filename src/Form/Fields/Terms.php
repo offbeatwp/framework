@@ -14,7 +14,8 @@ class Terms extends AbstractField {
         return $this;
     }
 
-    final public function multiSelect(): self
+    /** @return $this */
+    final public function multiSelect()
     {
         $this->setAttribute('field_type', 'multi_select');
         return $this;

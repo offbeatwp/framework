@@ -127,7 +127,8 @@ abstract class AbstractField implements FieldInterface
     }
 
     /* Chain setters */
-    public function description(string $description): self
+    /** @return $this */
+    public function description(string $description)
     {
         $this->setAttribute('description', $description);
         return $this;
@@ -137,7 +138,7 @@ abstract class AbstractField implements FieldInterface
      * @param mixed $value
      * @return $this
      */
-    public function default($value): self
+    public function default($value)
     {
         $this->setAttribute('default', $value);
         return $this;
@@ -147,19 +148,21 @@ abstract class AbstractField implements FieldInterface
      * @param mixed[] $attributes
      * @return $this
      */
-    public function attributes(array $attributes): self
+    public function attributes(array $attributes)
     {
         $this->setAttributes($attributes);
         return $this;
     }
 
-    public function required(bool $required = true): self
+    /** @return $this */
+    public function required(bool $required = true)
     {
         $this->setRequired($required);
         return $this;
     }
 
-    public function allowNull(bool $allowNull = true): self
+    /** @return $this */
+    public function allowNull(bool $allowNull = true)
     {
         $this->setAttribute('allow_null', ($allowNull) ? 1 : 0);
         return $this;
@@ -171,7 +174,7 @@ abstract class AbstractField implements FieldInterface
      * @param array{field: string, operator: string, value?: string|int}[][] $logic
      * @return $this
      */
-    public function conditionalLogic(array $logic): self
+    public function conditionalLogic(array $logic)
     {
         $this->setAttribute('conditional_logic', $logic);
         return $this;
@@ -182,13 +185,14 @@ abstract class AbstractField implements FieldInterface
      * @param mixed $value
      * @return $this
      */
-    public function attribute(string $key, $value): self
+    public function attribute(string $key, $value)
     {
         $this->setAttribute($key, $value);
         return $this;
     }
 
-    public function width(int $percent): self
+    /** @return $this */
+    public function width(int $percent)
     {
         $this->setAttribute('width', $percent);
         return $this;
