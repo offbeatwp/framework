@@ -2,8 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-/** @final */
-class TaxonomyBuilder
+final class TaxonomyBuilder
 {
     private string $taxonomy;
     /** @var string[] */

@@ -6,8 +6,7 @@ use Illuminate\Support\Traits\Macroable;
 use WP_Post;
 use WP_Query;
 
-/** @final */
-class PostTypeBuilder
+final class PostTypeBuilder
 {
     use Macroable;
 
