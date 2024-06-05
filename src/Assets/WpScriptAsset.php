@@ -18,7 +18,7 @@ final class WpScriptAsset
      * @param mixed $data Data will be encodeable with Json.
      * @return $this
      */
-    public function with(string $varName, $data): self
+    public function with(string $varName, $data)
     {
         if ($this->enqueueNow) {
             WpScriptAsset::addInlineScript($this->handle, $varName, $data);
