@@ -333,7 +333,7 @@ final class Wordpress
         if (!isset($attributes['class']) && !empty($classes)) {
             $attributes['class'] = implode(' ', $classes);
         }
-        
+
         return wp_get_attachment_image($attachmentID, $size, false, $attributes);
     }
 
@@ -463,7 +463,7 @@ final class Wordpress
         return UserModel::getCurrentUser();
     }
 
-    public function getBlockTemplatePart(string $part):string
+    public function getBlockTemplatePart(string $part): string
     {
         ob_start();
         block_template_part($part);
@@ -477,19 +477,20 @@ final class Wordpress
      * @param string|null $className
      * @return string
      */
-    public function getTemplatePart(string $slug, $tagName = null, $className = null) {
+    public function getTemplatePart(string $slug, $tagName = null, $className = null)
+    {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
 
-//    /**
-//     * Retrieves an option value based on an option name.<br>
-//     * If the option does not exist, <i>NULL</i> is returned.<br><br>
-//     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
-//     * @param string $name
-//     * @return mixed|null
-//     */
-//    final public function getOption(string $name)
-//    {
-//        return get_option($name, null);
-//    }
+    //    /**
+    //     * Retrieves an option value based on an option name.<br>
+    //     * If the option does not exist, <i>NULL</i> is returned.<br><br>
+    //     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
+    //     * @param string $name
+    //     * @return mixed|null
+    //     */
+    //    final public function getOption(string $name)
+    //    {
+    //        return get_option($name, null);
+    //    }
 }

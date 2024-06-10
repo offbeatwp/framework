@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Support\Wordpress;
 
 final class Page
@@ -17,7 +18,8 @@ final class Page
     }
 
     /** @return string[] */
-    public function getPageTemplates() {
+    public function getPageTemplates()
+    {
         return $this->pageTemplates;
     }
 }

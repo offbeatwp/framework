@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post\Relations;
 
 class BelongsToOneOrMany extends Relation
@@ -13,7 +14,7 @@ class BelongsToOneOrMany extends Relation
         if (!$append) {
             $this->dissociateAll();
         }
-        
+
         if (is_array($ids)) {
             $this->makeRelationships($ids, 'reverse');
         } else {

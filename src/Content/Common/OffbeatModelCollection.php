@@ -69,7 +69,7 @@ abstract class OffbeatModelCollection extends Collection
      */
     public function mapAs(string $methodName): Collection
     {
-        return $this->toCollection()->map(fn($item) => $item->$methodName());
+        return $this->toCollection()->map(fn ($item) => $item->$methodName());
     }
 
     /**

@@ -1,10 +1,13 @@
 <?php
+
 namespace OffbeatWP\Form\Fields;
 
-class Editor extends AbstractField {
+class Editor extends AbstractField
+{
     public const FIELD_TYPE = 'editor';
 
-    public function basicToolbar(bool $useBasicToolbar = true) {
+    public function basicToolbar(bool $useBasicToolbar = true)
+    {
         $this->attribute('toolbar', ($useBasicToolbar) ? 'basic' : 'full');
         return $this;
     }

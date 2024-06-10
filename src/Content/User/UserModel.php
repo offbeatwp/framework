@@ -19,6 +19,13 @@ use WP_User;
 
 class UserModel
 {
+    use BaseModelTrait;
+    use SetMetaTrait;
+    use GetMetaTrait;
+    use Macroable {
+        Macroable::__call as macroCall;
+        Macroable::__callStatic as macroCallStatic;
+    }
     protected WP_User $wpUser;
     /** @var mixed[]|null */
     protected ?array $metas = null;
@@ -28,14 +35,6 @@ class UserModel
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
     private bool $isInitialised = false;
-
-    use BaseModelTrait;
-    use SetMetaTrait;
-    use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
 
     /** @param WP_User|null $user */
     final public function __construct($user = null)

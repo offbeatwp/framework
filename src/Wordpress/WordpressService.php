@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Wordpress;
 
 use Illuminate\Support\Collection;
@@ -41,7 +42,7 @@ final class WordpressService
 
         // Page Template
         add_action('init', [$this, 'registerPageTemplate'], 99);
-        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10 ,2);
+        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10, 2);
     }
 
     public function registerMenus(): void

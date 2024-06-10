@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Routes\Routes;
 
 use Closure;
@@ -20,7 +21,8 @@ final class CallbackRoute extends Route
      * @param string[] $methods
      * @param string|null $condition
      */
-    public function __construct(string $name, Closure $matchCallback, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', string|array $schemes = [], string|array $methods = [], ?string $condition = '') {
+    public function __construct(string $name, Closure $matchCallback, $actionCallback, array $defaults = [], array $requirements = [], array $options = [], ?string $host = '', string|array $schemes = [], string|array $methods = [], ?string $condition = '')
+    {
         $this->setName($name);
         $this->setActionCallback($actionCallback);
 
@@ -38,8 +40,9 @@ final class CallbackRoute extends Route
      * @param callable(): bool $matchCallback
      * @return void
      */
-    public function setMatchCallback($matchCallback) {
-            $this->matchCallback = $matchCallback;
+    public function setMatchCallback($matchCallback)
+    {
+        $this->matchCallback = $matchCallback;
     }
 
     public function doMatchCallback(): bool

@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Routes;
 
 use OffbeatWP\Services\AbstractService;

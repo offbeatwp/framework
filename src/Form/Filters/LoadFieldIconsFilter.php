@@ -4,12 +4,14 @@ namespace OffbeatWP\Form\Filters;
 
 use OffbeatWP\Hooks\AbstractFilter;
 
-class LoadFieldIconsFilter extends AbstractFilter {
+class LoadFieldIconsFilter extends AbstractFilter
+{
     /**
      * @param mixed $field
      * @return mixed
      */
-    public function filter($field) {
+    public function filter($field)
+    {
         if (!isset($field['wrapper']['class']) || $field['wrapper']['class'] !== 'offbeat-icon-field') {
             return $field;
         }

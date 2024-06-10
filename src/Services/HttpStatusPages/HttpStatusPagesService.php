@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Services\HttpStatusPages;
 
 use OffbeatWP\Foundation\App;
@@ -25,7 +26,8 @@ class HttpStatusPagesService extends AbstractService
      * @param int $code
      * @return mixed
      */
-    public function renderHttpStatusPage($return, int $code) {
+    public function renderHttpStatusPage($return, int $code)
+    {
         global $wp_query, $wp_the_query;
 
         $pageId = setting("http-status-page-{$code}");

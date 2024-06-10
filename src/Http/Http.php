@@ -26,7 +26,7 @@ final class Http
      * @return void
      */
     public function redirectToParentUrl($requestUri = null, int $status = 301): void
-    {   
+    {
         if ($requestUri === null) {
             $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
             $requestUri = $request->getPathInfo();

@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Taxonomy;
 
 use ArrayIterator;
@@ -19,7 +20,8 @@ use WP_Term;
 class TermsCollection extends OffbeatModelCollection
 {
     /** @param int[]|WP_Term[]|TermModel[] $items */
-    public function __construct(iterable $items = []) {
+    public function __construct(iterable $items = [])
+    {
         $terms = [];
 
         foreach ($items as $item) {
@@ -37,7 +39,8 @@ class TermsCollection extends OffbeatModelCollection
      * Retrieves all object Ids within this collection as an array.
      * @return int[]
      */
-    public function getIds(): array {
+    public function getIds(): array
+    {
         return array_map(static function (TermModel $model) {
             return $model->getId() ?: 0;
         }, $this->items);

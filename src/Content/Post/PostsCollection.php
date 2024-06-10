@@ -168,7 +168,7 @@ class PostsCollection extends OffbeatModelCollection
             $chunks = explode('>', $links);
             for ($i = 0, $l = count($chunks); $i < $l; $i++) {
                 if (str_contains($chunks[$i], '<button')) {
-                    $chunks[$i] = preg_replace_callback('/href=".*(\/page\/(\d*+)\/?.*?)?"/U', fn($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $chunks[$i]);
+                    $chunks[$i] = preg_replace_callback('/href=".*(\/page\/(\d*+)\/?.*?)?"/U', fn ($matches) => 'data-page="' . ($matches[2] ?? 1) . '"', $chunks[$i]);
                 }
             }
 
@@ -200,7 +200,7 @@ class PostsCollection extends OffbeatModelCollection
      */
     public function getIds(): array
     {
-        return array_map(static fn(PostModel $model) => $model->getId() ?: 0, $this->items);
+        return array_map(static fn (PostModel $model) => $model->getId() ?: 0, $this->items);
     }
 
     /**

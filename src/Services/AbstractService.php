@@ -1,9 +1,11 @@
 <?php
+
 namespace OffbeatWP\Services;
 
 use OffbeatWP\Foundation\App;
 
-abstract class AbstractService {
+abstract class AbstractService
+{
     /** @var App */
     protected $app;
 

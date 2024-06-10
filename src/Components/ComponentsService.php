@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Services\AbstractService;

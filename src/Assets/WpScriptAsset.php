@@ -7,7 +7,8 @@ final class WpScriptAsset
     private string $handle;
     private bool $enqueueNow;
 
-    public function __construct(string $handle, bool $enqueueNow) {
+    public function __construct(string $handle, bool $enqueueNow)
+    {
         $this->handle = $handle;
         $this->enqueueNow = $enqueueNow;
     }

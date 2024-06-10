@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Services\HttpStatusPages;
 
 use Illuminate\Support\Collection;
@@ -24,7 +25,7 @@ class HttpStatusPagesSettings
             $httpStatusPagesCodes = collect(['404']);
         }
 
-        $httpStatusPagesCodes->each(function($statusCode) use ($form) {
+        $httpStatusPagesCodes->each(function ($statusCode) use ($form) {
             $form->addField(Post::make('http-status-page-' . $statusCode, 'Page for ' . $statusCode)->fromPostTypes(['page']));
         });
 

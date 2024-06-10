@@ -38,14 +38,14 @@ final class Post
         if (is_preview()) {
             return;
         }
-        
+
         $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
         $requestUri = strtok($request->getUri(), '?');
         $postUri = $post->getPermalink();
 
         if ($requestUri !== $postUri) {
             $url = $post->getPermalink();
-            
+
             $getParameters = $_GET;
             if (is_array($getParameters)) {
                 foreach ($getParameters as $getParameterKey => $getParameter) {

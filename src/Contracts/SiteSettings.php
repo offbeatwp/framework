@@ -2,7 +2,8 @@
 
 namespace OffbeatWP\Contracts;
 
-interface SiteSettings {
+interface SiteSettings
+{
     /** @param class-string $class */
     public function addPage($class);
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Controllers;
 
 use OffbeatWP\Views\ViewableTrait;

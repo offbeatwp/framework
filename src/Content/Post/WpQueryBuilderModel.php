@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post;
 
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;

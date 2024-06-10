@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Form\FieldsContainers;
 
 use Illuminate\Support\Collection;
@@ -123,7 +124,7 @@ class AbstractFieldsContainer extends Collection implements FieldsContainerInter
     /** @return array{type: string, id: string, label: string, attributes: mixed[], items: mixed[]} */
     public function toArray()
     {
-        $items = $this->map(fn($item) => $item->toArray());
+        $items = $this->map(fn ($item) => $item->toArray());
 
         return [
             'type'       => $this->getType(),
