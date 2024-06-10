@@ -88,7 +88,7 @@ final class Design
     {
         /** @var Collection<string|int, array{label: string, sub_themes: Collection<string|int, array{label: string}>}>|null $rowThemes */
         $rowThemes = config('design.row_themes');
-        if(!$rowThemes instanceof Collection) {
+        if(!is_iterable($rowThemes)) {
             return [];
         }
 
@@ -96,14 +96,11 @@ final class Design
 
         foreach ($rowThemes as $key => $item) {
             if (!empty($item['sub_themes'])) {
-                $subThemes = collect($item['sub_themes']);
-                $rowSubThemeList = [];
+                $rowThemeList = [$key => $item['label']];
 
-                foreach ($subThemes as $subKey => $subItem) {
-                    $rowSubThemeList["{$key}**{$subKey}"] = "{$item['label']} + {$subItem['label']}";
+                foreach ($item['sub_themes'] as $subKey => $subItem) {
+                    $rowThemeList["{$key}**{$subKey}"] = "{$item['label']} + {$subItem['label']}";
                 }
-
-                $rowThemeList = array_merge([$key => $item['label']], $rowSubThemeList);
 
                 $rowThemesList[$item['label']] = $rowThemeList;
             } else {
