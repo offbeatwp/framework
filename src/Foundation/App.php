@@ -69,7 +69,7 @@ final class App
         add_action('wp', [$this, 'findRoute'], 1);
     }
 
-    /** @return array{assets: CreateDefinitionHelper<AssetsManager>, http: CreateDefinitionHelper<Http>} */
+    /** @return array{assets: CreateDefinitionHelper, http: CreateDefinitionHelper} */
     private function baseBindings(): array
     {
         return [
