@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
@@ -14,8 +15,6 @@ use WP_Term;
 
 class TermModel implements TermModelInterface
 {
-    public const TAXONOMY = '';
-
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
@@ -23,6 +22,7 @@ class TermModel implements TermModelInterface
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
     }
+    public const TAXONOMY = '';
 
     public ?WP_Term $wpTerm = null;
     public ?int $id = null;
@@ -91,7 +91,7 @@ class TermModel implements TermModelInterface
         if ($hookValue !== null) {
             return $hookValue;
         }
-        
+
         if (method_exists(TermQueryBuilder::class, $method)) {
             trigger_error('Called TermQueryBuilder method on a model instance through magic method. Please use the static TermModel::query method instead.', E_USER_DEPRECATED);
             return static::query()->$method(...$parameters);

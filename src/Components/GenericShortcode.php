@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Components;
 
 class GenericShortcode

@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Console;
 
 use Exception;
@@ -6,7 +7,8 @@ use Throwable;
 use WP_CLI;
 use WP_Error;
 
-abstract class AbstractCommand {
+abstract class AbstractCommand
+{
     public const COMMAND = '';
 
     /**

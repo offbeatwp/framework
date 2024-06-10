@@ -1,14 +1,17 @@
 <?php
+
 namespace OffbeatWP\Config;
 
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
-final class Config {
+final class Config
+{
     private App $app;
     private array $config = [];
 
-    public function __construct(App $app) {
+    public function __construct(App $app)
+    {
         $this->app = $app;
         $this->loadConfig();
     }
@@ -97,7 +100,8 @@ final class Config {
      * @param mixed $value
      * @return mixed
      */
-    public function set($key, $value) {
+    public function set($key, $value)
+    {
         $this->config[$key] = $value;
 
         return $value;

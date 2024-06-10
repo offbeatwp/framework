@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Routes;
 
 use OffbeatWP\Routes\Routes\Route as OffbeatRoute;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\RouteCollection as SymfonyRouteCollection;
 final class RouteCollection extends SymfonyRouteCollection
 {
     /** @param OffbeatRoute[] $routes */
-    public function __construct (array $routes = [])
+    public function __construct(array $routes = [])
     {
         foreach ($routes as $name => $route) {
             $this->add($name, $route);

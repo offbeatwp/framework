@@ -3,6 +3,9 @@
   "description": "The OffbeatWP framework",
   "license": "MIT",
   "type": "library",
+  "scripts": {
+    "phpcs": "vendor/bin/php-cs-fixer fix"
+  },
   "require": {
     "php": "^8.0",
     "php-di/php-di": "^7.0.6",
@@ -25,6 +28,7 @@
     "php-stubs/wp-cli-stubs": "^v2.10.0",
     "phpstan/phpstan": "1.11.1",
     "szepeviktor/phpstan-wordpress": "^v1.3.4",
-    "phpstan/phpstan-deprecation-rules": "^1.2.0"
+    "phpstan/phpstan-deprecation-rules": "^1.2.0",
+    "friendsofphp/php-cs-fixer": "^3.58"
   }
 }

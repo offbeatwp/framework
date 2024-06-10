@@ -1,9 +1,11 @@
 <?php
+
 namespace OffbeatWP\Helpers;
 
 use InvalidArgumentException;
 
-final class ArrayHelper {
+final class ArrayHelper
+{
     /**
      * @pure
      * @param mixed $input

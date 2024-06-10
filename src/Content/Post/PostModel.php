@@ -26,6 +26,13 @@ use WP_User;
 
 class PostModel implements PostModelInterface
 {
+    use BaseModelTrait;
+    use SetMetaTrait;
+    use GetMetaTrait;
+    use Macroable {
+        Macroable::__call as macroCall;
+        Macroable::__callStatic as macroCallStatic;
+    }
     public const POST_TYPE = 'any';
 
     public const DEFAULT_POST_STATUS = 'publish';
@@ -48,14 +55,6 @@ class PostModel implements PostModelInterface
      * @see Relation
      */
     public $relationKeyMethods = null;
-
-    use BaseModelTrait;
-    use SetMetaTrait;
-    use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
 
     /**
      * @final
@@ -217,11 +216,11 @@ class PostModel implements PostModelInterface
         $content = apply_filters('the_content', $content);
 
         if ($didManualRestoreWpAutopHook) {
-            $priority = has_filter( 'the_content', 'wpautop' );
-            remove_filter( 'the_content', 'wpautop', $priority );
-            add_filter( 'the_content', '_restore_wpautop_hook', $priority + 1 );
+            $priority = has_filter('the_content', 'wpautop');
+            remove_filter('the_content', 'wpautop', $priority);
+            add_filter('the_content', '_restore_wpautop_hook', $priority + 1);
         }
-        
+
         return $content;
     }
 
@@ -698,7 +697,7 @@ class PostModel implements PostModelInterface
 
         setup_postdata($this->wpPost);
         $wp_query->in_the_loop = true;
-        
+
         // Small workaround for a notice the occurs within WP caching featured images.
         if ($wp_query->posts === null) {
             $wp_query->posts = [];
@@ -966,7 +965,7 @@ class PostModel implements PostModelInterface
 
         return [];
     }
-    
+
     private function updateRelation(string $key): void
     {
         $method = $this->getMethodByRelationKey($key);

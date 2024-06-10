@@ -1,7 +1,9 @@
 <?php
+
 namespace OffbeatWP\Services;
 
-abstract class AbstractServicePageBuilder extends AbstractService {
+abstract class AbstractServicePageBuilder extends AbstractService
+{
     /** @return void */
     public function register()
     {

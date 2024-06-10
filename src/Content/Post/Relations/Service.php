@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\Relations\Console\Install;
@@ -10,7 +11,8 @@ use WP_Query;
 class Service extends AbstractService
 {
     /** @return void */
-    public function register() {
+    public function register()
+    {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
 
         if (offbeat('console')::isConsole()) {
@@ -116,7 +118,8 @@ class Service extends AbstractService
     }
 
     /** @throws InvalidQueryOperatorException */
-    private function checkOperator(?string $operator): void {
+    private function checkOperator(?string $operator): void
+    {
         if ($operator !== 'AND' && $operator !== 'OR') {
             throw new InvalidQueryOperatorException('Operator not valid for the relationships query builder. Only AND / OR are valid operators');
         }

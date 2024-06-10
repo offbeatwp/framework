@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Api;
 
 use WP_REST_Request;

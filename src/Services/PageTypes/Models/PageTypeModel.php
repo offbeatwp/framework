@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Services\PageTypes\Models;
 
 use OffbeatWP\Content\Taxonomy\TermModel;

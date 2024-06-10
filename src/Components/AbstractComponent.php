@@ -51,7 +51,7 @@ abstract class AbstractComponent
      * *string[]* **supports** - Supported functionality of this component. Valid options include 'pagebuilder', 'editor', 'shortcode' and 'widget'.
      * @return array{name?: string, description?: string, slug: string, category?: string, icon?: string, supports?: string[], block?: mixed[], variations?: mixed[], form?: Form}
      */
-    abstract static function settings();
+    abstract public static function settings();
 
     public function __construct(View $view, ?ContextInterface $context = null)
     {
@@ -257,7 +257,9 @@ abstract class AbstractComponent
     }
 
     /** @return void */
-    public static function enqueueAssets() {}
+    public static function enqueueAssets()
+    {
+    }
 
     /** @return void */
     public static function _enqueueAssets()

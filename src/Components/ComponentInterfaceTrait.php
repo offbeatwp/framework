@@ -4,7 +4,8 @@ namespace OffbeatWP\Components;
 
 use OffbeatWP\Foundation\App;
 
-trait ComponentInterfaceTrait {
+trait ComponentInterfaceTrait
+{
     public function render($settings)
     {
         $component = App::singleton()->container->make($this->componentClass);
@@ -15,5 +16,5 @@ trait ComponentInterfaceTrait {
 
         return App::singleton()->container->call([$component, 'render'], [$settings]);
 
-    }    
+    }
 }

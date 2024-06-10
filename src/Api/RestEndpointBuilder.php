@@ -53,7 +53,7 @@ final class RestEndpointBuilder
      */
     public function capability(string $capability)
     {
-        $this->permission(fn() => current_user_can($capability));
+        $this->permission(fn () => current_user_can($capability));
         return $this;
     }
 

@@ -5,7 +5,9 @@ namespace OffbeatWP\Content\Post;
 /** The default WordPress post statuses as of WP 5.5. Keep in mind that themes/plugin can add custom statuses. */
 class PostStatus
 {
-    final private function __construct() {}
+    final private function __construct()
+    {
+    }
 
     public const ANY = 'any';
     public const PUBLISHED = 'publish';

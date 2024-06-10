@@ -1,10 +1,12 @@
 <?php
+
 namespace OffbeatWP\Form\FieldsCollections;
 
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Form\Fields\Text;
 
-class Heading extends AbstractFieldsCollection {
+class Heading extends AbstractFieldsCollection
+{
     /** @param string $defaultHeading */
     public function __construct($defaultHeading = 'h3')
     {

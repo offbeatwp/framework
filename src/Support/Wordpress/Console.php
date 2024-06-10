@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Console\AbstractCommand;

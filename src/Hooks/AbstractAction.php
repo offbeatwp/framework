@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Hooks;
 
 use OffbeatWP\Foundation\App;

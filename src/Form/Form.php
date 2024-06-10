@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
@@ -187,7 +188,7 @@ final class Form extends Collection
     /** @inheritDoc */
     public function toArray()
     {
-        $items = $this->map(fn($item) => $item->toArray());
+        $items = $this->map(fn ($item) => $item->toArray());
         return $items->toArray();
     }
 

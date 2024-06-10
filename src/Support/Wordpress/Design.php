@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
@@ -128,7 +129,7 @@ final class Design
         }
 
         if ($margins instanceof Collection) {
-            return $margins->map(fn($item) => $item['label'])->toArray();
+            return $margins->map(fn ($item) => $item['label'])->toArray();
         }
 
         return [];
@@ -147,7 +148,7 @@ final class Design
         }
 
         if ($paddings instanceof Collection) {
-            return $paddings->map(fn($item) => $item['label'])->toArray();
+            return $paddings->map(fn ($item) => $item['label'])->toArray();
         }
 
         return [];

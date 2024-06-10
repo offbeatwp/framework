@@ -13,7 +13,8 @@ abstract class AbstractField implements FieldInterface
     /** @var mixed[] */
     public $attributes = [];
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->init();
     }
 

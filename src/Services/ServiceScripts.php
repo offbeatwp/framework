@@ -15,9 +15,9 @@ class ServiceScripts extends AbstractService
     {
         $this->settings = $settings;
 
-        add_action('wp_head',       [$this, 'scriptsHead']);
-        add_action('body_open',     [$this, 'scriptsBodyOpen']);
-        add_action('wp_footer',     [$this, 'scriptsFooter']);
+        add_action('wp_head', [$this, 'scriptsHead']);
+        add_action('body_open', [$this, 'scriptsBodyOpen']);
+        add_action('wp_footer', [$this, 'scriptsFooter']);
 
         $settings->addPage(SettingsScripts::class);
     }

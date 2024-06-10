@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post\Relations;
 
 class HasOneOrMany extends Relation

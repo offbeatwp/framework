@@ -1,7 +1,9 @@
 <?php
+
 namespace OffbeatWP\Form\FieldsCollections;
 
-interface FieldsCollectionInterface {
+interface FieldsCollectionInterface
+{
     /** @return self */
     public function each(callable $callback);
 }

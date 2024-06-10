@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Content\Post\Relations\Console;
 
 use OffbeatWP\Console\AbstractCommand;

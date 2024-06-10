@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Foundation;
 
 use Closure;
@@ -21,6 +22,7 @@ use OffbeatWP\Routes\RoutesService;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
 use WP_Error;
+
 use function DI\autowire;
 use function DI\create;
 
@@ -44,7 +46,8 @@ final class App
         return static::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         // App is a singleton and must instantiated via the App::singleton() method.
     }
 
@@ -66,7 +69,7 @@ final class App
         add_action('wp', [$this, 'findRoute'], 1);
     }
 
-    /** @return CreateDefinitionHelper[] */
+    /** @return array{assets: CreateDefinitionHelper<AssetsManager>, http: CreateDefinitionHelper<Http>} */
     private function baseBindings(): array
     {
         return [

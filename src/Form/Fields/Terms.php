@@ -1,7 +1,9 @@
 <?php
+
 namespace OffbeatWP\Form\Fields;
 
-class Terms extends AbstractField {
+class Terms extends AbstractField
+{
     public const FIELD_TYPE = 'terms';
 
     /**
