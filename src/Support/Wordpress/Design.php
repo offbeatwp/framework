@@ -86,32 +86,27 @@ final class Design
     /** @return mixed[] */
     public function getRowThemesList()
     {
+        /** @var Collection<string|int, array{label: string, sub_themes: Collection<string|int, array{label: string}>}>|null $rowThemes */
         $rowThemes = config('design.row_themes');
-        if(!$rowThemes instanceof Collection) {
+        if(!is_iterable($rowThemes)) {
             return [];
         }
 
         $rowThemesList = [];
 
-        $rowThemes->each(function ($item, $key) use (&$rowThemesList) {
+        foreach ($rowThemes as $key => $item) {
             if (!empty($item['sub_themes'])) {
-                $subThemes       = collect($item['sub_themes']);
-                $rowSubThemeList = [];
+                $rowThemeList = [$key => $item['label']];
 
-                $subThemes->each(function ($subItem, $subKey) use ($item, $key, &$rowSubThemeList) {
-                    $rowSubThemeList["{$key}**{$subKey}"] = "{$item['label']} + {$subItem['label']}";
-                });
-
-                $rowThemeList = array_merge(
-                    [$key => $item['label']],
-                    $rowSubThemeList
-                );
+                foreach ($item['sub_themes'] as $subKey => $subItem) {
+                    $rowThemeList["{$key}**{$subKey}"] = "{$item['label']} + {$subItem['label']}";
+                }
 
                 $rowThemesList[$item['label']] = $rowThemeList;
             } else {
                 $rowThemesList[$key] = $item['label'];
             }
-        });
+        }
 
         return $rowThemesList;
     }
@@ -125,7 +120,9 @@ final class Design
         $margins = config('design.margins');
 
         if ($margins instanceof Closure) {
-            $margins = collect($margins($context));
+            /** @var array<int, array{label: string}> $labelArray */
+            $labelArray = $margins($context);
+            $margins = collect($labelArray);
         }
 
         if ($margins instanceof Collection) {
@@ -144,7 +141,9 @@ final class Design
         $paddings = config('design.paddings');
 
         if ($paddings instanceof Closure) {
-            $paddings = collect($paddings($context));
+            /** @var array<int, array{label: string}> $labelArray */
+            $labelArray = $paddings($context);
+            $paddings = collect($labelArray);
         }
 
         if ($paddings instanceof Collection) {

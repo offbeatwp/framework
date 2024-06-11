@@ -2,6 +2,9 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use WP_REST_Response;
+use WP_Taxonomy;
+
 final class TaxonomyBuilder
 {
     private string $taxonomy;
@@ -18,7 +21,7 @@ final class TaxonomyBuilder
      * @param string $singularLabel
      * @return TaxonomyBuilder
      */
-    public function make(string $taxonomy, $postTypes, $pluralName, $singularLabel = ''): TaxonomyBuilder
+    public function make(string $taxonomy, string|array $postTypes, string $pluralName, string $singularLabel = ''): TaxonomyBuilder
     {
         $this->taxonomy = $taxonomy;
         $this->postTypes = (array)$postTypes;
@@ -217,11 +220,25 @@ final class TaxonomyBuilder
     }
 
     /**
-     * Used to disable the metabox
+     * Used to disable the metabox of this taxonomy
      * @return $this
      */
     public function hideMetaBox()
     {
+        // Block Editor
+        add_filter('rest_prepare_taxonomy', function(WP_REST_Response $response, WP_Taxonomy $taxonomy) {
+            $context = $_REQUEST['context'] ?? null;
+
+            if ($context === 'edit' && $taxonomy->name === $this->taxonomy) {
+                $data = $response->get_data();
+                $data['visibility']['show_ui'] = false;
+                $response->set_data($data);
+            }
+
+            return $response;
+        }, 10, 2);
+
+        // Classic Editor
         $this->args['meta_box_cb'] = false;
         return $this;
     }
