@@ -6,8 +6,10 @@ class Radio extends AbstractField
 {
     public const FIELD_TYPE = 'radio';
 
+    /** @var array<string|int, scalar|null> */
     public $options = [];
 
+    /** @param array<string|int, scalar|null> $options */
     public function addOptions($options = [])
     {
         $this->options = $options;
@@ -15,6 +17,10 @@ class Radio extends AbstractField
         return $this;
     }
 
+    /**
+     * @param string|int $key
+     * @param scalar|null $value
+     */
     public function addOption($key, $value)
     {
         $this->options[$key] = $value;
@@ -22,6 +28,7 @@ class Radio extends AbstractField
         return $this;
     }
 
+    /** @return array<string|int, scalar|null> */
     public function getOptions()
     {
         if (is_callable($this->options)) {
