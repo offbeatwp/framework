@@ -11,6 +11,7 @@ use OffbeatWP\Form\FieldsContainers\Repeater;
 use OffbeatWP\Form\FieldsContainers\Section;
 use OffbeatWP\Form\FieldsContainers\Tab;
 
+/** @extends Collection<int, AbstractField|AbstractFieldsCollection|AbstractFieldsContainer|Form> */
 final class Form extends Collection
 {
     /** @var string[] */
