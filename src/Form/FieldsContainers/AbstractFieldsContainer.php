@@ -7,6 +7,7 @@ use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
 use OffbeatWP\Form\Form;
 
+/** @extends Collection<int, AbstractField|AbstractFieldsContainer|AbstractFieldsCollection|Form> */
 class AbstractFieldsContainer extends Collection implements FieldsContainerInterface
 {
     public const LEVEL = 0;

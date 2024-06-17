@@ -6,6 +6,7 @@ class Select extends AbstractField
 {
     public const FIELD_TYPE = 'select';
 
+    /** @var array<string|int, scalar|null> */
     public $options = [];
 
     /**
@@ -31,6 +32,7 @@ class Select extends AbstractField
         return $this;
     }
 
+    /** @return array<string|int, scalar|null> */
     public function getOptions()
     {
         if (is_callable($this->options)) {
