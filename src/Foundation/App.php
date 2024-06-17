@@ -78,6 +78,7 @@ final class App
         ];
     }
 
+    /** @param \DI\ContainerBuilder<Container> $containerBuilder */
     private function initiateBaseServices(ContainerBuilder $containerBuilder): void
     {
         foreach ([WordpressService::class, RoutesService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
@@ -85,6 +86,7 @@ final class App
         }
     }
 
+    /** @param \DI\ContainerBuilder<Container> $containerBuilder */
     private function initiateServices(ContainerBuilder $containerBuilder): void
     {
         $services = config('services');
@@ -96,6 +98,10 @@ final class App
         }
     }
 
+    /**
+     * @param string $serviceClass
+     * @param \DI\ContainerBuilder<Container> $containerBuilder
+     */
     private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
     {
         if ($this->isServiceInitiated($serviceClass)) {
