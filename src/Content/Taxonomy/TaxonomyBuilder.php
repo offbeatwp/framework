@@ -226,7 +226,7 @@ final class TaxonomyBuilder
     public function hideMetaBox()
     {
         // Block Editor
-        add_filter('rest_prepare_taxonomy', function(WP_REST_Response $response, WP_Taxonomy $taxonomy) {
+        add_filter('rest_prepare_taxonomy', function (WP_REST_Response $response, WP_Taxonomy $taxonomy) {
             $context = $_REQUEST['context'] ?? null;
 
             if ($context === 'edit' && $taxonomy->name === $this->taxonomy) {

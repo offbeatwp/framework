@@ -9,6 +9,7 @@ class NavMenu extends Select
         $this->addOptions([$this, 'getNavMenus']);
     }
 
+    /** @return array<int, string> */
     public function getNavMenus()
     {
         $options = [
