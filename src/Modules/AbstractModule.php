@@ -82,7 +82,7 @@ abstract class AbstractModule extends AbstractService
     /**
      * @param string $path
      * @param bool $findDirs This parameter is unused and does not do unless your module overrides this method.
-     * @return Collection|null
+     * @return Collection<string, string>|null
      */
     public function getRegisterableObjects($path, $findDirs = false)
     {

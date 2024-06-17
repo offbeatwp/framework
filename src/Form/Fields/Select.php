@@ -8,6 +8,10 @@ class Select extends AbstractField
 
     public $options = [];
 
+    /**
+     * @param array<int|string, scalar|null> $options
+     * @return $this
+     */
     public function addOptions(array $options = [])
     {
         $this->options = array_replace($this->options, $options);
@@ -15,6 +19,11 @@ class Select extends AbstractField
         return $this;
     }
 
+    /**
+     * @param int|string $key
+     * @param scalar|null $value
+     * @return $this
+     */
     public function addOption($key, $value)
     {
         $this->options[$key] = $value;
