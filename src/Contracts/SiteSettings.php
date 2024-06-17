@@ -4,10 +4,16 @@ namespace OffbeatWP\Contracts;
 
 interface SiteSettings
 {
-    /** @param class-string $class */
+    /**
+     * @param class-string $class
+     * @return void
+     */
     public function addPage($class);
 
-    /** @param string $key */
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function get($key);
 
     /**

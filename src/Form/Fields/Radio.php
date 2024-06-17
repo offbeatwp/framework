@@ -9,7 +9,10 @@ class Radio extends AbstractField
     /** @var array<string|int, scalar|null> */
     public $options = [];
 
-    /** @param array<string|int, scalar|null> $options */
+    /**
+     * @param array<string|int, scalar|null> $options
+     * @return $this
+     */
     public function addOptions($options = [])
     {
         $this->options = $options;
@@ -20,6 +23,7 @@ class Radio extends AbstractField
     /**
      * @param string|int $key
      * @param scalar|null $value
+     * @return $this
      */
     public function addOption($key, $value)
     {
