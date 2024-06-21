@@ -10,7 +10,9 @@ use TypeError;
 use WP_User;
 
 /**
- * @template TModel of UserModel
+ * @template TKey of array-key
+ * @template TValue of UserModel
+ * 
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
  * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
@@ -19,18 +21,18 @@ use WP_User;
  * @method UserModel|null reduce(callable $callback, mixed $initial = null)
  * @method UserModel offsetGet(int|string $key)
  * @method ArrayIterator|UserModel[] getIterator()
- * @phpstan-method TModel[] all()
+ * @phpstan-method TValue[] all()
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var TModel[] */
+    /** @var TValue[] */
     protected $items = [];
-    /** @var class-string<TModel> */
+    /** @var class-string<TValue> */
     private string $modelClass;
 
     /**
      * @param int[]|WP_User[]|UserModel[] $items
-     * @param class-string<TModel> $modelClass
+     * @param class-string<TValue> $modelClass
      */
     final public function __construct(iterable $items = [], string $modelClass = UserModel::class)
     {
@@ -58,7 +60,7 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * @return UserModel[]
-     * @phpstan-return TModel[]
+     * @phpstan-return TValue[]
      */
     public function toArray()
     {
@@ -134,7 +136,7 @@ class UserCollection extends OffbeatModelCollection
 
     /**
      * @param int|WP_User|UserModel $item
-     * @phpstan-return  TModel|null
+     * @phpstan-return  TValue|null
      */
     protected function createValidUserModel($item): ?UserModel
     {
@@ -165,7 +167,7 @@ class UserCollection extends OffbeatModelCollection
         $this->items = [];
     }
 
-    /** @return UserCollection<TModel> */
+    /** @return UserCollection<TValue> */
     final public function values(): UserCollection
     {
         return new static(array_values($this->items), $this->modelClass);

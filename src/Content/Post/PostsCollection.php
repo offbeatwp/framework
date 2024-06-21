@@ -10,7 +10,7 @@ use WP_Post;
 use WP_Query;
 
 /**
- * @template TModel of \OffbeatWP\Content\Post\PostModel
+ * @template TValue of \OffbeatWP\Content\Post\PostModel
  *
  * @method PostModel|mixed pull(int|string $key, mixed $default = null)
  * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
@@ -204,8 +204,8 @@ class PostsCollection extends OffbeatModelCollection
     }
 
     /**
-     * @return PostModel[]|TModel[]
-     * @phpstan-return TModel[]
+     * @return PostModel[]|TValue[]
+     * @phpstan-return TValue[]
      */
     public function toArray()
     {

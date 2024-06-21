@@ -6,17 +6,17 @@ use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use WP_Post;
 
 /**
- * @template TModel of PostModel
- * @extends WpQueryBuilder<TModel>
+ * @template TValue of PostModel
+ * @extends WpQueryBuilder<TValue>
  */
 final class WpQueryBuilderModel extends WpQueryBuilder
 {
-    /** @var class-string<TModel> */
+    /** @var class-string<TValue> */
     protected string $modelClass;
 
     /**
      * @throws OffbeatInvalidModelException
-     * @param class-string<TModel> $modelClass
+     * @param class-string<TValue> $modelClass
      */
     public function __construct(string $modelClass)
     {
@@ -40,7 +40,7 @@ final class WpQueryBuilderModel extends WpQueryBuilder
         $this->order($order, $orderDirection);
     }
 
-    /** @phpstan-return TModel|PostModel */
+    /** @phpstan-return TValue|PostModel */
     public function firstOrNew(): PostModel
     {
         return $this->first() ?: new $this->modelClass(null);
@@ -48,7 +48,7 @@ final class WpQueryBuilderModel extends WpQueryBuilder
 
     /**
      * @param WP_Post|int|null $post
-     * @phpstan-return TModel|PostModel|null
+     * @phpstan-return TValue|PostModel|null
      */
     public function postToModel($post)
     {
@@ -59,13 +59,13 @@ final class WpQueryBuilderModel extends WpQueryBuilder
         return new $this->modelClass($post);
     }
 
-    /** @phpstan-return TModel|null */
+    /** @phpstan-return TValue|null */
     public function first(): ?PostModel
     {
         return parent::first();
     }
 
-    /** @phpstan-return TModel */
+    /** @phpstan-return TValue */
     public function firstOrFail(): PostModel
     {
         return parent::firstOrFail();
