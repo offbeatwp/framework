@@ -16,6 +16,7 @@ final class TermQueryBuilder
     /** @var class-string<TValue> */
     protected string $modelClass;
     protected string $taxonomy;
+    /** @var array<string, mixed> */
     protected array $queryVars = [];
 
     /** @param class-string<TValue> $model */
@@ -85,7 +86,7 @@ final class TermQueryBuilder
         return $this;
     }
 
-    /** @return TermsCollection<TValue> */
+    /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
@@ -106,7 +107,7 @@ final class TermQueryBuilder
 
     /**
      * Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms
-     * @return TermsCollection<TValue>
+     * @return TermsCollection<int, TValue>
      */
     public function all(): TermsCollection
     {
@@ -115,7 +116,7 @@ final class TermQueryBuilder
 
     /**
      * @param int $numberOfItems
-     * @return TermsCollection<TValue>
+     * @return TermsCollection<int, TValue>
      */
     public function take(int $numberOfItems): TermsCollection
     {

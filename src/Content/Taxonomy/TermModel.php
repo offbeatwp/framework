@@ -28,7 +28,9 @@ class TermModel implements TermModelInterface
     public ?int $id = null;
     /** @var array<string, mixed> */
     protected array $metaInput = [];
+    /** @var ("")[] */
     protected array $metaToUnset = [];
+    /** @var array<string|int|float|bool|\stdClass|\Serializable>|null */
     private ?array $meta = null;
     /** @var array{slug?: string, description?: string, parent?: int} */
     private array $args = [];
@@ -173,7 +175,7 @@ class TermModel implements TermModelInterface
         return static::find($this->getParentId());
     }
 
-    /** @return Collection<int> */
+    /** @return Collection<int, int> */
     public function getAncestorIds(): Collection
     {
         return collect(get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy'));
@@ -184,6 +186,7 @@ class TermModel implements TermModelInterface
         return get_edit_term_link($this->wpTerm ?: $this->getId()) ?: '';
     }
 
+    /** @return Collection<int, TermModel> */
     public function getAncestors(): Collection
     {
         return $this->getAncestorIds()->map(function ($ancestorId) {
@@ -191,6 +194,7 @@ class TermModel implements TermModelInterface
         });
     }
 
+    /** @return mixed[] */
     final public function getMetas(): array
     {
         if ($this->meta === null) {

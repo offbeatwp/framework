@@ -10,7 +10,9 @@ use WP_Post;
 use WP_Query;
 
 /**
+ * @template TKey of array-key
  * @template TValue of \OffbeatWP\Content\Post\PostModel
+ * @extends OffbeatModelCollection<TKey, TValue>
  *
  * @method PostModel|mixed pull(int|string $key, mixed $default = null)
  * @method PostModel|mixed first(callable $callback = null, mixed $default = null)

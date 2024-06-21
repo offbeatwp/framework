@@ -6,6 +6,7 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 
 class HasOne extends HasOneOrMany
 {
+    /** @return \OffbeatWP\Content\Post\WpQueryBuilder */
     public function query()
     {
         return (new WpQueryBuilder())
@@ -14,6 +15,7 @@ class HasOne extends HasOneOrMany
              ->hasRelationshipWith($this->model, $this->relationKey);
     }
 
+    /** @return \OffbeatWP\Content\Post\PostModel|null */
     public function get()
     {
         return $this->query()->first();

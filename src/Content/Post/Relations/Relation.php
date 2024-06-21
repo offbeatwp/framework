@@ -7,7 +7,9 @@ use OffbeatWP\Content\Post\PostModel;
 /** @abstract */
 class Relation
 {
+    /** @var \OffbeatWP\Content\Post\PostModel */
     protected $model;
+    /** @var string */
     protected $relationKey;
 
     /**
@@ -77,6 +79,7 @@ class Relation
         );
     }
 
+    /** @param iterable<int> $ids */
     public function makeRelationships(iterable $ids, ?string $direction = null): void
     {
         foreach ($ids as $id) {

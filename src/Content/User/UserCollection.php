@@ -12,6 +12,7 @@ use WP_User;
 /**
  * @template TKey of array-key
  * @template TValue of UserModel
+ * @extends OffbeatModelCollection<TKey, TValue>
  * 
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
@@ -97,7 +98,7 @@ class UserCollection extends OffbeatModelCollection
      * @template T of \OffbeatWP\Content\User\UserModel
      * @deprecated
      * @param class-string<T> $className
-     * @return UserCollection<T>
+     * @return UserCollection<int, T>
      */
     public function as(string $className): UserCollection
     {
@@ -167,7 +168,7 @@ class UserCollection extends OffbeatModelCollection
         $this->items = [];
     }
 
-    /** @return UserCollection<TValue> */
+    /** @return UserCollection<int, TValue> */
     final public function values(): UserCollection
     {
         return new static(array_values($this->items), $this->modelClass);
