@@ -7,7 +7,9 @@ use InvalidArgumentException;
 final class ArrayHelper
 {
     /**
+     * Consider using <b>array_is_list</b> instead
      * @pure
+     * @see \array_is_list()
      * @param mixed $input
      * @return bool
      */
@@ -68,6 +70,7 @@ final class ArrayHelper
     }
 
     /**
+     * @deprecated
      * @pure
      * @param scalar|scalar[] $data
      * @param bool $deleteNonNumericValues When true, any non-numeric values found in the array are deleted.
@@ -85,6 +88,7 @@ final class ArrayHelper
     }
 
     /**
+     * @deprecated
      * Retrieve a single random value from an array.
      * @template T
      * @param T[] $array
@@ -92,8 +96,7 @@ final class ArrayHelper
      */
     public static function randomValue(array $array)
     {
-        $randKey = array_rand($array);
-        return $array[$randKey];
+        return $array[array_rand($array)];
     }
 
     /**
@@ -120,8 +123,9 @@ final class ArrayHelper
 
     /**
      * Recursively removes all NULL values from an array<br>
-     * This passed array may not contain any objects
+     * <b>The passed array may not contain any objects</b>
      * @pure
+     * @deprecated
      * @throws InvalidArgumentException
      * @param scalar[]|null[]|mixed[][] $array
      * @return scalar[]|mixed[][]

@@ -16,6 +16,7 @@ final class UserQueryBuilder
 
     /** @var class-string<UserModel> */
     protected string $modelClass;
+    /** @var array<string, mixed> */
     protected array $queryVars = ['number' => 0];
     protected bool $skipOnLimit = false;
     protected bool $skipOnInclude = false;
