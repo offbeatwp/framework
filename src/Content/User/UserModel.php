@@ -27,9 +27,9 @@ class UserModel
         Macroable::__callStatic as macroCallStatic;
     }
     protected WP_User $wpUser;
-    /** @var mixed[]|null */
+    /** @var array<string, mixed>|null */
     protected ?array $metas = null;
-    /** @var mixed[] */
+    /** @var array<string, string|int|float|bool|mixed[]|\stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var ("")[] */
     protected array $metaToUnset = [];
@@ -185,6 +185,7 @@ class UserModel
         return $this->wpUser->ID;
     }
 
+    /** @return array<string, mixed> */
     final public function getMetas(): array
     {
         if ($this->metas === null) {
@@ -540,7 +541,7 @@ class UserModel
         return null;
     }
 
-    /** @return UserCollection<static> */
+    /** @return UserCollection<int, static> */
     public static function all(): UserCollection
     {
         return static::query()->get();

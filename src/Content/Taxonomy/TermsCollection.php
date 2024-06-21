@@ -8,6 +8,10 @@ use TypeError;
 use WP_Term;
 
 /**
+ * @template TKey of array-key
+ * @template TValue of TermModel
+ * @extends OffbeatModelCollection<TKey, TValue>
+ *
  * @method TermModel|mixed pull(int|string $key, $default = null)
  * @method TermModel|mixed first(callable $callback = null, mixed $default = null)
  * @method TermModel|mixed last(callable $callback = null, mixed $default = null)

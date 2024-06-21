@@ -22,11 +22,13 @@ class HasOneOrMany extends Relation
         }
     }
 
+    /** @return void */
     public function detach(int $id)
     {
         $this->removeRelationship($id);
     }
 
+    /** @return void */
     public function detachAll()
     {
         $this->removeAllRelationships();

@@ -8,17 +8,18 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
 use WP_Term_Query;
 
-/** @template TModel of TermModel */
+/** @template TValue of TermModel */
 final class TermQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var class-string<TModel> */
+    /** @var class-string<TValue> */
     protected string $modelClass;
     protected string $taxonomy;
+    /** @var array<string, mixed> */
     protected array $queryVars = [];
 
-    /** @param class-string<TModel> $model */
+    /** @param class-string<TValue> $model */
     public function __construct(string $model)
     {
         $this->modelClass = $model;
@@ -85,7 +86,7 @@ final class TermQueryBuilder
         return $this;
     }
 
-    /** @return TermsCollection<TModel> */
+    /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
         $termModels = new TermsCollection();
@@ -106,7 +107,7 @@ final class TermQueryBuilder
 
     /**
      * Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms
-     * @return TermsCollection<TModel>
+     * @return TermsCollection<int, TValue>
      */
     public function all(): TermsCollection
     {
@@ -115,7 +116,7 @@ final class TermQueryBuilder
 
     /**
      * @param int $numberOfItems
-     * @return TermsCollection<TModel>
+     * @return TermsCollection<int, TValue>
      */
     public function take(int $numberOfItems): TermsCollection
     {
@@ -205,13 +206,13 @@ final class TermQueryBuilder
         return $this->limit(1)->slugs(false)[0] ?? null;
     }
 
-    /** @phpstan-return TModel|null */
+    /** @phpstan-return TValue|null */
     public function first(): ?TermModel
     {
         return $this->take(1)->first();
     }
 
-    /** @phpstan-return TModel */
+    /** @phpstan-return TValue */
     public function firstOrFail(): TermModel
     {
         $result = $this->first();
@@ -223,7 +224,7 @@ final class TermQueryBuilder
         return $result;
     }
 
-    /** @phpstan-return TModel */
+    /** @phpstan-return TValue */
     public function firstOrNew(): TermModel
     {
         $result = $this->first();
@@ -238,7 +239,7 @@ final class TermQueryBuilder
 
     /**
      * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
-     * @phpstan-return TModel|null
+     * @phpstan-return TValue|null
      */
     public function findById(?int $id): ?TermModel
     {
@@ -257,7 +258,7 @@ final class TermQueryBuilder
 
     /**
      * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
-     * @phpstan-return TModel
+     * @phpstan-return TValue
      */
     public function findByIdOrFail(int $id): TermModel
     {
@@ -272,7 +273,7 @@ final class TermQueryBuilder
 
     /**
      * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
-     * @phpstan-return TModel|null
+     * @phpstan-return TValue|null
      */
     public function findBySlug(string $slug): ?TermModel
     {
@@ -291,7 +292,7 @@ final class TermQueryBuilder
 
     /**
      * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
-     * @phpstan-return TModel
+     * @phpstan-return TValue
      */
     public function findBySlugOrFail(string $slug): TermModel
     {
@@ -306,7 +307,7 @@ final class TermQueryBuilder
 
     /**
      * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
-     * @phpstan-return TModel|null
+     * @phpstan-return TValue|null
      */
     public function findByName(string $name): ?TermModel
     {
@@ -325,7 +326,7 @@ final class TermQueryBuilder
 
     /**
      * Note: Will return empty terms unless <i>hide_empty</i> is explicitly set to true.
-     * @phpstan-return TModel
+     * @phpstan-return TValue
      */
     public function findByNameOrFail(string $name): TermModel
     {
@@ -341,7 +342,7 @@ final class TermQueryBuilder
     /**
      * @deprecated Use findById, findBySlug or findByName instead
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
-     * @phpstan-return TModel|null
+     * @phpstan-return TValue|null
      */
     public function findBy(string $field, string|int $value): ?TermModel
     {
@@ -363,7 +364,7 @@ final class TermQueryBuilder
     /**
      * @deprecated Use findByIdOrFail, findBySlugOrFail or findByNameOrFail instead
      * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
-     * @phpstan-return TModel
+     * @phpstan-return TValue
      */
     public function findByOrFail(string $field, string|int $value): TermModel
     {

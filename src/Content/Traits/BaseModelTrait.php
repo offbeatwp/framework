@@ -49,7 +49,7 @@ trait BaseModelTrait
         return static::query()->whereIdIn([$id])->exists();
     }
 
-    /** @return static[] */
+    /** @return array<int, static> */
     public static function allAsArray()
     {
         return static::all()->toArray();

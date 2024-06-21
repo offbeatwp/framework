@@ -10,6 +10,7 @@ final class TaxonomyBuilder
     private string $taxonomy;
     /** @var string[] */
     private array $postTypes;
+    /** @var array<string, mixed> */
     private array $args = [];
     /** @var class-string<TermModel>|null */
     private ?string $modelClass = null;

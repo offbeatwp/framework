@@ -9,7 +9,7 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
 use WP_User_Query;
 
-/** @template TModel of UserModel */
+/** @template TValue of UserModel */
 final class UserQueryBuilder
 {
     use OffbeatQueryTrait;
@@ -21,7 +21,7 @@ final class UserQueryBuilder
     protected bool $skipOnLimit = false;
     protected bool $skipOnInclude = false;
 
-    /** @param class-string<TModel> $modelClass */
+    /** @param class-string<TValue> $modelClass */
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
@@ -31,7 +31,7 @@ final class UserQueryBuilder
         }
     }
 
-    /** @return UserCollection<TModel> */
+    /** @return UserCollection<int, TValue> */
     public function get(): UserCollection
     {
         do_action('offbeatwp/users/query/before_get', $this);
@@ -43,27 +43,27 @@ final class UserQueryBuilder
 
     /**
      * @deprecated Use the <b>get</b> method instead.
-     * @return UserCollection<TModel>
+     * @return UserCollection<int, TValue>
      */
     public function all(): UserCollection
     {
         return $this->take(0);
     }
 
-    /** @return UserCollection<TModel> */
+    /** @return UserCollection<int, TValue> */
     public function take(int $numberOfUsers): UserCollection
     {
         $this->queryVars['number'] = $numberOfUsers;
         return $this->get();
     }
 
-    /** @phpstan-return TModel|null */
+    /** @phpstan-return TValue|null */
     public function first(): ?UserModel
     {
         return $this->take(1)->first();
     }
 
-    /** @phpstan-return TModel|null */
+    /** @phpstan-return TValue|null */
     public function findById(?int $id): ?UserModel
     {
         if ($id <= 0) {
@@ -74,7 +74,7 @@ final class UserQueryBuilder
         return $this->first();
     }
 
-    /** @phpstan-return TModel */
+    /** @phpstan-return TValue */
     public function findByIdOrFail(int $id): UserModel
     {
         $result = $this->findById($id);
@@ -178,7 +178,7 @@ final class UserQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this<TModel>
+     * @return $this<TValue>
      */
     public function whereIdNotIn($ids)
     {
@@ -187,7 +187,7 @@ final class UserQueryBuilder
         return $this;
     }
 
-    /** @return $this<TModel> */
+    /** @return $this<TValue> */
     public function limit(int $amount)
     {
         $this->skipOnLimit = ($amount <= 0);

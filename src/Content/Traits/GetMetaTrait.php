@@ -13,7 +13,7 @@ trait GetMetaTrait
 {
     /**
      * @param string $key
-     * @param scalar|array|null $defaultValue
+     * @param scalar|mixed[]|null $defaultValue
      * @param bool $single
      * @return mixed
      * @internal
@@ -163,6 +163,7 @@ trait GetMetaTrait
     /**
      * Retrieve a meta value as an array.<br>
      * If the meta value does not exist then <b>an empty array</b> is returned.
+     * @return mixed[]
      */
     public function getMetaArray(string $key, bool $single = true): array
     {
@@ -188,7 +189,10 @@ trait GetMetaTrait
         return $models;
     }
 
-    /** @deprecated Use <i>collect($model->getMetas())</i> instead */
+    /**
+     * @deprecated Use <i>collect($model->getMetas())</i> instead
+     * @return Collection<int|string, mixed>
+     */
     public function getMetaCollection(string $key): Collection
     {
         return collect($this->getMetaArray($key));

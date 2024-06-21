@@ -10,7 +10,7 @@ use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
 
-/** @template TModel of PostModel */
+/** @template TValue of PostModel */
 class WpQueryBuilder
 {
     use OffbeatQueryTrait;
@@ -19,7 +19,7 @@ class WpQueryBuilder
     protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
 
-    /** @return PostsCollection<TModel> */
+    /** @return PostsCollection<TValue> */
     final public function all(): PostsCollection
     {
         return $this->take(-1);
@@ -58,7 +58,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @return PostsCollection<TModel> */
+    /** @return PostsCollection<TValue> */
     final public function get(): PostsCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
@@ -85,7 +85,7 @@ class WpQueryBuilder
         return $queryVars[$var] ?? null;
     }
 
-    /** @return PostsCollection<TModel> */
+    /** @return PostsCollection<TValue> */
     final public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
@@ -109,7 +109,7 @@ class WpQueryBuilder
         return $result;
     }
 
-    /** @phpstan-return TModel|null */
+    /** @phpstan-return TValue|null */
     final public function findById(?int $id): ?PostModel
     {
         if ($id <= 0) {
@@ -121,7 +121,7 @@ class WpQueryBuilder
         return $this->first();
     }
 
-    /** @phpstan-return TModel */
+    /** @phpstan-return TValue */
     public function findByIdOrFail(int $id): PostModel
     {
         $result = $this->findById($id);
