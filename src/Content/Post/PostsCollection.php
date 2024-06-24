@@ -217,6 +217,7 @@ class PostsCollection extends OffbeatModelCollection
     /**
      * Deletes <b>all</b> the posts in this collection from the database.
      * @param bool $force
+     * @return void
      */
     public function deleteAll(bool $force)
     {
