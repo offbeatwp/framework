@@ -40,8 +40,11 @@ class PostModel implements PostModelInterface
     public const DEFAULT_PING_STATUS = 'closed';
 
     public WP_Post|stdClass|null $wpPost;
+    /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
+    /** @var array<string, ""> */
     protected array $metaToUnset = [];
+    /** @var array<string, mixed>|null */
     protected ?array $metas = null;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
@@ -388,6 +391,7 @@ class PostModel implements PostModelInterface
         return (int)$this->wpPost->post_author;
     }
 
+    /** @return mixed[] */
     final public function getMetas(): array
     {
         if ($this->metas === null) {
@@ -470,7 +474,10 @@ class PostModel implements PostModelInterface
         return $result;
     }
 
-    /** @return $this */
+    /**
+     * @param iterable<string, int|float|bool|string|mixed[]|\Serializable|stdClass> $metadata
+     * @return $this
+     */
     public function setMetas(iterable $metadata)
     {
         foreach ($metadata as $key => $value) {
@@ -484,6 +491,7 @@ class PostModel implements PostModelInterface
      * Moves a meta value from one key to another.
      * @param string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
      * @param string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
+     * @return void
      */
     public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
     {
@@ -496,6 +504,7 @@ class PostModel implements PostModelInterface
     /**
      * @param string $taxonomy
      * @param array{} $unused
+     * @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel>
      */
     public function getTerms($taxonomy, $unused = []): TermQueryBuilder
     {
@@ -595,7 +604,7 @@ class PostModel implements PostModelInterface
         return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
     }
 
-    /** @return PostsCollection<static> Retrieves the children of this post. */
+    /** @return PostsCollection<int, static> Retrieves the children of this post. */
     public function getChildren()
     {
         return static::query()->where(['post_parent' => $this->getId()])->all();
@@ -607,7 +616,7 @@ class PostModel implements PostModelInterface
         return get_post_ancestors($this->getId());
     }
 
-    /** @return Collection<static> Returns the ancestors of a post. */
+    /** @return Collection<int, static> Returns the ancestors of a post. */
     public function getAncestors(): Collection
     {
         $ancestors = collect();
@@ -830,6 +839,7 @@ class PostModel implements PostModelInterface
         return $this->relationKeyMethods ?? null;
     }
 
+    /** @return void */
     public function refreshMetas()
     {
         $this->metas = null;
@@ -920,7 +930,7 @@ class PostModel implements PostModelInterface
         return $model;
     }
 
-    /** @return PostsCollection<static> */
+    /** @return PostsCollection<int, static> */
     public static function all(): PostsCollection
     {
         return static::query()->take(-1);
