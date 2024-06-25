@@ -20,4 +20,15 @@ class HasMany extends HasOneOrMany
     {
         return $this->query()->all();
     }
+
+    public function count(): int
+    {
+        return $this->query()->count();
+    }
+
+    /** @return int[] */
+    public function ids(): array
+    {
+        return $this->query()->ids();
+    }
 }
