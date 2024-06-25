@@ -4,7 +4,11 @@ namespace OffbeatWP\Content\Post;
 
 use ArrayIterator;
 
-/** @template TValue of PostModel */
+/**
+ * @extends ArrayIterator<TKey, TValue>
+ * @template TKey of int|string
+ * @template TValue of PostModel
+ */
 final class WpPostsIterator extends ArrayIterator
 {
     /** @var \WP_Post|null */

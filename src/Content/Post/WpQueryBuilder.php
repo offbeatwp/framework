@@ -19,7 +19,7 @@ class WpQueryBuilder
     protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
 
-    /** @return PostsCollection<TValue> */
+    /** @return PostsCollection<int, TValue> */
     final public function all(): PostsCollection
     {
         return $this->take(-1);
@@ -58,7 +58,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @return PostsCollection<TValue> */
+    /** @return PostsCollection<int, TValue> */
     final public function get(): PostsCollection
     {
         if (!isset($this->queryVars['no_found_rows'])) {
@@ -85,7 +85,7 @@ class WpQueryBuilder
         return $queryVars[$var] ?? null;
     }
 
-    /** @return PostsCollection<TValue> */
+    /** @return PostsCollection<int, TValue> */
     final public function take(int $numberOfItems): PostsCollection
     {
         $this->queryVars['posts_per_page'] = $numberOfItems;
@@ -449,15 +449,23 @@ class WpQueryBuilder
     }
 
     /**
-     * @param PostModel|PostsCollection<PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModel|PostsCollection<int|string, PostModel>|int $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
      * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
      * @return $this
      */
-    final public function hasRelationshipWith(PostModel|PostsCollection $postModelOrCollection, string $relationKey, ?string $direction = null)
+    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, ?string $direction = null)
     {
+        if ($postModelOrCollection instanceof PostsCollection) {
+            $id = $postModelOrCollection->getIds();
+        } elseif ($postModelOrCollection instanceof PostModel) {
+            $id = $postModelOrCollection->getId();
+        } else {
+            $id = $postModelOrCollection;
+        }
+
         $this->queryVars['relationships'] = [
-            'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
+            'id' => $id,
             'key' => $relationKey,
             'direction' => $direction,
         ];

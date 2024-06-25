@@ -306,7 +306,7 @@ class TermModel implements TermModelInterface
         return new static($wpTerm);
     }
 
-    /** @return TermsCollection<static> Empty terms <b>will</b> be included. */
+    /** @return TermsCollection<int, static> Empty terms <b>will</b> be included. */
     public static function all(): TermsCollection
     {
         return static::query()->excludeEmpty(false)->get();
