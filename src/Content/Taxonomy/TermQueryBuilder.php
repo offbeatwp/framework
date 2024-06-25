@@ -89,6 +89,7 @@ final class TermQueryBuilder
     /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
+        /** @var \OffbeatWP\Content\Taxonomy\TermsCollection<int, TValue>  $termModels */
         $termModels = new TermsCollection();
         $terms = $this->runQuery()->get_terms();
 
