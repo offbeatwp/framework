@@ -449,15 +449,23 @@ class WpQueryBuilder
     }
 
     /**
-     * @param PostModel|PostsCollection<int|string, PostModel> $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModel|PostsCollection<int|string, PostModel>|int|int[] $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
      * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
      * @return $this
      */
-    final public function hasRelationshipWith(PostModel|PostsCollection $postModelOrCollection, string $relationKey, ?string $direction = null)
+    final public function hasRelationshipWith(PostModel|PostsCollection|int|array $postModelOrCollection, string $relationKey, ?string $direction = null)
     {
+        if ($postModelOrCollection instanceof PostsCollection) {
+            $id = $postModelOrCollection->getIds();
+        } elseif ($postModelOrCollection instanceof PostModel) {
+            $id = $postModelOrCollection->getId();
+        } else {
+            $id = $postModelOrCollection;
+        }
+
         $this->queryVars['relationships'] = [
-            'id' => ($postModelOrCollection instanceof PostsCollection) ? $postModelOrCollection->getIds() : $postModelOrCollection->getId(),
+            'id' => $id,
             'key' => $relationKey,
             'direction' => $direction,
         ];
