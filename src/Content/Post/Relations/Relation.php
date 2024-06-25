@@ -13,9 +13,9 @@ class Relation
      * @final
      * @param string $relationKey
      */
-    public function __construct(int $model, $relationKey)
+    public function __construct(int $modelId, $relationKey)
     {
-        $this->modelId = $model;
+        $this->modelId = $modelId;
         $this->relationKey = $relationKey;
     }
 
