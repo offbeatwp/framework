@@ -12,7 +12,7 @@ class HasMany extends HasOneOrMany
         return (new WpQueryBuilder())
             ->where(['ignore_sticky_posts' => 1])
             ->wherePostType('any')
-            ->hasRelationshipWith($this->model, $this->relationKey);
+            ->hasRelationshipWith($this->modelId, $this->relationKey);
     }
 
     /** @return \OffbeatWP\Content\Post\PostsCollection */
