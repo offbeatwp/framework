@@ -82,7 +82,10 @@ final class AssetsManager
         $entrypoints = $this->getAssetsEntryPoints();
 
         if (empty($entrypoints->entrypoints->$entry->$key)) {
-            trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
+            if ($entrypoints !== null) {
+                trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
+            }
+
             return false;
         }
 
@@ -161,24 +164,25 @@ final class AssetsManager
 
                 if (!wp_style_is($handle)) {
                     if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
-                        wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
+                        $this->enqueue('style', $handle, $this->getAssetsUrl($asset), $dependencies);
                     } else {
                         add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
-                            wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
+                            $this->enqueue('style', $handle, $this->getAssetsUrl($asset), $dependencies);
                         });
                     }
                 }
             }
-
-            return;
-        }
-
-        if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
-            wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
         } else {
-            add_action('wp_enqueue_scripts', function () use ($entry, $dependencies) {
-                wp_enqueue_style('theme-style' . $entry, $this->getUrl($entry . '.css'), $dependencies);
-            });
+            $handle = 'theme-style' . $entry;
+            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+
+            if ($enqueueNow) {
+                $this->enqueue('style', $handle, $this->getUrl($entry . '.css'), $dependencies);
+            } else {
+                add_action('wp_enqueue_scripts', function () use ($entry, $dependencies, $handle) {
+                    $this->enqueue('style', $handle, $this->getUrl($entry . '.css'), $dependencies);
+                });
+            }
         }
     }
 
@@ -209,10 +213,10 @@ final class AssetsManager
                     $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
 
                     if ($enqueueNow) {
-                        wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
+                        $this->enqueue('script', $handle, $this->getAssetsUrl($asset), $dependencies);
                     } else {
                         add_action('wp_enqueue_scripts', function () use ($handle, $asset, $dependencies) {
-                            wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, true);
+                            $this->enqueue('script', $handle, $this->getAssetsUrl($asset), $dependencies);
                         });
                     }
                 }
@@ -222,15 +226,24 @@ final class AssetsManager
             $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
 
             if ($enqueueNow) {
-                wp_enqueue_script($handle, $this->getUrl($entry . '.js'), $dependencies, false, true);
+                $this->enqueue('script', $handle, $this->getUrl($entry . '.js'), $dependencies);
             } else {
                 add_action('wp_enqueue_scripts', function () use ($handle, $entry, $dependencies) {
-                    wp_enqueue_script($handle, $this->getUrl($entry . '.js'), $dependencies, false, true);
+                    $this->enqueue('script', $handle, $this->getUrl($entry . '.js'), $dependencies);
                 });
             }
         }
 
         return new WpScriptAsset($handle, $enqueueNow);
+    }
+
+    private function enqueue(string $type, string $handle, string $src, array $deps): void
+    {
+        if ($type === 'script') {
+            wp_enqueue_script($handle, $src, $deps, false, true);
+        } else {
+            wp_enqueue_style($handle, $src, $deps);
+        }
     }
 
     /**
