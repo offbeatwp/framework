@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Components;
 
-use Doctrine\Common\Cache\ArrayCache;
 use OffbeatWP\Form\Form;
 use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
@@ -62,11 +61,6 @@ abstract class AbstractComponent
     {
         $this->view = $view;
         $this->context = $context;
-
-        if (!App::singleton()->container->has('componentCache')) {
-            // Just a simple lightweight cache if none is set
-            App::singleton()->container->set('componentCache', new ArrayCache());
-        }
     }
 
     /**
@@ -109,13 +103,6 @@ abstract class AbstractComponent
             return '';
         }
 
-        $cachedId = $this->getCacheId($settings);
-        $object = $this->getCachedComponent($cachedId);
-
-        if ($object !== false) {
-            return $object;
-        }
-
         if ($this->context) {
             $this->context->initContext();
         }
@@ -135,8 +122,7 @@ abstract class AbstractComponent
             'settings' => new ComponentSettings($filteredSettings, $defaultValues)
         ]);
 
-        $render = apply_filters('offbeat.component.render', $output, $this);
-        return $this->setCachedObject($cachedId, $render);
+        return apply_filters('offbeat.component.render', $output, $this);
     }
 
     /** @param object|null $settings */
@@ -159,40 +145,6 @@ abstract class AbstractComponent
         }
 
         $this->setCssClasses(apply_filters('offbeatwp/component/classes', $this->cssClasses, $componentSlug));
-    }
-
-    /**
-     * @param object|mixed[] $settings
-     * @return string
-     */
-    protected function getCacheId($settings): string
-    {
-        $prefix = $this->context ? $this->context->getCacheId() : '';
-        return md5($prefix . get_class($this) . json_encode($settings));
-    }
-
-    /**
-     * @param string $id
-     * @return false|string
-     */
-    protected function getCachedComponent($id)
-    {
-        return $this->getCachedObject($id);
-    }
-
-    /** @return false|string */
-    protected function getCachedObject(string $id)
-    {
-        return container('componentCache')->fetch($id);
-    }
-
-    protected function setCachedObject(string $id, ?string $object): ?string
-    {
-        if ($object) {
-            container('componentCache')->save($id, $object, 60);
-        }
-
-        return $object;
     }
 
     public static function supports(string $service): bool
