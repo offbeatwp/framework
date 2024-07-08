@@ -141,6 +141,20 @@ trait OffbeatQueryTrait
         return $this;
     }
 
+    /** @return $this */
+    final public function orderAsc()
+    {
+        $this->queryVars['order'] = 'ASC';
+        return $this;
+    }
+
+    /** @return $this */
+    final public function orderDesc()
+    {
+        $this->queryVars['order'] = 'DESC';
+        return $this;
+    }
+
     /** @return string Returns the last executed query as raw query string. */
     public static function getLastRequest(): string
     {
