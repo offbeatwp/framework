@@ -6,7 +6,7 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 
 class BelongsToMany extends BelongsToOneOrMany
 {
-    /** @return \OffbeatWP\Content\Post\WpQueryBuilder */
+    /** @return \OffbeatWP\Content\Post\WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
     public function query()
     {
         return (new WpQueryBuilder())
@@ -15,7 +15,7 @@ class BelongsToMany extends BelongsToOneOrMany
             ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
     }
 
-    /** @return \OffbeatWP\Content\Post\PostsCollection */
+    /** @return \OffbeatWP\Content\Post\PostsCollection<int, \OffbeatWP\Content\Post\PostModel> */
     public function get()
     {
         return $this->query()->all();

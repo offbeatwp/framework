@@ -6,7 +6,7 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 
 class HasOne extends HasOneOrMany
 {
-    /** @return \OffbeatWP\Content\Post\WpQueryBuilder */
+    /** @return \OffbeatWP\Content\Post\WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
     public function query()
     {
         return (new WpQueryBuilder())

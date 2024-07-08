@@ -22,11 +22,13 @@ class BelongsToOneOrMany extends Relation
         }
     }
 
+    /** @return void */
     public function dissociate(int $id)
     {
         $this->removeRelationship($id, 'reverse');
     }
 
+    /** @return void */
     public function dissociateAll()
     {
         $this->removeAllRelationships('reverse');
