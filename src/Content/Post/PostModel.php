@@ -883,25 +883,37 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /** @param string $relationKey */
+    /**
+     * @param string $relationKey
+     * @return HasMany<self>
+     */
     public function hasMany($relationKey): HasMany
     {
         return new HasMany($this, $relationKey);
     }
 
-    /** @param string $relationKey */
+    /**
+     * @param string $relationKey
+     * @return HasOne<self>
+     */
     public function hasOne($relationKey): HasOne
     {
         return new HasOne($this, $relationKey);
     }
 
-    /** @param string $relationKey */
+    /**
+     * @param string $relationKey
+     * @return BelongsTo<self>
+     */
     public function belongsTo($relationKey): BelongsTo
     {
         return new BelongsTo($this, $relationKey);
     }
 
-    /** @param string $relationKey */
+    /**
+     * @param string $relationKey
+     * @return BelongsToMany<self>
+     */
     public function belongsToMany($relationKey): BelongsToMany
     {
         return new BelongsToMany($this, $relationKey);

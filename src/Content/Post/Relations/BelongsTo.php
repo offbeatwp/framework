@@ -4,18 +4,28 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
+/**
+ * @template T of \OffbeatWP\Content\Post\PostModel
+ * @extends \OffbeatWP\Content\Post\Relations\BelongsToOneOrMany<T>
+ */
 class BelongsTo extends BelongsToOneOrMany
 {
-    /** @return WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
+    /** @phpstan-return WpQueryBuilder<T> */
     public function query()
     {
-        return (new WpQueryBuilder())
+        /** @var WpQueryBuilder<T> $builer */
+        $builer = new WpQueryBuilder();
+
+        return $builer
             ->where(['ignore_sticky_posts' => 1])
-            ->wherePostType('any')
+            ->wherePostType($this->model::POST_TYPE)
             ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
     }
 
-    /** @return \OffbeatWP\Content\Post\PostModel */
+    /**
+     * @return \OffbeatWP\Content\Post\PostModel|null
+     * @phpstan-return T|null
+     */
     public function get()
     {
         return $this->query()->first();
