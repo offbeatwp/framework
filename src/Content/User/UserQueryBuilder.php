@@ -88,7 +88,7 @@ final class UserQueryBuilder
 
     /**
      * @param string[]|string $properties Sort retrieved users by parameter. Defaults to <i>login</i>.
-     * @param string $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
+     * @param 'ASC'|'DESC'|'' $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
      * @return $this
      */
     public function orderBy($properties, string $direction = '')
