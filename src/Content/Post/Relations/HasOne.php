@@ -13,10 +13,10 @@ class HasOne extends HasOneOrMany
     /** @phpstan-return WpQueryBuilder<T> */
     public function query()
     {
-        /** @var WpQueryBuilder<T> $builer */
-        $builer = new WpQueryBuilder();
+        /** @var WpQueryBuilder<T> $builder */
+        $builder = new WpQueryBuilder();
 
-        return $builer
+        return $builder
             ->where(['ignore_sticky_posts' => 1])
             ->wherePostType($this->model::POST_TYPE)
             ->hasRelationshipWith($this->model, $this->relationKey);
