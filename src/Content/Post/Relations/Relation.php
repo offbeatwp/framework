@@ -14,16 +14,20 @@ class Relation
     protected PostModel $model;
     /** @var string */
     protected $relationKey;
+    /** @var class-string<T> */
+    protected string $modelClass;
 
     /**
      * @final
      * @phpstan-param T $model
      * @param string $relationKey
+     * @param class-string<T> $modelClass
      */
-    public function __construct(PostModel $model, $relationKey)
+    public function __construct(PostModel $model, $relationKey, string $modelClass = PostModel::class)
     {
         $this->model = $model;
         $this->relationKey = $relationKey;
+        $this->modelClass = $modelClass;
     }
 
     /** @return int|false */

@@ -18,7 +18,7 @@ class BelongsTo extends BelongsToOneOrMany
 
         return $builder
             ->where(['ignore_sticky_posts' => 1])
-            ->wherePostType($this->model::POST_TYPE)
+            ->wherePostType($this->modelClass::POST_TYPE)
             ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
     }
 

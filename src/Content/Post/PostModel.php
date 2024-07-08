@@ -885,38 +885,38 @@ class PostModel implements PostModelInterface
 
     /**
      * @param string $relationKey
-     * @return HasMany<self>
+     * @param class-string<PostModel> $modelClass
      */
-    public function hasMany($relationKey): HasMany
+    public function hasMany($relationKey, string $modelClass = PostModel::class): HasMany
     {
-        return new HasMany($this, $relationKey);
+        return new HasMany($this, $relationKey, $modelClass);
     }
 
     /**
      * @param string $relationKey
-     * @return HasOne<self>
+     * @param class-string<PostModel> $modelClass
      */
-    public function hasOne($relationKey): HasOne
+    public function hasOne($relationKey, string $modelClass = PostModel::class): HasOne
     {
-        return new HasOne($this, $relationKey);
+        return new HasOne($this, $relationKey, $modelClass);
     }
 
     /**
      * @param string $relationKey
-     * @return BelongsTo<self>
+     * @param class-string<PostModel> $modelClass
      */
-    public function belongsTo($relationKey): BelongsTo
+    public function belongsTo($relationKey, string $modelClass = PostModel::class): BelongsTo
     {
-        return new BelongsTo($this, $relationKey);
+        return new BelongsTo($this, $relationKey, $modelClass);
     }
 
     /**
      * @param string $relationKey
-     * @return BelongsToMany<self>
+     * @param class-string<PostModel> $modelClass
      */
-    public function belongsToMany($relationKey): BelongsToMany
+    public function belongsToMany($relationKey, string $modelClass = PostModel::class): BelongsToMany
     {
-        return new BelongsToMany($this, $relationKey);
+        return new BelongsToMany($this, $relationKey, $modelClass);
     }
 
     /**
