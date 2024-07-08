@@ -88,7 +88,7 @@ trait OffbeatQueryTrait
 
     /**
      * @param string $metaKey
-     * @param string $direction
+     * @param 'ASC'|'DESC'|'' $direction
      * @return $this
      */
     public function orderByMeta(string $metaKey, string $direction = '')
@@ -105,7 +105,7 @@ trait OffbeatQueryTrait
 
     /**
      * @param string $metaKey
-     * @param string $direction
+     * @param 'ASC'|'DESC'|'' $direction
      * @return $this
      */
     public function orderByMetaNum(string $metaKey, string $direction = '')

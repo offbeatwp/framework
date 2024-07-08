@@ -539,13 +539,7 @@ class WpQueryBuilder
      */
     final public function orderBy(string|array $orderBy)
     {
-        if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
-            $this->queryVars['meta_key'] = $match[3];
-            $this->queryVars['orderby'] = ($match[1] === 'meta_num') ? 'meta_value_num' : 'meta_value';
-        } else {
-            $this->queryVars['orderby'] = $orderBy;
-        }
-
+        $this->queryVars['orderby'] = $orderBy;
         return $this;
     }
 }
