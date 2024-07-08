@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
-use OffbeatWP\Content\Post\WpQueryBuilder;
+use OffbeatWP\Content\Post\WpQueryBuilderModel;
 
 /**
  * @template T of \OffbeatWP\Content\Post\PostModel
@@ -10,15 +10,11 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
  */
 class BelongsTo extends BelongsToOneOrMany
 {
-    /** @return WpQueryBuilder<T> */
+    /** @return WpQueryBuilderModel<T> */
     public function query()
     {
-        /** @var WpQueryBuilder<T> $builder */
-        $builder = new WpQueryBuilder();
-
-        return $builder
+        return (new WpQueryBuilderModel($this->modelClass))
             ->where(['ignore_sticky_posts' => 1])
-            ->wherePostType($this->modelClass::POST_TYPE)
             ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
     }
 
