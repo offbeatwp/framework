@@ -50,7 +50,7 @@ class PostModel implements PostModelInterface
     protected array $termsToSet = [];
 
     /**
-     * @var string[]|null
+     * @var array<non-empty-string, non-empty-string>|null
      * This should be an associative string array<br>
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
      * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
