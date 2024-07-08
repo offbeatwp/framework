@@ -10,7 +10,7 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
  */
 class BelongsToMany extends BelongsToOneOrMany
 {
-    /** @phpstan-return WpQueryBuilder<T> */
+    /** @return WpQueryBuilder<T> */
     public function query()
     {
         /** @var WpQueryBuilder<T> $builder */
