@@ -10,8 +10,8 @@ use OffbeatWP\Content\Post\PostModel;
  */
 class Relation
 {
-    /** @phpstan-var T */
-    protected PostModel $model;
+    /** @var PostModel */
+    protected $model;
     /** @var string */
     protected $relationKey;
     /** @var class-string<T> */
@@ -23,7 +23,7 @@ class Relation
      * @param string $relationKey
      * @param class-string<T> $modelClass
      */
-    public function __construct(PostModel $model, $relationKey, string $modelClass = PostModel::class)
+    public function __construct($model, $relationKey, string $modelClass = PostModel::class)
     {
         $this->model = $model;
         $this->relationKey = $relationKey;
