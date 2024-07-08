@@ -19,7 +19,7 @@ class Relation
 
     /**
      * @final
-     * @phpstan-param T $model
+     * @param PostModel $model
      * @param string $relationKey
      * @param class-string<T> $modelClass
      */
