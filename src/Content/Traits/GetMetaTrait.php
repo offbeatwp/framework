@@ -112,24 +112,6 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as a localised formatted time string.
-     * @param string $key Meta key.
-     * @param string $format The time format. If not specified, will default to the time_format WordPress option.
-     * @return string <b>Formatted time string</b> if the meta key exists and is a valid time. Otherwise, an <b>empty string</b> is returned.
-     */
-    public function getMetaTime(string $key, string $format = ''): string
-    {
-        $strDate = strtotime($this->getMetaString($key));
-
-        if ($strDate) {
-            $timeFormat = $format ?: get_option('time_format') ?: 'H:i';
-            return date_i18n($timeFormat, $strDate);
-        }
-
-        return '';
-    }
-
-    /**
      * Attempt to retrieve a meta value as a WpDateTime object.<br>
      * If no meta exists or if conversion fails, <i>null</i> will be returned.
      * @param string $key Meta key.
@@ -264,14 +246,6 @@ trait GetMetaTrait
 
         if ($type === 'double' || $type === 'float') {
             return $this->getMetaFloat($metaKey);
-        }
-
-        if ($type === 'date') {
-            return $this->getMetaDate($metaKey);
-        }
-
-        if ($type === 'time') {
-            return $this->getMetaTime($metaKey);
         }
 
         if ($type === 'datetime') {
