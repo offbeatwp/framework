@@ -223,8 +223,8 @@ trait GetMetaTrait
 
     /**
      * @param non-empty-string $metaKey
-     * @param "string"|"boolean"|"array"|"integer"|"double"|"float" $type
-     * @return scalar|mixed[]
+     * @param "string"|"boolean"|"array"|"integer"|"double"|"float"|"datetime" $type
+     * @return scalar|WpDateTime|null|mixed[]
      */
     private function getMetaX(string $metaKey, string $type)
     {
@@ -246,6 +246,10 @@ trait GetMetaTrait
 
         if ($type === 'double' || $type === 'float') {
             return $this->getMetaFloat($metaKey);
+        }
+
+        if ($type === 'datetime') {
+            return $this->getMetaDateTime($metaKey);
         }
 
         throw new InvalidArgumentException('Invalid type parameter: ' . $type);
