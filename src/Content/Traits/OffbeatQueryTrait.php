@@ -146,4 +146,18 @@ trait OffbeatQueryTrait
     {
         return self::$lastRequest;
     }
+
+    /** @return $this */
+    final public function orderAsc()
+    {
+        $this->queryVars['order'] = 'ASC';
+        return $this;
+    }
+
+    /** @return $this */
+    final public function orderDesc()
+    {
+        $this->queryVars['order'] = 'DESC';
+        return $this;
+    }
 }
