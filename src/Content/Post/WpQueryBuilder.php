@@ -542,4 +542,14 @@ class WpQueryBuilder
         $this->queryVars['orderby'] = $orderBy;
         return $this;
     }
+
+    /**
+     * Whether to cache post information. Default true.
+     * @return $this
+     */
+    final public function cacheResults(bool $cacheResults)
+    {
+        $this->queryVars['cache_results'] = $cacheResults;
+        return $this;
+    }
 }
