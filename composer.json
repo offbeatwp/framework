@@ -7,7 +7,7 @@
     "phpcs": "vendor/bin/php-cs-fixer fix"
   },
   "require": {
-    "php": "^8.0",
+    "php": "^8.1",
     "php-di/php-di": "^7.0.6",
     "illuminate/collections": "^v10.48.11",
     "illuminate/macroable": "^v10.48.11",
