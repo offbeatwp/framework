@@ -76,7 +76,7 @@ class WpQueryBuilder
      * @return Generator<\OffbeatWP\Content\Post\PostModel>
      * @phpstan-return TValue
      */
-    final public function getLazy(): Generator
+    final public function getGenerator(): Generator
     {
         if (!isset($this->queryVars['no_found_rows'])) {
             $isPaged = (bool)($this->queryVars['paged'] ?? false);
