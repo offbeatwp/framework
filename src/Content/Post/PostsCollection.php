@@ -34,7 +34,7 @@ class PostsCollection extends OffbeatModelCollection
         if ($items instanceof WP_Query || $items instanceof IWpQuerySubstitute) {
             $this->query = $items;
 
-            if (!empty($items->posts)) {
+            if ($items->posts) {
                 foreach ($items->posts as $post) {
                     $postItems[] = offbeat('post')->convertWpPostToModel($post);
                 }
