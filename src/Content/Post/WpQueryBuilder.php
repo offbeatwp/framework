@@ -1,6 +1,7 @@
 <?php
 namespace OffbeatWP\Content\Post;
 
+use Generator;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
@@ -68,6 +69,22 @@ class WpQueryBuilder
         $query = $this->runQuery();
 
         return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
+    }
+
+    /**
+     * @return Generator<\OffbeatWP\Content\Post\PostModel>
+     * @phpstan-return TValue
+     */
+    final public function getLazy(): Generator
+    {
+        if (!isset($this->queryVars['no_found_rows'])) {
+            $isPaged = (bool)($this->queryVars['paged'] ?? false);
+            $this->queryVars['no_found_rows'] = !$isPaged;
+        }
+
+        foreach ($this->runQuery()->get_posts() as $post) {
+            yield offbeat('post')->convertWpPostToModel($post);
+        }
     }
 
     /** @return mixed[] */
