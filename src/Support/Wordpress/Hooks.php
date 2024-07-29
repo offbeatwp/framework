@@ -1,4 +1,5 @@
 <?php
+
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Foundation\App;
@@ -7,7 +8,7 @@ class Hooks
 {
     /**
      * @param string $filter
-     * @param callable(mixed...): mixed $callback
+     * @param class-string<\OffbeatWP\Hooks\AbstractFilter>|callable(mixed...): mixed $callback
      * @param int $priority
      * @param int $acceptArguments
      * @return void
@@ -19,7 +20,7 @@ class Hooks
             if (is_string($callback)) {
                 $callback = [$callback, 'filter'];
             }
-                
+
             return App::singleton()->container->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
@@ -36,7 +37,7 @@ class Hooks
 
     /**
      * @param string $action
-     * @param callable(mixed...): void $callback
+     * @param class-string<\OffbeatWP\Hooks\AbstractAction>|callable(mixed...): void $callback
      * @param int $priority
      * @param int $acceptArguments
      * @return void
@@ -48,7 +49,7 @@ class Hooks
                 $callback = [$callback, 'action'];
             }
 
-            return App::singleton()->container->call($callback, $parameters);
+            App::singleton()->container->call($callback, $parameters);
         }, $priority, $acceptArguments);
     }
 
