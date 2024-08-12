@@ -34,7 +34,7 @@ final class PostType
     }
 
     /** @return class-string<PostModel> */
-    public function getModelByPostType(string $postType): ?string
+    public function getModelByPostType(string $postType): string
     {
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
