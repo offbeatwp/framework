@@ -13,8 +13,7 @@ final class Http
         return apply_filters('offbeatwp/http_status', null, $code);
     }
 
-    /** @return never-returns */
-    public function redirect(string $url, int $status = 301): void
+    public function redirect(string $url, int $status = 301): never
     {
         wp_redirect($url, $status);
         exit;

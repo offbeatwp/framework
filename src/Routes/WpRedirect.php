@@ -15,8 +15,7 @@ final class WpRedirect
         $this->redirectBy = $redirectBy;
     }
 
-    /** @return never-returns */
-    public function execute(): void
+    public function execute(): never
     {
         wp_safe_redirect($this->location, $this->status, $this->redirectBy);
         exit;
