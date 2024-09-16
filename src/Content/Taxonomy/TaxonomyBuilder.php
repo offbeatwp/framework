@@ -128,7 +128,6 @@ class TaxonomyBuilder
         return $this;
     }
 
-    /** @deprecated */
     public function notPubliclyQueryable(): self
     {
         $this->args['publicly_queryable'] = false;

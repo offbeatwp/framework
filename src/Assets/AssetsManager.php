@@ -244,10 +244,11 @@ class AssetsManager
     }
 
     /**
+     * @deprecated
      * Retrieves the <b>primary</b> asset url for the given handle.
      * @param string $handle The handle
      * @param string $assetType The type. Either <b>js</b> or <b>css</b>.
-     * @return non-empty-string
+     * @return string|null
      */
     public function getAssetUrlByHandle(string $handle, string $assetType): ?string
     {
