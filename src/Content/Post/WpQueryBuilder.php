@@ -74,7 +74,7 @@ class WpQueryBuilder
 
     /**
      * @return Generator<\OffbeatWP\Content\Post\PostModel>
-     * @phpstan-return TValue
+     * @phpstan-return Generator<TValue>
      */
     final public function getGenerator(): Generator
     {
