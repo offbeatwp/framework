@@ -140,10 +140,7 @@ final class TaxonomyBuilder
         return $this;
     }
 
-    /**
-     * @deprecated Use <b>publicQueryable</b> instead
-     * @return $this
-     */
+    /** @return $this */
     public function notPubliclyQueryable()
     {
         $this->args['publicly_queryable'] = false;
