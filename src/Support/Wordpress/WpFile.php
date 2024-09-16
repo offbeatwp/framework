@@ -7,10 +7,10 @@ use OffbeatWP\Exceptions\WpErrorException;
 
 final class WpFile
 {
-    private string $file;
-    private string $url;
-    private string $type;
-    private ?string $error;
+    private readonly string $file;
+    private readonly string $url;
+    private readonly string $type;
+    private readonly ?string $error;
 
     /** @param array{file: string, url: string, type: string, error: string|false|null} $result */
     private function __construct(array $result)

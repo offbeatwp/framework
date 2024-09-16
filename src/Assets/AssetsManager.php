@@ -248,6 +248,7 @@ final class AssetsManager
 
     /**
      * Retrieves the <b>primary</b> asset url for the given handle.
+     * @deprecated
      * @param string $handle The handle
      * @param string $assetType The type. Either <b>js</b> or <b>css</b>.
      * @return non-empty-string|null

@@ -286,10 +286,7 @@ final class PostTypeBuilder
         return $this;
     }
 
-    /**
-     * @deprecated Use <b>publicQueryable</b> instead
-     * @return $this
-     */
+    /** @return $this */
     public function notPubliclyQueryable()
     {
         $this->postTypeArgs['publicly_queryable'] = false;
