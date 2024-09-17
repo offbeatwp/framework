@@ -372,7 +372,6 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @deprecated Consider using getAuthorModel instead
      * @return false|WP_User
      */
     public function getAuthor()
