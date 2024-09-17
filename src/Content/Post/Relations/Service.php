@@ -65,15 +65,13 @@ class Service extends AbstractService
         if (!empty($query->query_vars['owp-fields']) && is_array($query->query_vars['owp-fields'])) {
             global $wpdb;
 
-            $postFields = array_map(function (string $field) use ($wpdb) {
+            $clauses['fields'] = implode(',', array_map(function (string $field) use ($wpdb) {
                 if (!in_array($field, self::POST_FIELDS, true)) {
                     throw new InvalidArgumentException($field . ' is not a valid post field.');
                 }
 
                 return $wpdb->posts . '.' . $field;
-            }, $query->query_vars['owp-fields']);
-
-            $clauses['fields'] = implode(',', $postFields);
+            }, $query->query_vars['owp-fields']));
         }
 
         return $clauses;
