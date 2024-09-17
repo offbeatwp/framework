@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
+use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
@@ -10,10 +11,13 @@ use WP_Query;
 
 class Service extends AbstractService
 {
+    private const POST_FIELDS = ['ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count'];
+
     /** @return void */
     public function register()
     {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
+        add_filter('posts_clauses', [$this, 'insertFieldsSql'], 10, 2);
 
         if (offbeat('console')::isConsole()) {
             offbeat('console')->register(Install::class);
@@ -46,6 +50,30 @@ class Service extends AbstractService
 
         if (is_array($query->query_vars['relationships']['id'] ?? null)) {
             $clauses['distinct'] = 'DISTINCT';
+        }
+
+        return $clauses;
+    }
+
+    /**
+     * @param string[] $clauses
+     * @param WP_Query $query
+     * @return string[]
+     */
+    final public function insertFieldsSql(array $clauses, $query): array
+    {
+        if (!empty($query->query_vars['owp-fields']) && is_array($query->query_vars['owp-fields'])) {
+            global $wpdb;
+
+            $postFields = array_map(function (string $field) use ($wpdb) {
+                if (!in_array($field, self::POST_FIELDS, true)) {
+                    throw new InvalidArgumentException($field . ' is not a valid post field.');
+                }
+
+                return $wpdb->posts . '.' . $field;
+            }, $query->query_vars['owp-fields']);
+
+            $clauses['fields'] = implode(',', $postFields);
         }
 
         return $clauses;

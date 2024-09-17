@@ -569,4 +569,18 @@ class WpQueryBuilder
         $this->queryVars['cache_results'] = $cacheResults;
         return $this;
     }
+
+    /**
+     * @param non-empty-array<'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count'> $columns
+     * @return WP_Post[]
+     */
+    final public function pluck(array $columns): array
+    {
+        if (!$columns) {
+            throw new InvalidArgumentException('WpQueryBuilder::pluck cannot receive an empty array.');
+        }
+
+        $this->queryVars['owp-fields'] = $columns;
+        return $this->runQuery()->get_posts();
+    }
 }
