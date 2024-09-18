@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\Console\Install;
+use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
@@ -28,7 +29,6 @@ class Service extends AbstractService
 
     /**
      * @param string[] $clauses
-     * @param WP_Query $query
      * @return string[]
      */
     public function insertRelationshipsSql(array $clauses, WP_Query $query): array
@@ -57,10 +57,9 @@ class Service extends AbstractService
 
     /**
      * @param string[] $clauses
-     * @param WP_Query $query
      * @return string[]
      */
-    final public function insertFieldsSql(array $clauses, $query): array
+    final public function insertFieldsSql(array $clauses, WP_Query $query): array
     {
         if (!empty($query->query_vars['owp-fields']) && is_array($query->query_vars['owp-fields'])) {
             global $wpdb;
