@@ -572,9 +572,9 @@ class WpQueryBuilder
 
     /**
      * @param non-empty-array<'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count'> $columns
-     * @return array{ID?: int, post_author?: int, post_date?: string, post_date_gmt?: string, post_content?: string, post_title?: string, post_excerpt?: string, post_status?: string, comment_status?: string, ping_status?: string, post_password?: string, post_name?: string, to_ping?: string, pinged?: string, post_modified?: string, post_modified_gmt?: string, post_content_filtered?: string, post_parent?: int, guid?: string, menu_order?: int, post_type?: string, post_mime_type?: string, comment_count?: int}[]
+     * @return WP_Post[]
      */
-    final public function pluck(array $columns): array
+    private function _getColumns(array $columns): array
     {
         if (!$columns) {
             throw new InvalidArgumentException('WpQueryBuilder::pluck cannot receive an empty array.');
@@ -582,6 +582,37 @@ class WpQueryBuilder
 
         $this->queryVars['owp-fields'] = $columns;
 
-        return array_map(fn(WP_Post $post) => array_intersect_key($post->to_array(), array_flip($columns)), $this->runQuery()->get_posts());
+        return $this->runQuery()->get_posts();
+    }
+
+    /**
+     * @param non-empty-array<'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count'> $columns
+     * @return array{ID?: int, post_author?: int, post_date?: string, post_date_gmt?: string, post_content?: string, post_title?: string, post_excerpt?: string, post_status?: string, comment_status?: string, ping_status?: string, post_password?: string, post_name?: string, to_ping?: string, pinged?: string, post_modified?: string, post_modified_gmt?: string, post_content_filtered?: string, post_parent?: int, guid?: string, menu_order?: int, post_type?: string, post_mime_type?: string, comment_count?: int}[]
+     */
+    final public function getColumns(array $columns): array
+    {
+        return array_map(fn(WP_Post $post) => array_intersect_key($post->to_array(), array_flip($columns)), $this->_getColumns($columns));
+    }
+
+    /**
+     * Pluck a specific post field from the database.<br>
+     * Optionally, you can provide a second value to be used as key.
+     * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count' $column
+     * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count' $indexColumn
+     * @return array<string, string>|array<string, int>|array<int, string>|array<int, int>
+     */
+    final public function pluck(string $column, string $indexColumn = ''): array
+    {
+        if ($indexColumn) {
+            $data = [];
+
+            foreach ($this->_getColumns([$column, $indexColumn]) as $post) {
+                $data[$post->$indexColumn] = $post->$column;
+            }
+
+            return $data;
+        }
+
+        return array_map(fn($post) => $post->$column, $this->_getColumns([$column]));
     }
 }
