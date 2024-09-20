@@ -16,7 +16,7 @@ class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var array<string, mixed|mixed[]> */
+    /** @var array<string, mixed> */
     protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
 
@@ -571,10 +571,13 @@ class WpQueryBuilder
     }
 
     /**
+     * Select only specific post fields. Returns an array of WP_Posts.<br>
+     * <b>Note:</b> Values not included in the query will have their default WP_Post value.
+     * @see WP_Post
      * @param non-empty-array<'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count'> $columns
      * @return WP_Post[]
      */
-    private function _getColumns(array $columns): array
+    final public function only(array $columns): array
     {
         if (!$columns) {
             throw new InvalidArgumentException('WpQueryBuilder::pluck cannot receive an empty array.');
@@ -599,13 +602,13 @@ class WpQueryBuilder
         if ($indexColumn) {
             $data = [];
 
-            foreach ($this->_getColumns([$column, $indexColumn]) as $post) {
+            foreach ($this->only([$column, $indexColumn]) as $post) {
                 $data[$post->$indexColumn] = $post->$column;
             }
 
             return $data;
         }
 
-        return array_map(fn($post) => $post->$column, $this->_getColumns([$column]));
+        return array_map(fn($post) => $post->$column, $this->only([$column]));
     }
 }
