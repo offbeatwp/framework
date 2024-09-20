@@ -16,7 +16,7 @@ class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
-    /** @var array<string, mixed|mixed[]> */
+    /** @var array<string, mixed> */
     protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
 
@@ -568,5 +568,47 @@ class WpQueryBuilder
     {
         $this->queryVars['cache_results'] = $cacheResults;
         return $this;
+    }
+
+    /**
+     * Select only specific post fields. Returns an array of WP_Posts.<br>
+     * <b>Note:</b> Values not included in the query will have their default WP_Post value.
+     * @see WP_Post
+     * @param non-empty-array<'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count'> $columns
+     * @return WP_Post[]
+     */
+    final public function only(array $columns): array
+    {
+        if (!$columns) {
+            throw new InvalidArgumentException('WpQueryBuilder::only method cannot receive an empty array.');
+        }
+
+        $this->queryVars['owp-fields'] = $columns;
+
+        return $this->runQuery()->get_posts();
+    }
+
+    /**
+     * Pluck a specific post field from the database.<br>
+     * Optionally, you can provide a second column whose value will be used as key.<br>
+     * <b>Note:</b> Values will be identical to what a WP_Post object would contain.
+     * @see WP_Post
+     * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count' $column
+     * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count' $indexColumn
+     * @return array<string, string>|array<string, int>|array<int, string>|array<int, int>
+     */
+    final public function pluck(string $column, string $indexColumn = ''): array
+    {
+        if ($indexColumn) {
+            $data = [];
+
+            foreach ($this->only([$column, $indexColumn]) as $post) {
+                $data[$post->$indexColumn] = $post->$column;
+            }
+
+            return $data;
+        }
+
+        return array_map(fn($post) => $post->$column, $this->only([$column]));
     }
 }
