@@ -580,7 +580,7 @@ class WpQueryBuilder
     final public function only(array $columns): array
     {
         if (!$columns) {
-            throw new InvalidArgumentException('WpQueryBuilder::pluck cannot receive an empty array.');
+            throw new InvalidArgumentException('WpQueryBuilder::only method cannot receive an empty array.');
         }
 
         $this->queryVars['owp-fields'] = $columns;
