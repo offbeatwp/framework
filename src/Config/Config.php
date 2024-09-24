@@ -55,7 +55,7 @@ final class Config
                 $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
 
                 // Get all settings in 'env' variable
-                $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
+                $envConfigs = $configSet['env'] ?? null;
 
                 if ($envConfigs) {
                     $explicitEnvConfigs = [];
