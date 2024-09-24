@@ -7,76 +7,80 @@ use OffbeatWP\Helpers\ArrayHelper;
 
 final class Config
 {
-    private App $app;
-    private array $config = [];
+    private readonly App $app;
+    private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->loadConfig();
+        $this->config = $this->loadConfig();
     }
 
-    private function loadConfig(): void
+    private function loadConfig(): array
     {
+        $config = [];
         $configFiles = glob($this->app->configPath() . '/*.php');
 
         foreach ($configFiles as $configFile) {
             $configValues = require $configFile;
-
-            $this->set(basename($configFile, '.php'), $configValues);
+            $config[basename($configFile, '.php')] = $configValues;
         }
 
-        $this->loadConfigEnvFile();
-        $this->loadConfigEnv();
+        $config = $this->loadConfigEnvFile($config);
+        $config = $this->loadConfigEnv($config);
+
+        return $config;
     }
 
-    protected function loadConfigEnvFile(): void
+    protected function loadConfigEnvFile(array $config): array
     {
         $env = get_template_directory() . '/env.php';
         if (file_exists($env)) {
             $configValues = require $env;
             foreach ($configValues as $key => $value) {
                 if ($this->get($key)) {
-                    $this->config[$key] = ArrayHelper::mergeRecursiveAssoc($this->config[$key], $value);
+                    $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
                 }
             }
         }
+
+        return $config;
     }
 
-    protected function loadConfigEnv(): void
+    protected function loadConfigEnv(array $config): array
     {
-        if (is_array($this->all())) {
-            foreach ($this->all() as $configKey => $configSet) {
-                if (ArrayHelper::isAssoc($configSet)) {
-                    // Get current environment
-                    $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
+        foreach ($config as $configKey => $configSet) {
+            if (ArrayHelper::isAssoc($configSet)) {
+                // Get current environment
+                $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
 
-                    // Get all settings in 'env' variable
-                    $envConfigs = ArrayHelper::getValueFromDottedKey('env', $configSet);
+                // Get all settings in 'env' variable
+                $envConfigs = $configSet['env'] ?? null;
 
-                    if ($envConfigs) {
-                        $explicitEnvConfigs = [];
+                if ($envConfigs) {
+                    $explicitEnvConfigs = [];
 
-                        foreach ($envConfigs as $envKey => $envConfig) {
-                            $matched = preg_match('/^!(.*)/', $envKey, $matches);
+                    foreach ($envConfigs as $envKey => $envConfig) {
+                        $matched = preg_match('/^!(.*)/', $envKey, $matches);
 
-                            if ($matched && !in_array($currentEnvironment, explode('|', $matches[1]))) {
-                                $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
-                            } elseif (!$matched && in_array($currentEnvironment, explode('|', $envKey))) {
-                                $explicitEnvConfigs[] = $envConfig;
-                            }
-                        }
-
-                        foreach ($explicitEnvConfigs as $explicitEnvConfig) {
-                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
+                        if ($matched && !in_array($currentEnvironment, explode('|', $matches[1]))) {
+                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
+                        } elseif (!$matched && in_array($currentEnvironment, explode('|', $envKey))) {
+                            $explicitEnvConfigs[] = $envConfig;
                         }
                     }
 
-                    // Set config
-                    $this->set($configKey, $configSet);
+                    foreach ($explicitEnvConfigs as $explicitEnvConfig) {
+                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
+                    }
                 }
+
+                // Set config
+                $config[$configKey] = $configSet;
             }
         }
+
+        return $config;
     }
 
     /**
@@ -85,17 +89,12 @@ final class Config
      */
     public function get(string $key)
     {
-        $config = $this->config;
-        $return = ArrayHelper::getValueFromDottedKey($key, $config ?: []);
-
-        if (is_array($return)) {
-            $return = collect($return);
-        }
-
-        return $return;
+        $result = ArrayHelper::getValueFromDottedKey($key, $this->config);
+        return is_array($result) ? collect($result) : $result;
     }
 
     /**
+     * @deprecated
      * @param array-key $key
      * @param mixed $value
      * @return mixed
@@ -108,7 +107,7 @@ final class Config
     }
 
     /** @return mixed[] */
-    public function all()
+    public function all(): array
     {
         return $this->config;
     }
