@@ -74,6 +74,7 @@ class PostModel implements PostModelInterface
         } elseif ($post instanceof WP_Post) {
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
+            trigger_error('Constructed PostModel with ID. Use PostModel::find instead.', E_USER_DEPRECATED);
             $this->wpPost = get_post($post);
         } else {
             trigger_error('PostModel expects a WP_Post, NULL or integer as argument but got: ' . gettype($post));

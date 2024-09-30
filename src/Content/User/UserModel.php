@@ -45,13 +45,13 @@ class UserModel
         }
 
         if (is_int($user)) {
-            trigger_error('Constructed UserModel with integer. Use UserModel::find instead.', E_USER_DEPRECATED);
             $userData = get_userdata($user);
 
             if (!$userData) {
                 throw new OffbeatModelNotFoundException('Could not find WP_User with ID ' . $user);
             }
 
+            trigger_error('Constructed UserModel with ID. Use UserModel::find instead.', E_USER_DEPRECATED);
             $user = $userData;
         }
 
