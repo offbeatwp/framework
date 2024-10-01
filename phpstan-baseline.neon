@@ -16,11 +16,6 @@ parameters:
 			path: src/Components/GenericWidget.php
 
 		-
-			message: "#^Method OffbeatWP\\\\Components\\\\GenericWidget\\:\\:form\\(\\) should return string but return statement is missing\\.$#"
-			count: 1
-			path: src/Components/GenericWidget.php
-
-		-
 			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\Fields\\\\AbstractField\\)\\:\\:FIELD_TYPE\\.$#"
 			count: 1
 			path: src/Form/Fields/AbstractField.php

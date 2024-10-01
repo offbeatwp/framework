@@ -129,6 +129,7 @@ class GenericWidget extends WP_Widget
         echo $this->get_field($key);
     }
 
+    /** @return void */
     public function registerForm()
     {
         if (function_exists('acf_add_local_field_group')) {
