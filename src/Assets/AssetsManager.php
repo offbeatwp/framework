@@ -77,6 +77,7 @@ final class AssetsManager
         return $this->entrypoints;
     }
 
+    /** @return string[]|false */
     public function getAssetsByEntryPoint(string $entry, string $key): array|false
     {
         $entrypoints = $this->getAssetsEntryPoints();
@@ -148,7 +149,6 @@ final class AssetsManager
     /**
      * @param string $entry
      * @param string[] $dependencies
-     * @return void
      */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
@@ -237,6 +237,7 @@ final class AssetsManager
         return new WpScriptAsset($handle, $enqueueNow);
     }
 
+    /** @param string[] $deps */
     private function enqueue(string $type, string $handle, string $src, array $deps): void
     {
         if ($type === 'script') {

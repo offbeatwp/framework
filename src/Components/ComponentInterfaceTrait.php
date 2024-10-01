@@ -6,6 +6,10 @@ use OffbeatWP\Foundation\App;
 
 trait ComponentInterfaceTrait
 {
+    /**
+     * @param mixed[]|object $settings
+     * @return string|null
+     */
     public function render($settings)
     {
         $component = App::singleton()->container->make($this->componentClass);

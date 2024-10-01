@@ -29,6 +29,7 @@ class ComponentRepository
     /**
      * @param string $name
      * @param class-string<AbstractComponent> $componentClass
+     * @return void
      */
     public function register($name, $componentClass)
     {
@@ -52,6 +53,7 @@ class ComponentRepository
      * @deprecated
      * @param string $name
      * @param class-string<AbstractComponent> $componentClass
+     * @return void
      */
     public function registerWidget($name, $componentClass)
     {
@@ -71,6 +73,7 @@ class ComponentRepository
     /**
      * @param string $name
      * @param class-string<AbstractComponent> $componentClass
+     * @return void
      */
     public function registerShortcode($name, $componentClass)
     {
@@ -135,7 +138,7 @@ class ComponentRepository
 
     /**
      * @param string $name
-     * @param array|object $args
+     * @param mixed[]|object $args
      * @return string|null
      * @throws NonexistentComponentException
      */

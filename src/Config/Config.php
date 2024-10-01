@@ -8,6 +8,7 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
+    /** @var mixed[] */
     private array $config;
 
     public function __construct(App $app)
@@ -16,6 +17,7 @@ final class Config
         $this->config = $this->loadConfig();
     }
 
+    /** @return mixed[] */
     private function loadConfig(): array
     {
         $config = [];
@@ -32,6 +34,10 @@ final class Config
         return $config;
     }
 
+    /**
+     * @param mixed[] $config
+     * @return mixed[]
+     */
     protected function loadConfigEnvFile(array $config): array
     {
         $env = get_template_directory() . '/env.php';
@@ -47,6 +53,10 @@ final class Config
         return $config;
     }
 
+    /**
+     * @param mixed[] $config
+     * @return mixed[]
+     */
     protected function loadConfigEnv(array $config): array
     {
         foreach ($config as $configKey => $configSet) {

@@ -9,10 +9,17 @@ class GenericWidget extends WP_Widget
 {
     use ComponentInterfaceTrait;
 
+    /** @var string|null */
     public $widgetId = null;
+    /** @var mixed[]|null */
     public $settings = null;
+    /** @var class-string|null */
     public $componentClass = null;
 
+    /**
+     * @param mixed[] $settings
+     * @param class-string $componentClass
+     */
     public function __construct($settings, $componentClass)
     {
         $this->settings = $settings;
@@ -29,6 +36,11 @@ class GenericWidget extends WP_Widget
         add_action('init', [$this, 'registerForm']);
     }
 
+    /**
+     * @param mixed[] $args
+     * @param mixed[] $instance
+     * @return void
+     */
     public function widget($args, $instance)
     {
         $this->widgetId = 'widget_' . $args['widget_id'];
@@ -40,7 +52,12 @@ class GenericWidget extends WP_Widget
         $this->initWidget($args, $instance);
     }
 
-    // TODO Quick implementation, needs to be improved
+    /**
+     * TODO Quick implementation, needs to be improved
+     * @param mixed[] $args
+     * @param null $instance Unused
+     * @return void
+     */
     public function initWidget($args, $instance)
     {
         echo $args['before_widget'];
@@ -50,6 +67,7 @@ class GenericWidget extends WP_Widget
         echo $args['after_widget'];
     }
 
+    /** @return \stdClass */
     public function getFieldValues()
     {
         $settings = (object)[];
@@ -71,11 +89,20 @@ class GenericWidget extends WP_Widget
         return $settings;
     }
 
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function get_field($key)
     {
         return get_field($key, $this->widgetId);
     }
 
+    /**
+     * @param mixed[] $new_instance
+     * @param mixed[] $old_instance
+     * @return mixed[]
+     */
     public function update($new_instance, $old_instance)
     {
         $instance = [];
@@ -84,16 +111,25 @@ class GenericWidget extends WP_Widget
         return $instance;
     }
 
+    /**
+     * @param mixed[] $instance
+     * @return void
+     */
     public function form($instance)
     {
         echo '<br>';
     }
 
+    /**
+     * @param string $key
+     * @return void
+     */
     public function the_field($key)
     {
         echo $this->get_field($key);
     }
 
+    /** @return void */
     public function registerForm()
     {
         if (function_exists('acf_add_local_field_group')) {

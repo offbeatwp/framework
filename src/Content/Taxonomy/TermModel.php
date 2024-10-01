@@ -41,6 +41,7 @@ class TermModel implements TermModelInterface
         if ($term instanceof WP_Term) {
             $this->wpTerm = $term;
         } elseif (is_numeric($term)) {
+            trigger_error('Constructed TermModel with ID. Use TermModel::find instead.', E_USER_DEPRECATED);
             $retrievedTerm = get_term($term, static::TAXONOMY);
             if ($retrievedTerm instanceof WP_Term) {
                 $this->wpTerm = $retrievedTerm;

@@ -11,6 +11,7 @@ use OffbeatWP\Support\Wordpress\WpDateTime;
 #[AllowDynamicProperties]
 final class ComponentSettings
 {
+    /** @var mixed[] */
     private array $defaultValues;
 
     /**

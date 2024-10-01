@@ -7,10 +7,12 @@ use ReflectionClass;
 
 class ComponentsService extends AbstractService
 {
+    /** @var array{components: class-string<\OffbeatWP\Components\ComponentRepository>} */
     public array $bindings = [
         'components' => ComponentRepository::class
     ];
 
+    /** @return void */
     public function register()
     {
         offbeat('hooks')->addAction('offbeat.ready', [$this, 'registerComponents']);
