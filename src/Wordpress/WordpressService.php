@@ -58,7 +58,7 @@ final class WordpressService
     {
         $images = config('images');
 
-        if (is_object($images) && $images->isNotEmpty()) {
+        if ($images instanceof Collection && $images->isNotEmpty()) {
             $images->each(function ($image, $key) {
                 add_image_size($key, $image['width'], $image['height'], $image['crop']);
             });
@@ -69,7 +69,7 @@ final class WordpressService
     {
         $sidebars = config('sidebars');
 
-        if (is_object($sidebars) && $sidebars->isNotEmpty()) {
+        if ($sidebars instanceof Collection && $sidebars->isNotEmpty()) {
             $sidebars->each(function ($sidebar, $id) {
                 $sidebar['id'] = $id;
                 register_sidebar($sidebar);
@@ -98,9 +98,14 @@ final class WordpressService
     public function applyPageTemplate($template, $data)
     {
         if (is_singular('page') && empty($data['ignore_page_template'])) {
-            $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
-            if ($pageTemplate && $pageTemplate !== 'default') {
-                return $pageTemplate;
+            $id = get_the_ID();
+
+            if (is_int($id)) {
+                $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
+
+                if ($pageTemplate && $pageTemplate !== 'default') {
+                    return $pageTemplate;
+                }
             }
         }
 

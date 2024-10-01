@@ -463,12 +463,16 @@ final class Wordpress
         return UserModel::getCurrentUser();
     }
 
+    /**
+     * @param 'footer'|'header' $part
+     * @return string
+     */
     public function getBlockTemplatePart(string $part): string
     {
         ob_start();
         block_template_part($part);
 
-        return ob_get_clean();
+        return ob_get_clean() ?: '';
     }
 
     /**
