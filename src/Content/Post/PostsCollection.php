@@ -65,6 +65,7 @@ class PostsCollection extends OffbeatModelCollection
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 
+    /** @return \OffbeatWP\Content\Post\WpPostsIterator<array-key, \OffbeatWP\Content\Post\PostModel> */
     public function getIterator(): WpPostsIterator
     {
         return new WpPostsIterator($this->items);
