@@ -26,7 +26,7 @@ use WP_User;
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var TValue[] */
+    /** @var array<TKey, TValue> */
     protected $items = [];
     /** @var class-string<TValue> */
     private string $modelClass;

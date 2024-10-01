@@ -43,10 +43,11 @@ abstract class OffbeatModelCollection extends Collection
     /**
      * Run a map over each of the items.
      *
-     * @template TMapValue
+     * @template TMapWithKeysKey of array-key
+     * @template TMapWithKeysValue
      *
-     * @param  callable(TValue, TKey): TMapValue  $callback
-     * @return Collection<TKey, TMapValue>
+     * @param  callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue>  $callback
+     * @return Collection<TMapWithKeysKey, TMapWithKeysValue>
      */
     public function mapWithKeys(callable $callback)
     {
