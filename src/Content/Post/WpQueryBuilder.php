@@ -594,7 +594,7 @@ class WpQueryBuilder
      * <b>Note:</b> Values will be identical to what a WP_Post object would contain.
      * @see WP_Post
      * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count' $column
-     * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count' $indexColumn
+     * @param 'ID'|'post_author'|'post_date'|'post_date_gmt'|'post_content'|'post_title'|'post_excerpt'|'post_status'|'comment_status'|'ping_status'|'post_password'|'post_name'|'to_ping'|'pinged'|'post_modified'|'post_modified_gmt'|'post_content_filtered'|'post_parent'|'guid'|'menu_order'|'post_type'|'post_mime_type'|'comment_count'|'' $indexColumn
      * @return array<string, string>|array<string, int>|array<int, string>|array<int, int>
      */
     final public function pluck(string $column, string $indexColumn = ''): array

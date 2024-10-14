@@ -22,11 +22,11 @@ use WP_User;
  * @method UserModel|null reduce(callable $callback, mixed $initial = null)
  * @method UserModel offsetGet(int|string $key)
  * @method ArrayIterator|UserModel[] getIterator()
- * @phpstan-method TValue[] all()
+ * @phpstan-method array<TKey, TValue> all()
  */
 class UserCollection extends OffbeatModelCollection
 {
-    /** @var TValue[] */
+    /** @var array<TKey, TValue> */
     protected $items = [];
     /** @var class-string<TValue> */
     private string $modelClass;
