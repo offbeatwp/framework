@@ -11,7 +11,7 @@ final class RestEndpointBuilder
     /** @var callable(\WP_REST_Request<mixed[]>): (\WP_REST_Response|\WP_Error) */
     public $callback;
     public string $method = WP_REST_Server::READABLE;
-    /** @var \Closure[] */
+    /** @var array<string, mixed[]> */
     public array $args = [];
     /** @var callable(\WP_REST_Request<mixed[]>): (bool|\WP_Error) */
     public $permissionCallback = '__return_true';

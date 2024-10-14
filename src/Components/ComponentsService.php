@@ -23,6 +23,7 @@ class ComponentsService extends AbstractService
         $components = $this->registrableComponents();
 
         if ($components) {
+            /** @var class-string<\OffbeatWP\Components\AbstractComponent> $class */
             foreach ($components as $class) {
                 container('components')->register($class::getSlug(), $class);
             }
@@ -30,7 +31,7 @@ class ComponentsService extends AbstractService
     }
 
     /**
-     * @return string[]|null
+     * @return class-string<\OffbeatWP\Components\AbstractComponent>[]|null
      * @throws \ReflectionException
      */
     public function registrableComponents(): ?array
@@ -56,6 +57,7 @@ class ComponentsService extends AbstractService
         $components = [];
 
         foreach ($activeComponents as $activeComponent) {
+            /** @var class-string<\OffbeatWP\Components\AbstractComponent> $compomentClass */
             $compomentClass = "Components\\" . $activeComponent . "\\" . $activeComponent;
             $compomentReflectionClass = new ReflectionClass($compomentClass);
 
