@@ -90,7 +90,7 @@ abstract class AbstractComponent
 
     /**
      * Render the component.
-     * @param object|mixed[] $settings
+     * @param object $settings
      * @return string|null
      */
     public function renderComponent($settings)
