@@ -183,7 +183,7 @@ final class App
 
     /**
      * @param string|null $config
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
+     * @return object|\Illuminate\Support\Collection|scalar|null
      */
     public function config(?string $config)
     {

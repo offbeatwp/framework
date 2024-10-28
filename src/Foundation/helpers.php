@@ -22,7 +22,7 @@ if (!function_exists('offbeat')) {
 if (!function_exists('config')) {
     /**
      * @param string|null $config
-     * @return mixed
+     * @return object|\Illuminate\Support\Collection|scalar|null
      */
     function config(?string $config = null)
     {
