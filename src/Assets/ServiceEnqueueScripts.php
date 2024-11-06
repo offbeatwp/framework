@@ -19,7 +19,11 @@ class ServiceEnqueueScripts extends AbstractService
     /** @return void */
     public function enqueueScripts()
     {
-        if (is_admin() || apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
+        $autoIncludeJquery = apply_filters('offbeatwp/assets/include_jquery_by_default', true);
+
+        if ($autoIncludeJquery === 'jquery-core') {
+            wp_enqueue_script('jquery-core');
+        } elseif ($autoIncludeJquery) {
             wp_enqueue_script('jquery');
         }
 
