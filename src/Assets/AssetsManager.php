@@ -194,7 +194,11 @@ final class AssetsManager
     public function enqueueScripts(string $entry, array $dependencies = []): WpScriptAsset
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
-        if (apply_filters('offbeatwp/assets/include_jquery_by_default', true)) {
+        $autoIncludeJquery = apply_filters('offbeatwp/assets/include_jquery_by_default', true);
+
+        if ($autoIncludeJquery === 'jquery-core') {
+            $dependencies[] = 'jquery-core';
+        } elseif ($autoIncludeJquery) {
             $dependencies[] = 'jquery';
         }
 
@@ -256,6 +260,8 @@ final class AssetsManager
      */
     public function getAssetUrlByHandle(string $handle, string $assetType): ?string
     {
+        trigger_error('AssetsManager::getAssetUrlByHandle is deprecated.', E_USER_DEPRECATED);
+
         if ($assetType !== 'js' && $assetType !== 'css') {
             throw new InvalidArgumentException('Type parameter must be either "js" or "css"');
         }
