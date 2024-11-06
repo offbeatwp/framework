@@ -551,7 +551,7 @@ class WpQueryBuilder
      * @param 'none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in'|('none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in')[] $orderBy
      * @return $this
      */
-    final public function orderBy(string|array $orderBy)
+    final public function orderBy($orderBy)
     {
         $this->queryVars['orderby'] = $orderBy;
         return $this;
