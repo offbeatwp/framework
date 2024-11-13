@@ -13,7 +13,7 @@ class NavMenu extends Select
     public function getNavMenus()
     {
         $options = [
-            '' => __('None', 'offbeatwp'),
+            '' => __('None', 'pinowp'),
         ];
         $menus = wp_get_nav_menus();
 

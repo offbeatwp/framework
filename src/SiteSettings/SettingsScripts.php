@@ -12,7 +12,7 @@ class SettingsScripts
 
     public function title(): string
     {
-        return __('Scripts', 'offbeatwp');
+        return __('Scripts', 'pinowp');
     }
 
     public function form(): Form

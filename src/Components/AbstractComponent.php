@@ -249,7 +249,7 @@ abstract class AbstractComponent
 
         if ($form instanceof Form && isset($settings['variations'])) {
             $form->addField(
-                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
+                Select::make('variation', __('Variation', 'pinowp'))->addOptions($settings['variations'])
             );
         }
 

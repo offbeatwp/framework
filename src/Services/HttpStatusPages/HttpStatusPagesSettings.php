@@ -13,7 +13,7 @@ class HttpStatusPagesSettings
 
     public function title(): string
     {
-        return __('Http status pages', 'offbeatwp');
+        return __('Http status pages', 'pinowp');
     }
 
     public function form(): Form

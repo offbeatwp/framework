@@ -11,36 +11,36 @@ class Heading extends AbstractFieldsCollection
     public function __construct($defaultHeading = 'h3')
     {
         parent::__construct();
-        $this->addField(Text::make('heading_title', __('Title', 'offbeatwp')));
+        $this->addField(Text::make('heading_title', __('Title', 'pinowp')));
 
-        $headingTypeField = Select::make('heading_type', __('Type', 'offbeatwp'));
+        $headingTypeField = Select::make('heading_type', __('Type', 'pinowp'));
         $headingTypeField
             ->addOptions([
-                'h1' => __('h1', 'offbeatwp'),
-                'h2' => __('h2', 'offbeatwp'),
-                'h3' => __('h3', 'offbeatwp'),
-                'h4' => __('h4', 'offbeatwp'),
-                'h5' => __('h5', 'offbeatwp'),
-                'h6' => __('h6', 'offbeatwp'),
-                'div' => __('div', 'offbeatwp'),
+                'h1' => __('h1', 'pinowp'),
+                'h2' => __('h2', 'pinowp'),
+                'h3' => __('h3', 'pinowp'),
+                'h4' => __('h4', 'pinowp'),
+                'h5' => __('h5', 'pinowp'),
+                'h6' => __('h6', 'pinowp'),
+                'div' => __('div', 'pinowp'),
             ])
-            ->description(__('The heading type is used to let search indexers know what is important on a page', 'offbeatwp'))
+            ->description(__('The heading type is used to let search indexers know what is important on a page', 'pinowp'))
             ->default($defaultHeading);
 
         $this->addField($headingTypeField);
 
-        $headingStyleField = Select::make('heading_style', __('Style', 'offbeatwp'));
+        $headingStyleField = Select::make('heading_style', __('Style', 'pinowp'));
         $headingStyleField
             ->addOptions([
-                '' => __('Default', 'offbeatwp'),
-                'h1' => __('h1', 'offbeatwp'),
-                'h2' => __('h2', 'offbeatwp'),
-                'h3' => __('h3', 'offbeatwp'),
-                'h4' => __('h4', 'offbeatwp'),
-                'h5' => __('h5', 'offbeatwp'),
-                'h6' => __('h6', 'offbeatwp'),
+                '' => __('Default', 'pinowp'),
+                'h1' => __('h1', 'pinowp'),
+                'h2' => __('h2', 'pinowp'),
+                'h3' => __('h3', 'pinowp'),
+                'h4' => __('h4', 'pinowp'),
+                'h5' => __('h5', 'pinowp'),
+                'h6' => __('h6', 'pinowp'),
             ])
-            ->description(__('The heading style is used to override the default styling of the header type', 'offbeatwp'));
+            ->description(__('The heading style is used to override the default styling of the header type', 'pinowp'));
 
         $this->addField($headingStyleField);
     }

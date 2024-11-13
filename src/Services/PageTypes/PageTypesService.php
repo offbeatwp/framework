@@ -45,7 +45,7 @@ class PageTypesService extends AbstractService
             $selected = $_GET[$taxonomy] ?? '';
 
             wp_dropdown_categories([
-                'show_option_all' => __('Show all page types', 'offbeatwp'),
+                'show_option_all' => __('Show all page types', 'pinowp'),
                 'taxonomy' => $taxonomy,
                 'name' => $taxonomy,
                 'orderby' => 'name',
@@ -88,7 +88,7 @@ class PageTypesService extends AbstractService
             if (is_wp_error($pageType) || !$pageType) {
                 printf(
                     '<div class="error below-h2"><p>%s</p></div>',
-                    esc_html__('Page type is mandatory', 'offbeatwp')
+                    esc_html__('Page type is mandatory', 'pinowp')
                 );
             }
         }

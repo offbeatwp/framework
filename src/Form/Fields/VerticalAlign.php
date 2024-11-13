@@ -7,10 +7,10 @@ class VerticalAlign extends Select
     public function __construct()
     {
         $this->addOptions([
-            ''              => __('Default', 'offbeatwp'),
-            'top'           => __('Top', 'offbeatwp'),
-            'middle'        => __('Middle', 'offbeatwp'),
-            'bottom'        => __('Bottom', 'offbeatwp'),
+            ''              => __('Default', 'pinowp'),
+            'top'           => __('Top', 'pinowp'),
+            'middle'        => __('Middle', 'pinowp'),
+            'bottom'        => __('Bottom', 'pinowp'),
         ]);
     }
 

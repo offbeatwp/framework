@@ -7,10 +7,10 @@ class Textalign extends Select
     public function __construct()
     {
         $this->addOptions([
-            ''              => __('Default', 'offbeatwp'),
-            'left'          => __('Left', 'offbeatwp'),
-            'center'        => __('Center', 'offbeatwp'),
-            'right'         => __('Right', 'offbeatwp'),
+            ''              => __('Default', 'pinowp'),
+            'left'          => __('Left', 'pinowp'),
+            'center'        => __('Center', 'pinowp'),
+            'right'         => __('Right', 'pinowp'),
         ]);
     }
 
