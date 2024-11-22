@@ -2,6 +2,10 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
+/**
+ * @template T of \OffbeatWP\Content\Post\PostModel
+ * @extends \OffbeatWP\Content\Post\Relations\Relation<T>
+ */
 class BelongsToOneOrMany extends Relation
 {
     /**
