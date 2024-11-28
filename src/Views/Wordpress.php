@@ -4,6 +4,7 @@ namespace OffbeatWP\Views;
 
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
+use RuntimeException;
 use WP_Post;
 use WP_Site;
 use WP_Term;
@@ -468,7 +469,13 @@ final class Wordpress
         ob_start();
         block_template_part($part);
 
-        return ob_get_clean();
+        $content = ob_get_clean();
+
+        if ($content === false) {
+            throw new RuntimeException('Output buffering is not enabled');
+        }
+
+        return $content;
     }
 
     /**
@@ -481,16 +488,4 @@ final class Wordpress
     {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
-
-    //    /**
-    //     * Retrieves an option value based on an option name.<br>
-    //     * If the option does not exist, <i>NULL</i> is returned.<br><br>
-    //     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
-    //     * @param string $name
-    //     * @return mixed|null
-    //     */
-    //    final public function getOption(string $name)
-    //    {
-    //        return get_option($name, null);
-    //    }
 }
