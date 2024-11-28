@@ -322,7 +322,7 @@ final class Wordpress
      *                                  'async' (default), 'sync', or 'auto'. Passing false or an empty
      *                                  string will result in the attribute being omitted.
      * }
-     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string|false} $attributes $attributes
+     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string} $attributes $attributes
      * @return string
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
