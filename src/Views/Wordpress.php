@@ -369,6 +369,9 @@ final class Wordpress
     {
         if ($strtotime) {
             $date = strtotime($date);
+        } elseif (is_string($date)) {
+            trigger_error('The formatDate function recieved an invalid value for the $date parameter.', E_USER_WARNING);
+            $date = is_numeric($date) ? (int)$date : false;
         }
 
         return date_i18n($format, $date);
