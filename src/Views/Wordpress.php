@@ -464,6 +464,7 @@ final class Wordpress
         return UserModel::getCurrentUser();
     }
 
+    /** @param 'header'|'footer' $part */
     public function getBlockTemplatePart(string $part): string
     {
         ob_start();
