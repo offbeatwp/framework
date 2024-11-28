@@ -4,6 +4,7 @@ namespace OffbeatWP\Views;
 
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
+use RuntimeException;
 use WP_Post;
 use WP_Site;
 use WP_Term;
@@ -321,7 +322,7 @@ final class Wordpress
      *                                  'async' (default), 'sync', or 'auto'. Passing false or an empty
      *                                  string will result in the attribute being omitted.
      * }
-     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string|false} $attributes $attributes
+     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string} $attributes $attributes
      * @return string
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
@@ -366,8 +367,13 @@ final class Wordpress
      */
     public function formatDate(?string $format, $date, bool $strtotime = false): string
     {
-        if ($strtotime) {
-            $date = strtotime($date);
+        if (is_string($date)) {
+            if ($strtotime) {
+                $date = strtotime($date);
+            } else {
+                trigger_error('The formatDate function recieved a string value for the $date parameter but strtotime is FALSE.', E_USER_WARNING);
+                $date = is_numeric($date) ? (int)$date : strtotime($date);
+            }
         }
 
         return date_i18n($format, $date);
@@ -463,12 +469,19 @@ final class Wordpress
         return UserModel::getCurrentUser();
     }
 
+    /** @param 'header'|'footer' $part */
     public function getBlockTemplatePart(string $part): string
     {
         ob_start();
         block_template_part($part);
 
-        return ob_get_clean();
+        $content = ob_get_clean();
+
+        if ($content === false) {
+            throw new RuntimeException('Output buffering is not enabled');
+        }
+
+        return $content;
     }
 
     /**
@@ -481,16 +494,4 @@ final class Wordpress
     {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
-
-    //    /**
-    //     * Retrieves an option value based on an option name.<br>
-    //     * If the option does not exist, <i>NULL</i> is returned.<br><br>
-    //     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
-    //     * @param string $name
-    //     * @return mixed|null
-    //     */
-    //    final public function getOption(string $name)
-    //    {
-    //        return get_option($name, null);
-    //    }
 }

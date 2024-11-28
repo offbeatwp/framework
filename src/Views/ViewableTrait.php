@@ -5,6 +5,7 @@ namespace OffbeatWP\Views;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Foundation\App;
 use ReflectionClass;
+use UnexpectedValueException;
 
 trait ViewableTrait
 {
@@ -60,8 +61,11 @@ trait ViewableTrait
 
     public function setRecursiveParentViewsPath(): void
     {
-        $reflector = new ReflectionClass($this);
-        $fn = $reflector->getFileName();
+        $fn = (new ReflectionClass($this))->getFileName();
+
+        if ($fn === false) {
+            throw new UnexpectedValueException('ViewableTrait attempted to reflect class defined in the PHP core or in a PHP extension.');
+        }
 
         $path = dirname($fn);
 
@@ -99,8 +103,13 @@ trait ViewableTrait
             return;
         }
 
-        $reflector = new ReflectionClass($this);
-        $directory = dirname($reflector->getFileName());
+        $fn = (new ReflectionClass($this))->getFileName();
+
+        if ($fn === false) {
+            throw new UnexpectedValueException('ViewableTrait attempted to reflect class defined in the PHP core or in a PHP extension.');
+        }
+
+        $directory = dirname($fn);
         $this->view->addTemplatePath($directory . '/views');
     }
 }

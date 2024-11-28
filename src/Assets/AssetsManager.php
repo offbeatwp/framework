@@ -191,7 +191,7 @@ final class AssetsManager
     /**
      * @param string $entry
      * @param string[] $dependencies
-     * @param array{in_footer: bool, strategy: 'defer'|'async'} $args
+     * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
      */
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
