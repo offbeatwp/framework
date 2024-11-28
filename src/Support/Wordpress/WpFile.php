@@ -4,6 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use Exception;
 use OffbeatWP\Exceptions\WpErrorException;
+use RuntimeException;
 
 final class WpFile
 {
@@ -95,7 +96,7 @@ final class WpFile
     /** @param array{name: string, tmp_name: string} $fileArray Array that represents a `$_FILES` upload array.<br>This array must have a <i>name</i> and a <i>tmp_name</i> key. */
     public static function uploadFromArray(array $fileArray): WpFile
     {
-        return self::uploadBits($fileArray['name'], file_get_contents($fileArray['tmp_name']));
+        return self::uploadBits($fileArray['name'], self::getFileContent($fileArray['tmp_name']));
     }
 
     /**
@@ -108,7 +109,7 @@ final class WpFile
 
         $c = count($fileArray['name']);
         for ($i = 0; $i < $c; $i++) {
-            $files[] = self::uploadBits($fileArray['name'][$i], file_get_contents($fileArray['tmp_name'][$i]));
+            $files[] = self::uploadBits($fileArray['name'][$i], self::getFileContent($fileArray['tmp_name'][$i]));
         }
 
         return $files;
@@ -126,13 +127,13 @@ final class WpFile
         $fileName = pathinfo($url, PATHINFO_FILENAME);
 
         if (!$fileName) {
-            throw new Exception('Could not get remote filename.');
+            throw new RuntimeException('Could not get remote filename.');
         }
 
         $headers = get_headers($url, true);
 
         if (!$headers || !isset($headers['Content-Type'])) {
-            throw new Exception('Could not determine content type of file.');
+            throw new RuntimeException('Could not determine content type of file.');
         }
 
         if (in_array($headers['Content-Type'], $allowedContentTypes, true)) {
@@ -145,11 +146,21 @@ final class WpFile
             throw new WpErrorException($downloadUrl->get_error_message());
         }
 
-        return self::uploadBits($fileName, file_get_contents($downloadUrl));
+        return self::uploadBits($fileName, self::getFileContent($downloadUrl));
     }
 
     public function unlink(): bool
     {
         return unlink($this->file);
+    }
+
+    private static function getFileContent(string $filename): string
+    {
+        $content = file_get_contents($filename);
+        if ($content === false) {
+            throw new RuntimeException('Failed to get file content.');
+        }
+
+        return $content;
     }
 }
