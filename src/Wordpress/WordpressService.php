@@ -3,6 +3,7 @@
 namespace OffbeatWP\Wordpress;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder;
 use OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder;
 use OffbeatWP\Support\Wordpress\AdminPage;
@@ -58,7 +59,7 @@ final class WordpressService
     {
         $images = config('images');
 
-        if (is_object($images) && $images->isNotEmpty()) {
+        if ($images instanceof Enumerable && $images->isNotEmpty()) {
             $images->each(function ($image, $key) {
                 add_image_size($key, $image['width'], $image['height'], $image['crop']);
             });
@@ -69,7 +70,7 @@ final class WordpressService
     {
         $sidebars = config('sidebars');
 
-        if (is_object($sidebars) && $sidebars->isNotEmpty()) {
+        if ($sidebars instanceof Enumerable && $sidebars->isNotEmpty()) {
             $sidebars->each(function ($sidebar, $id) {
                 $sidebar['id'] = $id;
                 register_sidebar($sidebar);
