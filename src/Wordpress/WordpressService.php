@@ -98,9 +98,14 @@ final class WordpressService
     public function applyPageTemplate($template, $data)
     {
         if (is_singular('page') && empty($data['ignore_page_template'])) {
-            $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
-            if ($pageTemplate && $pageTemplate !== 'default') {
-                return $pageTemplate;
+            $id = get_the_ID();
+
+            if ($id) {
+                $pageTemplate = get_post_meta($id, '_wp_page_template', true);
+
+                if ($pageTemplate && $pageTemplate !== 'default') {
+                    return $pageTemplate;
+                }
             }
         }
 
