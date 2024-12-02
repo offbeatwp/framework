@@ -252,7 +252,7 @@ final class TermQueryBuilder
             $this->queryVars['hide_empty'] = false;
         }
 
-        $this->queryVars['term_taxonomy_id'] = [$id];
+        $this->queryVars['include'] = [$id];
 
         return $this->first();
     }
