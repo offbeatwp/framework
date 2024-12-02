@@ -145,10 +145,7 @@ final class AssetsManager
         return get_template_directory_uri() . '/assets' . $path;
     }
 
-    /**
-     * @param string $entry
-     * @param string[] $dependencies
-     */
+    /** @param string[] $dependencies */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
@@ -189,9 +186,8 @@ final class AssetsManager
     }
 
     /**
-     * @param string $entry
      * @param string[] $dependencies
-     * @param array{in_footer: bool, strategy: 'defer'|'async'} $args
+     * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
      */
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
