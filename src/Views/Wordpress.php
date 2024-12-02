@@ -6,7 +6,6 @@ use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
 use WP_Site;
-use WP_Term;
 
 final class Wordpress
 {
@@ -43,7 +42,6 @@ final class Wordpress
 
     /**
      * Retrieves the permalink for a post type archive.
-     * @param string|null $postType
      * @return false|string
      */
     public function archiveUrl(?string $postType = 'post')
@@ -53,40 +51,7 @@ final class Wordpress
 
     /**
      * Returns a navigation menu.
-     * @param string[]|int[]|bool[]|object[]|callable[]|null $args {
-     *     Optional. Array of nav menu arguments.
-     *
-     *     @type int|string|WP_Term $menu                 Desired menu. Accepts a menu ID, slug, name, or object.
-     *                                                    Default empty.
-     *     @type string             $menu_class           CSS class to use for the ul element which forms the menu.
-     *                                                    Default 'menu'.
-     *     @type string             $menu_id              The ID that is applied to the ul element which forms the menu.
-     *                                                    Default is the menu slug, incremented.
-     *     @type string             $container            Whether to wrap the ul, and what to wrap it with.
-     *                                                    Default 'div'.
-     *     @type string             $container_class      Class that is applied to the container.
-     *                                                    Default 'menu-{menu slug}-container'.
-     *     @type string             $container_id         The ID that is applied to the container. Default empty.
-     *     @type string             $container_aria_label The aria-label attribute that is applied to the container
-     *                                                    when it's a nav element. Default empty.
-     *     @type callable|false     $fallback_cb          If the menu doesn't exist, a callback function will fire.
-     *                                                    Default is 'wp_page_menu'. Set to false for no fallback.
-     *     @type string             $before               Text before the link markup. Default empty.
-     *     @type string             $after                Text after the link markup. Default empty.
-     *     @type string             $link_before          Text before the link text. Default empty.
-     *     @type string             $link_after           Text after the link text. Default empty.
-     *     @type bool               $echo                 Whether to echo the menu or return it. Default true.
-     *     @type int                $depth                How many levels of the hierarchy are to be included.
-     *                                                    0 means all. Default 0.
-     *                                                    Default 0.
-     *     @type object             $walker               Instance of a custom walker class. Default empty.
-     *     @type string             $theme_location       Theme location to be used. Must be registered with
-     *                                                    register_nav_menu() in order to be selectable by the user.
-     *     @type string             $items_wrap           How the list items should be wrapped. Uses printf() format with
-     *                                                    numbered placeholders. Default is a ul with an id and class.
-     *     @type string             $item_spacing         Whether to preserve whitespace within the menu's HTML.
-     *                                                    Accepts 'preserve' or 'discard'. Default 'preserve'.
-     * }
+     * @param string[]|int[]|bool[]|object[]|callable[]|null $args
      * @phpstan-param null|array{menu?: int|string|WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
      * @return false|string|null
      */
@@ -126,7 +91,6 @@ final class Wordpress
     /**
      * Retrieves the URL for the current site where WordPress application files (e.g. wp-blog-header.php or the wp-admin/ folder) are accessible.<br>
      * Returns the 'site_url' option with the appropriate protocol, 'https' if is_ssl() and 'http' otherwise.
-     * @return string
      */
     public function siteUrl(): string
     {
@@ -209,7 +173,6 @@ final class Wordpress
      * If there are no shortcode tags defined, then the content will be returned without any filtering.<br>
      * This might cause issues when plugins are disabled but the shortcode will still show up in the post or content.
      * @param string|null $code
-     * @return string
      */
     public function shortcode(?string $code): ?string
     {
@@ -231,10 +194,7 @@ final class Wordpress
         return ob_get_clean();
     }
 
-    /**
-     * @param int|null $postId
-     * @return false|mixed
-     */
+    /** @return false|mixed */
     public function getAllPostMeta(?int $postId = null)
     {
         if ($postId) {
@@ -267,7 +227,6 @@ final class Wordpress
      * Retrieves an attachment URL.
      * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
-     * @param int|null $attachmentID
      * @param string|int[] $size
      * @return false|string
      */
@@ -301,28 +260,10 @@ final class Wordpress
      * Gets an HTML img element representing an image attachment.<br>
      * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
-     * @param int $attachmentID
      * @param int[]|string $size
      * @param string[] $classes
-     * @param string[]|false[] $attributes {
-     *     Optional. Attributes for the image markup.
-     *
-     *     @type string       $src      Image attachment URL.
-     *     @type string       $class    CSS class name or space-separated list of classes.
-     *                                  Default `attachment-$size_class size-$size_class`,
-     *                                  where `$size_class` is the image size being requested.
-     *     @type string       $alt      Image description for the alt attribute.
-     *     @type string       $srcset   The 'srcset' attribute value.
-     *     @type string       $sizes    The 'sizes' attribute value.
-     *     @type string|false $loading  The 'loading' attribute value. Passing a value of false
-     *                                  will result in the attribute being omitted for the image.
-     *                                  Defaults to 'lazy', depending on wp_lazy_loading_enabled().
-     *     @type string       $decoding The 'decoding' attribute value. Possible values are
-     *                                  'async' (default), 'sync', or 'auto'. Passing false or an empty
-     *                                  string will result in the attribute being omitted.
-     * }
-     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string|false} $attributes $attributes
-     * @return string
+     * @param string[]|false[] $attributes
+     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string} $attributes $attributes
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
     {
@@ -337,11 +278,7 @@ final class Wordpress
         return wp_get_attachment_image($attachmentID, $size, false, $attributes);
     }
 
-    /**
-     * @param int $attachmentId
-     * @param int[][]|string[] $sizes
-     * @return string
-     */
+    /** @param int[][]|string[] $sizes */
     public function getAttachmentImageSrcSet(int $attachmentId, $sizes = ['thumbnail']): string
     {
         $srcSet = [];
@@ -359,10 +296,7 @@ final class Wordpress
 
     /**
      * @deprecated
-     * @param string|null $format
      * @param string|int|bool $date
-     * @param bool $strtotime
-     * @return string
      */
     public function formatDate(?string $format, $date, bool $strtotime = false): string
     {
@@ -463,6 +397,7 @@ final class Wordpress
         return UserModel::getCurrentUser();
     }
 
+    /** @param 'header'|'footer' $part */
     public function getBlockTemplatePart(string $part): string
     {
         ob_start();
@@ -481,16 +416,4 @@ final class Wordpress
     {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
-
-    //    /**
-    //     * Retrieves an option value based on an option name.<br>
-    //     * If the option does not exist, <i>NULL</i> is returned.<br><br>
-    //     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
-    //     * @param string $name
-    //     * @return mixed|null
-    //     */
-    //    final public function getOption(string $name)
-    //    {
-    //        return get_option($name, null);
-    //    }
 }
