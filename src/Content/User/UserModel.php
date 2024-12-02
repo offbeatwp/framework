@@ -11,6 +11,7 @@ use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Exceptions\UserModelException;
+use OffbeatWP\Exceptions\UserRegistrationException;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use UnexpectedValueException;
@@ -26,6 +27,7 @@ class UserModel
         Macroable::__call as macroCall;
         Macroable::__callStatic as macroCallStatic;
     }
+
     protected WP_User $wpUser;
     /** @var array<string, mixed>|null */
     protected ?array $metas = null;
@@ -320,7 +322,7 @@ class UserModel
     /** Whether this user is the currently logged in user. */
     final public function isCurrentUser(): bool
     {
-        return (get_current_user_id() && $this->wpUser->ID === get_current_user_id());
+        return get_current_user_id() && $this->wpUser->ID === get_current_user_id();
     }
 
     public function hasCapability(string $capabilityName): bool
@@ -347,8 +349,8 @@ class UserModel
     }
 
     /**
-     * @deprecated
      * @return string[]
+     * @deprecated
      */
     public function getTranslatedRoles(string $domain = 'default'): array
     {
@@ -556,12 +558,33 @@ class UserModel
     /**
      * Inserts a new user into the WordPress database.<br>
      * This function is used when a new user registers through WordPress’ Login Page.<br>
+     * It requires a valid username and email address but doesn’t allow to choose a password, generating a random one using wp_generate_password().<br>
+     * On error, a UserException is thrown.
+     * @param string $userEmail User's email address to send password.
+     * @param string $userLogin User's username for logging in. Default to email if omitted.
+     * @return static Returns the registered user if the user was registered successfully.
+     * @throws \OffbeatWP\Exceptions\UserRegistrationException
+     */
+    public static function registerNewUserOrFail(string $userEmail, string $userLogin = ''): static
+    {
+        $result = register_new_user($userLogin ?: $userEmail, $userEmail);
+
+        if ($result instanceof WP_Error) {
+            throw new UserRegistrationException($result->get_error_message(), $result->get_error_code());
+        }
+
+        return self::_applyDefinedUserRoles($result) ?: static::findOrFail($result);
+    }
+
+    /**
+     * Inserts a new user into the WordPress database.<br>
+     * This function is used when a new user registers through WordPress’ Login Page.<br>
      * It requires a valid username and email address but doesn’t allow to choose a password, generating a random one using wp_generate_password().
      * @param string $userEmail User's email address to send password.
      * @param string $userLogin User's username for logging in. Default to email if omitted.
      * @return static|null Returns the registered user if the user was registered successfully.
      */
-    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?UserModel
+    public static function registerNewUser(string $userEmail, string $userLogin = ''): ?static
     {
         $result = register_new_user($userLogin ?: $userEmail, $userEmail);
 
@@ -569,19 +592,27 @@ class UserModel
             return null;
         }
 
-        // Assign the appropriate roles defined by this class.
+        return self::_applyDefinedUserRoles($result) ?: static::find($result);
+    }
+
+    /**
+     * Assign the appropriate roles defined by this class and returns a new instance with said roles.<br>
+     * If no roles are defined, <i>NULL</i> is returned instead.
+     */
+    private static function _applyDefinedUserRoles(int $newUserId): ?static
+    {
         if (static::definedUserRoles()) {
-            $wpUser = get_user_by('ID', $result);
+            $wpUser = get_user_by('ID', $newUserId);
             $wpUser->set_role('');
 
-            foreach(static::definedUserRoles() as $role) {
+            foreach (static::definedUserRoles() as $role) {
                 $wpUser->add_role($role);
             }
 
             return new static($wpUser);
         }
 
-        return static::find($result);
+        return null;
     }
 
     final public function delete(?int $reassign = null): bool
