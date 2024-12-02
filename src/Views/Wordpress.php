@@ -4,9 +4,7 @@ namespace OffbeatWP\Views;
 
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
-use WP_Post;
 use WP_Site;
-use WP_Term;
 
 class Wordpress
 {
@@ -43,7 +41,6 @@ class Wordpress
 
     /**
      * Retrieves the permalink for a post type archive.
-     * @param string|null $postType
      * @return false|string
      */
     public function archiveUrl(?string $postType = 'post')
@@ -56,7 +53,7 @@ class Wordpress
      * @param string[]|int[]|bool[]|object[]|callable[]|null $args {
      *     Optional. Array of nav menu arguments.
      *
-     *     @type int|string|WP_Term $menu                 Desired menu. Accepts a menu ID, slug, name, or object.
+     *     @type int|string|\WP_Term $menu                 Desired menu. Accepts a menu ID, slug, name, or object.
      *                                                    Default empty.
      *     @type string             $menu_class           CSS class to use for the ul element which forms the menu.
      *                                                    Default 'menu'.
@@ -87,7 +84,7 @@ class Wordpress
      *     @type string             $item_spacing         Whether to preserve whitespace within the menu's HTML.
      *                                                    Accepts 'preserve' or 'discard'. Default 'preserve'.
      * }
-     * @phpstan-param null|array{menu?: int|string|WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
+     * @phpstan-param null|array{menu?: int|string|\WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
      * @return false|string|null
      */
     public function navMenu(?array $args = [])
@@ -241,7 +238,7 @@ class Wordpress
             return get_post_meta($postId);
         }
 
-        /** @global WP_Post $post */
+        /** @global \WP_Post $post */
         global $post;
 
         if (!$post) {
@@ -338,7 +335,6 @@ class Wordpress
     }
 
     /**
-     * @param int $attachmentId
      * @param int[][]|string[] $sizes
      * @return string
      */
@@ -359,10 +355,7 @@ class Wordpress
 
     /**
      * @deprecated
-     * @param string|null $format
      * @param string|int|bool $date
-     * @param bool $strtotime
-     * @return string
      */
     public function formatDate(?string $format, $date, bool $strtotime = false): string
     {
@@ -463,7 +456,8 @@ class Wordpress
         return UserModel::getCurrentUser();
     }
 
-    public function getBlockTemplatePart(string $part):string
+    /** @param 'header'|'footer' $part */
+    public function getBlockTemplatePart(string $part): string
     {
         ob_start();
         block_template_part($part);
@@ -474,16 +468,4 @@ class Wordpress
     public function getTemplatePart(string $slug, $tagName = null, $className = null) {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
     }
-
-//    /**
-//     * Retrieves an option value based on an option name.<br>
-//     * If the option does not exist, <i>NULL</i> is returned.<br><br>
-//     * <b>Note: </b> ACF will prefix it's sitesetting options with "options_"
-//     * @param string $name
-//     * @return mixed|null
-//     */
-//    final public function getOption(string $name)
-//    {
-//        return get_option($name, null);
-//    }
 }
