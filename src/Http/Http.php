@@ -27,7 +27,7 @@ class Http
     /**
      * @param string|null $requestUri
      * @param int $status
-     * @return void
+     * @return never-return
      */
     public function redirectToParentUrl($requestUri = null, int $status = 301): void
     {   
