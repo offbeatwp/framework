@@ -93,14 +93,16 @@ final class Config
         return $config;
     }
 
-    /**
-     * @param string $key
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
-     */
-    public function get(string $key)
+    public function get(string $key, ?int $filter = null): mixed
     {
         $result = ArrayHelper::getValueFromDottedKey($key, $this->config);
-        return is_array($result) ? collect($result) : $result;
+
+        if ($filter === null) {
+            // For legacy reasons arrays are converted to collections if filter is NULL
+            return is_array($result) ? collect($result) : $result;
+        }
+
+        return filter_var($result, $filter, FILTER_NULL_ON_FAILURE);
     }
 
     /**

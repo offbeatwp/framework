@@ -21,12 +21,19 @@ if (!function_exists('offbeat')) {
 
 if (!function_exists('config')) {
     /**
-     * @param string|null $config
-     * @return bool|float|\Illuminate\Support\Collection|int|null|object|\OffbeatWP\Config\Config|string
+     * @param string|null $config Config slug. Dotted keys annotation can be used.
+     * @param int|null $filter Filter to use.<br>
+     * If <i>NULL</i> is passed, arrays will be converted to collections to match legacy behavior of this function.<br>
+     * The FILTER_NULL_ON_FAILURE option is enabled by default which means <i>NULL</i> is returned if the filter fails.
+     * @see filter_var
      */
-    function config(?string $config = null)
+    function config(?string $config = null, ?int $filter = null): mixed
     {
-        return App::singleton()->config($config);
+        if ($config === null) {
+            trigger_error('Passing NULL as first parameter to config is deprecated.', E_USER_DEPRECATED);
+        }
+
+        return App::singleton()->config($config, $filter);
     }
 }
 

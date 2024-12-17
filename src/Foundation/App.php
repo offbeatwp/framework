@@ -181,18 +181,14 @@ final class App
         return get_template_directory() . '/components';
     }
 
-    /**
-     * @param string|null $config
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
-     */
-    public function config(?string $config)
+    public function config(?string $config, ?int $filter): mixed
     {
         if ($this->config === null) {
             $this->config = new Config($this);
         }
 
         if ($config !== null) {
-            return $this->config->get($config);
+            return $this->config->get($config, $filter);
         }
 
         return $this->config;
