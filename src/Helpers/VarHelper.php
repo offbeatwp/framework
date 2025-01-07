@@ -10,12 +10,13 @@ final class VarHelper
     }
 
     /**
-     * If the given value is scalar, it will be cast to a <i>string</i> and returned.<br>
+     * If the given value passed the FILTER_UNSAFE_RAW filter, it will be cast to a <i>string</i> and returned.<br>
      * Otherwise, the value of <b>$default</b> is returned.
      */
     public static function toString(mixed $value, ?string $default = null): ?string
     {
-        return is_scalar($value) ? (string)$value : $default;
+        $v = filter_var($value, FILTER_UNSAFE_RAW);
+        return is_string($v) ? $v : $default;
     }
 
     /**
@@ -54,7 +55,7 @@ final class VarHelper
      */
     public static function toArray(mixed $value, ?array $default = null): ?array
     {
-        $v = filter_var($value, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+        $v = filter_var($value, FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY);
         return is_array($v) ? $v : $default;
     }
 }
