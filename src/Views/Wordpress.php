@@ -260,6 +260,7 @@ final class Wordpress
      * Gets an HTML img element representing an image attachment.<br>
      * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
+     * @param int|null $attachmentID
      * @param int[]|string $size
      * @param string[] $classes
      * @param string[]|false[] $attributes
