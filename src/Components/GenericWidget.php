@@ -33,7 +33,7 @@ class GenericWidget extends WP_Widget
             $options
         );
 
-        add_action('init', [$this, 'registerForm']);
+        add_action('admin_init', [$this, 'registerForm']);
     }
 
     /**
