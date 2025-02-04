@@ -38,14 +38,18 @@ abstract class AbstractField implements FieldInterface
         return $field;
     }
 
-    public function setId(string $id): void
+    /** @return $this */
+    public function setId(string $id)
     {
         $this->id = $id;
+        return $this;
     }
 
-    public function setLabel(string $label): void
+    /** @return $this */
+    public function setLabel(string $label)
     {
         $this->label = $label;
+        return $this;
     }
 
     /** @internal Use required instead */
@@ -59,21 +63,23 @@ abstract class AbstractField implements FieldInterface
      * @internal Use attribute instead
      * @param string $key
      * @param mixed $value
-     * @return void
+     * @return $this
      */
-    public function setAttribute($key, $value = null): void
+    public function setAttribute($key, $value = null)
     {
         $this->attributes[$key] = $value;
+        return $this;
     }
 
     /**
      * @internal Use attributes instead
      * @param mixed[] $attributes
-     * @return void
+     * @return $this
      */
-    public function setAttributes(array $attributes): void
+    public function setAttributes(array $attributes)
     {
         $this->attributes = array_merge($this->attributes, $attributes);
+        return $this;
     }
 
     /* Basic Getters */

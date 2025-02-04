@@ -16,7 +16,6 @@ class Select extends AbstractField
     public function addOptions(array $options = [])
     {
         $this->options = array_replace($this->options, $options);
-
         return $this;
     }
 
@@ -28,7 +27,6 @@ class Select extends AbstractField
     public function addOption($key, $value)
     {
         $this->options[$key] = $value;
-
         return $this;
     }
 
@@ -40,6 +38,13 @@ class Select extends AbstractField
         }
 
         return $this->options;
+    }
+
+    /** @return $this */
+    public function multiple(bool $multiple)
+    {
+        $this->attributes['multiple'] = $multiple;
+        return $this;
     }
 
     public function getFieldType(): string

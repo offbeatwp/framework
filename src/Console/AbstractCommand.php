@@ -20,11 +20,12 @@ abstract class AbstractCommand
 
     /**
      * @param Exception|string|Throwable|WP_Error $message
-     * @return void
+     * @return never-return
      */
     public function error($message)
     {
         WP_CLI::error($message);
+        exit;
     }
 
     /**
