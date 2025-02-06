@@ -19,6 +19,7 @@ class TermModel implements TermModelInterface
         Macroable::__callStatic as macroCallStatic;
     }
 
+    /** @var \WP_Term|null */
     public $wpTerm;
     public $id;
     protected array $metaInput = [];
