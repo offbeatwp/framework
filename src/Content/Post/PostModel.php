@@ -885,6 +885,22 @@ class PostModel implements PostModelInterface
         return null;
     }
 
+    /** Get the post object as WP_Post */
+    final public function getWpPost(): WP_Post
+    {
+        $post = $this->wpPost;
+
+        if ($post instanceof WP_Post) {
+            return $post;
+        }
+
+        if (!($post instanceof stdClass)) {
+            $post = (object)[];
+        }
+
+        return new WP_Post($post);
+    }
+
     /////////////////////
     /// Query Methods ///
     /////////////////////
