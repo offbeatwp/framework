@@ -691,10 +691,29 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    /** @return WP_Post|object|null */
+    /**
+     * Get the <b>raw</b> post object
+     * @return WP_Post|object|null
+     */
     public function getPostObject(): ?object
     {
         return $this->wpPost;
+    }
+
+    /** Get the post object as WP_Post */
+    final public function getWpPost(): WP_Post
+    {
+        $post = $this->wpPost;
+
+        if ($post instanceof WP_Post) {
+            return $post;
+        }
+
+        if (!($post instanceof stdClass)) {
+            $post = (object)[];
+        }
+
+        return new WP_Post($post);
     }
 
     ///////////////////////
