@@ -570,7 +570,7 @@ class UserModel
         $result = register_new_user($userLogin ?: $userEmail, $userEmail);
 
         if ($result instanceof WP_Error) {
-            throw new UserRegistrationException($result->get_error_message(), $result->get_error_code());
+            throw new UserRegistrationException($result->get_error_message());
         }
 
         return self::_applyDefinedUserRoles($result) ?: static::findOrFail($result);
