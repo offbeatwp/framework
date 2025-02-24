@@ -22,7 +22,7 @@ if (!function_exists('offbeat')) {
 if (!function_exists('config')) {
     /**
      * @param string|null $config
-     * @return bool|float|\Illuminate\Support\Collection|int|null|object|\OffbeatWP\Config\Config|string
+     * @return mixed
      */
     function config(?string $config = null)
     {
