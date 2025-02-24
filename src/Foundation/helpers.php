@@ -22,7 +22,7 @@ if (!function_exists('config')) {
     /**
      * @param string|null $config
      * @param null $default Unused
-     * @return bool|float|\Illuminate\Support\Collection|int|null|object|\OffbeatWP\Config\Config|string
+     * @return mixed
      */
     function config(?string $config = null, $default = null) {
         return App::singleton()->config($config, $default);
