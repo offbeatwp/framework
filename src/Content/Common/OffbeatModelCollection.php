@@ -24,7 +24,7 @@ abstract class OffbeatModelCollection extends Collection
      * Get the values of a given key. This will return a basic Collection.
      * @param string|mixed[]|int|null $value
      * @param string|null $key
-     * @return Collection<TKey, TValue>
+     * @return Collection<array-key, mixed>
      */
     public function pluck($value, $key = null)
     {
