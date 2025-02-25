@@ -88,7 +88,7 @@ final class Design
     {
         /** @var Collection<string|int, array{label: string, sub_themes: Collection<string|int, array{label: string}>}>|null $rowThemes */
         $rowThemes = config('design.row_themes');
-        if(!is_iterable($rowThemes)) {
+        if (!is_iterable($rowThemes)) {
             return [];
         }
 

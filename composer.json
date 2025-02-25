@@ -4,7 +4,8 @@
   "license": "MIT",
   "type": "library",
   "scripts": {
-    "phpcs": "vendor/bin/php-cs-fixer fix"
+    "phpcs": "vendor/bin/php-cs-fixer fix",
+    "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
   },
   "require": {
     "php": ">=8.1",
