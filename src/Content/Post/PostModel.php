@@ -352,7 +352,7 @@ class PostModel implements PostModelInterface
         return get_the_modified_date($format, $this->wpPost) ?: null;
     }
 
-    /** @return false|string */
+    /** @return string */
     public function getExcerpt(bool $formatted = true)
     {
         if (!$formatted) {
@@ -365,7 +365,7 @@ class PostModel implements PostModelInterface
 
         ob_start();
         the_excerpt();
-        $excerpt = ob_get_clean();
+        $excerpt = (string)ob_get_clean();
 
         $GLOBALS['post'] = $currentPost;
 
