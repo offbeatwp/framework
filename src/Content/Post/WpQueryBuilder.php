@@ -451,7 +451,7 @@ class WpQueryBuilder
             }
 
             $this->queryVars['paged'] = $paged;
-        } elseif(isset($this->queryVars['paged'])) {
+        } elseif (isset($this->queryVars['paged'])) {
             unset($this->queryVars['paged']);
         }
 
@@ -609,6 +609,6 @@ class WpQueryBuilder
             return $data;
         }
 
-        return array_map(fn($post) => $post->$column, $this->only([$column]));
+        return array_map(fn ($post) => $post->$column, $this->only([$column]));
     }
 }

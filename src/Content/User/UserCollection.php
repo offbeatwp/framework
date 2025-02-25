@@ -13,7 +13,7 @@ use WP_User;
  * @template TKey of array-key
  * @template TValue of UserModel
  * @extends OffbeatModelCollection<TKey, TValue>
- * 
+ *
  * @method UserModel|mixed pull(int|string $key, mixed $default = null)
  * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
  * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
@@ -21,7 +21,6 @@ use WP_User;
  * @method UserModel|static|null shift(int $count = 1)
  * @method UserModel|null reduce(callable $callback, mixed $initial = null)
  * @method UserModel offsetGet(int|string $key)
- * @method ArrayIterator|UserModel[] getIterator()
  * @phpstan-method TValue[] all()
  */
 class UserCollection extends OffbeatModelCollection
@@ -172,5 +171,12 @@ class UserCollection extends OffbeatModelCollection
     final public function values(): UserCollection
     {
         return new static(array_values($this->items), $this->modelClass);
+    }
+
+    /** @return ArrayIterator<TKey, TValue> */
+    public function getIterator(): ArrayIterator
+    {
+        /** @var ArrayIterator<TKey, TValue> */
+        return parent::getIterator();
     }
 }

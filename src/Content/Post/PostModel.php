@@ -777,7 +777,7 @@ class PostModel implements PostModelInterface
     {
         $copy = clone $this;
 
-        foreach(get_object_taxonomies($this->wpPost) as $taxonomyName) {
+        foreach (get_object_taxonomies($this->wpPost) as $taxonomyName) {
             $termIds = $this->getTerms($taxonomyName)->excludeEmpty(false)->ids();
             $copy->termsToSet[] = ['termIds' => $termIds, 'taxonomy' => $taxonomyName, 'append' => false];
         }
