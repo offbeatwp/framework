@@ -8,19 +8,20 @@ use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;
 use WP_Query;
+use function PHPStan\dumpType;
 
 /**
  * @template TKey of array-key
  * @template TValue of \OffbeatWP\Content\Post\PostModel
  * @extends OffbeatModelCollection<TKey, TValue>
  *
- * @method PostModel|mixed pull(int|string $key, mixed $default = null)
- * @method PostModel|mixed first(callable $callback = null, mixed $default = null)
- * @method PostModel|mixed last(callable $callback = null, mixed $default = null)
- * @method PostModel|static|null pop(int $count = 1)
- * @method PostModel|static|null shift(int $count = 1)
- * @method PostModel|null reduce(callable $callback, mixed $initial = null)
- * @method PostModel offsetGet(int|string $key)
+ * @method TValue|mixed pull(int|string $key, mixed $default = null)
+ * @method TValue|mixed first(callable $callback = null, mixed $default = null)
+ * @method TValue|mixed last(callable $callback = null, mixed $default = null)
+ * @method TValue|static|null pop(int $count = 1)
+ * @method TValue|static|null shift(int $count = 1)
+ * @method TValue|null reduce(callable $callback, mixed $initial = null)
+ * @method TValue offsetGet(int|string $key)
  */
 class PostsCollection extends OffbeatModelCollection
 {
@@ -65,9 +66,10 @@ class PostsCollection extends OffbeatModelCollection
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
     }
 
-    /** @return \OffbeatWP\Content\Post\WpPostsIterator<array-key, \OffbeatWP\Content\Post\PostModel> */
+    /** @return \OffbeatWP\Content\Post\WpPostsIterator<array-key, TValue> */
     public function getIterator(): WpPostsIterator
     {
+        /** @var \OffbeatWP\Content\Post\WpPostsIterator<array-key, TValue> */
         return new WpPostsIterator($this->items);
     }
 
