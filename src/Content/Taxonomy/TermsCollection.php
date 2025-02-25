@@ -19,7 +19,6 @@ use WP_Term;
  * @method TermModel|static|null shift(int $count = 1)
  * @method TermModel|null reduce(callable $callback, mixed $initial = null)
  * @method TermModel offsetGet(int|string $key)
- * @method ArrayIterator|TermModel[] getIterator()
  */
 class TermsCollection extends OffbeatModelCollection
 {
@@ -88,5 +87,12 @@ class TermsCollection extends OffbeatModelCollection
         });
 
         $this->items = [];
+    }
+
+    /** @return ArrayIterator<TKey, TValue> */
+    public function getIterator(): ArrayIterator
+    {
+        /** @var ArrayIterator<TKey, TValue> */
+        return parent::getIterator();
     }
 }
