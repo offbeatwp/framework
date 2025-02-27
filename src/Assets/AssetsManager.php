@@ -154,9 +154,7 @@ final class AssetsManager
         if ($assets) {
             foreach ($assets as $asset) {
                 $asset = ltrim($asset, './');
-                $baseName = basename($asset);
-                $handle = substr($baseName, 0, strpos($baseName, '.'));
-                $handle = 'owp-' . $handle;
+                $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_style_is($handle)) {
                     $url = $this->getAssetsUrl($asset);
@@ -207,9 +205,7 @@ final class AssetsManager
         if ($assets) {
             foreach ($assets as $asset) {
                 $asset = ltrim($asset, './');
-                $baseName = basename($asset);
-                $handle = substr($baseName, 0, strpos($baseName, '.'));
-                $handle = 'owp-' . $handle;
+                $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_script_is($handle)) {
                     $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
@@ -262,5 +258,13 @@ final class AssetsManager
         }
 
         return $this->getUrl($handle . '.' . $assetType) ?: null;
+    }
+
+    private function getHandleFromAsset(string $asset): string
+    {
+        $baseName = basename($asset);
+        $handle = substr($baseName, 0, strpos($baseName, '.'));
+
+        return 'owp-' . $handle;
     }
 }
