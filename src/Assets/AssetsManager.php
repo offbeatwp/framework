@@ -184,7 +184,8 @@ final class AssetsManager
         }
     }
 
-    public function registerStyles(string $entry, array $dependencies = [])
+    /** @param string[] $dependencies */
+    public function registerStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
         if (!$assets) {
@@ -260,7 +261,8 @@ final class AssetsManager
         return new WpScriptAsset($handle, $enqueueNow);
     }
 
-    public function registerScripts(string $entry, array $dependencies = [])
+    /** @param string[] $dependencies */
+    public function registerScripts(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
         if (!$assets) {
