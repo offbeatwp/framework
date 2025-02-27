@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Assets;
 
+use Generator;
 use InvalidArgumentException;
 use stdClass;
 
@@ -152,8 +153,7 @@ final class AssetsManager
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
-            foreach ($assets as $asset) {
-                $asset = ltrim($asset, './');
+            foreach ($this->trimAssets($assets) as $asset) {
                 $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_style_is($handle)) {
@@ -194,8 +194,7 @@ final class AssetsManager
 
         $previousHandle = '';
 
-        foreach ($assets as $asset) {
-            $asset = ltrim($asset, './');
+        foreach ($this->trimAssets($assets) as $asset) {
             $handle = $this->getHandleFromAsset($asset);
 
             wp_register_style(
@@ -228,8 +227,7 @@ final class AssetsManager
         $handle = '';
 
         if ($assets) {
-            foreach ($assets as $asset) {
-                $asset = ltrim($asset, './');
+            foreach ($this->trimAssets($assets) as $asset) {
                 $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_script_is($handle)) {
@@ -272,8 +270,7 @@ final class AssetsManager
 
         $previousHandle = '';
 
-        foreach ($assets as $asset) {
-            $asset = ltrim($asset, './');
+        foreach ($this->trimAssets($assets) as $asset) {
             $handle = $this->getHandleFromAsset($asset);
 
             wp_register_script(
@@ -320,5 +317,16 @@ final class AssetsManager
         $handle = substr($baseName, 0, strpos($baseName, '.'));
 
         return 'owp-' . $handle;
+    }
+
+    /**
+     * @param string[] $assets
+     * @return Generator<string>
+     */
+    private function trimAssets(array $assets): Generator
+    {
+        foreach ($assets as $asset) {
+            yield ltrim($asset, './');
+        }
     }
 }
