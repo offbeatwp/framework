@@ -132,11 +132,8 @@ final class AssetsManager
         $path = ($path) ? "/{$path}" : '';
 
         if (config('app.assets.from_site_root')) {
-            $url = get_site_url();
-
-            return $url . $path;
+            return get_site_url() . $path;
         }
-
 
         $url = config('app.assets.url');
         if ($url) {
