@@ -184,6 +184,30 @@ final class AssetsManager
         }
     }
 
+    public function registerStyles(string $entry, array $dependencies = [])
+    {
+        $assets = $this->getAssetsByEntryPoint($entry, 'css');
+        if (!$assets) {
+            trigger_error("Failed to register styles for entry: {$entry}", E_USER_WARNING);
+            return;
+        }
+
+        $previousHandle = '';
+
+        foreach ($assets as $asset) {
+            $asset = ltrim($asset, './');
+            $handle = $this->getHandleFromAsset($asset);
+
+            wp_register_style(
+                $handle,
+                $this->getAssetsUrl($asset),
+                $previousHandle ? [...$dependencies, $previousHandle] : $dependencies
+            );
+
+            $previousHandle = $handle;
+        }
+    }
+
     /**
      * @param string[] $dependencies
      * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
@@ -236,6 +260,30 @@ final class AssetsManager
         }
 
         return new WpScriptAsset($handle, $enqueueNow);
+    }
+
+    public function registerScripts(string $entry, array $dependencies = [])
+    {
+        $assets = $this->getAssetsByEntryPoint($entry, 'js');
+        if (!$assets) {
+            trigger_error("Failed to register scripts for entry: {$entry}", E_USER_WARNING);
+            return;
+        }
+
+        $previousHandle = '';
+
+        foreach ($assets as $asset) {
+            $asset = ltrim($asset, './');
+            $handle = $this->getHandleFromAsset($asset);
+
+            wp_register_script(
+                $handle,
+                $this->getAssetsUrl($asset),
+                $previousHandle ? [...$dependencies, $previousHandle] : $dependencies
+            );
+
+            $previousHandle = $handle;
+        }
     }
 
     /**
