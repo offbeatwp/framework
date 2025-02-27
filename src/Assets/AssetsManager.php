@@ -157,9 +157,10 @@ final class AssetsManager
                 $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_style_is($handle)) {
+                    $enqueueNow = $this->shouldEnqueueNow();
                     $url = $this->getAssetsUrl($asset);
 
-                    if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
+                    if ($enqueueNow) {
                         wp_enqueue_style($handle, $url, $dependencies);
                     } else {
                         add_action('wp_enqueue_scripts', function () use ($handle, $url, $dependencies) {
@@ -170,7 +171,7 @@ final class AssetsManager
             }
         } else {
             $handle = 'theme-style' . $entry;
-            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+            $enqueueNow = $this->shouldEnqueueNow();
             $url = $this->getUrl($entry . '.css');
 
             if ($enqueueNow) {
@@ -208,7 +209,7 @@ final class AssetsManager
                 $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_script_is($handle)) {
-                    $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+                    $enqueueNow = $this->shouldEnqueueNow();
                     $url = $this->getAssetsUrl($asset);
 
                     if ($enqueueNow) {
@@ -222,7 +223,7 @@ final class AssetsManager
             }
         } else {
             $handle = 'theme-script-' . $entry;
-            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+            $enqueueNow = $this->shouldEnqueueNow();
             $url = $this->getUrl($entry . '.js');
 
             if ($enqueueNow) {
@@ -258,6 +259,11 @@ final class AssetsManager
         }
 
         return $this->getUrl($handle . '.' . $assetType) ?: null;
+    }
+
+    private function shouldEnqueueNow(): bool
+    {
+        return did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
     }
 
     private function getHandleFromAsset(string $asset): string
