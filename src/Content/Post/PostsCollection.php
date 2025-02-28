@@ -8,7 +8,6 @@ use OffbeatWP\Contracts\IWpQuerySubstitute;
 use TypeError;
 use WP_Post;
 use WP_Query;
-use function PHPStan\dumpType;
 
 /**
  * @template TKey of array-key
