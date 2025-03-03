@@ -258,8 +258,11 @@ final class AssetsManager
         return new WpScriptAsset($handle, $enqueueNow);
     }
 
-    /** @param string[] $dependencies */
-    public function registerScripts(string $entry, array $dependencies = []): void
+    /**
+     * @param string[] $dependencies
+     * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
+     */
+    public function registerScripts(string $entry, array $dependencies = [], $args = ['in_footer' => true]): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
         if (!$assets) {
@@ -275,7 +278,9 @@ final class AssetsManager
             wp_register_script(
                 $handle,
                 $this->getAssetsUrl($asset),
-                $previousHandle ? [...$dependencies, $previousHandle] : $dependencies
+                $previousHandle ? [...$dependencies, $previousHandle] : $dependencies,
+                false,
+                $args
             );
 
             $previousHandle = $handle;
