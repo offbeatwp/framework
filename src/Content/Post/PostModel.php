@@ -894,11 +894,11 @@ class PostModel implements PostModelInterface
             return $post;
         }
 
-        if (!($post instanceof stdClass)) {
-            $post = (object)[];
+        if (is_object($post)) {
+            return new WP_Post($post);
         }
 
-        return new WP_Post($post);
+        return WP_Post((object)[]);
     }
 
     /////////////////////
