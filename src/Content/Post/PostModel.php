@@ -974,7 +974,7 @@ class PostModel implements PostModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $wpPost->ID);
         }
 
-        if (defined(static::class . '::POST_TYPE') && !in_array($wpPost->post_type, (array)static::POST_TYPE, true)) {
+        if (defined(static::class . '::POST_TYPE') && !in_array($wpPost->post_type, (array)static::POST_TYPE, true) && static::POST_TYPE !== 'any') {
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post object: Invalid Post Type');
         }
 
