@@ -72,6 +72,9 @@ class PostModel implements PostModelInterface
             $this->wpPost->comment_status = static::DEFAULT_COMMENT_STATUS;
             $this->wpPost->ping_status = static::DEFAULT_PING_STATUS;
         } elseif ($post instanceof WP_Post) {
+            if (!static::postObjectHasValidPostType($post)) {
+                trigger_error('Constructed ' . basename(static::class) . ' with post type ' . $post->post_type . ' but it should have post type ' . implode(' or ', (array)static::POST_TYPE), E_USER_WARNING);
+            }
             $this->wpPost = $post;
         } elseif (is_numeric($post)) {
             trigger_error('Constructed PostModel with ID. Use PostModel::find instead.', E_USER_DEPRECATED);
@@ -974,11 +977,16 @@ class PostModel implements PostModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $wpPost->ID);
         }
 
-        if (defined(static::class . '::POST_TYPE') && !in_array($wpPost->post_type, (array)static::POST_TYPE, true) && static::POST_TYPE !== 'any') {
+        if (!static::postObjectHasValidPostType($wpPost)) {
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post object: Invalid Post Type');
         }
 
         return new static($wpPost);
+    }
+
+    private static function postObjectHasValidPostType(WP_Post $wpPost): bool
+    {
+        return self::POST_TYPE === 'any' || in_array($wpPost->post_type, (array)static::POST_TYPE, true);
     }
 
     /** @return int[] Retrieves the value of a meta field as an array of IDs. */
