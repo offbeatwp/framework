@@ -590,11 +590,17 @@ class PostModel implements PostModelInterface
 
     public function getParent(): ?PostModel
     {
-        if (!$this->getParentId()) {
-            return null;
+        $parentId = $this->getParentId();
+
+        if ($parentId) {
+            $parent = get_post($parentId);
+
+            if ($parent) {
+                return new static($parent);
+            }
         }
 
-        return new static($this->getParentId());
+        return null;
     }
 
     public function getTopLevelParent(): ?PostModel
