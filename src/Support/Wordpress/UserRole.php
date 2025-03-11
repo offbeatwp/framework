@@ -20,7 +20,7 @@ final class UserRole
         self::$userModels[$userType] = $userModelClass;
     }
 
-    /** @return class-string<UserModel> */
+    /** @return class-string<UserModel>|null */
     public static function getModelByUserRole(string $userType): ?string
     {
         return self::$userModels[$userType] ?? null;
