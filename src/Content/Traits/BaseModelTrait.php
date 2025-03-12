@@ -35,11 +35,7 @@ trait BaseModelTrait
         return $item;
     }
 
-    /**
-     * Checks if a model with the given ID exists.
-     * @param int|null $id
-     * @return bool
-     */
+    /** Checks if a model with the given ID exists. */
     public static function exists(?int $id): bool
     {
         if ($id <= 0) {
