@@ -879,7 +879,7 @@ class PostModel implements PostModelInterface
     {
         $modelClass = static::class;
 
-        if (defined("{$modelClass}::POST_TYPE")) {
+        if (static::POST_TYPE !== 'any') {
             return get_post_type_object($modelClass::POST_TYPE);
         }
 
@@ -974,7 +974,7 @@ class PostModel implements PostModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $wpPost->ID);
         }
 
-        if (defined(static::class . '::POST_TYPE') && !in_array($wpPost->post_type, (array)static::POST_TYPE, true) && static::POST_TYPE !== 'any') {
+        if (!in_array($wpPost->post_type, (array)static::POST_TYPE, true) && static::POST_TYPE !== 'any') {
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post object: Invalid Post Type');
         }
 
