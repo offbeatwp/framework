@@ -1,8 +1,20 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method OffbeatWP\\Blocks\\AbstractBlockCallback\:\:getInnerBlocks\(\) never returns array\{\} so it can be removed from the return type\.$#'
+			message: '#^Method OffbeatWP\\Blocks\\AbstractBlockCallback\:\:getInnerBlocks\(\) never returns array so it can be removed from the return type\.$#'
 			identifier: return.unusedType
+			count: 1
+			path: src/Blocks/AbstractBlockCallback.php
+
+		-
+			message: '#^Method OffbeatWP\\Blocks\\AbstractBlockCallback\:\:getInnerBlocks\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Blocks/AbstractBlockCallback.php
+
+		-
+			message: '#^Method OffbeatWP\\Blocks\\AbstractBlockCallback\:\:getInnerBlocks\(\) return type has no value type specified in iterable type array\|WP_Block_List\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: src/Blocks/AbstractBlockCallback.php
 
@@ -113,12 +125,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/Support/Wordpress/Post.php
-
-		-
-			message: '#^Path in require_once\(\) "\./wp\-admin/includes/image\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: src/Support/Wordpress/WpFile.php
 
 		-
 			message: '#^Method OffbeatWP\\Views\\Wordpress\:\:shortcode\(\) never returns null so it can be removed from the return type\.$#'

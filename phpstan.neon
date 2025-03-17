@@ -9,6 +9,8 @@ parameters:
         - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
     excludePaths:
         - src/Components/GenericWidget.php
+    ignoreErrors:
+        - '#^Path in require_once\(\) "\./wp\-admin/includes/image\.php" is not a file or it does not exist\.$#'
 includes:
     - phpstan-baseline.neon
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
