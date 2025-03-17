@@ -1,6 +1,42 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Method OffbeatWP\\Assets\\AssetsManager\:\:getAssetUrlByHandle\(\) should return non\-empty\-string\|null but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Assets/AssetsManager.php
+
+		-
+			message: '#^Parameter \#1 \$json of function json_decode expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Assets/AssetsManager.php
+
+		-
+			message: '#^Parameter \#2 \$src of function wp_enqueue_script expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Assets/AssetsManager.php
+
+		-
+			message: '#^Parameter \#2 \$src of function wp_enqueue_style expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Assets/AssetsManager.php
+
+		-
+			message: '#^Parameter \#3 \$length of function substr expects int\|null, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Assets/AssetsManager.php
+
+		-
+			message: '#^Parameter \#3 \$length of function substr expects int\|null, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Assets/Objects/AssetChunk.php
+
+		-
 			message: '#^Method OffbeatWP\\Blocks\\AbstractBlockCallback\:\:getInnerBlocks\(\) never returns array so it can be removed from the return type\.$#'
 			identifier: return.unusedType
 			count: 1
@@ -19,10 +55,88 @@ parameters:
 			path: src/Blocks/AbstractBlockCallback.php
 
 		-
+			message: '#^Parameter \#1 \$path of function dirname expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Blocks/AbstractBlockCallback.php
+
+		-
+			message: '#^Method OffbeatWP\\Components\\AbstractComponent\:\:getCategory\(\) should return string\|null but returns array\<string\>\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: '#^Method OffbeatWP\\Components\\AbstractComponent\:\:getDescription\(\) should return string\|null but returns array\<string\>\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: '#^Method OffbeatWP\\Components\\AbstractComponent\:\:getIcon\(\) should return string\|null but returns array\<string\>\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: '#^Method OffbeatWP\\Components\\AbstractComponent\:\:getName\(\) should return string\|null but returns array\<string\>\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: '#^Method OffbeatWP\\Components\\AbstractComponent\:\:getSlug\(\) should return string but returns array\<string\>\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Components/AbstractComponent.php
+
+		-
+			message: '#^Parameter \#1 \$path of function dirname expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Components/AbstractComponent.php
+
+		-
 			message: '#^Call to deprecated method registerWidget\(\) of class OffbeatWP\\Components\\ComponentRepository\.$#'
 			identifier: method.deprecated
 			count: 1
 			path: src/Components/ComponentRepository.php
+
+		-
+			message: '#^Offset ''name'' might not exist on array\{name\?\: string, description\?\: string, slug\: string, category\?\: string, icon\?\: string, supports\?\: array\<string\>, block\?\: array\<mixed\>, variations\?\: array\<mixed\>, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Components/ComponentRepository.php
+
+		-
+			message: '#^Parameter \#1 \$name of method DI\\Container\:\:make\(\) expects string, array\<class\-string\<OffbeatWP\\Components\\AbstractComponent\>\>\|class\-string\<OffbeatWP\\Components\\AbstractComponent\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Components/ComponentRepository.php
+
+		-
+			message: '#^Parameter \#1 \$tag of function add_shortcode expects string, array\<string\>\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Components/ComponentRepository.php
+
+		-
+			message: '#^Parameter \#1 \$string of function urlencode expects string, bool\|float\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Components/ComponentSettings.php
+
+		-
+			message: '#^Parameter \#1 \$name of method DI\\Container\:\:make\(\) expects string, class\-string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Components/GenericShortcode.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Config/Config.php
 
 		-
 			message: '#^Unreachable statement \- code above always terminates\.$#'
@@ -31,10 +145,388 @@ parameters:
 			path: src/Console/AbstractCommand.php
 
 		-
+			message: '#^Method OffbeatWP\\Content\\Common\\OffbeatModelCollection\:\:groupBy\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), static\(OffbeatWP\\Content\\Common\\OffbeatModelCollection\<\(int\|string\), TValue\>\)\> but returns Illuminate\\Support\\Collection\<\(int\|string\), Illuminate\\Support\\Collection\<\(int\|string\), TValue\>\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Common/OffbeatModelCollection.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue\>\:\:pluck\(\) expects array\<string\>\|int\|string, array\<mixed\>\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Common/OffbeatModelCollection.php
+
+		-
+			message: '#^Property OffbeatWP\\Content\\Enqueue\\WpScriptEnqueueBuilder\:\:\$bindingsToPass \(array\<array\{value\: string, inFooter\: bool, position\: string\}\>\) does not accept non\-empty\-array\<array\{value\: string, inFooter\?\: bool, position\: string\}\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Content/Enqueue/WpScriptEnqueueBuilder.php
+
+		-
+			message: '#^Cannot access property \$ID on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$meta_input on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_author on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_content on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_excerpt on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_name on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_parent on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_status on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_title on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot access property \$post_type on stdClass\|WP_Post\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Cannot clone stdClass\|WP_Post\|null\.$#'
+			identifier: clone.nonObject
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\PostModel\:\:getModifiedDate\(\) should return string\|null but returns int\<min, \-1\>\|int\<1, max\>\|string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\PostModel\:\:getPostDate\(\) should return string\|false but returns int\|string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$object_type of function get_object_taxonomies expects array\<string\>\|string\|WP_Post, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_edit_post_link expects int\|WP_Post, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_page_template_slug expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_permalink expects int\|WP_Post, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_ancestors expects int\|WP_Post, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_thumbnail_id expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post_type expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_excerpt expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_password_form expects int\|WP_Post, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_post_thumbnail expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_the_post_thumbnail_url expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function has_post_thumbnail expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function post_password_required expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of function setup_postdata expects int\|object, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function wp_delete_post expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function wp_trash_post expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function wp_untrash_post expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post_type of function get_post_type_object expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#2 \$post of function get_the_date expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#2 \$post of function get_the_modified_date expects int\|WP_Post\|null, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#2 \$terms of function wp_set_post_terms expects array\|string, array\<int\>\|bool\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#3 \$priority of function remove_filter expects int, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#3 \$taxonomy of function wp_set_post_terms expects string, array\<int\>\|bool\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#4 \$append of function wp_set_post_terms expects bool, array\<int\>\|bool\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Property OffbeatWP\\Content\\Post\\PostModel\:\:\$termsToSet \(array\<array\<array\<int\>\|bool\|int\|string\>\>\) does not accept array\<array\<array\<int\|string\>\|bool\|int\|string\>\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Content/Post/PostModel.php
+
+		-
+			message: '#^Parameter \#1 \$post_type of function register_post_type expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostTypeBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\PostsCollection\:\:getPaginatedLinks\(\) should return string but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Offset ''next_text'' might not exist on array\{base\?\: string, use_buttons\?\: bool, format\: string, total\?\: int, current\?\: int, aria_current\?\: string, show_all\?\: bool, end_size\?\: int, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Offset ''prev_text'' might not exist on array\{base\?\: string, use_buttons\?\: bool, format\: string, total\?\: int, current\?\: int, aria_current\?\: string, show_all\?\: bool, end_size\?\: int, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_contains expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function strpos expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Parameter \#1 \$items of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue of OffbeatWP\\Content\\Post\\PostModel\>\:\:__construct\(\) expects Illuminate\\Contracts\\Support\\Arrayable\<TKey of \(int\|string\), TValue of OffbeatWP\\Content\\Post\\PostModel\>\|iterable\<TKey of \(int\|string\), TValue of OffbeatWP\\Content\\Post\\PostModel\>\|null, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function preg_replace_callback expects array\<float\|int\|string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/PostsCollection.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\Relations\\BelongsTo\:\:get\(\) should return OffbeatWP\\Content\\Post\\PostModel but returns OffbeatWP\\Content\\Post\\PostModel\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/Relations/BelongsTo.php
+
+		-
+			message: '#^Part \$relationshipQuery\[''key''\] \(array\<int\|string\>\|int\|string\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: src/Content/Post/Relations/Service.php
+
+		-
+			message: '#^Cannot access property \$wpPost on \(TValue of OffbeatWP\\Content\\Post\\PostModel\)\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Post/WpPostsIterator.php
+
+		-
 			message: '#^Method OffbeatWP\\Content\\Post\\WpPostsIterator\:\:current\(\) never returns false so it can be removed from the return type\.$#'
 			identifier: return.unusedType
 			count: 1
 			path: src/Content/Post/WpPostsIterator.php
+
+		-
+			message: '#^Parameter \#1 \$post of function setup_postdata expects int\|object, stdClass\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/WpPostsIterator.php
+
+		-
+			message: '#^Access to an undefined property OffbeatWP\\Contracts\\IWpQuerySubstitute\|WP_Query\:\:\$post_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Access to an undefined property OffbeatWP\\Contracts\\IWpQuerySubstitute\|WP_Query\:\:\$posts\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$request\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Call to an undefined method OffbeatWP\\Contracts\\IWpQuerySubstitute\|WP_Query\:\:get_posts\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\WpQueryBuilder\:\:findById\(\) should return \(TValue of OffbeatWP\\Content\\Post\\PostModel\)\|null but returns OffbeatWP\\Content\\Post\\PostModel\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\WpQueryBuilder\:\:ids\(\) should return array\<int\> but returns array\<int\|WP_Post\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\WpQueryBuilder\:\:only\(\) should return array\<WP_Post\> but returns array\<int\|WP_Post\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\WpQueryBuilder\:\:runQuery\(\) should return OffbeatWP\\Contracts\\IWpQuerySubstitute\|WP_Query but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
 
 		-
 			message: '#^Offset 1 on array\{string, non\-falsy\-string, ''''\|''_num'', non\-empty\-string\} in isset\(\) always exists and is not nullable\.$#'
@@ -43,10 +535,256 @@ parameters:
 			path: src/Content/Post/WpQueryBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$items of class OffbeatWP\\Content\\Post\\PostsCollection constructor expects array\<int\|WP_Post\>\|WP_Query, OffbeatWP\\Contracts\\IWpQuerySubstitute\|WP_Query given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$arrays of function array_merge expects array, array\<mixed\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\WpQueryBuilderModel\:\:first\(\) should return \(TValue of OffbeatWP\\Content\\Post\\PostModel\)\|null but returns OffbeatWP\\Content\\Post\\PostModel\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilderModel.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Post\\WpQueryBuilderModel\:\:firstOrFail\(\) should return TValue of OffbeatWP\\Content\\Post\\PostModel but returns OffbeatWP\\Content\\Post\\PostModel\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilderModel.php
+
+		-
+			message: '#^Parameter \#1 \$post of method OffbeatWP\\Content\\Post\\WpQueryBuilder\<TValue of OffbeatWP\\Content\\Post\\PostModel\>\:\:postToModel\(\) expects WP_Post, int\|WP_Post\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Post/WpQueryBuilderModel.php
+
+		-
+			message: '#^Cannot access property \$count on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot access property \$description on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot access property \$name on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot access property \$parent on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot access property \$slug on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot access property \$taxonomy on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot access property \$term_id on WP_Term\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Cannot clone WP_Term\|null\.$#'
+			identifier: clone.nonObject
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Taxonomy\\TermModel\:\:getAncestors\(\) should return Illuminate\\Support\\Collection\<int, OffbeatWP\\Content\\Taxonomy\\TermModel\> but returns Illuminate\\Support\\Collection\<int, static\(OffbeatWP\\Content\\Taxonomy\\TermModel\)\|null\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Parameter \#1 \$object_id of function get_ancestors expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Parameter \#1 \$term of function get_edit_term_link expects int\|object, int\|WP_Term\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Parameter \#1 \$term of function get_term_link expects int\|string\|WP_Term, WP_Term\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Parameter \#1 \$term of function wp_delete_term expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Parameter \#1 \$term_id of function get_term_meta expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Parameter \#2 \$terms of method OffbeatWP\\Content\\Post\\WpQueryBuilder\<OffbeatWP\\Content\\Post\\PostModel\>\:\:whereTerm\(\) expects array\<int\|string\>\|int\|string, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermModel.php
+
+		-
+			message: '#^Argument of an invalid type array\<int\|string\|WP_Term\>\|string supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\:\:firstOrNew\(\) should return TValue of OffbeatWP\\Content\\Taxonomy\\TermModel but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\:\:ids\(\) should return array\<int\> but returns array\<int\|string\|WP_Term\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\:\:names\(\) should return array\<string\> but returns array\<int\|string\|WP_Term\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\:\:parentIds\(\) should return array\<int\> but returns array\<int\|string\|WP_Term\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\:\:slugs\(\) should return array\<string\> but returns array\<int\|string\|WP_Term\>\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
 			message: '#^Offset 1 on array\{string, non\-falsy\-string, ''''\|''_num'', non\-empty\-string\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
 			count: 1
 			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$id of method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\<TValue of OffbeatWP\\Content\\Taxonomy\\TermModel\>\:\:findById\(\) expects int\|null, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$name of method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\<TValue of OffbeatWP\\Content\\Taxonomy\\TermModel\>\:\:findByName\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$slug of method OffbeatWP\\Content\\Taxonomy\\TermQueryBuilder\<TValue of OffbeatWP\\Content\\Taxonomy\\TermModel\>\:\:findBySlug\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$arrays of function array_merge expects array, array\<mixed\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$items of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue of OffbeatWP\\Content\\Taxonomy\\TermModel\>\:\:__construct\(\) expects Illuminate\\Contracts\\Support\\Arrayable\<TKey of \(int\|string\), TValue of OffbeatWP\\Content\\Taxonomy\\TermModel\>\|iterable\<TKey of \(int\|string\), TValue of OffbeatWP\\Content\\Taxonomy\\TermModel\>\|null, list\<OffbeatWP\\Content\\Taxonomy\\TermModel\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/Taxonomy/TermsCollection.php
+
+		-
+			message: '#^Parameter \#1 \$item of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue of OffbeatWP\\Content\\User\\UserModel\>\:\:add\(\) expects TValue of OffbeatWP\\Content\\User\\UserModel, \(TValue of OffbeatWP\\Content\\User\\UserModel\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: '#^Parameter \#1 \$object_or_class of function is_a expects object, \(TValue of OffbeatWP\\Content\\User\\UserModel\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue of OffbeatWP\\Content\\User\\UserModel\>\:\:prepend\(\) expects TValue of OffbeatWP\\Content\\User\\UserModel, \(TValue of OffbeatWP\\Content\\User\\UserModel\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: '#^Parameter \#1 \.\.\.\$values of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue of OffbeatWP\\Content\\User\\UserModel\>\:\:push\(\) expects TValue of OffbeatWP\\Content\\User\\UserModel, \(TValue of OffbeatWP\\Content\\User\\UserModel\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Illuminate\\Support\\Collection\<TKey of \(int\|string\),TValue of OffbeatWP\\Content\\User\\UserModel\>\:\:offsetSet\(\) expects TValue of OffbeatWP\\Content\\User\\UserModel, \(TValue of OffbeatWP\\Content\\User\\UserModel\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserCollection.php
+
+		-
+			message: '#^Argument of an invalid type array\<string\>\|null supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Content/User/UserModel.php
+
+		-
+			message: '#^Cannot call method add_role\(\) on WP_User\|false\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Content/User/UserModel.php
+
+		-
+			message: '#^Cannot call method set_role\(\) on WP_User\|false\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Content/User/UserModel.php
+
+		-
+			message: '#^Parameter \#1 \$user of class OffbeatWP\\Content\\User\\UserModel constructor expects WP_User\|null, WP_User\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserModel.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserModel.php
 
 		-
 			message: '#^Method OffbeatWP\\Content\\User\\UserQueryBuilder\:\:limit\(\) has no return type specified\.$#'
@@ -79,8 +817,38 @@ parameters:
 			path: src/Content/User/UserQueryBuilder.php
 
 		-
+			message: '#^Parameter \#1 \$roles of method OffbeatWP\\Content\\User\\UserQueryBuilder\<TValue of OffbeatWP\\Content\\User\\UserModel\>\:\:whereRoleIn\(\) expects array\<string\>, array\<string\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$arrays of function array_merge expects array, array\<mixed\>\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$path of function dirname expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controllers/AbstractController.php
+
+		-
 			message: '#^Access to undefined constant static\(OffbeatWP\\Form\\Fields\\AbstractField\)\:\:FIELD_TYPE\.$#'
 			identifier: classConstant.notFound
+			count: 1
+			path: src/Form/Fields/AbstractField.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Fields/AbstractField.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Form/Fields/AbstractField.php
 
@@ -91,10 +859,76 @@ parameters:
 			path: src/Form/Fields/AbstractField.php
 
 		-
+			message: '#^Method OffbeatWP\\Form\\Fields\\NavMenu\:\:getNavMenus\(\) should return array\<int, string\> but returns array\<int\|string, string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Form/Fields/NavMenu.php
+
+		-
 			message: '#^Parameter \#1 \$options of method OffbeatWP\\Form\\Fields\\Select\:\:addOptions\(\) expects array\<int\|string, bool\|float\|int\|string\|null\>, array\<int, \$this\(OffbeatWP\\Form\\Fields\\NavMenu\)\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Form/Fields/NavMenu.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Form/Filters/LoadFieldIconsFilter.php
+
+		-
+			message: '#^Access to undefined constant OffbeatWP\\Form\\FieldsContainers\\AbstractFieldsContainer\|OffbeatWP\\Form\\Form\:\:LEVEL\.$#'
+			identifier: classConstant.notFound
+			count: 1
+			path: src/Form/Form.php
+
+		-
+			message: '#^Parameter \#1 \$item of method OffbeatWP\\Form\\Form\:\:setActiveItem\(\) expects OffbeatWP\\Form\\FieldsContainers\\AbstractFieldsContainer\|OffbeatWP\\Form\\Form, OffbeatWP\\Form\\FieldsContainers\\FieldsContainerInterface\|OffbeatWP\\Form\\Form given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Form.php
+
+		-
+			message: '#^Parameter \#2 \$label of method OffbeatWP\\Form\\Form\:\:addSection\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Form.php
+
+		-
+			message: '#^Call to an undefined method object\:\:each\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Foundation/App.php
+
+		-
+			message: '#^Call to an undefined method object\:\:isNotEmpty\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Foundation/App.php
+
+		-
+			message: '#^Parameter \#1 \$route of method OffbeatWP\\Foundation\\App\:\:runRoute\(\) expects OffbeatWP\\Routes\\Routes\\Route\|false, OffbeatWP\\Routes\\Routes\\CallbackRoute\|OffbeatWP\\Routes\\Routes\\PathRoute\|false\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Foundation/App.php
+
+		-
+			message: '#^Property OffbeatWP\\Foundation\\App\:\:\$services \(array\<OffbeatWP\\Services\\AbstractService\>\) does not accept array\<object\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Foundation/App.php
+
+		-
+			message: '#^Function container\(\) should return T but returns DI\\Container\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Foundation/helpers.php
+
+		-
+			message: '#^Function offbeat\(\) should return T but returns OffbeatWP\\Foundation\\App\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Foundation/helpers.php
 
 		-
 			message: '#^Template type T of function container\(\) is not referenced in a parameter\.$#'
@@ -109,6 +943,24 @@ parameters:
 			path: src/Foundation/helpers.php
 
 		-
+			message: '#^Argument of an invalid type array\<int, int\|string\>\|int\|string supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Helpers/ArrayHelper.php
+
+		-
+			message: '#^Cannot access offset mixed on iterable\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: src/Helpers/ArrayHelper.php
+
+		-
+			message: '#^Method OffbeatWP\\Helpers\\ArrayHelper\:\:filterNull\(\) should return array\<array\<mixed\>\|bool\|float\|int\|string\> but returns array\<array\<mixed\>\|bool\|float\|int\|string\|null\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Helpers/ArrayHelper.php
+
+		-
 			message: '#^Possibly impure call to function array_filter\(\) in pure method OffbeatWP\\Helpers\\ArrayHelper\:\:toIntArray\(\)\.$#'
 			identifier: possiblyImpure.functionCall
 			count: 1
@@ -121,10 +973,322 @@ parameters:
 			path: src/Helpers/ArrayHelper.php
 
 		-
+			message: '#^Parameter \#1 \$path of function dirname expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Hooks/AbstractAction.php
+
+		-
+			message: '#^Parameter \#1 \$path of function dirname expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Hooks/AbstractFilter.php
+
+		-
+			message: '#^Parameter \#3 \$length of function substr expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Http/Http.php
+
+		-
+			message: '#^Parameter \#1 \$path of function dirname expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Modules/AbstractModule.php
+
+		-
+			message: '#^Parameter \#1 \$value of function collect expects Illuminate\\Contracts\\Support\\Arrayable\<int\<0, max\>, string\>\|iterable\<int\<0, max\>, string\>\|null, list\<string\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Modules/AbstractModule.php
+
+		-
+			message: '#^Parameter \#3 \$length of function substr expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Modules/AbstractModule.php
+
+		-
+			message: '#^Parameter \#2 \$whereValue of method OffbeatWP\\Routes\\RouteCollection\:\:where\(\) expects class\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Routes/RouteCollection.php
+
+		-
+			message: '#^Property OffbeatWP\\Routes\\Routes\\Route\:\:\$middleware \(array\<class\-string\<OffbeatWP\\Routes\\IMiddleware\>\>\) does not accept array\<string\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Routes/Routes/Route.php
+
+		-
+			message: '#^Cannot access offset 0 on OffbeatWP\\Routes\\Routes\\Route\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Cannot access offset 1 on OffbeatWP\\Routes\\Routes\\Route\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Cannot call method addDefaults\(\) on OffbeatWP\\Routes\\Routes\\PathRoute\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Method OffbeatWP\\Routes\\RoutesManager\:\:getLastMatchRoute\(\) should return OffbeatWP\\Routes\\Routes\\CallbackRoute\|OffbeatWP\\Routes\\Routes\\PathRoute\|false but returns OffbeatWP\\Routes\\Routes\\CallbackRoute\|OffbeatWP\\Routes\\Routes\\PathRoute\|false\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Parameter \#1 \$route of method OffbeatWP\\Routes\\RoutesManager\:\:createGetRoute\(\) expects string, Closure\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Parameter \#2 \$matchCallback of class OffbeatWP\\Routes\\Routes\\CallbackRoute constructor expects Closure, Closure\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Parameter \#2 \$path of class OffbeatWP\\Routes\\Routes\\PathRoute constructor expects string, Closure\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Property OffbeatWP\\Routes\\RoutesManager\:\:\$routes \(array\<array\<OffbeatWP\\Routes\\Routes\\Route\>\>\) does not accept array\<array\<list\<OffbeatWP\\Routes\\Routes\\Route\|string\>\|OffbeatWP\\Routes\\Routes\\Route\>\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Routes/RoutesManager.php
+
+		-
+			message: '#^Argument of an invalid type list\<string\>\|false supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Routes/RoutesService.php
+
+		-
+			message: '#^Access to an undefined property WP_Error\|WP_Term\:\:\$term_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/Services/PageTypes/PageTypesService.php
+
+		-
+			message: '#^Cannot access property \$slug on WP_Error\|WP_Term\|false\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Services/PageTypes/PageTypesService.php
+
+		-
+			message: '#^Parameter \#2 \$value of function get_term_by expects int\|string, float\|int\<min, \-1\>\|int\<1, max\>\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Services/PageTypes/PageTypesService.php
+
+		-
+			message: '#^Cannot call method get\(\) on OffbeatWP\\Contracts\\SiteSettings\|null\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: src/Services/ServiceScripts.php
+
+		-
+			message: '#^Property OffbeatWP\\Support\\Objects\\OffbeatImageSrc\:\:\$height \(int\) does not accept bool\|int\|string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Support/Objects/OffbeatImageSrc.php
+
+		-
+			message: '#^Property OffbeatWP\\Support\\Objects\\OffbeatImageSrc\:\:\$resized \(bool\) does not accept bool\|int\|string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Support/Objects/OffbeatImageSrc.php
+
+		-
+			message: '#^Property OffbeatWP\\Support\\Objects\\OffbeatImageSrc\:\:\$url \(string\) does not accept bool\|int\|string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Support/Objects/OffbeatImageSrc.php
+
+		-
+			message: '#^Property OffbeatWP\\Support\\Objects\\OffbeatImageSrc\:\:\$width \(int\) does not accept bool\|int\|string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Support/Objects/OffbeatImageSrc.php
+
+		-
+			message: '#^Parameter \#1 \$callable of method DI\\Container\:\:call\(\) expects array\|\(callable\(\)\: mixed\)\|string, ''''\|''0''\|\(Closure\(\)\: void\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Support/Wordpress/AdminPage.php
+
+		-
+			message: '#^Parameter \#6 \$callback of function add_submenu_page expects ''''\|\(callable\(\)\: mixed\), ''''\|''0''\|\(Closure\(\)\: void\)\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Support/Wordpress/AdminPage.php
+
+		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/Support/Wordpress/Post.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\Post\:\:convertWpPostToModel\(\) should return OffbeatWP\\Content\\Post\\PostModel but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/Post.php
+
+		-
+			message: '#^Parameter \#1 \$post of function get_post expects int\|WP_Post\|null, int\|string\|WP_Post\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Support/Wordpress/Post.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\PostType\:\:getPostTypeByModel\(\) should return string but returns int\|string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/PostType.php
+
+		-
+			message: '#^Call to an undefined method object\:\:response\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Support/Wordpress/RestApi.php
+
+		-
+			message: '#^Binary operation "\.\=" between string\|WP_Error and non\-falsy\-string results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: src/Support/Wordpress/Taxonomy.php
+
+		-
+			message: '#^Parameter \#1 \$string of function rtrim expects string, string\|false\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Support/Wordpress/Taxonomy.php
+
+		-
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|WP_Error given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Support/Wordpress/Taxonomy.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\UserRole\:\:getUserRoleByModel\(\) should return string but returns int\|string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/UserRole.php
+
+		-
+			message: '#^Cannot access offset ''errors'' on array\{warning_count\: int\<0, max\>, warnings\: list\<string\>, error_count\: int\<0, max\>, errors\: list\<string\>\}\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTime\:\:getDayOfYear\(\) should return int\<0, 365\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTime\:\:getMicro\(\) should return int\<0, 999999\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTime\:\:getMinute\(\) should return int\<0, 59\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTime\:\:getSecond\(\) should return int\<0, 59\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTime\:\:getWeekOfYear\(\) should return int\<1, 53\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTime\:\:i18n\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTime.php
+
+		-
+			message: '#^Cannot access offset ''errors'' on array\{warning_count\: int\<0, max\>, warnings\: list\<string\>, error_count\: int\<0, max\>, errors\: list\<string\>\}\|false\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTimeImmutable\:\:getDayOfYear\(\) should return int\<0, 365\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTimeImmutable\:\:getMicro\(\) should return int\<0, 999999\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTimeImmutable\:\:getMinute\(\) should return int\<0, 59\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTimeImmutable\:\:getSecond\(\) should return int\<0, 59\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTimeImmutable\:\:getWeekOfYear\(\) should return int\<1, 53\> but returns int\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\WpDateTimeImmutable\:\:i18n\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Support/Wordpress/WpDateTimeImmutable.php
+
+		-
+			message: '#^Parameter \#2 \$fileContent of static method OffbeatWP\\Support\\Wordpress\\WpFile\:\:uploadBits\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Support/Wordpress/WpFile.php
+
+		-
+			message: '#^Method OffbeatWP\\Views\\Wordpress\:\:getBlockTemplatePart\(\) should return string but returns string\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Method OffbeatWP\\Views\\Wordpress\:\:getSearchForm\(\) should return string but returns string\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Views/Wordpress.php
 
 		-
 			message: '#^Method OffbeatWP\\Views\\Wordpress\:\:shortcode\(\) never returns null so it can be removed from the return type\.$#'
@@ -139,7 +1303,85 @@ parameters:
 			path: src/Views/Wordpress.php
 
 		-
+			message: '#^Parameter \#1 \$args of function wp_nav_menu expects array\{menu\?\: int\|string\|WP_Term, menu_class\?\: string, menu_id\?\: string, container\?\: string, container_class\?\: string, container_id\?\: string, container_aria_label\?\: string, fallback_cb\?\: \(callable\(\)\: mixed\)\|false, \.\.\.\}, array\{menu\?\: int\|OffbeatWP\\Views\\WP_Term\|string, menu_class\?\: string, menu_id\?\: string, container\?\: string, container_class\?\: string, container_id\?\: string, container_aria_label\?\: string, fallback_cb\?\: \(callable\(\)\: mixed\)\|false, \.\.\.\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$attachment_id of function wp_get_attachment_image expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$attachment_id of function wp_get_attachment_image_src expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$content of function do_shortcode expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of function strtotime expects string, bool\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$format of function date_i18n expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$hook_name of function do_action expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#1 \$post_type of function get_post_type_archive_link expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp_with_offset of function date_i18n expects bool\|int, bool\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \#4 \$attr of function wp_get_attachment_image expects array\{src\?\: string, class\?\: string, alt\?\: string, srcset\?\: string, sizes\?\: string, loading\?\: string\|false, decoding\?\: string, fetchpriority\?\: string\}, array\{src\?\: string, class\?\: string, alt\?\: string, srcset\?\: string, sizes\?\: string, loading\?\: string\|false, decoding\?\: string\|false\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
 			message: '#^Parameter \$args of method OffbeatWP\\Views\\Wordpress\:\:navMenu\(\) has invalid type OffbeatWP\\Views\\WP_Term\.$#'
 			identifier: class.notFound
 			count: 1
 			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Call to an undefined method object\:\:each\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Wordpress/WordpressService.php
+
+		-
+			message: '#^Call to an undefined method object\:\:isNotEmpty\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Wordpress/WordpressService.php
+
+		-
+			message: '#^Parameter \#1 \$post_id of function get_post_meta expects int, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Wordpress/WordpressService.php
