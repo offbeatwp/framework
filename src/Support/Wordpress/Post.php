@@ -8,7 +8,7 @@ use WP_Post;
 
 final class Post
 {
-    public function convertWpPostToModel(WP_Post $post): ?PostModel
+    public function convertWpPostToModel(WP_Post $post): PostModel
     {
         $model = offbeat('post-type')->getModelByPostType($post->post_type);
         $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
