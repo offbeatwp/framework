@@ -1,36 +1,163 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to deprecated method registerWidget\\(\\) of class OffbeatWP\\\\Components\\\\ComponentRepository\\.$#"
+			message: '#^Method OffbeatWP\\Blocks\\AbstractBlockCallback\:\:getInnerBlocks\(\) never returns array\{\} so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Blocks/AbstractBlockCallback.php
+
+		-
+			message: '#^PHPDoc tag @phpstan\-var has invalid value \(array\<string\|null, array\{mixed, int\<0, max\>\}\>\> \$data each element being a tuple of \[\$data, \$expiration\], where the expiration is int\)\: Unexpected token "\>", expected TOKEN_HORIZONTAL_WS at offset 62 on line 1$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Components/ComponentArrayCache.php
+
+		-
+			message: '#^Property OffbeatWP\\Components\\ComponentArrayCache\:\:\$data type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Components/ComponentArrayCache.php
+
+		-
+			message: '#^Call to deprecated method registerWidget\(\) of class OffbeatWP\\Components\\ComponentRepository\.$#'
+			identifier: method.deprecated
 			count: 1
 			path: src/Components/ComponentRepository.php
 
 		-
-			message: "#^Call to static method get\\(\\) on an unknown class OffbeatWP\\\\AcfCore\\\\ComponentFields\\.$#"
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
-			path: src/Components/GenericWidget.php
+			path: src/Console/AbstractCommand.php
 
 		-
-			message: "#^Function get_field not found\\.$#"
+			message: '#^Method OffbeatWP\\Content\\Post\\WpPostsIterator\:\:current\(\) never returns false so it can be removed from the return type\.$#'
+			identifier: return.unusedType
 			count: 1
-			path: src/Components/GenericWidget.php
+			path: src/Content/Post/WpPostsIterator.php
 
 		-
-			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\Fields\\\\AbstractField\\)\\:\\:FIELD_TYPE\\.$#"
+			message: '#^Offset 1 on array\{string, non\-falsy\-string, ''''\|''_num'', non\-empty\-string\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: src/Content/Post/WpQueryBuilder.php
+
+		-
+			message: '#^Offset 1 on array\{string, non\-falsy\-string, ''''\|''_num'', non\-empty\-string\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: src/Content/Taxonomy/TermQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\User\\UserQueryBuilder\:\:limit\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^Method OffbeatWP\\Content\\User\\UserQueryBuilder\:\:whereIdNotIn\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^Offset 1 on array\{string, non\-falsy\-string, ''''\|''_num'', non\-empty\-string\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$this\<TValue\>\)\: Unexpected token "\<", expected TOKEN_HORIZONTAL_WS at offset 17 on line 1$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(\$this\<TValue\>\)\: Unexpected token "\<", expected TOKEN_HORIZONTAL_WS at offset 53 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Content/User/UserQueryBuilder.php
+
+		-
+			message: '#^Access to undefined constant static\(OffbeatWP\\Form\\Fields\\AbstractField\)\:\:FIELD_TYPE\.$#'
+			identifier: classConstant.notFound
 			count: 1
 			path: src/Form/Fields/AbstractField.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Form/Fields/AbstractField.php
 
 		-
-			message: "#^Template type T of function container\\(\\) is not referenced in a parameter\\.$#"
+			message: '#^Parameter \#1 \$options of method OffbeatWP\\Form\\Fields\\Select\:\:addOptions\(\) expects array\<int\|string, bool\|float\|int\|string\|null\>, array\<int, \$this\(OffbeatWP\\Form\\Fields\\NavMenu\)\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Form/Fields/NavMenu.php
+
+		-
+			message: '#^Method OffbeatWP\\Foundation\\App\:\:getService\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Foundation/App.php
+
+		-
+			message: '#^Template type T of function container\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Foundation/helpers.php
 
 		-
-			message: "#^Template type T of function offbeat\\(\\) is not referenced in a parameter\\.$#"
+			message: '#^Template type T of function offbeat\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Foundation/helpers.php
+
+		-
+			message: '#^Possibly impure call to function array_filter\(\) in pure method OffbeatWP\\Helpers\\ArrayHelper\:\:toIntArray\(\)\.$#'
+			identifier: possiblyImpure.functionCall
+			count: 1
+			path: src/Helpers/ArrayHelper.php
+
+		-
+			message: '#^Possibly impure call to function array_map\(\) in pure method OffbeatWP\\Helpers\\ArrayHelper\:\:toIntArray\(\)\.$#'
+			identifier: possiblyImpure.functionCall
+			count: 1
+			path: src/Helpers/ArrayHelper.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Support/Wordpress/Post.php
+
+		-
+			message: '#^Method OffbeatWP\\Support\\Wordpress\\Post\:\:convertWpPostToModel\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Support/Wordpress/Post.php
+
+		-
+			message: '#^Path in require_once\(\) "\./wp\-admin/includes/image\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: src/Support/Wordpress/WpFile.php
+
+		-
+			message: '#^Method OffbeatWP\\Views\\Wordpress\:\:shortcode\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Method OffbeatWP\\Views\\Wordpress\:\:title\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Views/Wordpress.php
+
+		-
+			message: '#^Parameter \$args of method OffbeatWP\\Views\\Wordpress\:\:navMenu\(\) has invalid type OffbeatWP\\Views\\WP_Term\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Views/Wordpress.php

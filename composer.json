@@ -5,7 +5,8 @@
   "type": "library",
   "scripts": {
     "phpcs": "vendor/bin/php-cs-fixer fix",
-    "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
+    "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
+    "phpstan-baseline": "php vendor/bin/phpstan analyse --memory-limit=2G --generate-baseline"
   },
   "require": {
     "php": ">=8.1",
@@ -26,10 +27,10 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
-    "php-stubs/wp-cli-stubs": "^v2.10.0",
-    "phpstan/phpstan": "1.11.1",
-    "szepeviktor/phpstan-wordpress": "^v1.3.4",
-    "phpstan/phpstan-deprecation-rules": "^1.2.0",
-    "friendsofphp/php-cs-fixer": "^3.58"
+    "php-stubs/wp-cli-stubs": "^v2.11.0",
+    "phpstan/phpstan": "^2.1.8",
+    "friendsofphp/php-cs-fixer": "^3.70.2",
+    "phpstan/phpstan-deprecation-rules": "^2.0.1",
+    "szepeviktor/phpstan-wordpress": "^2.0"
   }
 }
