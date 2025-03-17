@@ -4,6 +4,7 @@ namespace OffbeatWP\Blocks;
 
 use OffbeatWP\Views\ViewableTrait;
 use WP_Block;
+use WP_Block_List;
 
 abstract class AbstractBlockCallback
 {
@@ -39,8 +40,7 @@ abstract class AbstractBlockCallback
         return $this->content;
     }
 
-    /** @return \WP_Block_List|array{} */
-    final public function getInnerBlocks()
+    final public function getInnerBlocks(): WP_Block_List|array
     {
         return $this->wpBlock->inner_blocks;
     }
