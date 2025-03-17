@@ -208,6 +208,7 @@ class TermModel implements TermModelInterface
     /**
      * @param string $key Optional. The meta key to retrieve. By default, returns data for all keys. Default empty.
      * @param bool $single Optional. Whether to return a single value. This parameter has no effect if `$key` is not specified. Default false.
+     * @return ($single is true ? mixed : mixed[])
      */
     final public function getMeta(string $key, bool $single = true): mixed
     {
