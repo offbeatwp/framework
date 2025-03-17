@@ -197,7 +197,7 @@ class UserModel
         return $this->metas;
     }
 
-    /** @return mixed|null */
+    /** @return ($single is true ? mixed : mixed[]) */
     public function getMeta(string $key, bool $single = true)
     {
         $metas = $this->getMetas();

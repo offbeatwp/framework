@@ -418,7 +418,7 @@ class PostModel implements PostModelInterface
         return $values;
     }
 
-    /** @return mixed */
+    /** @return ($single is true ? mixed : mixed[]) */
     public function getMeta(string $key, bool $single = true)
     {
         if (isset($this->getMetas()[$key])) {
