@@ -136,8 +136,7 @@ final class App
         }
     }
 
-    /** @return null|false|AbstractService */
-    public function getService(string $serviceClass)
+    public function getService(string $serviceClass): false|AbstractService
     {
         if ($this->isServiceInitiated($serviceClass)) {
             return $this->services[$serviceClass];
@@ -148,7 +147,7 @@ final class App
 
     public function isServiceInitiated(string $serviceClass): bool
     {
-        return (isset($this->services[$serviceClass]));
+        return isset($this->services[$serviceClass]);
     }
 
     public function markServiceAsInitiated(object $service): void
