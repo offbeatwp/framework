@@ -8,13 +8,31 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
+    /** @var iterable<mixed>|null */
+    private readonly iterable $envConfigValues;
     /** @var mixed[] */
     private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
+        $this->envConfigValues = $this->getEnvConfigValues();
         $this->config = $this->loadConfig();
+    }
+
+    private function getEnvConfigValues(): ?iterable
+    {
+        $envPath = get_template_directory() . '/env.php';
+
+        if (file_exists($envPath)) {
+            $envConfigValues = require $envPath;
+
+            if (is_iterable($envConfigValues)) {
+                return $envConfigValues;
+            }
+        }
+
+        return null;
     }
 
     /** @return mixed[] */
@@ -40,10 +58,8 @@ final class Config
      */
     protected function loadConfigEnvFile(array $config): array
     {
-        $env = get_template_directory() . '/env.php';
-        if (file_exists($env)) {
-            $configValues = require $env;
-            foreach ($configValues as $key => $value) {
+        if ($this->envConfigValues) {
+            foreach ($this->envConfigValues as $key => $value) {
                 if ($this->get($key)) {
                     $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
                 }
