@@ -95,12 +95,17 @@ final class Config
 
     /**
      * @param string $key
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|\OffbeatWP\Config\Config
+     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config
      */
-    public function get(string $key)
+    public function get(string $key, bool $collect = true)
     {
         $result = ArrayHelper::getValueFromDottedKey($key, $this->config);
-        return is_array($result) ? collect($result) : $result;
+
+        if (is_array($result)) {
+            return $collect ? collect($result) : $result;
+        }
+
+        return $result;
     }
 
     /**

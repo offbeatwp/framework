@@ -198,6 +198,16 @@ final class App
         return $this->config;
     }
 
+    public function getConfigArray(string $config): array
+    {
+        if ($this->config === null) {
+            $this->config = new Config($this);
+        }
+
+        $value = $this->config->get($config, false);
+        return is_array($value) ? $value : [];
+    }
+
     public function addRoutes(): void
     {
         offbeat('routes')->addRoutes();
