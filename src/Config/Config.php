@@ -8,17 +8,36 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
+    /** @var iterable<mixed> */
+    private readonly iterable $envConfigValues;
     /** @var mixed[] */
     private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->config = $this->loadConfig();
+        $this->envConfigValues = $this->getEnvConfigValues();
+        $this->config = $this->loadConfigs();
+    }
+
+    /** @return iterable<mixed> */
+    private function getEnvConfigValues(): iterable
+    {
+        $envPath = get_template_directory() . '/env.php';
+
+        if (file_exists($envPath)) {
+            $envConfigValues = require $envPath;
+
+            if (is_iterable($envConfigValues)) {
+                return $envConfigValues;
+            }
+        }
+
+        return [];
     }
 
     /** @return mixed[] */
-    private function loadConfig(): array
+    private function loadConfigs(): array
     {
         $config = [];
         $configFiles = glob($this->app->configPath() . '/*.php');
@@ -28,8 +47,8 @@ final class Config
             $config[basename($configFile, '.php')] = $configValues;
         }
 
-        $config = $this->loadConfigEnvFile($config);
-        $config = $this->loadConfigEnv($config);
+        $config = $this->loadConfigEnvFiles($config);
+        $config = $this->loadConfigEnvs($config);
 
         return $config;
     }
@@ -38,15 +57,11 @@ final class Config
      * @param mixed[] $config
      * @return mixed[]
      */
-    protected function loadConfigEnvFile(array $config): array
+    protected function loadConfigEnvFiles(array $config): array
     {
-        $env = get_template_directory() . '/env.php';
-        if (file_exists($env)) {
-            $configValues = require $env;
-            foreach ($configValues as $key => $value) {
-                if ($this->get($key)) {
-                    $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
-                }
+        foreach ($this->envConfigValues as $key => $value) {
+            if ($this->get($key)) {
+                $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
             }
         }
 
@@ -57,7 +72,7 @@ final class Config
      * @param mixed[] $config
      * @return mixed[]
      */
-    protected function loadConfigEnv(array $config): array
+    protected function loadConfigEnvs(array $config): array
     {
         foreach ($config as $configKey => $configSet) {
             if (ArrayHelper::isAssoc($configSet)) {
