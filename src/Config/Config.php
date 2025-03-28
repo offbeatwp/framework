@@ -8,8 +8,8 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
-    /** @var iterable<mixed>|null */
-    private readonly ?iterable $envConfigValues;
+    /** @var iterable<mixed> */
+    private readonly iterable $envConfigValues;
     /** @var mixed[] */
     private array $config;
 
@@ -20,7 +20,7 @@ final class Config
         $this->config = $this->loadConfig();
     }
 
-    private function getEnvConfigValues(): ?iterable
+    private function getEnvConfigValues(): iterable
     {
         $envPath = get_template_directory() . '/env.php';
 
@@ -32,7 +32,7 @@ final class Config
             }
         }
 
-        return null;
+        return [];
     }
 
     /** @return mixed[] */
@@ -58,11 +58,9 @@ final class Config
      */
     protected function loadConfigEnvFile(array $config): array
     {
-        if ($this->envConfigValues) {
-            foreach ($this->envConfigValues as $key => $value) {
-                if ($this->get($key)) {
-                    $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
-                }
+        foreach ($this->envConfigValues as $key => $value) {
+            if ($this->get($key)) {
+                $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
             }
         }
 
