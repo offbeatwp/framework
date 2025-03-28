@@ -20,6 +20,7 @@ final class Config
         $this->config = $this->loadConfig();
     }
 
+    /** @return iterable<mixed> */
     private function getEnvConfigValues(): iterable
     {
         $envPath = get_template_directory() . '/env.php';
