@@ -9,7 +9,7 @@ final class Config
 {
     private readonly App $app;
     /** @var iterable<mixed>|null */
-    private readonly iterable $envConfigValues;
+    private readonly ?iterable $envConfigValues;
     /** @var mixed[] */
     private array $config;
 
