@@ -14,6 +14,7 @@ use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\Service;
 use OffbeatWP\Exceptions\InvalidRouteException;
 use OffbeatWP\Exceptions\WpErrorException;
+use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Http\Http;
 use OffbeatWP\Routes\Routes\CallbackRoute;
 use OffbeatWP\Routes\Routes\PathRoute;
@@ -181,31 +182,29 @@ final class App
         return get_template_directory() . '/components';
     }
 
+    private function getConfigInstance(): Config
+    {
+        if ($this->config === null) {
+            $this->config = new Config($this);
+        }
+
+        return $this->config;
+    }
+
     /**
      * @param string|null $config
      * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
      */
     public function config(?string $config)
     {
-        if ($this->config === null) {
-            $this->config = new Config($this);
-        }
-
-        if ($config !== null) {
-            return $this->config->get($config);
-        }
-
-        return $this->config;
+        $instance = $this->getConfigInstance();
+        return $config === null ? $instance : $instance->get($config);
     }
 
+    /** @return mixed[] */
     public function getConfigArray(string $config): array
     {
-        if ($this->config === null) {
-            $this->config = new Config($this);
-        }
-
-        $value = $this->config->get($config, false);
-        return is_array($value) ? $value : [];
+        return VarHelper::toArray($this->getConfigInstance()->get($config), []);
     }
 
     public function addRoutes(): void
