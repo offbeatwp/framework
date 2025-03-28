@@ -17,7 +17,7 @@ final class Config
     {
         $this->app = $app;
         $this->envConfigValues = $this->getEnvConfigValues();
-        $this->config = $this->loadConfig();
+        $this->config = $this->loadConfigs();
     }
 
     /** @return iterable<mixed> */
@@ -37,7 +37,7 @@ final class Config
     }
 
     /** @return mixed[] */
-    private function loadConfig(): array
+    private function loadConfigs(): array
     {
         $config = [];
         $configFiles = glob($this->app->configPath() . '/*.php');
@@ -47,8 +47,8 @@ final class Config
             $config[basename($configFile, '.php')] = $configValues;
         }
 
-        $config = $this->loadConfigEnvFile($config);
-        $config = $this->loadConfigEnv($config);
+        $config = $this->loadConfigEnvFiles($config);
+        $config = $this->loadConfigEnvs($config);
 
         return $config;
     }
@@ -57,7 +57,7 @@ final class Config
      * @param mixed[] $config
      * @return mixed[]
      */
-    protected function loadConfigEnvFile(array $config): array
+    protected function loadConfigEnvFiles(array $config): array
     {
         foreach ($this->envConfigValues as $key => $value) {
             if ($this->get($key)) {
@@ -72,7 +72,7 @@ final class Config
      * @param mixed[] $config
      * @return mixed[]
      */
-    protected function loadConfigEnv(array $config): array
+    protected function loadConfigEnvs(array $config): array
     {
         foreach ($config as $configKey => $configSet) {
             if (ArrayHelper::isAssoc($configSet)) {
