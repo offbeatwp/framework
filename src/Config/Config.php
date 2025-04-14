@@ -39,39 +39,12 @@ final class Config
     }
 
     /**
-     * @param mixed[] $config
-     * @return mixed[]
-     */
-    protected function loadConfigEnvFiles(array $config): array
-    {
-        foreach ($this->envConfigValues as $envKey => $envValue) {
-            $config[$envKey] = $this->loadConfigEnvFile($envKey, $envValue);
-        }
-
-        return $config;
-    }
-
-    /**
      * @param mixed[] $envValue
      * @return mixed[]
      */
     private function loadConfigEnvFile(string $envKey, array $envValue): array
     {
         return $this->get($envKey) ? ArrayHelper::mergeRecursiveAssoc($envValue, $this->config[$envKey]) : $envValue;
-    }
-    /**
-     * @param mixed[] $config
-     * @return mixed[]
-     */
-    protected function loadConfigEnvs(array $config): array
-    {
-        foreach ($config as $configKey => $configSet) {
-            if (ArrayHelper::isAssoc($configSet)) {
-                $config[$configKey] = $this->loadConfigEnv($configSet);
-            }
-        }
-
-        return $config;
     }
 
     /**
@@ -110,9 +83,13 @@ final class Config
     {
         if (!array_key_exists($name, $this->config)) {
             $configPath = $this->app->configPath() . '/' . $name . '.php';
-            $this->config[$name] = require $configPath;
-            $this->config = $this->loadConfigEnvFile($name, $this->config[$name]);
-            $this->config = $this->loadConfigEnv($this->config);
+            $configData = require $configPath;
+
+            if (is_array($configData)) {
+                $this->config[$name] = $configData;
+                $this->config = $this->loadConfigEnvFile($name, $this->config[$name]);
+                $this->config = $this->loadConfigEnv($this->config);
+            }
         }
     }
 
