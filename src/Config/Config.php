@@ -57,10 +57,8 @@ final class Config
      */
     private function loadConfigEnvFile(string $envKey, array $envValue): array
     {
-        $configValue = $this->get($envKey);
-        return $configValue ? ArrayHelper::mergeRecursiveAssoc($envValue, $configValue) : $envValue;
+        return $this->get($envKey) ? ArrayHelper::mergeRecursiveAssoc($envValue, $this->config[$envKey]) : $envValue;
     }
-
     /**
      * @param mixed[] $config
      * @return mixed[]
