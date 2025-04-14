@@ -23,7 +23,7 @@ final class Config
             $configData = require $configFile;
 
             if (is_array($configData)) {
-                $this->config[basename($configFile, '.php')] = require $configData;
+                $this->config[basename($configFile, '.php')] = $configData;
             }
         }
 
