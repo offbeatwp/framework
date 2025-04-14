@@ -11,20 +11,15 @@ final class Config
     /** @var iterable<mixed> */
     private readonly iterable $envConfigValues;
     /** @var array<string, mixed[]> */
-    private array $config = [];
+    private array $config;
+    private bool $allConfigsAreLoaded;
 
     public function __construct(App $app)
     {
         $this->app = $app;
         $this->envConfigValues = $this->getEnvConfigValues();
-
-        // Load all configs
-        foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
-            $this->config[basename($configFile, '.php')] = require $configFile;
-        }
-
-        $this->config = $this->loadConfigEnvFiles($this->config);
-        $this->config = $this->loadConfigEnvs($this->config);
+        $this->config = [];
+        $this->allConfigsAreLoaded = false;
     }
 
     /** @return iterable<mixed> */
@@ -112,10 +107,23 @@ final class Config
         return $configSet;
     }
 
+    /** Loads a config file if it hasn't been loaded already */
+    private function loadConfig(string $name): void
+    {
+        if (!array_key_exists($name, $this->config)) {
+            $configPath = $this->app->configPath() . '/' . $name . '.php';
+            $this->config[$name] = require $configPath;
+            $this->config = $this->loadConfigEnvFile($name, $this->config[$name]);
+            $this->config = $this->loadConfigEnv($this->config);
+        }
+    }
+
     /** @return object|\Illuminate\Support\Collection|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config */
     public function get(string $key, bool $collect = true)
     {
-        $result = ArrayHelper::getValueFromDottedKey($key, $this->config);
+        $keys = explode('.', $key);
+        $this->loadConfig($keys[0]);
+        $result = ArrayHelper::getValueFromKeyArray($keys, $this->config);
 
         if (is_array($result)) {
             return $collect ? collect($result) : $result;
@@ -127,8 +135,8 @@ final class Config
     /**
      * @deprecated
      * @param array-key $key
-     * @param mixed $value
-     * @return mixed
+     * @param mixed[] $value
+     * @return mixed[]
      */
     public function set($key, $value)
     {
@@ -140,6 +148,14 @@ final class Config
     /** @return mixed[] */
     public function all(): array
     {
+        if (!$this->allConfigsAreLoaded) {
+            foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
+                $this->loadConfig(basename($configFile, '.php'));
+            }
+
+            $this->allConfigsAreLoaded = true;
+        }
+
         return $this->config;
     }
 }

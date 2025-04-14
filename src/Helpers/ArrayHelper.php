@@ -52,13 +52,20 @@ final class ArrayHelper
 
     /**
      * @pure
-     * @param string $key
-     * @param mixed[] $array
-     * @return mixed
+     * @param iterable<mixed> $array
      */
-    public static function getValueFromDottedKey(string $key, iterable $array = [])
+    public static function getValueFromDottedKey(string $key, iterable $array = []): mixed
     {
-        foreach (explode('.', $key) as $var) {
+        return self::getValueFromKeyArray(explode('.', $key), $array);
+    }
+
+    /**
+     * @pure
+     * @param iterable<mixed> $array
+     */
+    public static function getValueFromKeyArray(array $keys, iterable $array = []): mixed
+    {
+        foreach ($keys as $var) {
             if (isset($array[$var])) {
                 $array = $array[$var];
             } else {
