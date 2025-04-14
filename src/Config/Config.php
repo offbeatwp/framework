@@ -11,13 +11,20 @@ final class Config
     /** @var iterable<mixed> */
     private readonly iterable $envConfigValues;
     /** @var array<string, mixed[]> */
-    private array $config;
+    private array $config = [];
 
     public function __construct(App $app)
     {
         $this->app = $app;
         $this->envConfigValues = $this->getEnvConfigValues();
-        $this->config = $this->loadConfigs();
+
+        // Load all configs
+        foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
+            $this->config[basename($configFile, '.php')] = require $configFile;
+        }
+
+        $this->config = $this->loadConfigEnvFiles($this->config);
+        $this->config = $this->loadConfigEnvs($this->config);
     }
 
     /** @return iterable<mixed> */
@@ -34,23 +41,6 @@ final class Config
         }
 
         return [];
-    }
-
-    /** @return mixed[] */
-    private function loadConfigs(): array
-    {
-        $config = [];
-        $configFiles = glob($this->app->configPath() . '/*.php');
-
-        foreach ($configFiles as $configFile) {
-            $configValues = require $configFile;
-            $config[basename($configFile, '.php')] = $configValues;
-        }
-
-        $config = $this->loadConfigEnvFiles($config);
-        $config = $this->loadConfigEnvs($config);
-
-        return $config;
     }
 
     /**
