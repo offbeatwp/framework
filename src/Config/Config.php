@@ -59,21 +59,21 @@ final class Config
      */
     protected function loadConfigEnvFiles(array $config): array
     {
-        foreach ($this->envConfigValues as $key => $value) {
-            $config[$key] = $this->loadConfigEnvFile($key, $value);
+        foreach ($this->envConfigValues as $envKey => $envValue) {
+            $config[$envKey] = $this->loadConfigEnvFile($envKey, $envValue);
         }
 
         return $config;
     }
 
     /**
-     * @param mixed[] $configEntry
+     * @param mixed[] $envValue
      * @return mixed[]
      */
-    private function loadConfigEnvFile(string $configKey, array $configEntry): array
+    private function loadConfigEnvFile(string $envKey, array $envValue): array
     {
-        $value = $this->get($configKey);
-        return $value ? ArrayHelper::mergeRecursiveAssoc($configEntry, $value) : $configEntry;
+        $configValue = $this->get($envKey);
+        return $configValue ? ArrayHelper::mergeRecursiveAssoc($envValue, $configValue) : $envValue;
     }
 
     /**
