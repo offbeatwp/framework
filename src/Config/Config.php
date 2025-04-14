@@ -20,7 +20,11 @@ final class Config
 
         // Load all configs
         foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
-            $this->config[basename($configFile, '.php')] = require $configFile;
+            $configData = require $configFile;
+
+            if (is_array($configData)) {
+                $this->config[basename($configFile, '.php')] = require $configData;
+            }
         }
 
         $this->config = $this->loadConfigEnvFiles($this->config);
