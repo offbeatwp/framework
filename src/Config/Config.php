@@ -10,7 +10,7 @@ final class Config
     private readonly App $app;
     /** @var iterable<mixed> */
     private readonly iterable $envConfigValues;
-    /** @var mixed[] */
+    /** @var array<string, mixed[]> */
     private array $config;
 
     public function __construct(App $app)
