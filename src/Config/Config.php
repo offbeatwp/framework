@@ -109,7 +109,7 @@ final class Config
 
     /**
      * @deprecated
-     * @param array-key $key
+     * @param string $key
      * @param mixed[] $value
      * @return mixed[]
      */
