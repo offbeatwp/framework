@@ -25,7 +25,7 @@ final class Wordpress
         return ob_get_clean();
     }
 
-    public function title(): ?string
+    public function title(): string
     {
         return wp_title('&raquo;', false);
     }
@@ -52,7 +52,7 @@ final class Wordpress
     /**
      * Returns a navigation menu.
      * @param string[]|int[]|bool[]|object[]|callable[]|null $args
-     * @phpstan-param null|array{menu?: int|string|WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
+     * @phpstan-param null|array{menu?: int|string|\WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
      * @return false|string|null
      */
     public function navMenu(?array $args = [])
@@ -174,7 +174,7 @@ final class Wordpress
      * This might cause issues when plugins are disabled but the shortcode will still show up in the post or content.
      * @param string|null $code
      */
-    public function shortcode(?string $code): ?string
+    public function shortcode(?string $code): string
     {
         if ($code === null) {
             trigger_error('Wordpress::shortcode expects a string as parameter but received NULL.', E_USER_DEPRECATED);
