@@ -10,14 +10,25 @@ final class Config
     private readonly App $app;
     /** @var iterable<mixed> */
     private readonly iterable $envConfigValues;
-    /** @var mixed[] */
+    /** @var array<string, mixed[]> */
     private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
         $this->envConfigValues = $this->getEnvConfigValues();
-        $this->config = $this->loadConfigs();
+        $this->config = [];
+
+        foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
+            $configValues = require $configFile;
+
+            if (is_array($configValues)) {
+                $this->config[basename($configFile, '.php')] = $configValues;
+            }
+        }
+
+        $this->config = $this->loadConfigEnvFiles($this->config);
+        $this->config = $this->loadConfigEnvs($this->config);
     }
 
     /** @return iterable<mixed> */
@@ -36,26 +47,9 @@ final class Config
         return [];
     }
 
-    /** @return mixed[] */
-    private function loadConfigs(): array
-    {
-        $config = [];
-        $configFiles = glob($this->app->configPath() . '/*.php');
-
-        foreach ($configFiles as $configFile) {
-            $configValues = require $configFile;
-            $config[basename($configFile, '.php')] = $configValues;
-        }
-
-        $config = $this->loadConfigEnvFiles($config);
-        $config = $this->loadConfigEnvs($config);
-
-        return $config;
-    }
-
     /**
-     * @param mixed[] $config
-     * @return mixed[]
+     * @param array<string, mixed[]> $config
+     * @return array<string, mixed[]>
      */
     protected function loadConfigEnvFiles(array $config): array
     {
@@ -69,8 +63,8 @@ final class Config
     }
 
     /**
-     * @param mixed[] $config
-     * @return mixed[]
+     * @param array<string, mixed[]> $config
+     * @return array<string, mixed[]>
      */
     protected function loadConfigEnvs(array $config): array
     {
