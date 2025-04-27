@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Assets;
 
+use Generator;
 use InvalidArgumentException;
 use stdClass;
 
@@ -131,11 +132,8 @@ final class AssetsManager
         $path = ($path) ? "/{$path}" : '';
 
         if (config('app.assets.from_site_root')) {
-            $url = get_site_url();
-
-            return $url . $path;
+            return get_site_url() . $path;
         }
-
 
         $url = config('app.assets.url');
         if ($url) {
@@ -152,16 +150,14 @@ final class AssetsManager
         $dependencies = array_unique($dependencies);
 
         if ($assets) {
-            foreach ($assets as $asset) {
-                $asset = ltrim($asset, './');
-                $baseName = basename($asset);
-                $handle = substr($baseName, 0, strpos($baseName, '.'));
-                $handle = 'owp-' . $handle;
+            foreach ($this->trimAssets($assets) as $asset) {
+                $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_style_is($handle)) {
+                    $enqueueNow = $this->shouldEnqueueNow();
                     $url = $this->getAssetsUrl($asset);
 
-                    if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
+                    if ($enqueueNow) {
                         wp_enqueue_style($handle, $url, $dependencies);
                     } else {
                         add_action('wp_enqueue_scripts', function () use ($handle, $url, $dependencies) {
@@ -172,7 +168,7 @@ final class AssetsManager
             }
         } else {
             $handle = 'theme-style' . $entry;
-            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+            $enqueueNow = $this->shouldEnqueueNow();
             $url = $this->getUrl($entry . '.css');
 
             if ($enqueueNow) {
@@ -182,6 +178,30 @@ final class AssetsManager
                     wp_enqueue_style($handle, $url, $dependencies);
                 });
             }
+        }
+    }
+
+    /** @param string[] $dependencies */
+    public function registerStyles(string $entry, array $dependencies = []): void
+    {
+        $assets = $this->getAssetsByEntryPoint($entry, 'css');
+        if (!$assets) {
+            trigger_error("Failed to register styles for entry: {$entry}", E_USER_WARNING);
+            return;
+        }
+
+        $previousHandle = '';
+
+        foreach ($this->trimAssets($assets) as $asset) {
+            $handle = $this->getHandleFromAsset($asset);
+
+            wp_register_style(
+                $handle,
+                $this->getAssetsUrl($asset),
+                $previousHandle ? [...$dependencies, $previousHandle] : $dependencies
+            );
+
+            $previousHandle = $handle;
         }
     }
 
@@ -205,14 +225,11 @@ final class AssetsManager
         $handle = '';
 
         if ($assets) {
-            foreach ($assets as $asset) {
-                $asset = ltrim($asset, './');
-                $baseName = basename($asset);
-                $handle = substr($baseName, 0, strpos($baseName, '.'));
-                $handle = 'owp-' . $handle;
+            foreach ($this->trimAssets($assets) as $asset) {
+                $handle = $this->getHandleFromAsset($asset);
 
                 if (!wp_script_is($handle)) {
-                    $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+                    $enqueueNow = $this->shouldEnqueueNow();
                     $url = $this->getAssetsUrl($asset);
 
                     if ($enqueueNow) {
@@ -226,7 +243,7 @@ final class AssetsManager
             }
         } else {
             $handle = 'theme-script-' . $entry;
-            $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+            $enqueueNow = $this->shouldEnqueueNow();
             $url = $this->getUrl($entry . '.js');
 
             if ($enqueueNow) {
@@ -239,6 +256,35 @@ final class AssetsManager
         }
 
         return new WpScriptAsset($handle, $enqueueNow);
+    }
+
+    /**
+     * @param string[] $dependencies
+     * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
+     */
+    public function registerScripts(string $entry, array $dependencies = [], $args = ['in_footer' => true]): void
+    {
+        $assets = $this->getAssetsByEntryPoint($entry, 'js');
+        if (!$assets) {
+            trigger_error("Failed to register scripts for entry: {$entry}", E_USER_WARNING);
+            return;
+        }
+
+        $previousHandle = '';
+
+        foreach ($this->trimAssets($assets) as $asset) {
+            $handle = $this->getHandleFromAsset($asset);
+
+            wp_register_script(
+                $handle,
+                $this->getAssetsUrl($asset),
+                $previousHandle ? [...$dependencies, $previousHandle] : $dependencies,
+                false,
+                $args
+            );
+
+            $previousHandle = $handle;
+        }
     }
 
     /**
@@ -262,5 +308,29 @@ final class AssetsManager
         }
 
         return $this->getUrl($handle . '.' . $assetType) ?: null;
+    }
+
+    private function shouldEnqueueNow(): bool
+    {
+        return did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
+    }
+
+    private function getHandleFromAsset(string $asset): string
+    {
+        $baseName = basename($asset);
+        $handle = substr($baseName, 0, strpos($baseName, '.'));
+
+        return 'owp-' . $handle;
+    }
+
+    /**
+     * @param string[] $assets
+     * @return Generator<string>
+     */
+    private function trimAssets(array $assets): Generator
+    {
+        foreach ($assets as $asset) {
+            yield ltrim($asset, './');
+        }
     }
 }
