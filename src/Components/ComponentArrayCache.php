@@ -4,7 +4,7 @@ namespace OffbeatWP\Components;
 
 final class ComponentArrayCache
 {
-    /** @phpstan-var array<string|null, array{mixed, int<0, max>}>> $data each element being a tuple of [$data, $expiration], where the expiration is int */
+    /** @phpstan-var array<string|null, array{mixed, int<0, max>}> $data each element being a tuple of [$data, $expiration], where the expiration is int */
     private static array $data = [];
 
     public static function contains(string $id): bool
