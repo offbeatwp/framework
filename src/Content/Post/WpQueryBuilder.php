@@ -201,7 +201,7 @@ class WpQueryBuilder
         return $this;
     }
 
-    /** @return int[] */
+    /** @return positive-int[] */
     final public function ids(): array
     {
         $this->queryVars['posts_per_page'] = $this->queryVars['posts_per_page'] ?? -1;
