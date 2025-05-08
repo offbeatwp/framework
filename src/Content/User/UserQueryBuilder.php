@@ -196,7 +196,7 @@ final class UserQueryBuilder
         return $this;
     }
 
-    /** @return int[] */
+    /** @return positive-int[] */
     public function ids(): array
     {
         $this->queryVars['fields'] = 'ID';
