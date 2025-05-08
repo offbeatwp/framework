@@ -139,7 +139,7 @@ final class TermQueryBuilder
         return $this;
     }
 
-    /** @return int[] */
+    /** @return positive-int[] */
     public function ids(): array
     {
         $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
