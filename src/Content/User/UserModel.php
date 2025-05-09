@@ -445,11 +445,12 @@ class UserModel
         return is_int($result) ? $result : 0;
     }
 
+    /** @return positive-int */
     final public function saveOrFail(): int
     {
         $result = $this->_save();
 
-        if (!is_int($result)) {
+        if (!is_int($result) || $result <= 0) {
             throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
         }
 
