@@ -105,6 +105,8 @@ final class Config
         $keys = explode('.', $key);
         if ($keys[0]) {
             $this->loadConfig($keys[0]);
+        } else {
+            trigger_error('Config::get $key must be a non-falsy string.', E_USER_DEPRECATED);
         }
 
         $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
@@ -125,7 +127,7 @@ final class Config
     public function set($key, $value)
     {
         if (!$key || !is_string($key)) {
-            trigger_error('Config key must be a non-falsy string.', E_USER_DEPRECATED);
+            trigger_error('Config::set $key must be a non-falsy string.', E_USER_DEPRECATED);
         }
 
         $this->config[$key] = $value;
