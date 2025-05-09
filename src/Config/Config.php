@@ -56,16 +56,6 @@ final class Config
         return [];
     }
 
-    /** @return array<string, mixed[]> */
-    protected function loadConfigEnvFiles(array $envConfigValues): array
-    {
-        foreach ($envConfigValues as $envKey => $envValue) {
-            $this->mergeConfigEnvFile($envKey, $envValue);
-        }
-
-        return $this->config;
-    }
-
     private function mergeConfigEnvFile(string $envKey, mixed $envValue): void
     {
         if ($this->get($envKey)) {
