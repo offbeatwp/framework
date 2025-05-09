@@ -28,7 +28,7 @@ final class Config
         }
 
         $this->config = $this->loadConfigEnvFiles($this->config);
-        $this->config = $this->loadConfigEnvs($this->config);
+        $this->config = $this->loadEnvironmentConfig($this->config);
     }
 
     /** @return iterable<mixed> */
@@ -66,7 +66,7 @@ final class Config
      * @param array<string, mixed[]> $config
      * @return array<string, mixed[]>
      */
-    protected function loadConfigEnvs(array $config): array
+    protected function loadEnvironmentConfig(array $config): array
     {
         foreach ($config as $configKey => $configSet) {
             if (ArrayHelper::isAssoc($configSet)) {
@@ -74,23 +74,23 @@ final class Config
                 $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
 
                 // Get all settings in 'env' variable
-                $envConfigs = $configSet['env'] ?? null;
+                $environmentConfigs = $configSet['env'] ?? null;
 
-                if ($envConfigs) {
-                    $explicitEnvConfigs = [];
+                if ($environmentConfigs) {
+                    $explicitEnvironmentConfigs = [];
 
-                    foreach ($envConfigs as $envKey => $envConfig) {
-                        $matched = preg_match('/^!(.*)/', $envKey, $matches);
+                    foreach ($environmentConfigs as $environmentKey => $environmentConfig) {
+                        $matched = preg_match('/^!(.*)/', $environmentKey, $matches);
 
                         if ($matched && !in_array($currentEnvironment, explode('|', $matches[1]))) {
-                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
-                        } elseif (!$matched && in_array($currentEnvironment, explode('|', $envKey))) {
-                            $explicitEnvConfigs[] = $envConfig;
+                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $environmentConfig);
+                        } elseif (!$matched && in_array($currentEnvironment, explode('|', $environmentKey))) {
+                            $explicitEnvironmentConfigs[] = $environmentConfig;
                         }
                     }
 
-                    foreach ($explicitEnvConfigs as $explicitEnvConfig) {
-                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
+                    foreach ($explicitEnvironmentConfigs as $explicitEnvironmentConfig) {
+                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvironmentConfig);
                     }
                 }
 
