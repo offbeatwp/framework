@@ -8,22 +8,23 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
+    private readonly array $envConfigValues;
     /** @var array<string, mixed[]> */
     private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
-        $envConfigValues = $this->getEnvConfigValues();
+        $this->envConfigValues = $this->getEnvConfigValues();
         $this->config = [];
 
         foreach (glob($this->app->configPath() . '/*.php') as $path) {
             $name = basename($path, '.php');
-            $this->loadConfig($path, $name, $envConfigValues);
+            $this->loadConfig($path, $name);
         }
     }
 
-    private function loadConfig(string $path, string $name, array $envConfigValues): void
+    private function loadConfig(string $path, string $name): void
     {
         $configValues = require $path;
 
@@ -31,23 +32,23 @@ final class Config
             $this->config[$name] = $configValues;
             $this->mergeEnvironmentConfig($name, $configValues);
 
-            if (array_key_exists($name, $envConfigValues) && is_iterable($envConfigValues[$name])) {
-                $this->mergeConfigEnvFile($name, $envConfigValues[$name]);
+            if (array_key_exists($name, $this->envConfigValues) && is_iterable($this->envConfigValues[$name])) {
+                $this->mergeConfigEnvFile($name, $this->envConfigValues[$name]);
             }
         } else {
             trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
         }
     }
 
-    /** @return iterable<mixed> */
-    private function getEnvConfigValues(): iterable
+    /** @return mixed[] */
+    private function getEnvConfigValues(): array
     {
         $envPath = get_template_directory() . '/env.php';
 
         if (file_exists($envPath)) {
             $envConfigValues = require $envPath;
 
-            if (is_iterable($envConfigValues)) {
+            if (is_array($envConfigValues)) {
                 return $envConfigValues;
             }
         }
