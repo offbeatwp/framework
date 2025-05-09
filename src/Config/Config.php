@@ -102,11 +102,10 @@ final class Config
     public function get(string $key, bool $collect = true)
     {
         $keys = explode('.', $key);
-        if (!$keys[0]) {
-            return null;
+        if ($keys[0]) {
+            $this->loadConfig($keys[0]);
         }
 
-        $this->loadConfig($keys[0]);
         $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
 
         if (is_array($result)) {
