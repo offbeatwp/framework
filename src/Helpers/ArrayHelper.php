@@ -58,7 +58,17 @@ final class ArrayHelper
      */
     public static function getValueFromDottedKey(string $key, iterable $array = [])
     {
-        foreach (explode('.', $key) as $var) {
+        return self::getValueFromStringArray(explode('.', $key), $array);
+    }
+
+    /**
+     * @param string[] $keys
+     * @param iterable $array
+     * @return array|iterable|mixed|null
+     */
+    public static function getValueFromStringArray(array $keys, iterable $array = [])
+    {
+        foreach ($keys as $var) {
             if (isset($array[$var])) {
                 $array = $array[$var];
             } else {

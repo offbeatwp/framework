@@ -109,7 +109,12 @@ final class Config
      */
     public function get(string $key, bool $collect = true)
     {
-        $result = ArrayHelper::getValueFromDottedKey($key, $this->config);
+        $keys = explode('.', $key);
+        if (!$keys[0]) {
+            return null;
+        }
+
+        $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
 
         if (is_array($result)) {
             return $collect ? collect($result) : $result;
