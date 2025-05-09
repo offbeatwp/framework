@@ -8,15 +8,13 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
-    /** @var iterable<mixed> */
-    private readonly iterable $envConfigValues;
     /** @var array<string, mixed[]> */
     private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->envConfigValues = $this->getEnvConfigValues();
+        $envConfigValues = $this->getEnvConfigValues();
         $this->config = [];
 
         foreach (glob($this->app->configPath() . '/*.php') as $path) {
@@ -24,7 +22,7 @@ final class Config
             $this->loadConfig($path, $name);
         }
 
-        $this->config = $this->loadConfigEnvFiles();
+        $this->config = $this->loadConfigEnvFiles($envConfigValues);
     }
 
     private function loadConfig(string $path, string $name): void
@@ -56,19 +54,19 @@ final class Config
     }
 
     /** @return array<string, mixed[]> */
-    protected function loadConfigEnvFiles(): array
+    protected function loadConfigEnvFiles(array $envConfigValues): array
     {
-        foreach ($this->envConfigValues as $key => $value) {
-            $this->mergeConfigEnvFile($key, $value);
+        foreach ($envConfigValues as $envKey => $envValue) {
+            $this->mergeConfigEnvFile($envKey, $envValue);
         }
 
         return $this->config;
     }
 
-    private function mergeConfigEnvFile(string $key, mixed $originalValue): void
+    private function mergeConfigEnvFile(string $envKey, mixed $envValue): void
     {
-        if ($this->get($key)) {
-            $this->config[$key] = ArrayHelper::mergeRecursiveAssoc($this->config[$key], $originalValue);
+        if ($this->get($envKey)) {
+            $this->config[$envKey] = ArrayHelper::mergeRecursiveAssoc($this->config[$envKey], $envValue);
         }
     }
 
