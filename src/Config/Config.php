@@ -19,16 +19,24 @@ final class Config
         $this->envConfigValues = $this->getEnvConfigValues();
         $this->config = [];
 
-        foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
-            $configValues = require $configFile;
-
-            if (is_array($configValues)) {
-                $this->config[basename($configFile, '.php')] = $configValues;
-            }
+        foreach (glob($this->app->configPath() . '/*.php') as $path) {
+            $name = basename($path, '.php');
+            $this->loadConfig($path, $name);
         }
 
         $this->config = $this->loadConfigEnvFiles();
         $this->config = $this->loadEnvironmentConfigs();
+    }
+
+    private function loadConfig(string $path, string $name): void
+    {
+        $configValues = require $path;
+
+        if (is_array($configValues)) {
+            $this->config[$name] = $configValues;
+        } else {
+            trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
+        }
     }
 
     /** @return iterable<mixed> */
