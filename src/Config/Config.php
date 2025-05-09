@@ -19,19 +19,21 @@ final class Config
 
         foreach (glob($this->app->configPath() . '/*.php') as $path) {
             $name = basename($path, '.php');
-            $this->loadConfig($path, $name);
+            $this->loadConfig($path, $name, $envConfigValues);
         }
-
-        $this->config = $this->loadConfigEnvFiles($envConfigValues);
     }
 
-    private function loadConfig(string $path, string $name): void
+    private function loadConfig(string $path, string $name, array $envConfigValues): void
     {
         $configValues = require $path;
 
         if (is_array($configValues)) {
             $this->config[$name] = $configValues;
             $this->mergeEnvironmentConfig($name, $configValues);
+
+            if (array_key_exists($name, $envConfigValues) && is_iterable($envConfigValues[$name])) {
+                $this->mergeConfigEnvFile($name, $envConfigValues[$name]);
+            }
         } else {
             trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
         }
