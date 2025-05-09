@@ -839,6 +839,7 @@ class PostModel implements PostModelInterface
         }
     }
 
+    /** @return positive-int */
     public function saveOrFail(): int
     {
         $result = $this->save();

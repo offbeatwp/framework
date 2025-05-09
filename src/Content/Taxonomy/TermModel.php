@@ -284,6 +284,7 @@ class TermModel implements TermModelInterface
         return $newId;
     }
 
+    /** @return positive-int */
     final public function saveOrFail(): int
     {
         $result = $this->save();
