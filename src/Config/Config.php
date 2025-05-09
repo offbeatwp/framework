@@ -21,6 +21,7 @@ final class Config
         $this->config = [];
     }
 
+    /** @param non-falsy-string $name */
     private function loadConfig(string $name): void
     {
         if (!array_key_exists($name, $this->config)) {
@@ -117,13 +118,16 @@ final class Config
 
     /**
      * @deprecated
-     * @param string $key
+     * @param non-falsy-string $key
      * @param mixed $value
      * @return mixed
      */
     public function set($key, $value)
     {
-        $this->loadConfig((string)$key);
+        if (!$key || !is_string($key)) {
+            trigger_error('Config key must be a non-falsy string.', E_USER_DEPRECATED);
+        }
+
         $this->config[$key] = $value;
 
         return $value;
