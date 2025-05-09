@@ -8,38 +8,48 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
-    /** @var iterable<mixed> */
-    private readonly iterable $envConfigValues;
+    private readonly string $baseConfigPath;
+    private readonly array $envConfigValues;
     /** @var array<string, mixed[]> */
     private array $config;
 
     public function __construct(App $app)
     {
         $this->app = $app;
+        $this->baseConfigPath = $this->app->configPath() . '/';
         $this->envConfigValues = $this->getEnvConfigValues();
         $this->config = [];
-
-        foreach (glob($this->app->configPath() . '/*.php') as $configFile) {
-            $configValues = require $configFile;
-
-            if (is_array($configValues)) {
-                $this->config[basename($configFile, '.php')] = $configValues;
-            }
-        }
-
-        $this->config = $this->loadConfigEnvFiles($this->config);
-        $this->config = $this->loadConfigEnvs($this->config);
     }
 
-    /** @return iterable<mixed> */
-    private function getEnvConfigValues(): iterable
+    /** @param non-falsy-string $name */
+    private function loadConfig(string $name): void
+    {
+        if (!array_key_exists($name, $this->config)) {
+            $configValues = require $this->baseConfigPath . $name . '.php';
+
+            if (is_array($configValues)) {
+                $this->config[$name] = $configValues;
+                $this->mergeEnvironmentConfig($name, $configValues);
+
+                if (array_key_exists($name, $this->envConfigValues) && is_iterable($this->envConfigValues[$name])) {
+                    $this->mergeConfigEnvFile($name, $this->envConfigValues[$name]);
+                }
+            } else {
+                trigger_error('Failed to load config file: ' . $name, E_USER_WARNING);
+                $this->config[$name] = [];
+            }
+        }
+    }
+
+    /** @return mixed[] */
+    private function getEnvConfigValues(): array
     {
         $envPath = get_template_directory() . '/env.php';
 
         if (file_exists($envPath)) {
             $envConfigValues = require $envPath;
 
-            if (is_iterable($envConfigValues)) {
+            if (is_array($envConfigValues)) {
                 return $envConfigValues;
             }
         }
@@ -47,59 +57,43 @@ final class Config
         return [];
     }
 
-    /**
-     * @param array<string, mixed[]> $config
-     * @return array<string, mixed[]>
-     */
-    protected function loadConfigEnvFiles(array $config): array
+    private function mergeConfigEnvFile(string $envKey, mixed $envValue): void
     {
-        foreach ($this->envConfigValues as $key => $value) {
-            if ($this->get($key)) {
-                $config[$key] = ArrayHelper::mergeRecursiveAssoc($config[$key], $value);
-            }
+        if ($this->get($envKey)) {
+            $this->config[$envKey] = ArrayHelper::mergeRecursiveAssoc($this->config[$envKey], $envValue);
         }
-
-        return $config;
     }
 
-    /**
-     * @param array<string, mixed[]> $config
-     * @return array<string, mixed[]>
-     */
-    protected function loadConfigEnvs(array $config): array
+    private function mergeEnvironmentConfig(string $key, mixed $originalValue): void
     {
-        foreach ($config as $configKey => $configSet) {
-            if (ArrayHelper::isAssoc($configSet)) {
-                // Get current environment
-                $currentEnvironment = defined('WP_ENV') ? WP_ENV : 'dev';
+        if (ArrayHelper::isAssoc($originalValue)) {
+            // Get current environment
+            $currentEnvironment = defined('WP_ENV') ? constant('WP_ENV') : 'dev';
 
-                // Get all settings in 'env' variable
-                $envConfigs = $configSet['env'] ?? null;
+            // Get all settings in 'env' variable
+            $environmentConfigs = $originalValue['env'] ?? null;
 
-                if ($envConfigs) {
-                    $explicitEnvConfigs = [];
+            if ($environmentConfigs) {
+                $explicitEnvironmentConfigs = [];
 
-                    foreach ($envConfigs as $envKey => $envConfig) {
-                        $matched = preg_match('/^!(.*)/', $envKey, $matches);
+                foreach ($environmentConfigs as $environmentKey => $environmentConfig) {
+                    $matched = preg_match('/^!(.*)/', $environmentKey, $matches);
 
-                        if ($matched && !in_array($currentEnvironment, explode('|', $matches[1]))) {
-                            $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $envConfig);
-                        } elseif (!$matched && in_array($currentEnvironment, explode('|', $envKey))) {
-                            $explicitEnvConfigs[] = $envConfig;
-                        }
-                    }
-
-                    foreach ($explicitEnvConfigs as $explicitEnvConfig) {
-                        $configSet = ArrayHelper::mergeRecursiveAssoc($configSet, $explicitEnvConfig);
+                    if ($matched && !in_array($currentEnvironment, explode('|', $matches[1]))) {
+                        $originalValue = ArrayHelper::mergeRecursiveAssoc($originalValue, $environmentConfig);
+                    } elseif (!$matched && in_array($currentEnvironment, explode('|', $environmentKey))) {
+                        $explicitEnvironmentConfigs[] = $environmentConfig;
                     }
                 }
 
-                // Set config
-                $config[$configKey] = $configSet;
+                foreach ($explicitEnvironmentConfigs as $explicitEnvironmentConfig) {
+                    $originalValue = ArrayHelper::mergeRecursiveAssoc($originalValue, $explicitEnvironmentConfig);
+                }
             }
-        }
 
-        return $config;
+            // Set config
+            $this->config[$key] = $originalValue;
+        }
     }
 
     /**
@@ -108,7 +102,14 @@ final class Config
      */
     public function get(string $key, bool $collect = true)
     {
-        $result = ArrayHelper::getValueFromDottedKey($key, $this->config);
+        $keys = explode('.', $key);
+        if ($keys[0]) {
+            $this->loadConfig($keys[0]);
+        } else {
+            trigger_error('Config::get $key must be a non-falsy string.', E_USER_DEPRECATED);
+        }
+
+        $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
 
         if (is_array($result)) {
             return $collect ? collect($result) : $result;
@@ -119,12 +120,16 @@ final class Config
 
     /**
      * @deprecated
-     * @param array-key $key
+     * @param non-falsy-string $key
      * @param mixed $value
      * @return mixed
      */
     public function set($key, $value)
     {
+        if (!$key || !is_string($key)) {
+            trigger_error('Config::set $key must be a non-falsy string.', E_USER_DEPRECATED);
+        }
+
         $this->config[$key] = $value;
 
         return $value;
