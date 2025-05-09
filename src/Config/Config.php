@@ -24,20 +24,26 @@ final class Config
         }
     }
 
-    private function loadConfig(string $path, string $name): void
+    /** @return mixed[] */
+    private function loadConfig(string $path, string $name): array
     {
-        $configValues = require $path;
+        if (!array_key_exists($name, $this->config)) {
+            $configValues = require $path;
 
-        if (is_array($configValues)) {
-            $this->config[$name] = $configValues;
-            $this->mergeEnvironmentConfig($name, $configValues);
+            if (is_array($configValues)) {
+                $this->config[$name] = $configValues;
+                $this->mergeEnvironmentConfig($name, $configValues);
 
-            if (array_key_exists($name, $this->envConfigValues) && is_iterable($this->envConfigValues[$name])) {
-                $this->mergeConfigEnvFile($name, $this->envConfigValues[$name]);
+                if (array_key_exists($name, $this->envConfigValues) && is_iterable($this->envConfigValues[$name])) {
+                    $this->mergeConfigEnvFile($name, $this->envConfigValues[$name]);
+                }
+            } else {
+                trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
+                $this->config[$name] = [];
             }
-        } else {
-            trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
         }
+
+        return $this->config[$name];
     }
 
     /** @return mixed[] */
