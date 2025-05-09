@@ -19,15 +19,9 @@ final class Config
         $this->baseConfigPath = $this->app->configPath() . '/';
         $this->envConfigValues = $this->getEnvConfigValues();
         $this->config = [];
-
-        foreach (glob($this->baseConfigPath . '*.php') as $path) {
-            $name = basename($path, '.php');
-            $this->loadConfig($name);
-        }
     }
 
-    /** @return mixed[] */
-    private function loadConfig(string $name): array
+    private function loadConfig(string $name): void
     {
         if (!array_key_exists($name, $this->config)) {
             $configValues = require $this->baseConfigPath . $name . '.php';
@@ -44,8 +38,6 @@ final class Config
                 $this->config[$name] = [];
             }
         }
-
-        return $this->config[$name];
     }
 
     /** @return mixed[] */
@@ -114,6 +106,7 @@ final class Config
             return null;
         }
 
+        $this->loadConfig($keys[0]);
         $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
 
         if (is_array($result)) {
@@ -125,12 +118,13 @@ final class Config
 
     /**
      * @deprecated
-     * @param array-key $key
+     * @param string $key
      * @param mixed $value
      * @return mixed
      */
     public function set($key, $value)
     {
+        $this->loadConfig((string)$key);
         $this->config[$key] = $value;
 
         return $value;
