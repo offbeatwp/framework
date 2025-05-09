@@ -62,6 +62,7 @@ final class ArrayHelper
     }
 
     /**
+     * @interal
      * @param string[] $keys
      * @param iterable $array
      * @return array|iterable|mixed|null
