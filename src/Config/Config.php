@@ -25,7 +25,6 @@ final class Config
         }
 
         $this->config = $this->loadConfigEnvFiles();
-        $this->config = $this->loadEnvironmentConfigs();
     }
 
     private function loadConfig(string $path, string $name): void
@@ -34,6 +33,7 @@ final class Config
 
         if (is_array($configValues)) {
             $this->config[$name] = $configValues;
+            $this->mergeEnvironmentConfig($name, $configValues);
         } else {
             trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
         }
@@ -70,16 +70,6 @@ final class Config
         if ($this->get($key)) {
             $this->config[$key] = ArrayHelper::mergeRecursiveAssoc($this->config[$key], $originalValue);
         }
-    }
-
-    /** @return array<string, mixed[]> */
-    protected function loadEnvironmentConfigs(): array
-    {
-        foreach ($this->config as $key => $value) {
-            $this->mergeEnvironmentConfig($key, $value);
-        }
-
-        return $this->config;
     }
 
     private function mergeEnvironmentConfig(string $key, mixed $originalValue): void
