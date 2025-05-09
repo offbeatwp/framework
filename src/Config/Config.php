@@ -8,6 +8,7 @@ use OffbeatWP\Helpers\ArrayHelper;
 final class Config
 {
     private readonly App $app;
+    private readonly string $baseConfigPath;
     private readonly array $envConfigValues;
     /** @var array<string, mixed[]> */
     private array $config;
@@ -15,20 +16,21 @@ final class Config
     public function __construct(App $app)
     {
         $this->app = $app;
+        $this->baseConfigPath = $this->app->configPath() . '/';
         $this->envConfigValues = $this->getEnvConfigValues();
         $this->config = [];
 
-        foreach (glob($this->app->configPath() . '/*.php') as $path) {
+        foreach (glob($this->baseConfigPath . '*.php') as $path) {
             $name = basename($path, '.php');
-            $this->loadConfig($path, $name);
+            $this->loadConfig($name);
         }
     }
 
     /** @return mixed[] */
-    private function loadConfig(string $path, string $name): array
+    private function loadConfig(string $name): array
     {
         if (!array_key_exists($name, $this->config)) {
-            $configValues = require $path;
+            $configValues = require $this->baseConfigPath . $name . '.php';
 
             if (is_array($configValues)) {
                 $this->config[$name] = $configValues;
@@ -38,7 +40,7 @@ final class Config
                     $this->mergeConfigEnvFile($name, $this->envConfigValues[$name]);
                 }
             } else {
-                trigger_error('Failed to load config file: ' . $path, E_USER_WARNING);
+                trigger_error('Failed to load config file: ' . $name, E_USER_WARNING);
                 $this->config[$name] = [];
             }
         }
