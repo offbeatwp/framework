@@ -36,7 +36,7 @@ final class WordpressService
 
     public function register(): void
     {
-        $this->registerMenus();
+        add_action('after_setup_theme', [$this, 'registerMenus']);
         $this->registerImageSizes();
         $this->registerSidebars();
 
