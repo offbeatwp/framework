@@ -15,7 +15,8 @@ final class TermQueryBuilder
 
     /** @var class-string<TValue> */
     protected string $modelClass;
-    protected string $taxonomy;
+    /** @var string|list<string> */
+    protected string|array $taxonomy;
     /** @var array<string, mixed> */
     protected array $queryVars = [];
 
