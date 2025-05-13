@@ -9,8 +9,8 @@ final class PostType
 {
     public const DEFAULT_POST_MODEL = PostModel::class;
 
-    /** @var class-string<PostModel>[] */
-    private array $postTypeModels = [];
+    /** @var array<string, class-string<PostModel>> */
+    private static array $postTypeModels = [];
 
     /**
      * @param string $name Must not exceed 20 characters and may only contain lowercase alphanumeric characters, dashes, and underscores.
@@ -30,24 +30,24 @@ final class PostType
      */
     public function registerPostModel(string $postType, string $modelClass): void
     {
-        $this->postTypeModels[$postType] = $modelClass;
+        self::$postTypeModels[$postType] = $modelClass;
     }
 
     /** @return class-string<PostModel> */
     public function getModelByPostType(string $postType): string
     {
-        return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
+        return self::$postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
 
     /** @param class-string<PostModel> $modelClass */
     public function getPostTypeByModel(string $modelClass): string
     {
-        return array_search($modelClass, $this->postTypeModels, true);
+        return array_search($modelClass, self::$postTypeModels, true);
     }
 
     /** @return string[] Returns an array of all post types registered with an Offbeat Model */
     public function getPostTypes(): array
     {
-        return array_keys($this->postTypeModels);
+        return array_keys(self::$postTypeModels);
     }
 }
