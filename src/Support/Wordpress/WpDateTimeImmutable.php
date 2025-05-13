@@ -51,6 +51,12 @@ final class WpDateTimeImmutable extends DateTimeImmutable
         return self::createFromInterface($object);
     }
 
+    public static function tryCreateFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): ?WpDateTimeImmutable
+    {
+        $dt = parent::createFromFormat($format, $datetime, $timezone);
+        return $dt ? self::createFromInterface($dt) : null;
+    }
+
     /**
      * Alters the timestamp
      * @param string $modifier <p>A date/time string. Valid formats are explained in
