@@ -137,7 +137,7 @@ final class App
         }
     }
 
-    /** @return null|false|AbstractService */
+    /** @return false|AbstractService */
     public function getService(string $serviceClass)
     {
         if ($this->isServiceInitiated($serviceClass)) {
