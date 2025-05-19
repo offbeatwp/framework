@@ -5,7 +5,7 @@ namespace OffbeatWP\Blocks;
 use OffbeatWP\Views\ViewableTrait;
 use WP_Block;
 
-abstract class AbstractBlockCallback
+abstract class AbstractBlockCallback implements IBlockCallback
 {
     use ViewableTrait;
 
