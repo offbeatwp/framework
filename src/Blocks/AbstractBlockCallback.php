@@ -5,31 +5,30 @@ namespace OffbeatWP\Blocks;
 use OffbeatWP\Views\ViewableTrait;
 use WP_Block;
 
-abstract class AbstractBlockCallback
+abstract class AbstractBlockCallback implements IBlockCallback
 {
     use ViewableTrait;
 
-    /** @var mixed[] */
+    /** @var array<string, mixed> */
     protected array $attributes;
     protected string $content;
     protected WP_Block $wpBlock;
 
-    /** @param mixed[] $attributes */
-    final public function __construct(array $attributes, string $content, WP_Block $wpBlock)
+    /** @param array<string, mixed> $attributes */
+    public function __construct(array $attributes, string $content, WP_Block $wpBlock)
     {
         $this->attributes = $attributes;
         $this->content = $content;
         $this->wpBlock = $wpBlock;
     }
 
-    /** @return mixed[] */
+    /** @return array<string, mixed> */
     final public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    /** @return mixed */
-    final public function getAttribute(string $index)
+    final public function getAttribute(string $index): mixed
     {
         return $this->attributes[$index] ?? null;
     }
@@ -39,19 +38,19 @@ abstract class AbstractBlockCallback
         return $this->content;
     }
 
-    /** @return \WP_Block_List */
+    /** @return \WP_Block_List|WP_Block[] */
     final public function getInnerBlocks()
     {
         return $this->wpBlock->inner_blocks;
     }
 
-    /** @return mixed[] */
+    /** @return array<string, mixed> */
     final public function getContext(): array
     {
         return $this->wpBlock->context;
     }
 
-    /** @param mixed[] $attributes */
+    /** @param array<string, mixed> $attributes */
     final public static function renderBlock(array $attributes, string $content, WP_Block $wpBlock): string
     {
         return (new static($attributes, $content, $wpBlock))->render();
