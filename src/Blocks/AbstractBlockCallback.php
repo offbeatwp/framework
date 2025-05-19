@@ -28,8 +28,7 @@ abstract class AbstractBlockCallback implements IBlockCallback
         return $this->attributes;
     }
 
-    /** @return mixed */
-    final public function getAttribute(string $index)
+    final public function getAttribute(string $index): mixed
     {
         return $this->attributes[$index] ?? null;
     }
@@ -39,19 +38,19 @@ abstract class AbstractBlockCallback implements IBlockCallback
         return $this->content;
     }
 
-    /** @return \WP_Block_List */
+    /** @return \WP_Block_List|WP_Block[] */
     final public function getInnerBlocks()
     {
         return $this->wpBlock->inner_blocks;
     }
 
-    /** @return mixed[] */
+    /** @return array<string, mixed> */
     final public function getContext(): array
     {
         return $this->wpBlock->context;
     }
 
-    /** @param mixed[] $attributes */
+    /** @param array<string, mixed> $attributes */
     final public static function renderBlock(array $attributes, string $content, WP_Block $wpBlock): string
     {
         return (new static($attributes, $content, $wpBlock))->render();
