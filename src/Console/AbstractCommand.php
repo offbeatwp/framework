@@ -25,7 +25,6 @@ abstract class AbstractCommand
     public function error($message)
     {
         WP_CLI::error($message);
-        exit;
     }
 
     /**
