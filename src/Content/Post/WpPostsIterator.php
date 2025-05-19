@@ -16,8 +16,8 @@ final class WpPostsIterator extends ArrayIterator
     private bool $globalPostWasChanged = false;
 
     /**
-     * @return PostModel|false
-     * @phpstan-return TValue|false
+     * @return PostModel
+     * @phpstan-return TValue
      */
     public function current(): mixed
     {
