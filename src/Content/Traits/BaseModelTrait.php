@@ -6,10 +6,14 @@ use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 
 trait BaseModelTrait
 {
-    /** @return static|null */
+    /**
+     * Will retrieve a model from the database for the given ID, or <i>NULL</i> if it does not exist.<br>
+     * If the given ID is a non-positive int or NULL then this method will immediately return <i>NULL</i> without performing a query.
+     * @return static|null
+     */
     public static function find(?int $id)
     {
-        return ($id) ? static::query()->findById($id) : null;
+        return static::query()->findById($id);
     }
 
     /** @return static|null */
@@ -24,7 +28,13 @@ trait BaseModelTrait
         return static::find($id) ?: static::create();
     }
 
-    /** @return static */
+    /**
+     * Will retrieve a model from the database for the given ID, or throw a <i>OffbeatModelNotFoundException</i> if no such model exists.<br>
+     * If the given ID is a non-positive int then always throw an exception.
+     * @throws \OffbeatWP\Exceptions\OffbeatModelNotFoundException
+     * @param positive-int $id
+     * @return static
+     */
     public static function findOrFail(int $id)
     {
         $item = static::find($id);
