@@ -9,6 +9,7 @@ final class Config
 {
     private readonly App $app;
     private readonly string $baseConfigPath;
+    /** @var mixed[] */
     private readonly array $envConfigValues;
     /** @var array<string, mixed[]> */
     private array $config;
