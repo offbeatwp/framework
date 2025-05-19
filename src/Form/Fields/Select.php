@@ -10,7 +10,7 @@ class Select extends AbstractField
     public $options = [];
 
     /**
-     * @param array<int|string, scalar|null> $options
+     * @param array<int|string, scalar|null>|array{0: Select, 1: non-falsy-string} $options
      * @return $this
      */
     public function addOptions(array $options = [])

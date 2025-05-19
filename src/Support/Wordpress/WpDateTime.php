@@ -51,6 +51,12 @@ final class WpDateTime extends DateTime
         return self::createFromInterface($object);
     }
 
+    public static function tryCreateFromFormat(string $format, string $datetime, ?DateTimeZone $timezone = null): ?WpDateTime
+    {
+        $dt = parent::createFromFormat($format, $datetime, $timezone);
+        return $dt ? self::createFromInterface($dt) : null;
+    }
+
     /**
      * Alter the timestamp of a DateTime object by incrementing or decrementing
      * in a format accepted by strtotime().

@@ -178,7 +178,7 @@ final class UserQueryBuilder
 
     /**
      * @param int[]|int $ids
-     * @return $this<TValue>
+     * @return $this
      */
     public function whereIdNotIn($ids)
     {
@@ -187,7 +187,7 @@ final class UserQueryBuilder
         return $this;
     }
 
-    /** @return $this<TValue> */
+    /** @return $this */
     public function limit(int $amount)
     {
         $this->skipOnLimit = ($amount <= 0);

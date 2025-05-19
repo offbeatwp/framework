@@ -62,10 +62,11 @@ final class ArrayHelper
     }
 
     /**
+     * @pure
      * @interal
      * @param string[] $keys
-     * @param iterable $array
-     * @return array|iterable|mixed|null
+     * @param iterable<mixed> $array
+     * @return array|iterable<mixed>|mixed|null
      */
     public static function getValueFromStringArray(array $keys, iterable $array = [])
     {
@@ -89,13 +90,15 @@ final class ArrayHelper
      */
     public static function toIntArray($data, bool $deleteNonNumericValues = false): array
     {
-        $data = (array)$data;
+        $output = [];
 
-        if ($deleteNonNumericValues) {
-            $data = array_filter($data, 'is_numeric');
+        foreach ((array)$data as $value) {
+            if (!$deleteNonNumericValues || is_numeric($value)) {
+                $output[] = (int)$value;
+            }
         }
 
-        return array_map('intval', $data);
+        return $output;
     }
 
     /**

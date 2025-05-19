@@ -47,16 +47,14 @@ final class Post
             $url = $post->getPermalink();
 
             $getParameters = $_GET;
-            if (is_array($getParameters)) {
-                foreach ($getParameters as $getParameterKey => $getParameter) {
-                    if (in_array($getParameterKey, $ignoreGetParameters)) {
-                        unset($getParameters[$getParameterKey]);
-                    }
+            foreach ($getParameters as $getParameterKey => $getParameter) {
+                if (in_array($getParameterKey, $ignoreGetParameters)) {
+                    unset($getParameters[$getParameterKey]);
                 }
+            }
 
-                if ($getParameters) {
-                    $url .= '?' . http_build_query($getParameters);
-                }
+            if ($getParameters) {
+                $url .= '?' . http_build_query($getParameters);
             }
 
             offbeat('http')->redirect($url);
