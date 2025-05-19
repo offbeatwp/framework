@@ -9,20 +9,20 @@ abstract class AbstractBlockCallback
 {
     use ViewableTrait;
 
-    /** @var mixed[] */
+    /** @var array<string, mixed> */
     protected array $attributes;
     protected string $content;
     protected WP_Block $wpBlock;
 
-    /** @param mixed[] $attributes */
-    final public function __construct(array $attributes, string $content, WP_Block $wpBlock)
+    /** @param array<string, mixed> $attributes */
+    public function __construct(array $attributes, string $content, WP_Block $wpBlock)
     {
         $this->attributes = $attributes;
         $this->content = $content;
         $this->wpBlock = $wpBlock;
     }
 
-    /** @return mixed[] */
+    /** @return array<string, mixed> */
     final public function getAttributes(): array
     {
         return $this->attributes;
