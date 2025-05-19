@@ -39,7 +39,7 @@ abstract class AbstractBlockCallback
         return $this->content;
     }
 
-    /** @return \WP_Block_List|array{} */
+    /** @return \WP_Block_List */
     final public function getInnerBlocks()
     {
         return $this->wpBlock->inner_blocks;
