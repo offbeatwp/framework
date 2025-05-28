@@ -33,6 +33,31 @@ abstract class AbstractBlockCallback implements IBlockCallback
         return $this->attributes[$index] ?? null;
     }
 
+    final public function getAttributeString(string $index): ?string
+    {
+        return $this->filterAttribute($index, FILTER_DEFAULT);
+    }
+
+    final public function getAttributeInt(string $index): ?int
+    {
+        return $this->filterAttribute($index, FILTER_VALIDATE_INT);
+    }
+
+    final public function getAttributeFloat(string $index): ?float
+    {
+        return $this->filterAttribute($index, FILTER_VALIDATE_FLOAT);
+    }
+
+    final public function getAttributeBool(string $index): ?bool
+    {
+        return $this->filterAttribute($index, FILTER_VALIDATE_BOOL);
+    }
+
+    private function filterAttribute(string $index, int $filter): mixed
+    {
+        return filter_var($this->attributes[$index] ?? null, $filter, FILTER_NULL_ON_FAILURE);
+    }
+
     final public function getContent(): string
     {
         return $this->content;
@@ -56,6 +81,7 @@ abstract class AbstractBlockCallback implements IBlockCallback
         return (new static($attributes, $content, $wpBlock))->render();
     }
 
+    /** @param array<non-falsy-string, scalar|null> $extraAttributes */
     final protected function getBlockWrapperAttributes(array $extraAttributes = []): string
     {
         return str_replace('wp-block-', '', get_block_wrapper_attributes($extraAttributes));

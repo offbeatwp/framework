@@ -26,7 +26,8 @@ final class Config
     private function loadConfig(string $name): void
     {
         if (!array_key_exists($name, $this->config)) {
-            $configValues = require $this->baseConfigPath . $name . '.php';
+            $path = $this->baseConfigPath . $name . '.php';
+            $configValues = file_exists($path) ? require $path : null;
 
             if (is_array($configValues)) {
                 $this->config[$name] = $configValues;
