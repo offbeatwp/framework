@@ -51,7 +51,7 @@ function owp_get_option_bool(string $option): ?bool
  * @param non-falsy-string $option
  * @return positive-int|null
  */
-function owp_get_option_id(string $option): ?int
+function owp_get_option_positive_int(string $option): ?int
 {
     $v = owp_get_option_int($option);
     return $v && $v > 0 ? $v : null;
