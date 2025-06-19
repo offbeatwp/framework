@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('owp_get_option_string')) {
-    function owp_get_option_int(string $option): ?string
+    function owp_get_option_string(string $option): ?string
     {
         return filter_var(get_option($option, null), FILTER_DEFAULT,  FILTER_NULL_ON_FAILURE);
     }
