@@ -18,7 +18,8 @@
   },
   "autoload": {
     "files": [
-      "src/Foundation/helpers.php"
+      "src/Foundation/helpers.php",
+      "src/Foundation/owp-options.php"
     ],
     "psr-4": {
       "OffbeatWP\\": "src"
