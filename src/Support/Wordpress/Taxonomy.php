@@ -11,8 +11,8 @@ final class Taxonomy
 {
     public const DEFAULT_TERM_MODEL = TermModel::class;
 
-    /** @var class-string<TermModel>[] */
-    private array $taxonomyModels = [];
+    /** @var array<string, class-string<TermModel>> */
+    private static array $taxonomyModels = [];
 
     /**
      * @param string $name Name should only contain lowercase letters and the underscore character, and not be more than 32 characters long.
@@ -33,13 +33,13 @@ final class Taxonomy
      */
     public function registerTermModel(string $taxonomy, string $modelClass)
     {
-        $this->taxonomyModels[$taxonomy] = $modelClass;
+        self::$taxonomyModels[$taxonomy] = $modelClass;
     }
 
     /** @return class-string<TermModel> */
     public function getModelByTaxonomy(string $taxonomy): string
     {
-        return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
+        return self::$taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
     /**
