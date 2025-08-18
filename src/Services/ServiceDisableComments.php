@@ -6,6 +6,14 @@ class ServiceDisableComments extends AbstractService
 {
     public function register(): void
     {
+        add_action('wp_before_admin_bar_render', function () {
+            if (is_admin_bar_showing() && wp_count_comments()->total_comments === 0) {
+                /** @global \WP_Admin_Bar $wp_admin_bar */
+                global $wp_admin_bar;
+                $wp_admin_bar->remove_menu('comments');
+            }
+        });
+
         if (!is_admin()) {
             return;
         }
@@ -14,18 +22,11 @@ class ServiceDisableComments extends AbstractService
             remove_menu_page('edit-comments.php');
         });
 
-        add_action('wp_before_admin_bar_render', static function () {
-            global $wp_admin_bar;
-            $wp_admin_bar->remove_menu('comments');
-        });
-
         add_action('admin_init', static function () {
-            $post_types = get_post_types();
-
-            foreach ($post_types as $post_type) {
-                if (post_type_supports($post_type, 'comments')) {
-                    remove_post_type_support($post_type, 'comments');
-                    remove_post_type_support($post_type, 'trackbacks');
+            foreach (get_post_types() as $postType) {
+                if (post_type_supports($postType, 'comments')) {
+                    remove_post_type_support($postType, 'comments');
+                    remove_post_type_support($postType, 'trackbacks');
                 }
             }
         });
