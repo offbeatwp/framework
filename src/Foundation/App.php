@@ -9,9 +9,8 @@ use DI\Definition\Helper\CreateDefinitionHelper;
 use DI\Definition\Helper\DefinitionHelper;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
-use OffbeatWP\Components\ComponentsService;
 use OffbeatWP\Config\Config;
-use OffbeatWP\Content\Post\Relations\Service;
+use OffbeatWP\Content\Post\Relations\PostRelationService;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
@@ -64,7 +63,7 @@ final class App
     /** @param \DI\ContainerBuilder<Container> $containerBuilder */
     private function initiateBaseServices(ContainerBuilder $containerBuilder): void
     {
-        foreach ([WordpressService::class, ComponentsService::class, ServiceEnqueueScripts::class, Service::class] as $service) {
+        foreach ([WordpressService::class, ServiceEnqueueScripts::class, PostRelationService::class] as $service) {
             $this->initiateService($service, $containerBuilder);
         }
     }
