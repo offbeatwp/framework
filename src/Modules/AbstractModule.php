@@ -19,7 +19,7 @@ abstract class AbstractModule extends AbstractService
         parent::__construct($app);
 
         if (method_exists($this, 'boot')) {
-            offbeat('hooks')->addAction('raow.ready', [$this, 'boot']);
+            add_action('raow.ready', [$this, 'boot']);
         }
 
         add_action('init', function () {
