@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Views;
 
-use DateTimeZone;
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
