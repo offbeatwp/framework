@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\Fields\\\\AbstractField\\)\\:\\:FIELD_TYPE\\.$#"
-			count: 1
-			path: src/Form/Fields/AbstractField.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Form/Fields/AbstractField.php
-
-		-
 			message: "#^Template type T of function container\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Foundation/helpers.php

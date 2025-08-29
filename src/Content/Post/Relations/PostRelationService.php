@@ -5,7 +5,6 @@ namespace OffbeatWP\Content\Post\Relations;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
-use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
 use WP_Query;
 
@@ -22,8 +21,6 @@ class PostRelationService extends AbstractService
         if (offbeat('console')::isConsole()) {
             offbeat('console')->register(Install::class);
         }
-
-        offbeat('hooks')->addFilter('acf/load_field', LoadFieldIconsFilter::class);
     }
 
     /**
