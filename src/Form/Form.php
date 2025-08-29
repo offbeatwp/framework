@@ -3,7 +3,6 @@
 namespace OffbeatWP\Form;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Components\AbstractComponent;
 use OffbeatWP\Form\Fields\AbstractField;
 use OffbeatWP\Form\FieldsCollections\AbstractFieldsCollection;
 use OffbeatWP\Form\FieldsContainers\AbstractFieldsContainer;
@@ -197,28 +196,6 @@ final class Form extends Collection
     public function getFieldKeys()
     {
         return $this->fieldKeys;
-    }
-
-    /**
-     * @param AbstractComponent|class-string<AbstractComponent> $component
-     * @param string $fieldPrefix
-     * @return void
-     */
-    public function addComponentForm($component, $fieldPrefix)
-    {
-        $activeItem = $this->getActiveItem();
-
-        $componentForm = $component::getForm();
-        if (!is_object($componentForm)) {
-            return;
-        }
-
-        $form = clone $componentForm;
-        $form->setFieldPrefix($fieldPrefix);
-
-        $this->addSection($fieldPrefix, $component::getName())->add($form);
-
-        $this->setActiveItem($activeItem);
     }
 
     /**

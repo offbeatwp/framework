@@ -1,6 +1,5 @@
 <?php
 
-use OffbeatWP\Contracts\SiteSettings;
 use OffbeatWP\Foundation\App;
 
 if (!function_exists('offbeat')) {
@@ -66,6 +65,6 @@ if (!function_exists('setting')) {
      */
     function setting($key)
     {
-        return offbeat(SiteSettings::class)->get($key);
+        return null;
     }
 }

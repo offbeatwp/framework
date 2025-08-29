@@ -3,8 +3,6 @@
 namespace OffbeatWP\Wordpress;
 
 use Illuminate\Support\Collection;
-use OffbeatWP\Content\Enqueue\WpScriptEnqueueBuilder;
-use OffbeatWP\Content\Enqueue\WpStyleEnqueueBuilder;
 use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
@@ -20,18 +18,16 @@ final class WordpressService
 {
     /** @var class-string[] */
     public array $bindings = [
-        'admin-page'        => AdminPage::class,
-        'ajax'              => Ajax::class,
-        'rest-api'          => RestApi::class,
-        'console'           => Console::class,
-        'hooks'             => Hooks::class,
-        'post-type'         => PostType::class,
-        'post'              => Post::class,
-        'page'              => Page::class,
-        'taxonomy'          => Taxonomy::class,
-        'design'            => Design::class,
-        'enqueue-script'    => WpScriptEnqueueBuilder::class,
-        'enqueue-style'     => WpStyleEnqueueBuilder::class,
+        'admin-page' => AdminPage::class,
+        'ajax'       => Ajax::class,
+        'rest-api'   => RestApi::class,
+        'console'    => Console::class,
+        'hooks'      => Hooks::class,
+        'post-type'  => PostType::class,
+        'post'       => Post::class,
+        'page'       => Page::class,
+        'taxonomy'   => Taxonomy::class,
+        'design'     => Design::class
     ];
 
     public function register(): void
