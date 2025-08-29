@@ -6,11 +6,9 @@ use OffbeatWP\Foundation\App;
 
 abstract class AbstractService
 {
-    /** @var App */
-    protected $app;
+    protected readonly App $app;
 
-    /** @param App $app */
-    public function __construct($app)
+    public function __construct(App $app)
     {
         $this->app = $app;
     }
