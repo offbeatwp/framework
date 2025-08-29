@@ -102,7 +102,7 @@ class PostModel implements PostModelInterface
             return $this->wpPost->$method;
         }
 
-        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
+        $hookValue = apply_filters_ref_array('post_attribute', [null, $method, $this]);
         if ($hookValue !== null) {
             return $hookValue;
         }

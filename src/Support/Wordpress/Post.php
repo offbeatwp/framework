@@ -11,7 +11,7 @@ final class Post
     public function convertWpPostToModel(WP_Post $post): PostModel
     {
         $model = offbeat('post-type')->getModelByPostType($post->post_type);
-        $model = offbeat('hooks')->applyFilters('post_model', $model, $post);
+        $model = apply_filters_ref_array('post_model', [$model, $post]);
 
         return new $model($post);
     }

@@ -4,34 +4,10 @@ namespace OffbeatWP\Services;
 
 abstract class AbstractServicePageBuilder extends AbstractService
 {
-    /** @return void */
-    public function register()
+    public function register(): void
     {
-        if (method_exists($this, 'onRegisterComponent')) {
-            offbeat('hooks')->addAction('offbeat.component.register', [$this, '_onRegisterComponent']);
-        }
-
         if (method_exists($this, 'afterRegister')) {
             $this->app->container->call([$this, 'afterRegister']);
-        }
-    }
-
-    /**
-     * @param mixed[] $component
-     * @return void
-     */
-    public function _onRegisterComponent($component)
-    {
-        $componentClass = $component['class'];
-
-        if (!$componentClass::supports('pagebuilder')) {
-            return;
-        }
-
-        if (method_exists($this, 'onRegisterComponent')) {
-            $this->onRegisterComponent($component['name'], $componentClass);
-        } else {
-            trigger_error('Class extending AbstractServicePageBuilder does not implement onRegisterComponent.');
         }
     }
 }

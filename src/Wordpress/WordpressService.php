@@ -7,7 +7,6 @@ use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
 use OffbeatWP\Support\Wordpress\Design;
-use OffbeatWP\Support\Wordpress\Hooks;
 use OffbeatWP\Support\Wordpress\Page;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\PostType;
@@ -22,7 +21,6 @@ final class WordpressService
         'ajax'       => Ajax::class,
         'rest-api'   => RestApi::class,
         'console'    => Console::class,
-        'hooks'      => Hooks::class,
         'post-type'  => PostType::class,
         'post'       => Post::class,
         'page'       => Page::class,
