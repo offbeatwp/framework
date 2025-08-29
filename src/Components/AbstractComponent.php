@@ -3,10 +3,8 @@
 namespace OffbeatWP\Components;
 
 use OffbeatWP\Form\Form;
-use OffbeatWP\Form\Fields\Select;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Foundation\App;
-use OffbeatWP\Layout\ContextInterface;
 use OffbeatWP\Views\CssClassTrait;
 use OffbeatWP\Views\ViewableTrait;
 use ReflectionClass;
@@ -21,7 +19,6 @@ abstract class AbstractComponent
     /** @var View */
     public $view;
     public ?Form $form = null;
-    protected ?ContextInterface $context;
     protected bool $assetsEnqueued = false;
     private ?int $renderId = null;
     /** @var string[] */
@@ -53,10 +50,9 @@ abstract class AbstractComponent
      */
     abstract public static function settings();
 
-    public function __construct(View $view, ?ContextInterface $context = null)
+    public function __construct(View $view)
     {
         $this->view = $view;
-        $this->context = $context;
     }
 
     /**
@@ -106,10 +102,6 @@ abstract class AbstractComponent
             return $object;
         }
 
-        if ($this->context) {
-            $this->context->initContext();
-        }
-
         $this->attachExtraCssClassesFromSettings($settings, self::getSlug());
 
         if (!apply_filters('offbeat.component.should_render', true, $this, $settings)) {
@@ -157,8 +149,7 @@ abstract class AbstractComponent
      */
     protected function getCacheId($settings): string
     {
-        $prefix = $this->context ? $this->context->getCacheId() : '';
-        return md5($prefix . $this::class . json_encode($settings));
+        return md5($this::class . json_encode($settings));
     }
 
     protected function getCachedComponent(string $id): ?string
@@ -182,8 +173,7 @@ abstract class AbstractComponent
 
     public static function supports(string $service): bool
     {
-        $settings = static::settings();
-        return (array_key_exists('supports', $settings) && in_array($service, $settings['supports'], true));
+        return false;
     }
 
     public static function getName(): ?string
@@ -194,9 +184,7 @@ abstract class AbstractComponent
     /** @return string|string[]|null */
     public static function getSetting(string $key)
     {
-        $settings = static::settings();
-
-        return $settings[$key] ?? null;
+        return null;
     }
 
     public static function getSlug(): string
@@ -233,27 +221,7 @@ abstract class AbstractComponent
 
     public static function getForm(): Form
     {
-        $form = static::form();
-
-        if ($form === null) {
-            $settings = static::settings();
-
-            if (isset($settings['form'])) {
-                $form = $settings['form'];
-            }
-
-            if (!($form instanceof Form)) {
-                $form = new Form();
-            }
-        }
-
-        if ($form instanceof Form && isset($settings['variations'])) {
-            $form->addField(
-                Select::make('variation', __('Variation', 'offbeatwp'))->addOptions($settings['variations'])
-            );
-        }
-
-        return apply_filters('offbeatwp/component/form', $form, static::class);
+        return apply_filters('offbeatwp/component/form', new Form(), static::class);
     }
 
     /** @return void */

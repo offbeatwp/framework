@@ -25,10 +25,6 @@ final class AdminPage
                 $capability = 'edit_posts';
             }
 
-            if ($callback === 'controller') {
-                $callback = [static::class, 'callbackController'];
-            }
-
             if ($callback) {
                 $callback = function () use ($callback) {
                     App::singleton()->container->call($callback);
@@ -57,10 +53,6 @@ final class AdminPage
         if (is_admin()) {
             if ($capability === null) {
                 $capability = 'edit_posts';
-            }
-
-            if ($callback === 'controller') {
-                $callback = [static::class, 'callbackController'];
             }
 
             if ($callback) {
@@ -93,12 +85,5 @@ final class AdminPage
                 add_submenu_page($parent, $title, $title, $capability, $slug, $callback, $position);
             });
         }
-    }
-
-    /** @return void */
-    public function callbackController()
-    {
-        App::singleton()->findRoute();
-        App::singleton()->run();
     }
 }

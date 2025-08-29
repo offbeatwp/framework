@@ -4,27 +4,13 @@ namespace OffbeatWP\Components;
 
 use OffbeatWP\Exceptions\NonexistentComponentException;
 use OffbeatWP\Foundation\App;
-use OffbeatWP\Layout\ContextInterface;
 
 /** @final */
 class ComponentRepository
 {
     /** @var class-string<AbstractComponent>[] */
     protected array $components = [];
-    protected ?ContextInterface $layoutContext = null;
     protected int $renderedComponents = 0;
-
-    public function getLayoutContext(): ?ContextInterface
-    {
-        return $this->layoutContext;
-    }
-
-    /** Set the context to be distributed when rendering components. */
-    public function setLayoutContext(?ContextInterface $context = null): ComponentRepository
-    {
-        $this->layoutContext = $context;
-        return $this;
-    }
 
     /**
      * @param string $name
@@ -124,7 +110,7 @@ class ComponentRepository
     {
         $componentClass = $this->get($name);
 
-        return App::singleton()->container->make($componentClass, ['context' => $this->getLayoutContext()]);
+        return App::singleton()->container->make($componentClass);
     }
 
     /**
