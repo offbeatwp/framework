@@ -189,7 +189,7 @@ abstract class AbstractComponent
 
     public static function getSlug(): string
     {
-        return static::getSetting('slug');
+        return static::getSetting('slug') ?? basename(static::class);
     }
 
     public static function getDescription(): ?string
