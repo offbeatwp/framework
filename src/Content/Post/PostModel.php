@@ -39,7 +39,7 @@ class PostModel implements PostModelInterface
     public const DEFAULT_COMMENT_STATUS = 'closed';
     public const DEFAULT_PING_STATUS = 'closed';
 
-    public ?WP_Post $wpPost;
+    public WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var array<string, ""> */
@@ -165,9 +165,9 @@ class PostModel implements PostModelInterface
     ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
-    public function getId(): ?int
+    public function getId(): int
     {
-        return $this->wpPost->ID ?? null;
+        return $this->wpPost->ID;
     }
 
     /** @return string */
@@ -232,7 +232,7 @@ class PostModel implements PostModelInterface
     /** @return $this */
     public function setAuthor(int $authorId)
     {
-        $this->wpPost->post_author = $authorId;
+        $this->wpPost->post_author = (string)$authorId;
         return $this;
     }
 
@@ -681,29 +681,14 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    /**
-     * Get the <b>raw</b> post object
-     * @return WP_Post|object|null
-     */
-    public function getPostObject(): ?object
+    public function getPostObject(): WP_Post
     {
         return $this->wpPost;
     }
 
-    /** Get the post object as WP_Post */
     final public function getWpPost(): WP_Post
     {
-        $post = $this->wpPost;
-
-        if ($post instanceof WP_Post) {
-            return $post;
-        }
-
-        if (!($post instanceof stdClass)) {
-            $post = (object)[];
-        }
-
-        return new WP_Post($post);
+        return $this->wpPost;
     }
 
     ///////////////////////
@@ -779,12 +764,15 @@ class PostModel implements PostModelInterface
     public function save(): int
     {
         if ($this->metaInput) {
-            $this->wpPost->meta_input = $this->metaInput;
+            $this->wpPost->meta_input = $this->metaInput; //@phpstan-ignore property.notFound
         }
 
-        if ($this->getId() === null) {
+        $postArr = (array)$this->wpPost;
+        $postArr['post_author'] = (int)$postArr['post_author'];
+
+        if ($this->getId() === 0) {
             // Insert post
-            $updatedPostId = wp_insert_post((array)$this->wpPost);
+            $updatedPostId = wp_insert_post($postArr);
             $insertedPost = get_post($updatedPostId);
 
             // Set internal wpPost
@@ -793,7 +781,7 @@ class PostModel implements PostModelInterface
             }
         } else {
             // Update post
-            $updatedPostId = wp_update_post((array)$this->wpPost);
+            $updatedPostId = wp_update_post($postArr);
 
             // Unset Meta
             if ($updatedPostId && is_int($updatedPostId)) {

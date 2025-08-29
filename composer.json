@@ -8,7 +8,7 @@
     "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
   },
   "require": {
-    "php": ">=8.1",
+    "php": ">=8.3",
     "php-di/php-di": "^7.0.6",
     "illuminate/collections": "^v10.48.11",
     "illuminate/macroable": "^v10.48.11",

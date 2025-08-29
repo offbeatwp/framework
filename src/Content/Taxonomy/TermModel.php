@@ -24,7 +24,7 @@ class TermModel implements TermModelInterface
     }
     public const TAXONOMY = '';
 
-    public ?WP_Term $wpTerm = null;
+    public ?WP_Term $wpTerm;
     public ?int $id = null;
     /** @var array<string, mixed> */
     protected array $metaInput = [];

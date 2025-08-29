@@ -1,7 +1,7 @@
 # phpstan.neon
 parameters:
     level: 6
-    phpVersion: 80200
+    phpVersion: 80300
     treatPhpDocTypesAsCertain: false
     paths:
         - src
