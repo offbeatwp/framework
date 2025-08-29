@@ -153,16 +153,6 @@ final class App
         return get_template_directory() . '/config';
     }
 
-    public function routesPath(): string
-    {
-        return get_template_directory() . '/routes';
-    }
-
-    public function componentsPath(): string
-    {
-        return get_template_directory() . '/components';
-    }
-
     private function getConfigInstance(): Config
     {
         if ($this->config === null) {
