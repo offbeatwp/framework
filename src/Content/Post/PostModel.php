@@ -59,34 +59,18 @@ class PostModel implements PostModelInterface
      */
     public $relationKeyMethods = null;
 
-    /**
-     * @final
-     * @param WP_Post|int|null $post
-     */
-    public function __construct($post = null)
+    final public function __construct(?WP_Post $post = null)
     {
         if ($post === null) {
-            $this->wpPost = (object)[];
-            $this->wpPost->post_type = static::POST_TYPE;
-            $this->wpPost->post_status = static::DEFAULT_POST_STATUS;
-            $this->wpPost->comment_status = static::DEFAULT_COMMENT_STATUS;
-            $this->wpPost->ping_status = static::DEFAULT_PING_STATUS;
-        } elseif ($post instanceof WP_Post) {
-            $this->wpPost = $post;
-        } elseif (is_numeric($post)) {
-            trigger_error('Constructed PostModel with ID. Use PostModel::find instead.', E_USER_DEPRECATED);
-            $this->wpPost = get_post($post);
+            $this->wpPost = new WP_Post((object)[
+                'post_type' => static::POST_TYPE,
+                'post_status' => static::DEFAULT_POST_STATUS,
+                'comment_status' => static::DEFAULT_COMMENT_STATUS,
+                'ping_status' => static::DEFAULT_PING_STATUS
+            ]);
         } else {
-            trigger_error('PostModel expects a WP_Post, NULL or integer as argument but got: ' . gettype($post));
+            $this->wpPost = $post;
         }
-
-        $this->init();
-    }
-
-    /** This method is called at the end of the PostModel constructor */
-    protected function init(): void
-    {
-        // Does nothing unless overriden by parent
     }
 
     /**

@@ -35,22 +35,15 @@ class TermModel implements TermModelInterface
     /** @var array{slug?: string, description?: string, parent?: int} */
     private array $args = [];
 
-    /** @final */
-    public function __construct(int|null|WP_Term $term)
+    final public function __construct(?WP_Term $term)
     {
-        if ($term instanceof WP_Term) {
+        if ($term) {
             $this->wpTerm = $term;
-        } elseif (is_numeric($term)) {
-            trigger_error('Constructed TermModel with ID. Use TermModel::find instead.', E_USER_DEPRECATED);
-            $retrievedTerm = get_term($term, static::TAXONOMY);
-            if ($retrievedTerm instanceof WP_Term) {
-                $this->wpTerm = $retrievedTerm;
-            }
+        } else {
+            $this->wpTerm = new WP_Term((object)[]);
         }
 
-        if (isset($this->wpTerm)) {
-            $this->id = $this->wpTerm->term_id;
-        }
+        $this->id = $this->wpTerm->term_id;
 
         $this->init();
     }
