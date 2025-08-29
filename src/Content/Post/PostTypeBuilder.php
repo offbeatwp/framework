@@ -229,7 +229,7 @@ final class PostTypeBuilder
                 $metaValue = get_post_meta($postId, $metaName, true);
 
                 if ($callback) {
-                    $model = new $this->modelClass($postId);
+                    $model = $this->modelClass::find($postId);
                     echo $callback($model, $metaValue);
                 } else {
                     echo $metaValue;
