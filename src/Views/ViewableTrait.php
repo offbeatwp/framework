@@ -60,11 +60,9 @@ trait ViewableTrait
 
     public function setRecursiveParentViewsPath(): void
     {
-        $reflector = new ReflectionClass($this);
-        $fn = $reflector->getFileName();
-
+        /** @var string $fn */
+        $fn = (new ReflectionClass($this))->getFileName();
         $path = dirname($fn);
-
         $this->setRecursiveViewsPath($path, 10);
     }
 
@@ -99,8 +97,9 @@ trait ViewableTrait
             return;
         }
 
-        $reflector = new ReflectionClass($this);
-        $directory = dirname($reflector->getFileName());
+        /** @var string $fn */
+        $fn = (new ReflectionClass($this))->getFileName();
+        $directory = dirname($fn);
         $this->view->addTemplatePath($directory . '/views');
     }
 }

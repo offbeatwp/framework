@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Views;
 
+use DateTimeZone;
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
 use WP_Post;
@@ -264,7 +265,7 @@ final class Wordpress
      * @param int[]|string $size
      * @param string[] $classes
      * @param string[]|false[] $attributes
-     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string|false} $attributes $attributes
+     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string, fetchpriority?: string} $attributes $attributes
      */
     public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
     {
@@ -280,7 +281,7 @@ final class Wordpress
     }
 
     /** @param int[][]|string[] $sizes */
-    public function getAttachmentImageSrcSet(int $attachmentId, $sizes = ['thumbnail']): string
+    public function getAttachmentImageSrcSet(int $attachmentId, array $sizes = ['thumbnail']): string
     {
         $srcSet = [];
 
@@ -293,19 +294,6 @@ final class Wordpress
         }
 
         return implode(', ', $srcSet);
-    }
-
-    /**
-     * @deprecated
-     * @param string|int|bool $date
-     */
-    public function formatDate(?string $format, $date, bool $strtotime = false): string
-    {
-        if ($strtotime) {
-            $date = strtotime($date);
-        }
-
-        return date_i18n($format, $date);
     }
 
     /** After looping through a separate query, this function restores the $post global to the current post in the main query. */
@@ -396,15 +384,6 @@ final class Wordpress
     public function getCurrentUser(): ?UserModel
     {
         return UserModel::getCurrentUser();
-    }
-
-    /** @param 'header'|'footer' $part */
-    public function getBlockTemplatePart(string $part): string
-    {
-        ob_start();
-        block_template_part($part);
-
-        return ob_get_clean();
     }
 
     /**
