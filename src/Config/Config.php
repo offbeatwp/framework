@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Config;
 
+use InvalidArgumentException;
 use OffbeatWP\Foundation\App;
 use OffbeatWP\Helpers\ArrayHelper;
 
@@ -98,26 +99,17 @@ final class Config
         }
     }
 
-    /**
-     * @param string $key
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config
-     */
-    public function get(string $key, bool $collect = true)
+    /** @return string|float|int|bool|null|mixed[]|object */
+    public function get(string $key, bool $collect = true): string|float|int|bool|null|array|object
     {
         $keys = explode('.', $key);
         if ($keys[0]) {
             $this->loadConfig($keys[0]);
         } else {
-            trigger_error('Config::get $key must be a non-falsy string.', E_USER_DEPRECATED);
+            throw new InvalidArgumentException('Config::get $key must be a non-falsy string.');
         }
 
-        $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
-
-        if (is_array($result)) {
-            return $collect ? collect($result) : $result;
-        }
-
-        return $result;
+        return ArrayHelper::getValueFromStringArray($keys, $this->config);
     }
 
     /**
