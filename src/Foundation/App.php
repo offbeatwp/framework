@@ -7,6 +7,7 @@ use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Helper\CreateDefinitionHelper;
 use DI\Definition\Helper\DefinitionHelper;
+use InvalidArgumentException;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Config\Config;
@@ -22,7 +23,7 @@ final class App
 {
     private static ?App $instance = null;
 
-    /** @var AbstractService[] */
+    /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
     public Container $container;
     protected ?Config $config = null;
@@ -71,17 +72,17 @@ final class App
     /** @param \DI\ContainerBuilder<Container> $containerBuilder */
     private function initiateServices(ContainerBuilder $containerBuilder): void
     {
-        $services = config('services');
+        $services = config('services', false);
 
-        if (is_object($services) && $services->isNotEmpty()) {
-            $services->each(function ($service) use ($containerBuilder) {
+        if (is_array($services)) {
+            foreach ($services as $service) {
                 $this->initiateService($service, $containerBuilder);
-            });
+            }
         }
     }
 
     /**
-     * @param string $serviceClass
+     * @param class-string<AbstractService> $serviceClass
      * @param \DI\ContainerBuilder<Container> $containerBuilder
      */
     private function initiateService(string $serviceClass, ContainerBuilder $containerBuilder): void
@@ -105,7 +106,7 @@ final class App
 
             $this->markServiceAsInitiated($service);
         } else {
-            trigger_error('Class for service "' . $serviceClass . '" could not be found.');
+            throw new InvalidArgumentException('Service "' . esc_html__($serviceClass) . '" could not be found.');
         }
     }
 
@@ -118,14 +119,13 @@ final class App
         }
     }
 
-    /** @return false|AbstractService */
-    public function getService(string $serviceClass)
+    public function getService(string $serviceClass): ?AbstractService
     {
         if ($this->isServiceInitiated($serviceClass)) {
             return $this->services[$serviceClass];
         }
 
-        return false;
+        return null;
     }
 
     public function isServiceInitiated(string $serviceClass): bool
@@ -133,17 +133,13 @@ final class App
         return (isset($this->services[$serviceClass]));
     }
 
-    public function markServiceAsInitiated(object $service): void
+    public function markServiceAsInitiated(AbstractService $service): void
     {
         $this->services[$service::class] = $service;
     }
 
-    /**
-     * @param string $abstract
-     * @param mixed|DefinitionHelper|Closure $concrete
-     * @return void
-     */
-    public function bind($abstract, $concrete)
+    /** @param mixed|DefinitionHelper|Closure $concrete */
+    public function bind(string $abstract, $concrete): void
     {
         $this->container->set($abstract, $concrete);
     }
@@ -162,14 +158,9 @@ final class App
         return $this->config;
     }
 
-    /**
-     * @param string|null $config
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
-     */
-    public function config(?string $config, bool $collect = true)
+    public function config(string $config, bool $collect = true): mixed
     {
-        $instance = $this->getConfigInstance();
-        return $config === null ? $instance : $instance->get($config, $collect);
+        return $this->getConfigInstance()->get($config, $collect);
     }
 
     /** @return mixed[] */
