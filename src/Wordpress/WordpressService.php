@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Wordpress;
 
-use Illuminate\Support\Collection;
 use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
@@ -41,33 +40,33 @@ final class WordpressService
 
     public function registerMenus(): void
     {
-        $menus = config('menus');
+        $menus = config('menus', false);
 
-        if ($menus instanceof Collection && $menus->isNotEmpty()) {
-            register_nav_menus($menus->toArray());
+        if (is_array($menus) && $menus) {
+            register_nav_menus($menus);
         }
     }
 
     public function registerImageSizes(): void
     {
-        $images = config('images');
+        $images = config('images', false);
 
-        if (is_object($images) && $images->isNotEmpty()) {
-            $images->each(function ($image, $key) {
+        if (is_array($images) && $images) {
+            foreach ($images as $key => $image) {
                 add_image_size($key, $image['width'], $image['height'], $image['crop']);
-            });
+            }
         }
     }
 
     public function registerSidebars(): void
     {
-        $sidebars = config('sidebars');
+        $sidebars = config('sidebars', false);
 
-        if (is_object($sidebars) && $sidebars->isNotEmpty()) {
-            $sidebars->each(function ($sidebar, $id) {
+        if (is_array($sidebars) && $sidebars) {
+            foreach ($sidebars as $id => $sidebar) {
                 $sidebar['id'] = $id;
                 register_sidebar($sidebar);
-            });
+            }
         }
     }
 
@@ -84,12 +83,8 @@ final class WordpressService
         });
     }
 
-    /**
-     * @param string $template
-     * @param mixed[] $data
-     * @return string
-     */
-    public function applyPageTemplate($template, $data)
+    /** @param mixed[] $data */
+    public function applyPageTemplate(string $template, array $data): string
     {
         if (is_singular('page') && empty($data['ignore_page_template'])) {
             $pageTemplate = get_post_meta(get_the_ID(), '_wp_page_template', true);
