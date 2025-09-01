@@ -101,7 +101,7 @@ final class Config
 
     /**
      * @param string $key
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config
+     * @return object|string|float|int|bool|null|mixed[]
      */
     public function get(string $key, bool $collect = false)
     {
