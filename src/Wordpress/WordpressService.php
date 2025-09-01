@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Wordpress;
 
-use Illuminate\Support\Collection;
 use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
@@ -43,8 +42,8 @@ final class WordpressService
     {
         $menus = config('menus');
 
-        if ($menus instanceof Collection && $menus->isNotEmpty()) {
-            register_nav_menus($menus->toArray());
+        if ($menus && is_array($menus)) {
+            register_nav_menus($menus);
         }
     }
 
