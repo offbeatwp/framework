@@ -10,11 +10,7 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('config')) {
-    /**
-     * @param string|null $config
-     * @return mixed
-     */
-    function config(?string $config = null, bool $collect = true)
+    function config(?string $config = null, bool $collect = true): mixed
     {
         return App::singleton()->config($config, $collect);
     }
@@ -42,6 +38,6 @@ if (!function_exists('assetUrl')) {
 if (!function_exists('setting')) {
     function setting(string $key): mixed
     {
-        return null;
+        return get_option('options_' . $key);
     }
 }
