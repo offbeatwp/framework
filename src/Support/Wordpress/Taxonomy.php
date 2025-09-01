@@ -4,7 +4,6 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
-use Symfony\Component\HttpFoundation\Request;
 use WP_Term;
 
 final class Taxonomy
@@ -19,19 +18,14 @@ final class Taxonomy
      * @param string|string[] $postTypes Object types with which the taxonomy should be associated.
      * @param string $pluralName Optional. Can also be set through the labels method.
      * @param string $singleName Optional. Can also be set through the labels method.
-     * @return TaxonomyBuilder
      */
-    public static function make(string $name, $postTypes, string $pluralName = '', string $singleName = ''): TaxonomyBuilder
+    public static function make(string $name, string|array $postTypes, string $pluralName = '', string $singleName = ''): TaxonomyBuilder
     {
         return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }
 
-    /**
-     * @param string $taxonomy
-     * @param class-string<TermModel> $modelClass
-     * @return void
-     */
-    public function registerTermModel(string $taxonomy, string $modelClass)
+    /** @param class-string<TermModel> $modelClass */
+    public function registerTermModel(string $taxonomy, string $modelClass): void
     {
         $this->taxonomyModels[$taxonomy] = $modelClass;
     }
@@ -42,32 +36,17 @@ final class Taxonomy
         return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
-    /**
-     * @deprecated Use convertWpTermToModel instead
-     * @see convertWpTermToModel
-     * @return TermModel
-     */
-    public function convertWpPostToModel(WP_Term $term)
-    {
-        trigger_error('Deprecated convertWpPostToModel called in Taxonomy. Use convertWpTermToModel instead.', E_USER_DEPRECATED);
-        return $this->convertWpTermToModel($term);
-    }
-
-    /** @return TermModel */
-    public function convertWpTermToModel(WP_Term $term)
+    public function convertWpTermToModel(WP_Term $term): TermModel
     {
         $model = $this->getModelByTaxonomy($term->taxonomy);
-
         return new $model($term);
     }
 
     /**
      * Get a taxonomy by either the WP_TERM or the taxonomy's ID
      * Attempts to get the currently queried object if no parameter is passed
-     * @param WP_Term|int|null $term
-     * @return TermModel|null
      */
-    public function get($term = null)
+    public function get(WP_Term|int|null $term = null): ?TermModel
     {
         if ($term instanceof WP_Term) {
             return $this->convertWpTermToModel($term);
@@ -89,25 +68,5 @@ final class Taxonomy
         }
 
         return null;
-    }
-
-    public function maybeRedirect(TermModel $term): void
-    {
-        $request = Request::create($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $_REQUEST, $_COOKIE, [], $_SERVER);
-        $requestUri = $request->getPathInfo();
-
-        $url = $term->getLink();
-        $url = str_replace(home_url(), '', $url);
-        $urlPath = parse_url($url, PHP_URL_PATH);
-
-        if (rtrim($requestUri, '/') !== rtrim($urlPath, '/')) {
-            $url = $term->getLink();
-
-            if (!empty($_GET)) {
-                $url .= '?' . http_build_query($_GET);
-            }
-
-            offbeat('http')->redirect($url);
-        }
     }
 }
