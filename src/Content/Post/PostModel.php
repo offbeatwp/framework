@@ -492,7 +492,7 @@ class PostModel implements PostModelInterface
      */
     public function getTerms($taxonomy, $unused = []): TermQueryBuilder
     {
-        $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
+        $model = container('taxonomy')->getModelByTaxonomy($taxonomy);
 
         return $model::query()->whereRelatedToPost($this->getId());
     }
@@ -613,7 +613,7 @@ class PostModel implements PostModelInterface
 
         if ($this->hasParent()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
-                $ancestor = offbeat('post')->get($ancestorId);
+                $ancestor = container('post')->get($ancestorId);
                 if ($ancestor) {
                     $ancestors->push($ancestor);
                 }
@@ -654,7 +654,7 @@ class PostModel implements PostModelInterface
         }
 
         if ($adjacentPost) {
-            return offbeat('post')->convertWpPostToModel($adjacentPost);
+            return container('post')->convertWpPostToModel($adjacentPost);
         }
 
         return null;
@@ -923,7 +923,7 @@ class PostModel implements PostModelInterface
      */
     final public static function current(): ?static
     {
-        $post = offbeat('post')->get();
+        $post = container('post')->get();
         return ($post instanceof static) ? $post : null;
     }
 

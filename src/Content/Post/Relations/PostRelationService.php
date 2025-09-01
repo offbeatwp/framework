@@ -18,8 +18,8 @@ class PostRelationService extends AbstractService
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
         add_filter('posts_clauses', [$this, 'insertFieldsSql'], 10, 2);
 
-        if (offbeat('console')::isConsole()) {
-            offbeat('console')->register(Install::class);
+        if (container('console')::isConsole()) {
+            container('console')->register(Install::class);
         }
     }
 

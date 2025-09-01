@@ -3,17 +3,8 @@
 use OffbeatWP\Foundation\App;
 
 if (!function_exists('offbeat')) {
-    /**
-     * @template T
-     * @param class-string<T>|string|null $service
-     * @return T
-     */
-    function offbeat(?string $service = null)
+    function offbeat(): App
     {
-        if ($service !== null) {
-            return container($service);
-        }
-
         return App::singleton();
     }
 }
@@ -32,38 +23,24 @@ if (!function_exists('config')) {
 if (!function_exists('container')) {
     /**
      * @template T
-     * @param class-string<T>|string|null $definition
+     * @param class-string<T>|string $definition
      * @return T
      */
-    function container(?string $definition = null)
+    function container(string $definition)
     {
-        $app = App::singleton();
-
-        if ($definition !== null) {
-            return $app->container->get($definition);
-        }
-
-        return $app->container;
+        return App::singleton()->container->get($definition);
     }
 }
 
 if (!function_exists('assetUrl')) {
-    /**
-     * @param string $file
-     * @return false|string
-     */
-    function assetUrl(string $file)
+    function assetUrl(string $file): ?string
     {
-        return offbeat('assets')->getUrl($file);
+        return container('assets')->getUrl($file);
     }
 }
 
 if (!function_exists('setting')) {
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    function setting($key)
+    function setting(string $key): mixed
     {
         return null;
     }

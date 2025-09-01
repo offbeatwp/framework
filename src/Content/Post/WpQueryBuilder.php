@@ -32,7 +32,7 @@ class WpQueryBuilder
      */
     public function postToModel($post)
     {
-        return offbeat('post')->convertWpPostToModel($post);
+        return container('post')->convertWpPostToModel($post);
     }
 
     /**
@@ -84,7 +84,7 @@ class WpQueryBuilder
         }
 
         foreach ($this->runQuery()->get_posts() as $post) {
-            yield offbeat('post')->convertWpPostToModel($post);
+            yield container('post')->convertWpPostToModel($post);
         }
     }
 

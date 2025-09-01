@@ -373,7 +373,7 @@ final class TaxonomyBuilder
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);
 
         if ($this->modelClass !== null) {
-            offbeat('taxonomy')->registerTermModel($this->taxonomy, $this->modelClass);
+            container('taxonomy')->registerTermModel($this->taxonomy, $this->modelClass);
         }
     }
 }
