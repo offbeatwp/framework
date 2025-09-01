@@ -99,11 +99,7 @@ final class Config
         }
     }
 
-    /**
-     * @param string $key
-     * @return object|string|float|int|bool|null|mixed[]
-     */
-    public function get(string $key, bool $collect = false)
+    public function get(string $key): mixed
     {
         $keys = explode('.', $key);
         if ($keys[0]) {
