@@ -166,10 +166,10 @@ final class App
      * @param string|null $config
      * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|Config
      */
-    public function config(?string $config)
+    public function config(?string $config, bool $collect = true)
     {
         $instance = $this->getConfigInstance();
-        return $config === null ? $instance : $instance->get($config);
+        return $config === null ? $instance : $instance->get($config, $collect);
     }
 
     /** @return mixed[] */

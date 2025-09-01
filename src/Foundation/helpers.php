@@ -23,9 +23,9 @@ if (!function_exists('config')) {
      * @param string|null $config
      * @return mixed
      */
-    function config(?string $config = null)
+    function config(?string $config = null, bool $collect = true)
     {
-        return App::singleton()->config($config);
+        return App::singleton()->config($config, $collect);
     }
 }
 

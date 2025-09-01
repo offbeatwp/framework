@@ -12,8 +12,6 @@
     "php-di/php-di": "^7.0.6",
     "illuminate/collections": "^v10.48.11",
     "illuminate/macroable": "^v10.48.11",
-    "symfony/routing": "^v6.4.7",
-    "symfony/http-foundation": "^v6.4.7",
     "ext-dom": "*"
   },
   "autoload": {
