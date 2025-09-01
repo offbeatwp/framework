@@ -10,7 +10,7 @@ final class AssetsManager
     public stdClass|null|false $manifest = null;
     public stdClass|null|false $entrypoints = null;
 
-    public function getUrl(string $filename): false|string
+    public function getUrl(string $filename): ?string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
@@ -23,7 +23,7 @@ final class AssetsManager
         }
 
         trigger_error('Could not retrieve url from asset manifest: ' . $filename, E_USER_WARNING);
-        return false;
+        return null;
     }
 
     public function getPath(string $filename): false|string

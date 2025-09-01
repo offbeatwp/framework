@@ -239,7 +239,7 @@ class TermModel implements TermModelInterface
     /** Retrieves the current term from the wordpress loop, provided the TermModel is or extends the TermModel class that it is called on. */
     final public static function current(): ?static
     {
-        $taxonomy = offbeat('taxonomy')->get();
+        $taxonomy = container('taxonomy')->get();
         return ($taxonomy instanceof static) ? $taxonomy : null;
     }
 

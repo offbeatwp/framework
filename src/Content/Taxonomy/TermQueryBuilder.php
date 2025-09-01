@@ -95,7 +95,7 @@ final class TermQueryBuilder
         $terms = $this->runQuery()->get_terms();
 
         foreach ($terms as $term) {
-            $model = offbeat('taxonomy')->convertWpTermToModel($term);
+            $model = container('taxonomy')->convertWpTermToModel($term);
 
             if ($this->modelClass && !$model instanceof $this->modelClass) {
                 throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
@@ -232,7 +232,7 @@ final class TermQueryBuilder
         $result = $this->first();
 
         if (!$result) {
-            $model = offbeat('taxonomy')->getModelByTaxonomy($this->taxonomy);
+            $model = container('taxonomy')->getModelByTaxonomy($this->taxonomy);
             return new $model(null);
         }
 

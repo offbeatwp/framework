@@ -36,7 +36,7 @@ class PostsCollection extends OffbeatModelCollection
 
             if ($items->posts) {
                 foreach ($items->posts as $post) {
-                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
+                    $postItems[] = container('post')->convertWpPostToModel($post);
                 }
             }
         } elseif (is_iterable($items)) {
@@ -59,7 +59,7 @@ class PostsCollection extends OffbeatModelCollection
         }
 
         if (is_int($item) || $item instanceof WP_Post) {
-            return offbeat('post')->get($item);
+            return container('post')->get($item);
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');

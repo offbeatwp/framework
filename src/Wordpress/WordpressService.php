@@ -73,7 +73,7 @@ final class WordpressService extends AbstractService
     public function registerPageTemplate(): void
     {
         add_filter('theme_page_templates', function ($postTemplates) {
-            $pageTemplates = offbeat('page')->getPageTemplates();
+            $pageTemplates = container('page')->getPageTemplates();
 
             if (is_array($pageTemplates)) {
                 $postTemplates = array_merge($postTemplates, $pageTemplates);

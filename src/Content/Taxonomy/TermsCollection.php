@@ -69,7 +69,7 @@ class TermsCollection extends OffbeatModelCollection
         }
 
         if (is_int($item) || $item instanceof WP_Term) {
-            return offbeat('taxonomy')->get($item);
+            return container('taxonomy')->get($item);
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a TermModel.');

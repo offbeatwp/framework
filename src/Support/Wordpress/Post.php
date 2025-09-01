@@ -9,7 +9,7 @@ final class Post
 {
     public function convertWpPostToModel(WP_Post $post): PostModel
     {
-        $model = offbeat('post-type')->getModelByPostType($post->post_type);
+        $model = container('post-type')->getModelByPostType($post->post_type);
         return new $model($post);
     }
 
