@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Wordpress;
 
+use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
@@ -12,7 +13,7 @@ use OffbeatWP\Support\Wordpress\PostType;
 use OffbeatWP\Support\Wordpress\RestApi;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 
-final class WordpressService
+final class WordpressService extends AbstractService
 {
     /** @var class-string[] */
     public array $bindings = [
