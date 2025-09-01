@@ -51,10 +51,10 @@ final class WordpressService
     {
         $images = config('images');
 
-        if (is_object($images) && $images->isNotEmpty()) {
-            $images->each(function ($image, $key) {
+        if (is_array($images) && $images) {
+            foreach ($images as $key => $image) {
                 add_image_size($key, $image['width'], $image['height'], $image['crop']);
-            });
+            }
         }
     }
 
@@ -62,11 +62,11 @@ final class WordpressService
     {
         $sidebars = config('sidebars');
 
-        if (is_object($sidebars) && $sidebars->isNotEmpty()) {
-            $sidebars->each(function ($sidebar, $id) {
+        if (is_array($sidebars) && $sidebars) {
+            foreach ($sidebars as $id => $sidebar) {
                 $sidebar['id'] = $id;
                 register_sidebar($sidebar);
-            });
+            }
         }
     }
 

@@ -73,10 +73,10 @@ final class App
     {
         $services = config('services');
 
-        if (is_object($services) && $services->isNotEmpty()) {
-            $services->each(function ($service) use ($containerBuilder) {
+        if (is_array($services) && $services) {
+            foreach ($services as $service) {
                 $this->initiateService($service, $containerBuilder);
-            });
+            }
         }
     }
 
