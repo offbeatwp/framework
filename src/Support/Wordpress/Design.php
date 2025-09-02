@@ -4,8 +4,9 @@ namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
 use Illuminate\Support\Collection;
+use OffbeatWP\Common\Singleton;
 
-final class Design
+final class Design extends Singleton
 {
     /**
      * @param string $id

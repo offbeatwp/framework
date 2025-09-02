@@ -20,7 +20,7 @@ trait ViewableTrait
      */
     public function view(string $name, array $data = [])
     {
-        $view = App::singleton()->container->get(View::class);
+        $view = App::getInstance()->container->get(View::class);
         $this->view = $view;
 
         $this->setTemplatePaths();
@@ -49,8 +49,8 @@ trait ViewableTrait
 
         $moduleClass = $matches[0] . '\\' . $matches[1];
 
-        if (App::singleton()->container->has($moduleClass)) {
-            $module = App::singleton()->container->get($moduleClass);
+        if (App::getInstance()->container->has($moduleClass)) {
+            $module = App::getInstance()->container->get($moduleClass);
 
             $this->view->addTemplatePath($module->getViewsDirectory());
         }

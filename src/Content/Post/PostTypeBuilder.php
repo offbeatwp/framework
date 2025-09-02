@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use OffbeatWP\Support\Wordpress\PostType;
 use WP_Post;
 use WP_Query;
 
@@ -451,7 +452,7 @@ final class PostTypeBuilder
         register_post_type($this->postType, $this->postTypeArgs);
 
         if ($this->modelClass !== null) {
-            container('post-type')->registerPostModel($this->postType, $this->modelClass);
+            PostType::getInstance()->registerPostModel($this->postType, $this->modelClass);
         }
     }
 }

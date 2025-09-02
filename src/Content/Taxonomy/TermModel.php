@@ -8,6 +8,7 @@ use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -190,7 +191,7 @@ class TermModel implements TermModelInterface
     /** Retrieves the current term from the wordpress loop, provided the TermModel is or extends the TermModel class that it is called on. */
     final public static function current(): ?static
     {
-        $taxonomy = container('taxonomy')->get();
+        $taxonomy = Taxonomy::getInstance()->get();
         return ($taxonomy instanceof static) ? $taxonomy : null;
     }
 

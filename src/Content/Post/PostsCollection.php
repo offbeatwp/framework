@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\Post;
 use DOMDocument;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
+use OffbeatWP\Support\Wordpress\Post;
 use TypeError;
 use WP_Post;
 use WP_Query;
@@ -36,7 +37,7 @@ class PostsCollection extends OffbeatModelCollection
 
             if ($items->posts) {
                 foreach ($items->posts as $post) {
-                    $postItems[] = container('post')->convertWpPostToModel($post);
+                    $postItems[] = Post::getInstance()->convertWpPostToModel($post);
                 }
             }
         } elseif (is_iterable($items)) {
@@ -59,7 +60,7 @@ class PostsCollection extends OffbeatModelCollection
         }
 
         if (is_int($item) || $item instanceof WP_Post) {
-            return container('post')->get($item);
+            return Post::getInstance()->get($item);
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');

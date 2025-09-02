@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Taxonomy;
 
 use ArrayIterator;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use TypeError;
 use WP_Term;
 
@@ -69,7 +70,7 @@ class TermsCollection extends OffbeatModelCollection
         }
 
         if (is_int($item) || $item instanceof WP_Term) {
-            return container('taxonomy')->get($item);
+            return Taxonomy::getInstance()->get($item);
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a TermModel.');

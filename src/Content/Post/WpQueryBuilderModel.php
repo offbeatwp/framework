@@ -46,11 +46,8 @@ final class WpQueryBuilderModel extends WpQueryBuilder
         return $this->first() ?: new $this->modelClass(null);
     }
 
-    /**
-     * @param WP_Post|int|null $post
-     * @phpstan-return TValue|PostModel|null
-     */
-    public function postToModel($post)
+    /** @phpstan-return TValue|PostModel|null */
+    public function postToModel(WP_Post $post): ?PostModel
     {
         if ($this->modelClass === PostModel::class) {
             return parent::postToModel($post);

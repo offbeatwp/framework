@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_REST_Response;
 use WP_Taxonomy;
 
@@ -241,25 +242,6 @@ final class TaxonomyBuilder
         return $this;
     }
 
-    /**
-     * @deprecated Does not work with Gutenberg editor.<br>Tip: Advanced Custom Fields has a good way to do this with the save/load term options.
-     * @return $this
-     */
-    public function useCheckboxes()
-    {
-        $this->metaBox('post_categories_meta_box');
-
-        add_filter('post_edit_category_parent_dropdown_args', function ($args) {
-            if ($args['taxonomy'] === $this->taxonomy) {
-                $args['echo'] = false;
-            }
-
-            return $args;
-        });
-
-        return $this;
-    }
-
     /** @return $this */
     public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null)
     {
@@ -373,7 +355,7 @@ final class TaxonomyBuilder
         register_taxonomy($this->taxonomy, $this->postTypes, $this->args);
 
         if ($this->modelClass !== null) {
-            container('taxonomy')->registerTermModel($this->taxonomy, $this->modelClass);
+            Taxonomy::getInstance()->registerTermModel($this->taxonomy, $this->modelClass);
         }
     }
 }
