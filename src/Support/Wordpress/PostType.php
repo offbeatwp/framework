@@ -20,7 +20,7 @@ final class PostType extends Singleton
      * @return PostTypeBuilder
      * @see sanitize_key()
      */
-    public static function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
+    public function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
     {
         return (new PostTypeBuilder())->make($name, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }

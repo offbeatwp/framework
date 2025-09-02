@@ -9,7 +9,7 @@ use WP_Term;
 
 final class Taxonomy extends Singleton
 {
-    public const DEFAULT_TERM_MODEL = TermModel::class;
+    public const string DEFAULT_TERM_MODEL = TermModel::class;
 
     /** @var class-string<TermModel>[] */
     private array $taxonomyModels = [];
@@ -20,7 +20,7 @@ final class Taxonomy extends Singleton
      * @param string $pluralName Optional. Can also be set through the labels method.
      * @param string $singleName Optional. Can also be set through the labels method.
      */
-    public static function make(string $name, string|array $postTypes, string $pluralName = '', string $singleName = ''): TaxonomyBuilder
+    public function make(string $name, string|array $postTypes, string $pluralName = '', string $singleName = ''): TaxonomyBuilder
     {
         return (new TaxonomyBuilder())->make($name, $postTypes, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }
