@@ -29,13 +29,15 @@ if (!function_exists('container')) {
 }
 
 if (!function_exists('assetUrl')) {
-    function assetUrl(string $file): ?string
+    /** @deprecated */
+    function assetUrl(string $file): string
     {
-        return null;
+        return '';
     }
 }
 
 if (!function_exists('setting')) {
+    /** @deprecated */
     function setting(string $key): mixed
     {
         return get_option('options_' . $key);
