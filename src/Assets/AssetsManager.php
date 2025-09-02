@@ -2,52 +2,57 @@
 
 namespace OffbeatWP\Assets;
 
-use OffbeatWP\Exceptions\OffbeatAssetException;
+use RuntimeException;
 
 final class AssetsManager
 {
-    /** @var mixed[]|null */
+    /** @var array<string, array{js?: list<string>, css?: list<string>}>|null */
     private ?array $entrypoints = null;
 
     /**
-     * @return mixed[]
+     * @return array<string, array{js?: list<string>, css?: list<string>}>
      * @throws \JsonException
-     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     * @throws \RuntimeException
      */
     private function getAssetsEntryPoints(): array
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
-            if (!file_exists($path)) {
-                throw new OffbeatAssetException('Asset entrypoints file not found at: ' . esc_html($path));
-            }
 
-            $entrypoints = json_decode(file_get_contents($path), true, 8, JSON_THROW_ON_ERROR);
-            if (!is_array($entrypoints)) {
-                throw new OffbeatAssetException('Asset entrypoints should be decoded into an array, but was decoded as: ' . gettype($entrypoints));
+            if (file_exists($path)) {
+                $data = json_decode(file_get_contents($path), true, 8, JSON_THROW_ON_ERROR);
+                if (!is_array($data) || !array_key_exists('entrypoints', $data) || !is_array($data['entrypoints'])) {
+                    throw new RuntimeException('Asset entrypoints should be decoded into an array, but was decoded as: ' . gettype($data));
+                }
+
+                $entrypoints = $data['entrypoints'];
+            } else {
+                trigger_error('The entrypoints.json file could not be found!', E_USER_WARNING);
+                $entrypoints = [];
             }
 
             $this->entrypoints = $entrypoints;
         }
 
+        var_dump($this->entrypoints);
         return $this->entrypoints;
     }
 
     /**
-     * @return mixed[]
+     * @return list<string>
      * @throws \JsonException
-     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     * @throws \RuntimeException
      */
     private function getAssetsByEntryPoint(string $entry, string $key): array
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
-        if (empty($entrypoints['entrypoints'][$entry][$key])) {
+        if (empty($entrypoints[$entry][$key])) {
             trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
             return [];
         }
 
-        return $entrypoints['entrypoints'][$entry][$key];
+        return $entrypoints[$entry][$key];
     }
 
     public function getAssetsPath(string $path = '', bool $forceAssetsPath = false): string
@@ -91,7 +96,7 @@ final class AssetsManager
     /**
      * @param array<int, string> $dependencies
      * @throws \JsonException
-     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     * @throws \RuntimeException
      */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
@@ -122,7 +127,7 @@ final class AssetsManager
      * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
      * @return \OffbeatWP\Assets\WpScriptAsset
      * @throws \JsonException
-     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     * @throws \RuntimeException
      */
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
