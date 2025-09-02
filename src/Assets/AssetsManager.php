@@ -2,19 +2,18 @@
 
 namespace OffbeatWP\Assets;
 
-use InvalidArgumentException;
-use stdClass;
-
 final class AssetsManager
 {
-    public stdClass|null|false $manifest = null;
-    public stdClass|null|false $entrypoints = null;
+    /** @var mixed[]|null */
+    public ?array $manifest = null;
+    /** @var mixed[]|null */
+    public ?array $entrypoints = null;
 
     public function getUrl(string $filename): ?string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
-        if ($path !== false) {
+        if ($path !== null) {
             if (str_starts_with($path, 'http')) {
                 return $path;
             }
@@ -26,33 +25,37 @@ final class AssetsManager
         return null;
     }
 
-    public function getPath(string $filename): false|string
+    public function getPath(string $filename): ?string
     {
         $path = $this->getEntryFromAssetsManifest($filename);
 
-        if ($path !== false) {
+        if ($path !== null) {
             return $this->getAssetsPath($path);
         }
 
         trigger_error('Could not retrieve path from asset manifest: ' . $filename, E_USER_WARNING);
-        return false;
+        return null;
     }
 
-    public function getEntryFromAssetsManifest(string $filename): false|string
+    public function getEntryFromAssetsManifest(string $filename): ?string
     {
-        return $this->getAssetsManifest()->$filename ?? false;
+        return $this->getAssetsManifest()[$filename] ?? null;
     }
 
-    public function getAssetsManifest(): stdClass|false|null
+    /** @return mixed[] */
+    public function getAssetsManifest(): array
     {
         if ($this->manifest === null) {
             $path = $this->getAssetsPath('manifest.json', true);
 
             if (file_exists($path)) {
-                $this->manifest = json_decode(file_get_contents($path), false);
+                $manifest = json_decode(file_get_contents($path), true);
 
-                if ($this->manifest === false) {
+                if (is_array($manifest)) {
+                    $this->manifest = $manifest;
+                } else {
                     trigger_error('MANIFEST JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
+                    $this->manifest = [];
                 }
             }
         }
@@ -60,16 +63,20 @@ final class AssetsManager
         return $this->manifest;
     }
 
-    public function getAssetsEntryPoints(): stdClass|false|null
+    /** @return mixed[] */
+    public function getAssetsEntryPoints(): array
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
 
             if (file_exists($path)) {
-                $this->entrypoints = json_decode(file_get_contents($path), false);
+                $entrypoints = json_decode(file_get_contents($path), true);
 
-                if ($this->entrypoints === false) {
+                if (is_array($entrypoints)) {
+                    $this->entrypoints = $entrypoints;
+                } else {
                     trigger_error('ENTRYPOINT JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
+                    $this->entrypoints = [];
                 }
             }
         }
@@ -77,20 +84,17 @@ final class AssetsManager
         return $this->entrypoints;
     }
 
-    /** @return string[]|false */
-    public function getAssetsByEntryPoint(string $entry, string $key): array|false
+    /** @return mixed[] */
+    public function getAssetsByEntryPoint(string $entry, string $key): array
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
-        if (empty($entrypoints->entrypoints->$entry->$key)) {
-            if ($entrypoints !== null) {
-                trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
-            }
-
-            return false;
+        if (empty($entrypoints['entrypoints'][$entry][$key])) {
+            trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
+            return [];
         }
 
-        return $entrypoints->entrypoints->$entry->$key;
+        return $entrypoints['entrypoints'][$entry][$key];
     }
 
     public function getAssetsPath(string $path = '', bool $forceAssetsPath = false): string
@@ -102,16 +106,6 @@ final class AssetsManager
 
         if ($forceAssetsPath) {
             return $assetsPath . $path;
-        }
-
-        if (config('app.assets.from_site_root')) {
-            if (config('app.assets.root_path')) {
-                $basepath = config('app.assets.root_path');
-            } else {
-                $basepath = defined('ABSPATH') ? ABSPATH : null;
-            }
-
-            return $basepath . $path;
         }
 
         if ($assetsPath) {
@@ -130,13 +124,6 @@ final class AssetsManager
         $path = ltrim($path, '/');
         $path = ($path) ? "/{$path}" : '';
 
-        if (config('app.assets.from_site_root')) {
-            $url = get_site_url();
-
-            return $url . $path;
-        }
-
-
         $url = config('app.assets.url');
         if ($url) {
             return $url . $path;
@@ -149,7 +136,6 @@ final class AssetsManager
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
-        $dependencies = array_unique($dependencies);
 
         if ($assets) {
             foreach ($assets as $asset) {
@@ -192,15 +178,6 @@ final class AssetsManager
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
-        $autoIncludeJquery = apply_filters('offbeatwp/assets/include_jquery_by_default', true);
-
-        if ($autoIncludeJquery === 'jquery-core') {
-            $dependencies[] = 'jquery-core';
-        } elseif ($autoIncludeJquery) {
-            $dependencies[] = 'jquery';
-        }
-
-        $dependencies = array_unique($dependencies);
         $enqueueNow = false;
         $handle = '';
 
@@ -239,28 +216,5 @@ final class AssetsManager
         }
 
         return new WpScriptAsset($handle, $enqueueNow);
-    }
-
-    /**
-     * Retrieves the <b>primary</b> asset url for the given handle.
-     * @deprecated
-     * @param string $handle The handle
-     * @param string $assetType The type. Either <b>js</b> or <b>css</b>.
-     * @return non-empty-string|null
-     */
-    public function getAssetUrlByHandle(string $handle, string $assetType): ?string
-    {
-        trigger_error('AssetsManager::getAssetUrlByHandle is deprecated.', E_USER_DEPRECATED);
-
-        if ($assetType !== 'js' && $assetType !== 'css') {
-            throw new InvalidArgumentException('Type parameter must be either "js" or "css"');
-        }
-
-        $assets = $this->getAssetsByEntryPoint($handle, $assetType);
-        if ($assets) {
-            return $this->getAssetsUrl(ltrim($assets[0], './'));
-        }
-
-        return $this->getUrl($handle . '.' . $assetType) ?: null;
     }
 }
