@@ -2,33 +2,42 @@
 
 namespace OffbeatWP\Assets;
 
+use OffbeatWP\Exceptions\OffbeatAssetException;
+
 final class AssetsManager
 {
     /** @var mixed[]|null */
     private ?array $entrypoints = null;
 
-    /** @return mixed[] */
+    /**
+     * @return mixed[]
+     * @throws \JsonException
+     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     */
     private function getAssetsEntryPoints(): array
     {
         if ($this->entrypoints === null) {
             $path = $this->getAssetsPath('entrypoints.json', true);
-
-            if (file_exists($path)) {
-                $entrypoints = json_decode(file_get_contents($path), true);
-
-                if (is_array($entrypoints)) {
-                    $this->entrypoints = $entrypoints;
-                } else {
-                    trigger_error('ENTRYPOINT JSON ERROR - ' . json_last_error_msg(), E_USER_WARNING);
-                    $this->entrypoints = [];
-                }
+            if (!file_exists($path)) {
+                throw new OffbeatAssetException('Asset entrypoints file not found at: ' . esc_html($path));
             }
+
+            $entrypoints = json_decode(file_get_contents($path), true, 8, JSON_THROW_ON_ERROR);
+            if (!is_array($entrypoints)) {
+                throw new OffbeatAssetException('Asset entrypoints should be decoded into an array, but was decoded as: ' . gettype($entrypoints));
+            }
+
+            $this->entrypoints = $entrypoints;
         }
 
         return $this->entrypoints;
     }
 
-    /** @return mixed[] */
+    /**
+     * @return mixed[]
+     * @throws \JsonException
+     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     */
     private function getAssetsByEntryPoint(string $entry, string $key): array
     {
         $entrypoints = $this->getAssetsEntryPoints();
@@ -79,7 +88,11 @@ final class AssetsManager
         return get_template_directory_uri() . '/assets' . $path;
     }
 
-    /** @param array<int, string> $dependencies */
+    /**
+     * @param array<int, string> $dependencies
+     * @throws \JsonException
+     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
+     */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
@@ -107,6 +120,9 @@ final class AssetsManager
     /**
      * @param array<int, string> $dependencies
      * @param array{in_footer?: bool, strategy?: 'defer'|'async'} $args
+     * @return \OffbeatWP\Assets\WpScriptAsset
+     * @throws \JsonException
+     * @throws \OffbeatWP\Exceptions\OffbeatAssetException
      */
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
