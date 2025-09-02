@@ -45,7 +45,7 @@ class WpQueryBuilder
     private function getModelConst(string $type): ?string
     {
         if (defined("{$this->modelClass}::{$type}")) {
-            $value = $this->modelClass::$type;
+            $value = $this->modelClass::{$type};
 
             if (is_string($value)) {
                 return $value;
