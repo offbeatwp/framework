@@ -31,7 +31,7 @@ if (!function_exists('container')) {
 if (!function_exists('assetUrl')) {
     function assetUrl(string $file): ?string
     {
-        return container('assets')->getUrl($file);
+        return null;
     }
 }
 
