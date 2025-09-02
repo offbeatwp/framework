@@ -68,7 +68,7 @@ final class AssetsManager
         return get_template_directory() . '/assets' . $path;
     }
 
-    private function getAssetsUrl(string $path = ''): string
+    public function getAssetsUrl(string $path = ''): string
     {
         if (str_starts_with($path, 'http')) {
             return $path;
