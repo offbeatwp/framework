@@ -39,7 +39,7 @@ class PostModel implements PostModelInterface
     public const DEFAULT_COMMENT_STATUS = 'closed';
     public const DEFAULT_PING_STATUS = 'closed';
 
-    public WP_Post|stdClass|null $wpPost;
+    public ?WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var array<string, ""> */
@@ -681,11 +681,8 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    /**
-     * Get the <b>raw</b> post object
-     * @return WP_Post|object|null
-     */
-    public function getPostObject(): ?object
+    /** Get the <b>raw</b> post object */
+    public function getPostObject(): ?WP_Post
     {
         return $this->wpPost;
     }
@@ -693,17 +690,7 @@ class PostModel implements PostModelInterface
     /** Get the post object as WP_Post */
     final public function getWpPost(): WP_Post
     {
-        $post = $this->wpPost;
-
-        if ($post instanceof WP_Post) {
-            return $post;
-        }
-
-        if (!($post instanceof stdClass)) {
-            $post = (object)[];
-        }
-
-        return new WP_Post($post);
+        return $this->wpPost ?: new WP_Post((object)[]);
     }
 
     ///////////////////////
@@ -778,13 +765,15 @@ class PostModel implements PostModelInterface
     /** Returns the ID of the inserted/updated model, or <b>0</b> on failure */
     public function save(): int
     {
+        $postData = (array)$this->wpPost;
+
         if ($this->metaInput) {
-            $this->wpPost->meta_input = $this->metaInput;
+            $postData['meta_input'] = $this->metaInput;
         }
 
         if ($this->getId() === null) {
             // Insert post
-            $updatedPostId = wp_insert_post((array)$this->wpPost);
+            $updatedPostId = wp_insert_post($postData);
             $insertedPost = get_post($updatedPostId);
 
             // Set internal wpPost
@@ -793,7 +782,7 @@ class PostModel implements PostModelInterface
             }
         } else {
             // Update post
-            $updatedPostId = wp_update_post((array)$this->wpPost);
+            $updatedPostId = wp_update_post($postData);
 
             // Unset Meta
             if ($updatedPostId && is_int($updatedPostId)) {
