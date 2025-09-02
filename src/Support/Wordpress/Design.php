@@ -13,7 +13,7 @@ final class Design
      */
     public function getRowThemeClasses(string $id)
     {
-        $rowThemes  = config('design.row_themes');
+        $rowThemes = config('design.row_themes');
         if (!$rowThemes) {
             return null;
         }
@@ -21,7 +21,7 @@ final class Design
         $subId = null;
 
         if (str_contains($id, '**')) {
-            $ids   = explode('**', $id);
+            $ids   = explode('**', $id, 2);
             $id    = $ids[0];
             $subId = $ids[1];
         }
@@ -120,13 +120,11 @@ final class Design
         $margins = config('design.margins');
 
         if ($margins instanceof Closure) {
-            /** @var array<int, array{label: string}> $labelArray */
-            $labelArray = $margins($context);
-            $margins = collect($labelArray);
+            $margins = $margins($context);
         }
 
-        if ($margins instanceof Collection) {
-            return $margins->map(fn ($item) => $item['label'])->toArray();
+        if (is_array($margins)) {
+            return array_map(fn ($item) => $item['label'], $margins);
         }
 
         return [];
@@ -141,13 +139,11 @@ final class Design
         $paddings = config('design.paddings');
 
         if ($paddings instanceof Closure) {
-            /** @var array<int, array{label: string}> $labelArray */
-            $labelArray = $paddings($context);
-            $paddings = collect($labelArray);
+            $paddings = $paddings($context);
         }
 
-        if ($paddings instanceof Collection) {
-            return $paddings->map(fn ($item) => $item['label'])->toArray();
+        if (is_array($paddings)) {
+            return array_map(fn ($item) => $item['label'], $paddings);
         }
 
         return [];

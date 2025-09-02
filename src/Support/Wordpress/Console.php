@@ -8,11 +8,8 @@ use WP_CLI;
 
 final class Console
 {
-    /**
-     * @param AbstractCommand|class-string<AbstractCommand> $commandClass
-     * @return void
-     */
-    public function register($commandClass): void
+    /** @param AbstractCommand|class-string<AbstractCommand> $commandClass */
+    public function register(AbstractCommand|string $commandClass): void
     {
         if (!self::isConsole()) {
             return;
@@ -27,6 +24,6 @@ final class Console
 
     public static function isConsole(): bool
     {
-        return (defined('WP_CLI') && WP_CLI);
+        return defined('WP_CLI') && constant('WP_CLI');
     }
 }

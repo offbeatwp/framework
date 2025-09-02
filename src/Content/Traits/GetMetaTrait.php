@@ -190,15 +190,6 @@ trait GetMetaTrait
     }
 
     /**
-     * @deprecated Use <i>collect($model->getMetas())</i> instead
-     * @return Collection<int|string, mixed>
-     */
-    public function getMetaCollection(string $key): Collection
-    {
-        return collect($this->getMetaArray($key));
-    }
-
-    /**
      * @param string $metaKey
      * @param mixed[] $shape
      * @return mixed[]
