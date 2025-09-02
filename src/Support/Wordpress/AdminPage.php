@@ -2,9 +2,10 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
+use OffbeatWP\Common\Singleton;
 use OffbeatWP\Foundation\App;
 
-final class AdminPage
+final class AdminPage extends Singleton
 {
     /**
      * @param string $title The text to be displayed in the title tags of the page when the menu is selected.
@@ -26,13 +27,13 @@ final class AdminPage
 
             if ($callback) {
                 $callback = function () use ($callback) {
-                    App::singleton()->container->call($callback);
+                    App::getInstance()->container->call($callback);
                 };
             }
 
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capability, $callback) {
                 add_menu_page($title, $title, $capability, $slug, function () use ($callback) {
-                    App::singleton()->container->call($callback);
+                    App::getInstance()->container->call($callback);
                 }, $icon, $position);
             });
         }
@@ -55,7 +56,7 @@ final class AdminPage
 
             if ($callback) {
                 $callback = function () use ($callback) {
-                    App::singleton()->container->call($callback);
+                    App::getInstance()->container->call($callback);
                 };
             }
 

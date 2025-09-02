@@ -16,6 +16,8 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
+use OffbeatWP\Support\Wordpress\Post;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use stdClass;
 use WP_Post;
@@ -438,24 +440,16 @@ class PostModel implements PostModelInterface
         }
     }
 
-    /**
-     * @param string $taxonomy
-     * @param array{} $unused
-     * @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel>
-     */
-    public function getTerms($taxonomy, $unused = []): TermQueryBuilder
+    /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
+    public function getTerms(string $taxonomy): TermQueryBuilder
     {
-        $model = container('taxonomy')->getModelByTaxonomy($taxonomy);
+        $model = Taxonomy::getInstance()->getModelByTaxonomy($taxonomy);
 
         return $model::query()->whereRelatedToPost($this->getId());
     }
 
-    /**
-     * @param int[]|string[]|int|string $term
-     * @param string $taxonomy
-     * @return bool
-     */
-    public function hasTerm($term, string $taxonomy): bool
+    /** @param int[]|string[]|int|string $term */
+    public function hasTerm(array|int|string $term, string $taxonomy): bool
     {
         return has_term($term, $taxonomy, $this->getId());
     }
@@ -466,17 +460,17 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
+     * @param array{0: positive-int, 1: positive-int}|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @param int[]|string[]|string $attr
      * @return string The post thumbnail image tag.
      */
-    public function getFeaturedImage($size = 'thumbnail', $attr = []): string
+    public function getFeaturedImage(array|string $size = 'thumbnail', array|string $attr = []): string
     {
         return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
 
     /**
-     * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
+     * @param array{0: positive-int, 1: positive-int}|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
@@ -484,10 +478,9 @@ class PostModel implements PostModelInterface
         return get_the_post_thumbnail_url($this->wpPost, $size);
     }
 
-    /** @return false|int */
-    public function getFeaturedImageId()
+    public function getFeaturedImageId(): int
     {
-        return get_post_thumbnail_id($this->wpPost) ?: false;
+        return (int)get_post_thumbnail_id($this->wpPost);
     }
 
     /** @return $this */
@@ -522,7 +515,7 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        return (bool)$this->getParentId();
+        return (bool)$this->wpPost->post_parent;
     }
 
     public function getParent(): ?PostModel
@@ -540,7 +533,7 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function getTopLevelParent(): ?static
+    public function getTopLevelParent(): ?PostModel
     {
         $ancestors = $this->getAncestors();
         return end($ancestors) ?: null;
@@ -558,14 +551,14 @@ class PostModel implements PostModelInterface
         return get_post_ancestors($this->getId());
     }
 
-    /** @return list<static> Returns the ancestors of a post. */
+    /** @return list<\OffbeatWP\Content\Post\PostModel> Returns the ancestors of a post. */
     public function getAncestors(): array
     {
         $ancestors = [];
 
         if ($this->hasParent()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
-                $ancestor = container('post')->get($ancestorId);
+                $ancestor = Post::getInstance()->get($ancestorId);
                 if ($ancestor) {
                     $ancestors[] = $ancestor;
                 }
@@ -597,11 +590,7 @@ class PostModel implements PostModelInterface
             $GLOBALS['post'] = $currentPost;
         }
 
-        if ($adjacentPost) {
-            return container('post')->convertWpPostToModel($adjacentPost);
-        }
-
-        return null;
+        return $adjacentPost ? static::from($adjacentPost) : null;
     }
 
     /**
@@ -850,27 +839,11 @@ class PostModel implements PostModelInterface
         return new BelongsToMany($this, $relationKey);
     }
 
-    /**
-     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
-     * @return static|null
-     */
+    /** Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on. */
     final public static function current(): ?static
     {
-        $post = container('post')->get();
-        return ($post instanceof static) ? $post : null;
-    }
-
-    /**
-     * Create a PostModel with an ID without running get_post.
-     * @param int $id Only accepts and ID as parameter.
-     * @return static
-     */
-    public static function createLazy(int $id)
-    {
-        $model = new static(null);
-        $model->setId($id);
-
-        return $model;
+        $post = Post::getInstance()->get();
+        return $post instanceof static ? $post : null;
     }
 
     /** @return PostsCollection<int, static> */

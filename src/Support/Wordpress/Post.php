@@ -2,14 +2,15 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
+use OffbeatWP\Common\Singleton;
 use OffbeatWP\Content\Post\PostModel;
 use WP_Post;
 
-final class Post
+final class Post extends Singleton
 {
     public function convertWpPostToModel(WP_Post $post): PostModel
     {
-        $model = container('post-type')->getModelByPostType($post->post_type);
+        $model = PostType::getInstance()->getModelByPostType($post->post_type);
         return new $model($post);
     }
 

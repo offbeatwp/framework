@@ -10,6 +10,7 @@ use DI\Definition\Helper\DefinitionHelper;
 use InvalidArgumentException;
 use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
+use OffbeatWP\Common\Singleton;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Post\Relations\PostRelationService;
 use OffbeatWP\Helpers\VarHelper;
@@ -19,28 +20,12 @@ use OffbeatWP\Wordpress\WordpressService;
 use function DI\autowire;
 use function DI\create;
 
-final class App
+final class App extends Singleton
 {
-    private static ?App $instance = null;
-
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
     public Container $container;
     protected ?Config $config = null;
-
-    public static function singleton(): App
-    {
-        if (!static::$instance) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    private function __construct()
-    {
-        // App is a singleton and must instantiated via the App::singleton() method.
-    }
 
     public function bootstrap(): void
     {

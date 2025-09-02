@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use OffbeatWP\Support\Wordpress\Post;
 use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
@@ -26,13 +27,9 @@ class WpQueryBuilder
         return $this->take(-1);
     }
 
-    /**
-     * @param WP_Post $post
-     * @return PostModel|null
-     */
-    public function postToModel($post)
+    public function postToModel(WP_Post $post): ?PostModel
     {
-        return container('post')->convertWpPostToModel($post);
+        return Post::getInstance()->convertWpPostToModel($post);
     }
 
     /**
@@ -83,8 +80,10 @@ class WpQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
+        $postHandler = Post::getInstance();
+
         foreach ($this->runQuery()->get_posts() as $post) {
-            yield container('post')->convertWpPostToModel($post);
+            yield $postHandler->convertWpPostToModel($post);
         }
     }
 

@@ -3,29 +3,9 @@
 namespace OffbeatWP\Wordpress;
 
 use OffbeatWP\Services\AbstractService;
-use OffbeatWP\Support\Wordpress\AdminPage;
-use OffbeatWP\Support\Wordpress\Ajax;
-use OffbeatWP\Support\Wordpress\Console;
-use OffbeatWP\Support\Wordpress\Design;
-use OffbeatWP\Support\Wordpress\Post;
-use OffbeatWP\Support\Wordpress\PostType;
-use OffbeatWP\Support\Wordpress\RestApi;
-use OffbeatWP\Support\Wordpress\Taxonomy;
 
 final class WordpressService extends AbstractService
 {
-    /** @var class-string[] */
-    public array $bindings = [
-        'admin-page' => AdminPage::class,
-        'ajax'       => Ajax::class,
-        'rest-api'   => RestApi::class,
-        'console'    => Console::class,
-        'post-type'  => PostType::class,
-        'post'       => Post::class,
-        'taxonomy'   => Taxonomy::class,
-        'design'     => Design::class
-    ];
-
     public function register(): void
     {
         add_action('after_setup_theme', [$this, 'registerMenus']);

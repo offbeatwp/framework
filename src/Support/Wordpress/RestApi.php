@@ -3,9 +3,10 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Api\RestEndpointBuilder;
+use OffbeatWP\Common\Singleton;
 use WP_REST_Request;
 
-final class RestApi
+final class RestApi extends Singleton
 {
     public static function isRestApiRequest(): bool
     {
