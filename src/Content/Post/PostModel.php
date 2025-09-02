@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
@@ -541,11 +540,10 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    public function getTopLevelParent(): ?PostModel
+    public function getTopLevelParent(): ?static
     {
         $ancestors = $this->getAncestors();
-        $this->getAncestors()->last();
-        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
+        return end($ancestors) ?: null;
     }
 
     /** @return PostsCollection<int, static> Retrieves the children of this post. */
@@ -560,16 +558,16 @@ class PostModel implements PostModelInterface
         return get_post_ancestors($this->getId());
     }
 
-    /** @return Collection<int, static> Returns the ancestors of a post. */
-    public function getAncestors(): Collection
+    /** @return list<static> Returns the ancestors of a post. */
+    public function getAncestors(): array
     {
-        $ancestors = collect();
+        $ancestors = [];
 
         if ($this->hasParent()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
                 $ancestor = container('post')->get($ancestorId);
                 if ($ancestor) {
-                    $ancestors->push($ancestor);
+                    $ancestors[] = $ancestor;
                 }
             }
         }
@@ -577,25 +575,17 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
-    /** @return static|null */
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    /** @return static|null */
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-    /**
-     * @private
-     * @final
-     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
-     * @return static|null
-     */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
+    private function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?static
     {
         $currentPost = $GLOBALS['post'] ?? null;
 

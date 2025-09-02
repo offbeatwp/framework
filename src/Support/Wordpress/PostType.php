@@ -7,7 +7,7 @@ use OffbeatWP\Content\Post\PostModel;
 
 final class PostType
 {
-    public const DEFAULT_POST_MODEL = PostModel::class;
+    public const string DEFAULT_POST_MODEL = PostModel::class;
 
     /** @var class-string<PostModel>[] */
     private array $postTypeModels = [];

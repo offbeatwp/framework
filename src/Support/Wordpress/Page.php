@@ -5,20 +5,15 @@ namespace OffbeatWP\Support\Wordpress;
 final class Page
 {
     /** @var string[] */
-    protected $pageTemplates = [];
+    protected array $pageTemplates = [];
 
-    /**
-     * @param string $label
-     * @param string $template
-     * @return void
-     */
-    public function registerTemplate($label, $template)
+    public function registerTemplate(string $label, string $template): void
     {
         $this->pageTemplates[$template] = $label;
     }
 
     /** @return string[] */
-    public function getPageTemplates()
+    public function getPageTemplates(): array
     {
         return $this->pageTemplates;
     }

@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -123,10 +122,10 @@ class TermModel implements TermModelInterface
         return static::find($this->getParentId());
     }
 
-    /** @return Collection<int, int> */
-    public function getAncestorIds(): Collection
+    /** @return array<int, int> */
+    public function getAncestorIds(): array
     {
-        return collect(get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy'));
+        return get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy');
     }
 
     public function getEditLink(): string
@@ -134,12 +133,10 @@ class TermModel implements TermModelInterface
         return get_edit_term_link($this->wpTerm ?: $this->getId()) ?: '';
     }
 
-    /** @return Collection<int, TermModel> */
-    public function getAncestors(): Collection
+    /** @return array<int, TermModel> */
+    public function getAncestors(): array
     {
-        return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::query()->findById($ancestorId);
-        });
+        return array_map(fn ($id) => static::query()->findById($id), $this->getAncestorIds());
     }
 
     /** @return mixed[] */
