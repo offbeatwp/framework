@@ -7,7 +7,6 @@ use OffbeatWP\Support\Wordpress\AdminPage;
 use OffbeatWP\Support\Wordpress\Ajax;
 use OffbeatWP\Support\Wordpress\Console;
 use OffbeatWP\Support\Wordpress\Design;
-use OffbeatWP\Support\Wordpress\Page;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\PostType;
 use OffbeatWP\Support\Wordpress\RestApi;
@@ -23,7 +22,6 @@ final class WordpressService extends AbstractService
         'console'    => Console::class,
         'post-type'  => PostType::class,
         'post'       => Post::class,
-        'page'       => Page::class,
         'taxonomy'   => Taxonomy::class,
         'design'     => Design::class
     ];
@@ -33,9 +31,6 @@ final class WordpressService extends AbstractService
         add_action('after_setup_theme', [$this, 'registerMenus']);
         $this->registerImageSizes();
         $this->registerSidebars();
-
-        // Page Template
-        add_action('init', [$this, 'registerPageTemplate'], 99);
     }
 
     public function registerMenus(): void
@@ -68,12 +63,5 @@ final class WordpressService extends AbstractService
                 register_sidebar($sidebar);
             }
         }
-    }
-
-    public function registerPageTemplate(): void
-    {
-        add_filter('theme_page_templates', function ($postTemplates) {
-            return array_merge($postTemplates, container('page')->getPageTemplates());
-        });
     }
 }
