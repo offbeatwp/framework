@@ -6,6 +6,7 @@ use Generator;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Contracts\IWpQuerySubstitute;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use OffbeatWP\Support\Wordpress\Post;
 use UnexpectedValueException;
@@ -13,13 +14,41 @@ use WP_Post;
 use WP_Query;
 
 /** @template TValue of PostModel */
-class WpQueryBuilder
+final class WpQueryBuilder
 {
     use OffbeatQueryTrait;
 
     /** @var array<string, mixed> */
     protected array $queryVars = ['post_type' => 'any'];
     private string $wpQueryClass = WP_Query::class;
+    /** @var class-string<TValue> */
+    public readonly string $modelClass;
+
+    /**
+     * @throws OffbeatInvalidModelException
+     * @param class-string<TValue> $modelClass
+     */
+    public function __construct(string $modelClass = PostModel::class)
+    {
+        $this->modelClass = $modelClass;
+
+        if ($modelClass::POST_TYPE) {
+            $this->wherePostType($modelClass::POST_TYPE);
+        }
+
+        $order = null;
+        $orderDirection = null;
+
+        if (defined("{$modelClass}::ORDER_BY")) {
+            $order = $modelClass::ORDER_BY;
+        }
+
+        if (defined("{$modelClass}::ORDER")) {
+            $orderDirection = $modelClass::ORDER;
+        }
+
+        $this->order($order, $orderDirection);
+    }
 
     /** @return PostsCollection<int, TValue> */
     final public function all(): PostsCollection
@@ -27,7 +56,7 @@ class WpQueryBuilder
         return $this->take(-1);
     }
 
-    public function postToModel(WP_Post $post): ?PostModel
+    public function postToModel(WP_Post $post): PostModel
     {
         return Post::getInstance()->convertWpPostToModel($post);
     }
@@ -109,11 +138,13 @@ class WpQueryBuilder
         return $this->get();
     }
 
+    /** @return TValue|null */
     public function first(): ?PostModel
     {
         return $this->take(1)->first();
     }
 
+    /** @return TValue */
     public function firstOrFail(): PostModel
     {
         $result = $this->first();
@@ -609,5 +640,11 @@ class WpQueryBuilder
         }
 
         return array_map(fn ($post) => $post->$column, $this->only([$column]));
+    }
+
+    /** @phpstan-return TValue|PostModel */
+    final public function firstOrNew(): PostModel
+    {
+        return $this->first() ?: new $this->modelClass(null);
     }
 }
