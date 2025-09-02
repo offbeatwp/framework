@@ -34,7 +34,6 @@ final class AssetsManager
             $this->entrypoints = $entrypoints;
         }
 
-        var_dump($this->entrypoints);
         return $this->entrypoints;
     }
 
