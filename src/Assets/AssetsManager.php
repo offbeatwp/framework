@@ -93,7 +93,7 @@ final class AssetsManager
     }
 
     /**
-     * @param array<int, string> $dependencies
+     * @param list<non-falsy-string> $dependencies
      * @throws \JsonException
      * @throws \RuntimeException
      */
