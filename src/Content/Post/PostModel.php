@@ -4,7 +4,6 @@ namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
@@ -29,10 +28,7 @@ class PostModel implements PostModelInterface
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
+
     public const POST_TYPE = 'any';
 
     public const DEFAULT_POST_STATUS = 'publish';
@@ -71,48 +67,6 @@ class PostModel implements PostModelInterface
         } else {
             $this->wpPost = $post;
         }
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return static::macroCallStatic($method, $parameters);
-        }
-
-        return static::query()->$method(...$parameters);
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        $hookValue = apply_filters_ref_array('post_attribute', [null, $method, $this]);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-
-        if (method_exists(WpQueryBuilderModel::class, $method)) {
-            trigger_error('Called WpQueryBuilder method on a model instance through magic method. Please use the static PostModel::query method instead.', E_USER_DEPRECATED);
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -18,10 +17,7 @@ class TermModel implements TermModelInterface
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
+
     public const TAXONOMY = '';
 
     public ?WP_Term $wpTerm = null;
@@ -52,48 +48,6 @@ class TermModel implements TermModelInterface
     protected function init(): void
     {
         // Does nothing unless overriden by parent
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return static::macroCallStatic($method, $parameters);
-        }
-
-        return static::query()->$method(...$parameters);
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        $hookValue = apply_filters_ref_array('term_attribute', [null, $method, $this]);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-
-        if (method_exists(TermQueryBuilder::class, $method)) {
-            trigger_error('Called TermQueryBuilder method on a model instance through magic method. Please use the static TermModel::query method instead.', E_USER_DEPRECATED);
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
     }
 
     public function __clone()
