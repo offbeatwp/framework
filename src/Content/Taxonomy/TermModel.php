@@ -162,22 +162,6 @@ class TermModel implements TermModelInterface
     }
 
     /**
-     * @param string|string[]|null $postTypes
-     * @return WpQueryBuilder<\OffbeatWP\Content\Post\PostModel>
-     */
-    public function getPosts($postTypes = null): WpQueryBuilder
-    {
-        global $wp_taxonomies;
-
-        // If no posttypes defined, get posttypes where the taxonomy is assigned to
-        if (!$postTypes) {
-            $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
-        }
-
-        return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
-    }
-
-    /**
      * Removes a term from the database.<br>
      * If the term is a parent of other terms, then the children will be updated to that term's parent.<br>
      * Metadata associated with the term will be deleted.

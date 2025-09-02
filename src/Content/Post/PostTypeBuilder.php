@@ -44,7 +44,7 @@ final class PostTypeBuilder
      * @param string[]|bool[]|int[]|bool $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
      * @return $this
      */
-    public function rewrite($rewrite)
+    public function rewrite(array|bool $rewrite)
     {
         $this->postTypeArgs['rewrite'] = $rewrite;
         return $this;
@@ -98,7 +98,7 @@ final class PostTypeBuilder
         // WP requires the use of a filter to add unique title placeholder text....
         if (isset($labels['enter_title_here'])) {
             add_filter('enter_title_here', function (string $text, WP_Post $post) use ($labels) {
-                return ($post->post_type === $this->getPostType()) ? $labels['enter_title_here'] : $text;
+                return ($post->post_type === $this->postType) ? $labels['enter_title_here'] : $text;
             }, 10, 2);
             unset($labels['enter_title_here']);
         }
@@ -378,18 +378,6 @@ final class PostTypeBuilder
     }
 
     /**
-     * @param null $position
-     * @deprecated This function does not actually appear to do anything
-     * @return $this
-     */
-    public function position($position = null)
-    {
-        trigger_error('Deprecated position called in PostTypeBuilder.', E_USER_DEPRECATED);
-        $this->postTypeArgs['position'] = $position;
-        return $this;
-    }
-
-    /**
      * The string to use to build the read, edit, and delete capabilities.
      * @param string $single Singular capability name.
      * @param string $plural Plural capability name. Same as singular name if omitted.
@@ -436,12 +424,8 @@ final class PostTypeBuilder
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param scalar $value
-     * @return $this
-     */
-    public function setArgument(string $key, $value)
+    /** @return $this */
+    public function setArgument(string $key, mixed $value)
     {
         $this->postTypeArgs[$key] = $value;
         return $this;

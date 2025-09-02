@@ -852,10 +852,10 @@ class PostModel implements PostModelInterface
         return static::query()->take(-1);
     }
 
-    /** @return WpQueryBuilderModel<static> */
-    public static function query(): WpQueryBuilderModel
+    /** @return WpQueryBuilder<static> */
+    public static function query(): WpQueryBuilder
     {
-        return new WpQueryBuilderModel(static::class);
+        return new WpQueryBuilder(static::class);
     }
 
     /** @return static */
