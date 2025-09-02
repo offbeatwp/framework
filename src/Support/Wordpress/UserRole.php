@@ -6,7 +6,7 @@ use OffbeatWP\Content\User\UserModel;
 
 final class UserRole
 {
-    /** @var class-string<UserModel>[] */
+    /** @var array<string, class-string<UserModel>> */
     private static array $userModels = [];
     /** @var class-string<UserModel> */
     private static string $defaultUserModel = UserModel::class;
@@ -27,9 +27,10 @@ final class UserRole
     }
 
     /** @param class-string<UserModel> $userModelClass */
-    public static function getUserRoleByModel(string $userModelClass): string
+    public static function getUserRoleByModel(string $userModelClass): ?string
     {
-        return array_search($userModelClass, self::$userModels, true);
+        $result = array_search($userModelClass, self::$userModels, true);
+        return $result === false ? null : $result;
     }
 
     /** @param class-string<UserModel> $userModelClass */

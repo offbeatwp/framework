@@ -4,25 +4,25 @@ namespace OffbeatWP\Views;
 
 use OffbeatWP\Content\User\UserModel;
 use OffbeatWP\Support\Objects\OffbeatImageSrc;
-use WP_Post;
+use RuntimeException;
 use WP_Site;
 
 final class Wordpress
 {
-    /** @return false|string */
-    public function head()
+    public function head(): string
     {
         ob_start();
         wp_head();
-        return ob_get_clean();
+
+        return $this->getBufferContent();
     }
 
-    /** @return false|string */
-    public function footer()
+    public function footer(): string
     {
         ob_start();
         wp_footer();
-        return ob_get_clean();
+
+        return $this->getBufferContent();
     }
 
     public function title(): string
@@ -33,32 +33,45 @@ final class Wordpress
     /**
      * Gets the language attributes for the 'html' tag.
      * Builds up a set of HTML attributes containing the text direction and language information for the page.
-     * @return string
      */
-    public function languageAttributes()
+    public function languageAttributes(): string
     {
         return get_language_attributes();
     }
 
-    /**
-     * Retrieves the permalink for a post type archive.
-     * @return false|string
-     */
-    public function archiveUrl(?string $postType = 'post')
+    /** Retrieves the permalink for a post type archive. */
+    public function archiveUrl(string $postType = 'post'): string
     {
-        return get_post_type_archive_link($postType);
+        return (string)get_post_type_archive_link($postType);
     }
 
     /**
-     * Returns a navigation menu.
-     * @param string[]|int[]|bool[]|object[]|callable[]|null $args
-     * @phpstan-param null|array{menu?: int|string|\WP_Term, menu_class?: string, menu_id?: string, container?: string, container_class?: string, container_id?: string, container_aria_label?: string, fallback_cb?: callable|false, before?: string, after?: string, link_before?: string, link_after?: string, echo?: bool, depth?: int, walker?: object, theme_location?: string, items_wrap?: string, item_spacing?: string} $args
-     * @return false|string|null
+     * Returns a navigation menu as string.
+     * @param array{
+     *     menu?: int|string|\WP_Term,
+     *     menu_class?: string,
+     *     menu_id?: string,
+     *     container?: string,
+     *     container_class?: string,
+     *     container_id?: string,
+     *     container_aria_label?: string,
+     *     fallback_cb?: callable|false,
+     *     before?: string,
+     *     after?: string,
+     *     link_before?: string,
+     *     link_after?: string,
+     *     echo?: bool,
+     *     depth?: int,
+     *     walker?: object,
+     *     theme_location?: string,
+     *     items_wrap?: string,
+     *     item_spacing?: string
+     * } $args
      */
-    public function navMenu(?array $args = [])
+    public function navMenu(array $args = []): string
     {
         $args['echo'] = false;
-        return wp_nav_menu($args);
+        return (string)wp_nav_menu($args);
     }
 
     /**
@@ -146,69 +159,36 @@ final class Wordpress
         return get_blog_details($id) ?: null;
     }
 
-    /**
-     * Echos the class names for the body element.
-     * @param string $class
-     * @return void
-     */
-    public function bodyClass($class = '')
+    /** Echos the class names for the body element. */
+    public function bodyClass(string $class = ''): void
     {
         body_class($class);
     }
 
-    /**
-     * @param string|null $action
-     * @param mixed $args
-     * @return false|string
-     */
-    public function action(?string $action, $args = [])
+    /** @param mixed[] $args */
+    public function action(string $action, array $args = []): string
     {
         ob_start();
         do_action($action, $args);
-        return ob_get_clean();
+        return $this->getBufferContent();
     }
 
     /**
      * Searches content for shortcodes and filter shortcodes through their hooks.<br>
      * If there are no shortcode tags defined, then the content will be returned without any filtering.<br>
      * This might cause issues when plugins are disabled but the shortcode will still show up in the post or content.
-     * @param string|null $code
      */
-    public function shortcode(?string $code): string
+    public function shortcode(string $code): string
     {
-        if ($code === null) {
-            trigger_error('Wordpress::shortcode expects a string as parameter but received NULL.', E_USER_DEPRECATED);
-        }
-
         return do_shortcode($code);
     }
 
-    /**
-     * @param int|string $name
-     * @return false|string
-     */
-    public function sidebar($name)
+    public function sidebar(int|string $name): string
     {
         ob_start();
         dynamic_sidebar($name);
-        return ob_get_clean();
-    }
 
-    /** @return false|mixed */
-    public function getAllPostMeta(?int $postId = null)
-    {
-        if ($postId) {
-            return get_post_meta($postId);
-        }
-
-        /** @global WP_Post $post */
-        global $post;
-
-        if (!$post) {
-            return false;
-        }
-
-        return get_post_meta($post->ID);
+        return $this->getBufferContent();
     }
 
     /**
@@ -220,17 +200,16 @@ final class Wordpress
     public function getAttachmentImageSrc(int $attachmentId, $size = 'thumbnail', bool $icon = false): ?OffbeatImageSrc
     {
         $attachment = wp_get_attachment_image_src($attachmentId, $size, $icon);
-        return ($attachment) ? new OffbeatImageSrc($attachment) : null;
+        return $attachment ? new OffbeatImageSrc($attachment) : null;
     }
 
     /**
      * Retrieves an attachment URL.
      * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
-     * @param string|int[] $size
-     * @return false|string
+     * @param string|array{0: positive-int, 1: positive-int} $size
      */
-    public function attachmentUrl(?int $attachmentID, $size = 'full')
+    public function attachmentUrl(?int $attachmentID, string|array $size = 'full'): string
     {
         if ($attachmentID === null) {
             trigger_error('Wordpress::attachmentUrl expects an integer as parameter, but received NULL.', E_USER_DEPRECATED);
@@ -238,7 +217,7 @@ final class Wordpress
 
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
         if (!$attachment) {
-            return false;
+            return '';
         }
 
         return $attachment[0];
@@ -247,40 +226,29 @@ final class Wordpress
     /**
      * Retrieves the URL for an attachment
      * @param int $attachmentID Attachment ID
-     * @return string|null Attachment URL or <i>NULL</i> if not found
+     * @return string Attachment URL or an <i>empty string</i> if not found
      * @see wp_get_attachment_url()
      */
-    public function attachmentFileUrl(int $attachmentID): ?string
+    public function attachmentFileUrl(int $attachmentID): string
     {
-        $url = wp_get_attachment_url($attachmentID);
-        return ($url !== false) ? $url : null;
+        return (string)wp_get_attachment_url($attachmentID);
     }
 
     /**
      * Gets an HTML img element representing an image attachment.<br>
      * While <b>$size</b> will accept an array, it is better to register a size with add_image_size() so that a cropped version is generated.<br>
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
-     * @param int|null $attachmentID
-     * @param int[]|string $size
-     * @param string[] $classes
-     * @param string[]|false[] $attributes
-     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string|false} $attributes $attributes
+     * @param string|array{0: positive-int, 1: positive-int} $size
+     * @param array<string, scalar> $attributes
+     * @phpstan-param array{src?: string, class?: string, alt?: string, srcset?: string, sizes?: string, loading?: string|false, decoding?: string} $attributes
      */
-    public function getAttachmentImage($attachmentID, $size = 'thumbnail', ?array $classes = ['img-fluid'], array $attributes = []): string
+    public function getAttachmentImage(int $attachmentID, array|string $size = 'thumbnail', array $attributes = []): string
     {
-        if (!is_int($attachmentID)) {
-            trigger_error('Wordpress::getAttachmentImage expects an integer as parameter, but received ' . gettype($attachmentID) .'.', E_USER_DEPRECATED);
-        }
-
-        if (!isset($attributes['class']) && !empty($classes)) {
-            $attributes['class'] = implode(' ', $classes);
-        }
-
         return wp_get_attachment_image($attachmentID, $size, false, $attributes);
     }
 
     /** @param int[][]|string[] $sizes */
-    public function getAttachmentImageSrcSet(int $attachmentId, $sizes = ['thumbnail']): string
+    public function getAttachmentImageSrcSet(int $attachmentId, array $sizes = ['thumbnail']): string
     {
         $srcSet = [];
 
@@ -293,19 +261,6 @@ final class Wordpress
         }
 
         return implode(', ', $srcSet);
-    }
-
-    /**
-     * @deprecated
-     * @param string|int|bool $date
-     */
-    public function formatDate(?string $format, $date, bool $strtotime = false): string
-    {
-        if ($strtotime) {
-            $date = strtotime($date);
-        }
-
-        return date_i18n($format, $date);
     }
 
     /** After looping through a separate query, this function restores the $post global to the current post in the main query. */
@@ -351,14 +306,13 @@ final class Wordpress
      */
     public function getSearchQuery(): ?string
     {
-        return ($this->isSearchPage()) ? get_search_query() : null;
+        return $this->isSearchPage() ? get_search_query() : null;
     }
 
     /**
      * Retrieves the post title.<br>
      * If the post is protected and the visitor is not an admin, then “Protected” will be inserted before the post title.<br>
      * If the post is private, then “Private” will be inserted before the post title.
-     * @return string
      */
     public function getPageTitle(): string
     {
@@ -368,7 +322,6 @@ final class Wordpress
     /**
      * Display the search form.
      * @param string $ariaLabel ARIA label for the search form. Useful to distinguish multiple search forms on the same page and improve accessibility.
-     * @return string
      */
     public function getSearchForm(string $ariaLabel = ''): string
     {
@@ -404,17 +357,22 @@ final class Wordpress
         ob_start();
         block_template_part($part);
 
-        return ob_get_clean();
+        return $this->getBufferContent();
     }
 
-    /**
-     * @param string $slug
-     * @param string|null $tagName
-     * @param string|null $className
-     * @return string
-     */
-    public function getTemplatePart(string $slug, $tagName = null, $className = null)
+    public function getTemplatePart(string $slug, ?string $tagName = null, ?string $className = null): string
     {
         return do_blocks('<!-- wp:template-part {"slug":"' . $slug . '","tagName":"' . $tagName . '","className":"' . $className . '"} /-->');
+    }
+
+    private function getBufferContent(): string
+    {
+        $result = ob_get_clean();
+
+        if (!is_string($result)) {
+            throw new RuntimeException('Object buffering is not enabled.');
+        }
+
+        return $result;
     }
 }

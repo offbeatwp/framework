@@ -120,23 +120,6 @@ final class Config
         return $result;
     }
 
-    /**
-     * @deprecated
-     * @param non-falsy-string $key
-     * @param mixed $value
-     * @return mixed
-     */
-    public function set($key, $value)
-    {
-        if (!$key || !is_string($key)) {
-            trigger_error('Config::set $key must be a non-falsy string.', E_USER_DEPRECATED);
-        }
-
-        $this->config[$key] = $value;
-
-        return $value;
-    }
-
     /** @return mixed[] */
     public function all(): array
     {
