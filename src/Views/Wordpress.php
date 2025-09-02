@@ -209,15 +209,11 @@ final class Wordpress
      * It's much more efficient than having to find the closest-sized image and then having the browser scale down the image.
      * @param string|array{0: positive-int, 1: positive-int} $size
      */
-    public function attachmentUrl(?int $attachmentID, string|array $size = 'full'): string
+    public function attachmentUrl(int $attachmentID, string|array $size = 'full'): ?string
     {
-        if ($attachmentID === null) {
-            trigger_error('Wordpress::attachmentUrl expects an integer as parameter, but received NULL.', E_USER_DEPRECATED);
-        }
-
         $attachment = wp_get_attachment_image_src($attachmentID, $size);
         if (!$attachment) {
-            return '';
+            return null;
         }
 
         return $attachment[0];
@@ -325,6 +321,7 @@ final class Wordpress
      */
     public function getSearchForm(string $ariaLabel = ''): string
     {
+        /** @var string Always returns a string when 'echo' is set to false. */
         return get_search_form(['echo' => false, 'aria_label' => $ariaLabel]);
     }
 
