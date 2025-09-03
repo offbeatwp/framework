@@ -7,13 +7,10 @@ use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Helper\DefinitionHelper;
 use InvalidArgumentException;
-use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Common\Singleton;
 use OffbeatWP\Config\Config;
-use OffbeatWP\Content\Post\Relations\PostRelationService;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
-use OffbeatWP\Wordpress\WordpressService;
 
 use function DI\autowire;
 
@@ -28,20 +25,11 @@ final class App extends Singleton
     {
         $containerBuilder = new ContainerBuilder();
 
-        $this->initiateBaseServices($containerBuilder);
         $this->initiateServices($containerBuilder);
 
         $this->container = $containerBuilder->build();
 
         $this->registerServices();
-    }
-
-    /** @param \DI\ContainerBuilder<Container> $containerBuilder */
-    private function initiateBaseServices(ContainerBuilder $containerBuilder): void
-    {
-        foreach ([WordpressService::class, ServiceEnqueueScripts::class, PostRelationService::class] as $service) {
-            $this->initiateService($service, $containerBuilder);
-        }
     }
 
     /** @param \DI\ContainerBuilder<Container> $containerBuilder */

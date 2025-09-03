@@ -9,8 +9,7 @@ final class WordpressService extends AbstractService
     public function register(): void
     {
         add_action('after_setup_theme', [$this, 'registerMenus']);
-        $this->registerImageSizes();
-        $this->registerSidebars();
+        add_action('after_setup_theme', [$this, 'registerImageSizes']);
     }
 
     public function registerMenus(): void
@@ -18,6 +17,7 @@ final class WordpressService extends AbstractService
         $menus = config('menus', false);
 
         if (is_array($menus) && $menus) {
+            /** @var array<string, string> $menus */
             register_nav_menus($menus);
         }
     }
@@ -26,21 +26,10 @@ final class WordpressService extends AbstractService
     {
         $images = config('images', false);
 
-        if (is_array($images) && $images) {
+        if (is_array($images)) {
+            /** @var array{width: int, height: int, crop: array{0: string, 1: string}} $image */
             foreach ($images as $key => $image) {
-                add_image_size($key, $image['width'], $image['height'], $image['crop']);
-            }
-        }
-    }
-
-    public function registerSidebars(): void
-    {
-        $sidebars = config('sidebars', false);
-
-        if (is_array($sidebars) && $sidebars) {
-            foreach ($sidebars as $id => $sidebar) {
-                $sidebar['id'] = $id;
-                register_sidebar($sidebar);
+                add_image_size((string)$key, $image['width'], $image['height'], $image['crop']);
             }
         }
     }
