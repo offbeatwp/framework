@@ -16,11 +16,11 @@ final class ServiceEnqueueScripts extends AbstractService
     public function enqueueScripts(): void
     {
         if (apply_filters('offbeatwp/assets/include_main_script_by_default', true)) {
-            container('assets')->enqueueScripts('main');
+            AssetsManager::getInstance()->enqueueScripts('main');
         }
 
         if (apply_filters('offbeatwp/assets/include_main_style_by_default', true)) {
-            container('assets')->enqueueStyles('main');
+            AssetsManager::getInstance()->enqueueStyles('main');
         }
     }
 }
