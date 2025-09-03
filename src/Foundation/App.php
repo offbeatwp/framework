@@ -5,10 +5,8 @@ namespace OffbeatWP\Foundation;
 use Closure;
 use DI\Container;
 use DI\ContainerBuilder;
-use DI\Definition\Helper\CreateDefinitionHelper;
 use DI\Definition\Helper\DefinitionHelper;
 use InvalidArgumentException;
-use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Assets\ServiceEnqueueScripts;
 use OffbeatWP\Common\Singleton;
 use OffbeatWP\Config\Config;
@@ -18,32 +16,24 @@ use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Wordpress\WordpressService;
 
 use function DI\autowire;
-use function DI\create;
 
 final class App extends Singleton
 {
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
-    public Container $container;
+    public readonly Container $container;
     protected ?Config $config = null;
 
     public function bootstrap(): void
     {
         $containerBuilder = new ContainerBuilder();
 
-        $containerBuilder->addDefinitions($this->baseBindings());
         $this->initiateBaseServices($containerBuilder);
         $this->initiateServices($containerBuilder);
 
         $this->container = $containerBuilder->build();
 
         $this->registerServices();
-    }
-
-    /** @return array{assets: CreateDefinitionHelper} */
-    private function baseBindings(): array
-    {
-        return ['assets' => create(AssetsManager::class)];
     }
 
     /** @param \DI\ContainerBuilder<Container> $containerBuilder */
@@ -80,7 +70,7 @@ final class App extends Singleton
         if (class_exists($serviceClass)) {
             $service = new $serviceClass($this);
 
-            if (property_exists($service, 'bindings') && !empty($service->bindings)) {
+            if (property_exists($service, 'bindings') && !empty($service->bindings) && is_array($service->bindings)) {
                 foreach ($service->bindings as &$binding) {
                     if (is_string($binding)) {
                         $binding = autowire($binding);

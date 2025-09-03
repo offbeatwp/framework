@@ -2,15 +2,16 @@
 
 namespace OffbeatWP\Assets;
 
+use OffbeatWP\Common\Singleton;
 use RuntimeException;
 
-final class AssetsManager
+final class AssetsManager extends Singleton
 {
-    /** @var array<string, array{js?: list<string>, css?: list<string>}>|null */
+    /** @var mixed[] */
     private ?array $entrypoints = null;
 
     /**
-     * @return array<string, array{js?: list<string>, css?: list<string>}>
+     * @return mixed[]
      * @throws \JsonException
      * @throws \RuntimeException
      */
@@ -20,7 +21,12 @@ final class AssetsManager
             $path = $this->getAssetsPath('entrypoints.json', true);
 
             if (file_exists($path)) {
-                $data = json_decode(file_get_contents($path), true, 8, JSON_THROW_ON_ERROR);
+                $fileContents = file_get_contents($path);
+                if (!is_string($fileContents)) {
+                    throw new RuntimeException('Unable to read entry points file.');
+                }
+
+                $data = json_decode($fileContents, true, 8, JSON_THROW_ON_ERROR);
                 if (!is_array($data) || !array_key_exists('entrypoints', $data) || !is_array($data['entrypoints'])) {
                     throw new RuntimeException('Asset entrypoints should be decoded into an array, but was decoded as: ' . gettype($data));
                 }
@@ -38,7 +44,7 @@ final class AssetsManager
     }
 
     /**
-     * @return list<string>
+     * @return mixed[]
      * @throws \JsonException
      * @throws \RuntimeException
      */
@@ -46,8 +52,13 @@ final class AssetsManager
     {
         $entrypoints = $this->getAssetsEntryPoints();
 
-        if (empty($entrypoints[$entry][$key])) {
+        if (empty($entrypoints[$entry]) || !is_array($entrypoints[$entry])) {
             trigger_error('Entry ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
+            return [];
+        }
+
+        if (empty($entrypoints[$entry][$key]) || !is_array($entrypoints[$entry][$key])) {
+            trigger_error('Entry key ' . $entry . ' -> ' . $key . ' could not be found in entrypoints.', E_USER_WARNING);
             return [];
         }
 
@@ -60,6 +71,9 @@ final class AssetsManager
         $path = ($path) ? "/{$path}" : '';
 
         $assetsPath = config('app.assets.path');
+        if (!is_string($assetsPath)) {
+            $assetsPath = '';
+        }
 
         if ($assetsPath || $forceAssetsPath) {
             return $assetsPath . $path;
@@ -85,7 +99,7 @@ final class AssetsManager
 
 
         $url = config('app.assets.url');
-        if ($url) {
+        if ($url && is_string($url)) {
             return $url . $path;
         }
 
@@ -102,10 +116,8 @@ final class AssetsManager
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
         foreach ($assets as $asset) {
-            $asset = ltrim($asset, './');
-            $baseName = basename($asset);
-            $handle = substr($baseName, 0, strpos($baseName, '.'));
-            $handle = 'owp-' . $handle;
+            $asset = is_string($asset) ? ltrim($asset, './') : '';
+            $handle = $this->generateHandle($asset);
 
             if (!wp_style_is($handle)) {
                 $url = $this->getAssetsUrl($asset);
@@ -134,10 +146,8 @@ final class AssetsManager
         $handle = '';
 
         foreach ($assets as $asset) {
-            $asset = ltrim($asset, './');
-            $baseName = basename($asset);
-            $handle = substr($baseName, 0, strpos($baseName, '.'));
-            $handle = 'owp-' . $handle;
+            $asset = is_string($asset) ? ltrim($asset, './') : '';
+            $handle = $this->generateHandle($asset);
 
             if (!wp_script_is($handle)) {
                 $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
@@ -154,5 +164,16 @@ final class AssetsManager
         }
 
         return new WpScriptAsset($handle);
+    }
+
+    /** @return non-falsy-string */
+    private function generateHandle(string $asset): string
+    {
+        $baseName = basename($asset);
+        $pos = strpos($baseName, '.');
+        $handle = substr($baseName, 0, is_int($pos) ? $pos : null);
+
+        return 'owp-' . $handle;
+
     }
 }
