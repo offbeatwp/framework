@@ -10,7 +10,7 @@ if (!function_exists('offbeat')) {
 }
 
 if (!function_exists('config')) {
-    function config(?string $config = null, bool $collect = true): mixed
+    function config(string $config, bool $collect = true): mixed
     {
         return App::getInstance()->config($config, $collect);
     }
