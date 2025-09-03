@@ -2,12 +2,13 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\Post\PostTypeBuilder;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Content\Post\PostTypeBuilder;
 
-final class PostType
+final class PostType extends Singleton
 {
-    public const DEFAULT_POST_MODEL = PostModel::class;
+    public const string DEFAULT_POST_MODEL = PostModel::class;
 
     /** @var class-string<PostModel>[] */
     private array $postTypeModels = [];
@@ -19,7 +20,7 @@ final class PostType
      * @return PostTypeBuilder
      * @see sanitize_key()
      */
-    public static function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
+    public function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
     {
         return (new PostTypeBuilder())->make($name, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }

@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
-use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -23,10 +22,6 @@ class UserModel
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
 
     protected WP_User $wpUser;
     /** @var array<string, mixed>|null */
@@ -70,28 +65,6 @@ class UserModel
     protected function init(): void
     {
         // Does nothing unless overriden by parent
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed|void
-     */
-    public function __call($method, $parameters)
-    {
-        $className = $this::class;
-
-        if (static::hasMacro($method)) {
-            trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpUser->$method)) {
-            trigger_error("{$className}::{$method} accessed a WP_User method.", E_USER_DEPRECATED);
-            return $this->wpUser->$method;
-        }
-
-        throw new BadMethodCallException("Call to undefined UserModel method {$className}::{$method}");
     }
 
     public function __clone()

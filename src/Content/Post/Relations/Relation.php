@@ -4,20 +4,17 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use OffbeatWP\Content\Post\PostModel;
 
-/** @abstract */
-class Relation
+abstract class Relation
 {
-    /** @var \OffbeatWP\Content\Post\PostModel */
-    protected $model;
-    /** @var string */
-    protected $relationKey;
+    protected readonly PostModel $model;
+    protected readonly string $relationKey;
 
     /**
      * @final
      * @param PostModel $model
      * @param string $relationKey
      */
-    public function __construct($model, $relationKey)
+    final public function __construct($model, $relationKey)
     {
         $this->model = $model;
         $this->relationKey = $relationKey;

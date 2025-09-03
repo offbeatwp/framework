@@ -3,8 +3,6 @@
 namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
@@ -18,6 +16,8 @@ use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
+use OffbeatWP\Support\Wordpress\Post;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use stdClass;
 use WP_Post;
@@ -29,17 +29,14 @@ class PostModel implements PostModelInterface
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
+
     public const POST_TYPE = 'any';
 
     public const DEFAULT_POST_STATUS = 'publish';
     public const DEFAULT_COMMENT_STATUS = 'closed';
     public const DEFAULT_PING_STATUS = 'closed';
 
-    public WP_Post|stdClass|null $wpPost;
+    public ?WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var array<string, ""> */
@@ -59,76 +56,18 @@ class PostModel implements PostModelInterface
      */
     public $relationKeyMethods = null;
 
-    /**
-     * @final
-     * @param WP_Post|int|null $post
-     */
-    public function __construct($post = null)
+    final public function __construct(?WP_Post $post = null)
     {
         if ($post === null) {
-            $this->wpPost = (object)[];
-            $this->wpPost->post_type = static::POST_TYPE;
-            $this->wpPost->post_status = static::DEFAULT_POST_STATUS;
-            $this->wpPost->comment_status = static::DEFAULT_COMMENT_STATUS;
-            $this->wpPost->ping_status = static::DEFAULT_PING_STATUS;
-        } elseif ($post instanceof WP_Post) {
-            $this->wpPost = $post;
-        } elseif (is_numeric($post)) {
-            trigger_error('Constructed PostModel with ID. Use PostModel::find instead.', E_USER_DEPRECATED);
-            $this->wpPost = get_post($post);
+            $this->wpPost = new WP_Post((object)[
+                'post_type' => static::POST_TYPE,
+                'post_status' => static::DEFAULT_POST_STATUS,
+                'comment_status' => static::DEFAULT_COMMENT_STATUS,
+                'ping_status' => static::DEFAULT_PING_STATUS
+            ]);
         } else {
-            trigger_error('PostModel expects a WP_Post, NULL or integer as argument but got: ' . gettype($post));
+            $this->wpPost = $post;
         }
-
-        $this->init();
-    }
-
-    /** This method is called at the end of the PostModel constructor */
-    protected function init(): void
-    {
-        // Does nothing unless overriden by parent
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return static::macroCallStatic($method, $parameters);
-        }
-
-        return static::query()->$method(...$parameters);
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        $hookValue = offbeat('hooks')->applyFilters('post_attribute', null, $method, $this);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-
-        if (method_exists(WpQueryBuilderModel::class, $method)) {
-            trigger_error('Called WpQueryBuilder method on a model instance through magic method. Please use the static PostModel::query method instead.', E_USER_DEPRECATED);
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
     }
 
     /**
@@ -501,24 +440,16 @@ class PostModel implements PostModelInterface
         }
     }
 
-    /**
-     * @param string $taxonomy
-     * @param array{} $unused
-     * @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel>
-     */
-    public function getTerms($taxonomy, $unused = []): TermQueryBuilder
+    /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
+    public function getTerms(string $taxonomy): TermQueryBuilder
     {
-        $model = offbeat('taxonomy')->getModelByTaxonomy($taxonomy);
+        $model = Taxonomy::getInstance()->getModelByTaxonomy($taxonomy);
 
         return $model::query()->whereRelatedToPost($this->getId());
     }
 
-    /**
-     * @param int[]|string[]|int|string $term
-     * @param string $taxonomy
-     * @return bool
-     */
-    public function hasTerm($term, string $taxonomy): bool
+    /** @param int[]|string[]|int|string $term */
+    public function hasTerm(array|int|string $term, string $taxonomy): bool
     {
         return has_term($term, $taxonomy, $this->getId());
     }
@@ -529,17 +460,17 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
+     * @param array{0: positive-int, 1: positive-int}|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @param int[]|string[]|string $attr
      * @return string The post thumbnail image tag.
      */
-    public function getFeaturedImage($size = 'thumbnail', $attr = []): string
+    public function getFeaturedImage(array|string $size = 'thumbnail', array|string $attr = []): string
     {
         return get_the_post_thumbnail($this->wpPost, $size, $attr);
     }
 
     /**
-     * @param int[]|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
+     * @param array{0: positive-int, 1: positive-int}|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
      * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
     public function getFeaturedImageUrl($size = 'thumbnail')
@@ -547,10 +478,9 @@ class PostModel implements PostModelInterface
         return get_the_post_thumbnail_url($this->wpPost, $size);
     }
 
-    /** @return false|int */
-    public function getFeaturedImageId()
+    public function getFeaturedImageId(): int
     {
-        return get_post_thumbnail_id($this->wpPost) ?: false;
+        return (int)get_post_thumbnail_id($this->wpPost);
     }
 
     /** @return $this */
@@ -585,7 +515,7 @@ class PostModel implements PostModelInterface
 
     public function hasParent(): bool
     {
-        return (bool)$this->getParentId();
+        return (bool)$this->wpPost->post_parent;
     }
 
     public function getParent(): ?PostModel
@@ -606,8 +536,7 @@ class PostModel implements PostModelInterface
     public function getTopLevelParent(): ?PostModel
     {
         $ancestors = $this->getAncestors();
-        $this->getAncestors()->last();
-        return $ancestors->isNotEmpty() ? $this->getAncestors()->last() : null;
+        return end($ancestors) ?: null;
     }
 
     /** @return PostsCollection<int, static> Retrieves the children of this post. */
@@ -622,16 +551,16 @@ class PostModel implements PostModelInterface
         return get_post_ancestors($this->getId());
     }
 
-    /** @return Collection<int, static> Returns the ancestors of a post. */
-    public function getAncestors(): Collection
+    /** @return list<\OffbeatWP\Content\Post\PostModel> Returns the ancestors of a post. */
+    public function getAncestors(): array
     {
-        $ancestors = collect();
+        $ancestors = [];
 
         if ($this->hasParent()) {
             foreach ($this->getAncestorIds() as $ancestorId) {
-                $ancestor = offbeat('post')->get($ancestorId);
+                $ancestor = Post::getInstance()->get($ancestorId);
                 if ($ancestor) {
-                    $ancestors->push($ancestor);
+                    $ancestors[] = $ancestor;
                 }
             }
         }
@@ -639,25 +568,17 @@ class PostModel implements PostModelInterface
         return $ancestors;
     }
 
-    /** @return static|null */
-    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getPreviousPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, true, $taxonomy);
     }
 
-    /** @return static|null */
-    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category')
+    public function getNextPost(bool $inSameTerm = false, string $excludedTerms = '', string $taxonomy = 'category'): ?static
     {
         return $this->getAdjacentPost($inSameTerm, $excludedTerms, false, $taxonomy);
     }
 
-    /**
-     * @private
-     * @final
-     * @internal You should use <b>getPreviousPost</b> or <b>getNextPost</b>.
-     * @return static|null
-     */
-    public function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category')
+    private function getAdjacentPost(bool $inSameTerm = false, string $excludedTerms = '', bool $previous = true, string $taxonomy = 'category'): ?static
     {
         $currentPost = $GLOBALS['post'] ?? null;
 
@@ -669,11 +590,7 @@ class PostModel implements PostModelInterface
             $GLOBALS['post'] = $currentPost;
         }
 
-        if ($adjacentPost) {
-            return offbeat('post')->convertWpPostToModel($adjacentPost);
-        }
-
-        return null;
+        return $adjacentPost ? static::from($adjacentPost) : null;
     }
 
     /**
@@ -697,11 +614,8 @@ class PostModel implements PostModelInterface
         return get_page_template_slug($this->wpPost) ?: null;
     }
 
-    /**
-     * Get the <b>raw</b> post object
-     * @return WP_Post|object|null
-     */
-    public function getPostObject(): ?object
+    /** Get the <b>raw</b> post object */
+    public function getPostObject(): ?WP_Post
     {
         return $this->wpPost;
     }
@@ -709,17 +623,7 @@ class PostModel implements PostModelInterface
     /** Get the post object as WP_Post */
     final public function getWpPost(): WP_Post
     {
-        $post = $this->wpPost;
-
-        if ($post instanceof WP_Post) {
-            return $post;
-        }
-
-        if (!($post instanceof stdClass)) {
-            $post = (object)[];
-        }
-
-        return new WP_Post($post);
+        return $this->wpPost ?: new WP_Post((object)[]);
     }
 
     ///////////////////////
@@ -935,27 +839,11 @@ class PostModel implements PostModelInterface
         return new BelongsToMany($this, $relationKey);
     }
 
-    /**
-     * Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on.
-     * @return static|null
-     */
+    /** Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on. */
     final public static function current(): ?static
     {
-        $post = offbeat('post')->get();
-        return ($post instanceof static) ? $post : null;
-    }
-
-    /**
-     * Create a PostModel with an ID without running get_post.
-     * @param int $id Only accepts and ID as parameter.
-     * @return static
-     */
-    public static function createLazy(int $id)
-    {
-        $model = new static(null);
-        $model->setId($id);
-
-        return $model;
+        $post = Post::getInstance()->get();
+        return $post instanceof static ? $post : null;
     }
 
     /** @return PostsCollection<int, static> */
@@ -964,10 +852,10 @@ class PostModel implements PostModelInterface
         return static::query()->take(-1);
     }
 
-    /** @return WpQueryBuilderModel<static> */
-    public static function query(): WpQueryBuilderModel
+    /** @return WpQueryBuilder<static> */
+    public static function query(): WpQueryBuilder
     {
-        return new WpQueryBuilderModel(static::class);
+        return new WpQueryBuilder(static::class);
     }
 
     /** @return static */

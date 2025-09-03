@@ -4,7 +4,7 @@ namespace OffbeatWP\Content\Post;
 
 use DOMDocument;
 use OffbeatWP\Content\Common\OffbeatModelCollection;
-use OffbeatWP\Contracts\IWpQuerySubstitute;
+use OffbeatWP\Support\Wordpress\Post;
 use TypeError;
 use WP_Post;
 use WP_Query;
@@ -24,19 +24,19 @@ use WP_Query;
  */
 class PostsCollection extends OffbeatModelCollection
 {
-    protected IWpQuerySubstitute|WP_Query|null $query = null;
+    protected ?WP_Query $query = null;
 
     /** @param int[]|WP_Post[]|WP_Query $items */
     public function __construct($items = [])
     {
         $postItems = [];
 
-        if ($items instanceof WP_Query || $items instanceof IWpQuerySubstitute) {
+        if ($items instanceof WP_Query) {
             $this->query = $items;
 
             if ($items->posts) {
                 foreach ($items->posts as $post) {
-                    $postItems[] = offbeat('post')->convertWpPostToModel($post);
+                    $postItems[] = Post::getInstance()->convertWpPostToModel($post);
                 }
             }
         } elseif (is_iterable($items)) {
@@ -59,7 +59,7 @@ class PostsCollection extends OffbeatModelCollection
         }
 
         if (is_int($item) || $item instanceof WP_Post) {
-            return offbeat('post')->get($item);
+            return Post::getInstance()->get($item);
         }
 
         throw new TypeError(gettype($item) . ' cannot be used to generate a PostModel.');
@@ -178,8 +178,7 @@ class PostsCollection extends OffbeatModelCollection
         return $links;
     }
 
-    /** @return IWpQuerySubstitute|WP_Query|null */
-    public function getQuery()
+    public function getQuery(): ?WP_Query
     {
         return $this->query;
     }

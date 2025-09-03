@@ -5,6 +5,7 @@ namespace OffbeatWP\Content\Taxonomy;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use UnexpectedValueException;
 use WP_Term_Query;
 
@@ -93,9 +94,10 @@ final class TermQueryBuilder
         /** @var \OffbeatWP\Content\Taxonomy\TermsCollection<int, TValue>  $termModels */
         $termModels = new TermsCollection();
         $terms = $this->runQuery()->get_terms();
+        $taxonomyManager = Taxonomy::getInstance();
 
         foreach ($terms as $term) {
-            $model = offbeat('taxonomy')->convertWpTermToModel($term);
+            $model = $taxonomyManager->convertWpTermToModel($term);
 
             if ($this->modelClass && !$model instanceof $this->modelClass) {
                 throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
@@ -232,7 +234,7 @@ final class TermQueryBuilder
         $result = $this->first();
 
         if (!$result) {
-            $model = offbeat('taxonomy')->getModelByTaxonomy($this->taxonomy);
+            $model = Taxonomy::getInstance()->getModelByTaxonomy($this->taxonomy);
             return new $model(null);
         }
 

@@ -3,9 +3,9 @@
 namespace OffbeatWP\Content\Traits;
 
 use Exception;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
@@ -175,10 +175,11 @@ trait GetMetaTrait
     public function getMetaPostModels(string $key): array
     {
         $models = [];
+        $postHandler = Post::getInstance();
 
         foreach ($this->getMetaArray($key) as $id) {
             if ($id) {
-                $model = offbeat('post')->get($id);
+                $model = $postHandler->get($id);
 
                 if ($model) {
                     $models[] = $model;
@@ -187,15 +188,6 @@ trait GetMetaTrait
         }
 
         return $models;
-    }
-
-    /**
-     * @deprecated Use <i>collect($model->getMetas())</i> instead
-     * @return Collection<int|string, mixed>
-     */
-    public function getMetaCollection(string $key): Collection
-    {
-        return collect($this->getMetaArray($key));
     }
 
     /**

@@ -4,15 +4,14 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\Console\Install;
-use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
-use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
+use OffbeatWP\Support\Wordpress\Console;
 use WP_Query;
 
-class Service extends AbstractService
+class PostRelationService extends AbstractService
 {
-    private const POST_FIELDS = ['ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count'];
+    private const array POST_FIELDS = ['ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count'];
 
     /** @return void */
     public function register()
@@ -20,11 +19,7 @@ class Service extends AbstractService
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
         add_filter('posts_clauses', [$this, 'insertFieldsSql'], 10, 2);
 
-        if (offbeat('console')::isConsole()) {
-            offbeat('console')->register(Install::class);
-        }
-
-        offbeat('hooks')->addFilter('acf/load_field', LoadFieldIconsFilter::class);
+        Console::getInstance()->register(Install::class);
     }
 
     /**

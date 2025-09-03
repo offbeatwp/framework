@@ -5,8 +5,9 @@ namespace OffbeatWP\Content\Post;
 use Generator;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
-use OffbeatWP\Contracts\IWpQuerySubstitute;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use OffbeatWP\Support\Wordpress\Post;
 use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
@@ -18,7 +19,41 @@ class WpQueryBuilder
 
     /** @var array<string, mixed> */
     protected array $queryVars = ['post_type' => 'any'];
-    private string $wpQueryClass = WP_Query::class;
+    /** @var class-string<TValue> */
+    public readonly string $modelClass;
+
+    /**
+     * @throws OffbeatInvalidModelException
+     * @param class-string<TValue> $modelClass
+     */
+    final public function __construct(string $modelClass = PostModel::class)
+    {
+        $this->modelClass = $modelClass;
+
+        if ($modelClass::POST_TYPE) {
+            /** @var string|list<string> $postType */
+            $postType = $modelClass::POST_TYPE;
+            $this->wherePostType($postType);
+        }
+
+        $order = $this->getModelConst('ORDER_BY');
+        $orderDirection = $this->getModelConst('ORDER');
+
+        $this->order($order, $orderDirection);
+    }
+
+    private function getModelConst(string $type): ?string
+    {
+        if (defined("{$this->modelClass}::{$type}")) {
+            $value = $this->modelClass::{$type};
+
+            if (is_string($value)) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
 
     /** @return PostsCollection<int, TValue> */
     final public function all(): PostsCollection
@@ -26,13 +61,9 @@ class WpQueryBuilder
         return $this->take(-1);
     }
 
-    /**
-     * @param WP_Post $post
-     * @return PostModel|null
-     */
-    public function postToModel($post)
+    final public function postToModel(WP_Post $post): PostModel
     {
-        return offbeat('post')->convertWpPostToModel($post);
+        return Post::getInstance()->convertWpPostToModel($post);
     }
 
     /**
@@ -67,9 +98,8 @@ class WpQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
-        $query = $this->runQuery();
-
-        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
+        /** @var PostsCollection<int, TValue> */
+        return new PostsCollection($this->runQuery());
     }
 
     /**
@@ -83,8 +113,12 @@ class WpQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
-        foreach ($this->runQuery()->get_posts() as $post) {
-            yield offbeat('post')->convertWpPostToModel($post);
+        $this->queryVars['fields'] = 'all';
+        /** @var WP_Post[] $posts Always posts since 'fields' is set to 'all' */
+        $posts = $this->runQuery()->get_posts();
+
+        foreach ($posts as $post) {
+            yield $this->modelClass::from($post);
         }
     }
 
@@ -94,8 +128,7 @@ class WpQueryBuilder
         return $this->queryVars;
     }
 
-    /** @return scalar|mixed[]|null */
-    final public function getQueryVar(string $var)
+    final public function getQueryVar(string $var): mixed
     {
         $queryVars = $this->getQueryVars();
 
@@ -110,12 +143,15 @@ class WpQueryBuilder
         return $this->get();
     }
 
-    public function first(): ?PostModel
+    /** @return TValue|null */
+    final public function first(): ?PostModel
     {
+        /** @var TValue|null */
         return $this->take(1)->first();
     }
 
-    public function firstOrFail(): PostModel
+    /** @return TValue */
+    final public function firstOrFail(): PostModel
     {
         $result = $this->first();
 
@@ -139,7 +175,7 @@ class WpQueryBuilder
     }
 
     /** @phpstan-return TValue */
-    public function findByIdOrFail(int $id): PostModel
+    final public function findByIdOrFail(int $id): PostModel
     {
         $result = $this->findById($id);
 
@@ -150,12 +186,12 @@ class WpQueryBuilder
         return $result;
     }
 
-    public function findBySlug(string $slug): ?PostModel
+    final public function findBySlug(string $slug): ?PostModel
     {
         return $this->whereSlug($slug)->first();
     }
 
-    public function findBySlugOrFail(string $slug): PostModel
+    final public function findBySlugOrFail(string $slug): PostModel
     {
         $result = $this->findBySlug($slug);
 
@@ -166,22 +202,10 @@ class WpQueryBuilder
         return $result;
     }
 
-    /** @deprecated Find a post based by it's <b>slug</b>. Consider using <b>findBySlug</b> instead. */
-    final public function findByName(string $slug): ?PostModel
-    {
-        return $this->findBySlug($slug);
-    }
-
-    /** @deprecated Find a post based by it's <b>slug</b>, or throw an Exception if no post with the provided slug was found. Consider using <b>findBySlugOrFail</b> instead. */
-    final public function findByNameOrFail(string $slug): PostModel
-    {
-        return $this->findBySlugOrFail($slug);
-    }
-
-    private function runQuery(): WP_Query|IWpQuerySubstitute
+    private function runQuery(): WP_Query
     {
         do_action('offbeatwp/posts/query/before_get', $this);
-        $query = new $this->wpQueryClass($this->queryVars);
+        $query = new WP_Query($this->queryVars);
         do_action('offbeatwp/posts/query/after_get', $this);
 
         self::$lastRequest = $query->request;
@@ -208,6 +232,7 @@ class WpQueryBuilder
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
+        /** @var array<int, positive-int> Always returns int array since 'fields' is set to 'ids' */
         return $this->runQuery()->posts;
     }
 
@@ -239,16 +264,6 @@ class WpQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         return $this->runQuery()->post_count;
-    }
-
-    /**
-     * @param class-string<WP_Query|IWpQuerySubstitute> $queryObjectClassName
-     * @return $this
-     */
-    final public function useQuery(string $queryObjectClassName)
-    {
-        $this->wpQueryClass = $queryObjectClassName;
-        return $this;
     }
 
     /**
@@ -318,7 +333,7 @@ class WpQueryBuilder
             $operator = 'IN';
         }
 
-        if (!isset($this->queryVars['tax_query'])) {
+        if (!isset($this->queryVars['tax_query']) || !is_array($this->queryVars['tax_query'])) {
             $this->queryVars['tax_query'] = [];
         }
 
@@ -342,7 +357,7 @@ class WpQueryBuilder
      */
     final public function whereDate(array $args)
     {
-        if (!isset($this->queryVars['date_query'])) {
+        if (!isset($this->queryVars['date_query']) || !is_array($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
         }
 
@@ -383,7 +398,7 @@ class WpQueryBuilder
      */
     final public function whereMeta($key, $value = '', string $compare = '=', string $type = 'CHAR')
     {
-        if (!isset($this->queryVars['meta_query'])) {
+        if (!isset($this->queryVars['meta_query']) || !is_array($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
         }
 
@@ -583,8 +598,10 @@ class WpQueryBuilder
             throw new InvalidArgumentException('WpQueryBuilder::only method cannot receive an empty array.');
         }
 
+        $this->queryVars['fields'] = 'all';
         $this->queryVars['owp-fields'] = $columns;
 
+        /** @var WP_Post[] Always returns posts since 'fields' is set to 'all'  */
         return $this->runQuery()->get_posts();
     }
 
@@ -610,5 +627,11 @@ class WpQueryBuilder
         }
 
         return array_map(fn ($post) => $post->$column, $this->only([$column]));
+    }
+
+    /** @phpstan-return TValue|PostModel */
+    final public function firstOrNew(): PostModel
+    {
+        return $this->first() ?: new $this->modelClass(null);
     }
 }

@@ -3,16 +3,14 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Console\AbstractCommand;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Foundation\App;
 use WP_CLI;
 
-final class Console
+final class Console extends Singleton
 {
-    /**
-     * @param AbstractCommand|class-string<AbstractCommand> $commandClass
-     * @return void
-     */
-    public function register($commandClass): void
+    /** @param AbstractCommand|class-string<AbstractCommand> $commandClass */
+    public function register(AbstractCommand|string $commandClass): void
     {
         if (!self::isConsole()) {
             return;
@@ -21,12 +19,12 @@ final class Console
         $command = $commandClass::COMMAND;
 
         WP_CLI::add_command($command, function ($args, $argsNamed) use ($commandClass) {
-            App::singleton()->container->call([$commandClass, 'execute'], ['args' => $args, 'argsNamed' => $argsNamed]);
+            App::getInstance()->container->call([$commandClass, 'execute'], ['args' => $args, 'argsNamed' => $argsNamed]);
         });
     }
 
     public static function isConsole(): bool
     {
-        return (defined('WP_CLI') && WP_CLI);
+        return defined('WP_CLI') && constant('WP_CLI');
     }
 }

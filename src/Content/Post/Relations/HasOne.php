@@ -2,12 +2,13 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
+use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
-class HasOne extends HasOneOrMany
+final class HasOne extends HasOneOrMany
 {
-    /** @return \OffbeatWP\Content\Post\WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
-    public function query()
+    /** @return WpQueryBuilder<PostModel> */
+    public function query(): WpQueryBuilder
     {
         return (new WpQueryBuilder())
              ->where(['ignore_sticky_posts' => 1])
@@ -15,8 +16,7 @@ class HasOne extends HasOneOrMany
              ->hasRelationshipWith($this->model, $this->relationKey);
     }
 
-    /** @return \OffbeatWP\Content\Post\PostModel|null */
-    public function get()
+    public function get(): ?PostModel
     {
         return $this->query()->first();
     }

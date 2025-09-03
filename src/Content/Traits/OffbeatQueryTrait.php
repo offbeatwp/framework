@@ -131,10 +131,10 @@ trait OffbeatQueryTrait
     }
 
     /**
-     * @param mixed[]|null $parameters
+     * @param array<string, mixed> $parameters
      * @return $this
      */
-    public function where(?array $parameters)
+    public function where(array $parameters)
     {
         $this->queryVars = array_merge($this->queryVars, $parameters);
 

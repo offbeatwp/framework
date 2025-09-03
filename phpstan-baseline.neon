@@ -1,36 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to deprecated method registerWidget\\(\\) of class OffbeatWP\\\\Components\\\\ComponentRepository\\.$#"
-			count: 1
-			path: src/Components/ComponentRepository.php
-
-		-
-			message: "#^Call to static method get\\(\\) on an unknown class OffbeatWP\\\\AcfCore\\\\ComponentFields\\.$#"
-			count: 1
-			path: src/Components/GenericWidget.php
-
-		-
-			message: "#^Function get_field not found\\.$#"
-			count: 1
-			path: src/Components/GenericWidget.php
-
-		-
-			message: "#^Access to undefined constant static\\(OffbeatWP\\\\Form\\\\Fields\\\\AbstractField\\)\\:\\:FIELD_TYPE\\.$#"
-			count: 1
-			path: src/Form/Fields/AbstractField.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Form/Fields/AbstractField.php
-
-		-
 			message: "#^Template type T of function container\\(\\) is not referenced in a parameter\\.$#"
-			count: 1
-			path: src/Foundation/helpers.php
-
-		-
-			message: "#^Template type T of function offbeat\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Foundation/helpers.php
