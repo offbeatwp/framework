@@ -3,16 +3,11 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
-use Illuminate\Support\Collection;
 use OffbeatWP\Content\Common\Singleton;
 
 final class Design extends Singleton
 {
-    /**
-     * @param string $id
-     * @return mixed
-     */
-    public function getRowThemeClasses(string $id)
+    public function getRowThemeClasses(string $id): ?string
     {
         $rowThemes = config('design.row_themes');
         if (!$rowThemes) {
@@ -40,13 +35,7 @@ final class Design extends Singleton
         return $classes;
     }
 
-    /**
-     * @param string $id
-     * @param string $context
-     * @param string $prefix
-     * @return string|null
-     */
-    public function getMarginClasses($id, $context, $prefix)
+    public function getMarginClasses(string $id, string $context, string $prefix): ?string
     {
         $margins = config('design.margins');
         if (!$margins) {
@@ -62,13 +51,7 @@ final class Design extends Singleton
         return str_replace('{{prefix}}', $prefix, $margins[$id]['classes']);
     }
 
-    /**
-     * @param string $id
-     * @param string $context
-     * @param string $prefix
-     * @return string|null
-     */
-    public function getPaddingClasses($id, $context, $prefix)
+    public function getPaddingClasses(string $id, string $context, string $prefix): ?string
     {
         $paddings = config('design.paddings');
         if (!$paddings) {
@@ -85,9 +68,9 @@ final class Design extends Singleton
     }
 
     /** @return mixed[] */
-    public function getRowThemesList()
+    public function getRowThemesList(): array
     {
-        /** @var Collection<string|int, array{label: string, sub_themes: Collection<string|int, array{label: string}>}>|null $rowThemes */
+        /** @var array<string|int, array{label: string, sub_themes: array<string|int, array{label: string}>}>|null $rowThemes */
         $rowThemes = config('design.row_themes');
         if (!is_iterable($rowThemes)) {
             return [];
@@ -112,11 +95,8 @@ final class Design extends Singleton
         return $rowThemesList;
     }
 
-    /**
-     * @param string $context
-     * @return mixed[]
-     */
-    public function getMarginsList($context = null)
+    /** @return mixed[] */
+    public function getMarginsList(string $context = ''): array
     {
         $margins = config('design.margins');
 
@@ -131,11 +111,8 @@ final class Design extends Singleton
         return [];
     }
 
-    /**
-     * @param string $context
-     * @return mixed[]
-     */
-    public function getPaddingsList($context = null)
+    /** @return mixed[] */
+    public function getPaddingsList(string $context = ''): array
     {
         $paddings = config('design.paddings');
 

@@ -17,7 +17,7 @@ final class App extends Singleton
 {
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
-    public readonly Container $container;
+    public Container $container;
     protected ?Config $config = null;
 
     public function bootstrap(): void
