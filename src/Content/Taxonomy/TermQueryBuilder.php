@@ -18,7 +18,31 @@ final class TermQueryBuilder
     protected readonly string $modelClass;
     /** @var string|list<string> */
     protected readonly string|array $taxonomy;
-    /** @var array<string, mixed> */
+    /**
+     * @var array{
+     *   current_category?: int|int[],
+     *   depth?: int,
+     *   echo?: bool|int,
+     *   exclude?: int[]|string,
+     *   exclude_tree?: int[]|string,
+     *   feed?: string,
+     *   feed_image?: string,
+     *   feed_type?: string,
+     *   hide_title_if_empty?: bool,
+     *   separator?: string,
+     *   show_count?: bool|int,
+     *   show_option_all?: string,
+     *   show_option_none?: string,
+     *   style?: string,
+     *   taxonomy?: string,
+     *   title_li?: string,
+     *   use_desc_for_title?: bool|int,
+     *   walker?: \Walker,
+     *   taxonomy?: string,
+     *   meta_query?: mixed[],
+     *   object_ids?: int[]|int
+     * }
+     */
     protected array $queryVars = [];
 
     /** @param class-string<TValue> $model */
@@ -30,22 +54,6 @@ final class TermQueryBuilder
         if ($this->taxonomy) {
             $this->queryVars['taxonomy'] = $this->taxonomy;
         }
-
-        if (method_exists($model, 'defaultQuery')) {
-            $model::defaultQuery($this);
-        }
-
-        $order = null;
-        if (defined("$model::ORDER")) {
-            $order = $model::ORDER;
-        }
-
-        $orderBy = null;
-        if (defined("$model::ORDER_BY")) {
-            $orderBy = $model::ORDER_BY;
-        }
-
-        $this->order($orderBy, $order);
     }
 
     /**
@@ -91,21 +99,9 @@ final class TermQueryBuilder
     /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
-        $termModels = [];
+        /** @var \WP_Term[] $terms */
         $terms = $this->runQuery()->get_terms();
-        $taxonomyManager = Taxonomy::getInstance();
-
-        foreach ($terms as $term) {
-            $model = $taxonomyManager->convertWpTermToModel($term);
-
-            if ($this->modelClass && !$model instanceof $this->modelClass) {
-                throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
-            }
-
-            $termModels[] = $model;
-        }
-
-        return new TermsCollection($termModels, $this->modelClass);
+        return new TermsCollection(array_map(fn($t) => $this->modelClass::from($t), $terms), $this->modelClass);
     }
 
     /**
@@ -141,19 +137,20 @@ final class TermQueryBuilder
         return $this;
     }
 
-    /** @return positive-int[] */
+    /** @return array<non-negative-int, positive-int> */
     public function ids(): array
     {
         $this->queryVars['number'] = $this->queryVars['number'] ?? 0;
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
+        /** @var array<non-negative-int, positive-int> */
         return $this->runQuery()->get_terms();
     }
 
     /**
      * Returns an associative array of parent term IDs, keyed by term ID
-     * @return int[]
+     * @return array<non-negative-int, positive-int>
      */
     public function parentIds(): array
     {
@@ -161,6 +158,7 @@ final class TermQueryBuilder
         $this->queryVars['fields'] = 'id=>parent';
         $this->queryVars['no_found_rows'] = true;
 
+        /** @var array<non-negative-int, positive-int> */
         return $this->runQuery()->get_terms();
     }
 
@@ -175,7 +173,7 @@ final class TermQueryBuilder
 
     /**
      * @param bool $indexById When true, the names will be indexed with their respective term ID.
-     * @return string[]
+     * @return array<non-negative-int, string>
      */
     public function names(bool $indexById): array
     {
@@ -183,6 +181,7 @@ final class TermQueryBuilder
         $this->queryVars['fields'] = ($indexById) ? 'id=>name' : 'names';
         $this->queryVars['no_found_rows'] = true;
 
+        /** @var array<non-negative-int, string> */
         return $this->runQuery()->get_terms();
     }
 
@@ -193,7 +192,7 @@ final class TermQueryBuilder
 
     /**
      * @param bool $indexById When true, the slugs will be indexed with their respective term ID.
-     * @return string[]
+     * @return array<non-negative-int, string>
      */
     public function slugs(bool $indexById): array
     {
@@ -201,6 +200,7 @@ final class TermQueryBuilder
         $this->queryVars['fields'] = ($indexById) ? 'id=>slug' : 'slugs';
         $this->queryVars['no_found_rows'] = true;
 
+        /** @var array<non-negative-int, string> */
         return $this->runQuery()->get_terms();
     }
 
@@ -222,19 +222,6 @@ final class TermQueryBuilder
 
         if (!$result) {
             throw new OffbeatModelNotFoundException('The query did not return any TermModels');
-        }
-
-        return $result;
-    }
-
-    /** @phpstan-return TValue */
-    public function firstOrNew(): TermModel
-    {
-        $result = $this->first();
-
-        if (!$result) {
-            $model = Taxonomy::getInstance()->getModelByTaxonomy($this->taxonomy);
-            return new $model(null);
         }
 
         return $result;
@@ -390,10 +377,10 @@ final class TermQueryBuilder
     }
 
     /**
-     * @param int|int[]|null $postIds
+     * @param int[] $postIds
      * @return $this
      */
-    public function whereRelatedToPost(int|array|null $postIds)
+    public function whereRelatedToPost(array $postIds)
     {
         $this->queryVars['object_ids'] = $postIds ?: [0];
         return $this;

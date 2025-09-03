@@ -16,7 +16,43 @@ final class UserQueryBuilder
 
     /** @var class-string<UserModel> */
     protected readonly string $modelClass;
-    /** @var array<string, mixed> */
+    /** @var array{
+     *   blog_id?: int,
+     *   role?: string|string[],
+     *   role__in?: string[],
+     *   role__not_in?: string[],
+     *   meta_key?: string|string[],
+     *   meta_value?: string|string[],
+     *   meta_compare?: string,
+     *   meta_compare_key?: string,
+     *   meta_type?: string,
+     *   meta_type_key?: string,
+     *   meta_query?: mixed[],
+     *   capability?: string|string[],
+     *   capability__in?: string[],
+     *   capability__not_in?: string[],
+     *   include?: int[],
+     *   exclude?: int[],
+     *   search?: string,
+     *   search_columns?: string[],
+     *   orderby?: string|mixed[],
+     *   order?: string,
+     *   offset?: int,
+     *   number?: int,
+     *   paged?: int,
+     *   count_total?: bool,
+     *   fields?: string|string[],
+     *   who?: string,
+     *   has_published_posts?: bool|string[],
+     *   nicename?: string,
+     *   nicename__in?: string[],
+     *   nicename__not_in?: string[],
+     *   login?: string,
+     *   login__in?: string[],
+     *   login__not_in?: string[],
+     *   cache_results?: bool,
+     * }
+     */
     protected array $queryVars = ['number' => 0];
     protected bool $skipOnLimit = false;
     protected bool $skipOnInclude = false;
@@ -25,25 +61,24 @@ final class UserQueryBuilder
     public function __construct(string $modelClass)
     {
         $this->modelClass = $modelClass;
+        $roles = $this->modelClass::definedUserRoles();
 
-        if ($this->modelClass::definedUserRoles() !== null) {
-            $this->whereRoleIn($this->modelClass::definedUserRoles());
+        if ($roles !== null) {
+            $this->whereRoleIn($roles);
         }
     }
 
     /** @return UserCollection<int, TValue> */
     public function get(): UserCollection
     {
-        do_action('offbeatwp/users/query/before_get', $this);
-
+        /** @var list<TValue> $results */
         $results = $this->getQueryResults();
-
-        return apply_filters('offbeatwp/users/query/get', new UserCollection($results, $this->modelClass), $this);
+        return new UserCollection($results, $this->modelClass);
     }
 
     /**
-     * @deprecated Use the <b>get</b> method instead.
      * @return UserCollection<int, TValue>
+     * @deprecated Use the <b>get</b> method instead.
      */
     public function all(): UserCollection
     {
@@ -88,19 +123,11 @@ final class UserQueryBuilder
 
     /**
      * @param string[]|string $properties Sort retrieved users by parameter. Defaults to <i>login</i>.
-     * @param 'ASC'|'DESC'|'' $direction Either <i>ASC</i> for lowest to highest or <i>DESC</i> for highest to lowest. Defaults to <i>ASC</i>.
      * @return $this
      */
-    public function orderBy($properties, string $direction = '')
+    public function orderBy($properties)
     {
         $this->queryVars['orderby'] = $properties;
-
-        if ($direction === 'ASC' || $direction === 'DESC') {
-            $this->queryVars['order'] = $direction;
-        } elseif ($direction !== '') {
-            throw new InvalidQueryOperatorException('Attempted to use incorrect direction in UserQueryBuilder. Only ASC and DESC are valid.');
-        }
-
         return $this;
     }
 
@@ -110,12 +137,8 @@ final class UserQueryBuilder
      */
     public function whereEmail(string $email)
     {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new InvalidArgumentException('whereEmail only accepts valid email strings.');
-        }
-
         $this->queryVars['search'] = $email;
-        $this->queryVars['search_columns'] = 'user_email';
+        $this->queryVars['search_columns'] = ['user_email'];
 
         return $this;
     }
@@ -200,6 +223,7 @@ final class UserQueryBuilder
     public function ids(): array
     {
         $this->queryVars['fields'] = 'ID';
+        /** @var positive-int[] */
         return $this->getQueryResults();
     }
 
@@ -214,6 +238,7 @@ final class UserQueryBuilder
         }
 
         $this->queryVars['fields'] = $fieldName;
+        /** @var string[] */
         return $this->getQueryResults();
     }
 
@@ -221,6 +246,7 @@ final class UserQueryBuilder
     {
         $this->queryVars['fields'] = 'display_name';
         $this->queryVars['number'] = 1;
+        /** @var string|null */
         return $this->getQueryResults()[0] ?? null;
     }
 
