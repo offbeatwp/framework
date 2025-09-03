@@ -15,7 +15,7 @@ final class UserQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var class-string<UserModel> */
-    protected string $modelClass;
+    protected readonly string $modelClass;
     /** @var array<string, mixed> */
     protected array $queryVars = ['number' => 0];
     protected bool $skipOnLimit = false;

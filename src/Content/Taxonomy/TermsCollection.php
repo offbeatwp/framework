@@ -2,98 +2,33 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use ArrayIterator;
-use OffbeatWP\Content\Common\OffbeatModelCollection;
-use OffbeatWP\Support\Wordpress\Taxonomy;
-use TypeError;
-use WP_Term;
+use OffbeatWP\Content\Common\ReadonlyCollection;
 
 /**
- * @template TKey of array-key
+ * @template TKey of int
  * @template TValue of TermModel
- * @extends OffbeatModelCollection<TKey, TValue>
- *
- * @method TermModel|mixed pull(int|string $key, $default = null)
- * @method TermModel|mixed first(callable $callback = null, mixed $default = null)
- * @method TermModel|mixed last(callable $callback = null, mixed $default = null)
- * @method TermModel|static|null pop(int $count = 1)
- * @method TermModel|static|null shift(int $count = 1)
- * @method TermModel|null reduce(callable $callback, mixed $initial = null)
- * @method TermModel offsetGet(int|string $key)
+ * @extends ReadonlyCollection<TKey, TValue>
  */
-class TermsCollection extends OffbeatModelCollection
+final class TermsCollection extends ReadonlyCollection
 {
-    /** @param int[]|WP_Term[]|TermModel[] $items */
-    public function __construct(iterable $items = [])
-    {
-        $terms = [];
-
-        foreach ($items as $item) {
-            $termModel = $this->createValidTermModel($item);
-            if ($termModel) {
-                $terms[] = $termModel;
-            }
-        }
-
-        parent::__construct($terms);
-    }
-
     /**
-     * @deprecated
-     * Retrieves all object Ids within this collection as an array.
-     * @return int[]
+     * @param list<TValue> $items
+     * @param class-string<TValue> $modelClass
      */
-    public function getIds(): array
+    public function __construct(array $items, string $modelClass = TermModel::class)
     {
-        return array_map(static function (TermModel $model) {
-            return $model->getId() ?: 0;
-        }, $this->items);
+        parent::__construct($items, $modelClass);
     }
 
-    /** @return string[] Returns an array of term names indexed by their id. */
-    public function getNames(): array
+    /** @return TValue|null */
+    public function offsetGet(mixed $offset): ?TermModel
     {
-        $names = [];
-
-        $this->each(function (TermModel $model) use (&$names) {
-            $names[$model->getId()] = $model->getName();
-        });
-
-        return $names;
+        return parent::offsetGet($offset);
     }
 
-    /** @param int|WP_Term|TermModel $item */
-    protected function createValidTermModel($item): ?TermModel
+    /** @return TValue|null */
+    public function first(): ?TermModel
     {
-        if ($item instanceof TermModel) {
-            return $item;
-        }
-
-        if (is_int($item) || $item instanceof WP_Term) {
-            return Taxonomy::getInstance()->get($item);
-        }
-
-        throw new TypeError(gettype($item) . ' cannot be used to generate a TermModel.');
-    }
-
-    /**
-     * Deletes <b>all</b> the terms in this collection from the database.
-     * @param bool $force
-     * @return void
-     */
-    public function deleteAll(bool $force)
-    {
-        $this->each(function (TermModel $model) {
-            $model->delete();
-        });
-
-        $this->items = [];
-    }
-
-    /** @return ArrayIterator<TKey, TValue> */
-    public function getIterator(): ArrayIterator
-    {
-        /** @var ArrayIterator<TKey, TValue> */
-        return parent::getIterator();
+        return parent::first();
     }
 }

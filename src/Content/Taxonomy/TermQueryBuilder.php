@@ -15,9 +15,9 @@ final class TermQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var class-string<TValue> */
-    protected string $modelClass;
+    protected readonly string $modelClass;
     /** @var string|list<string> */
-    protected string|array $taxonomy;
+    protected readonly string|array $taxonomy;
     /** @var array<string, mixed> */
     protected array $queryVars = [];
 
@@ -91,8 +91,7 @@ final class TermQueryBuilder
     /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
-        /** @var \OffbeatWP\Content\Taxonomy\TermsCollection<int, TValue>  $termModels */
-        $termModels = new TermsCollection();
+        $termModels = [];
         $terms = $this->runQuery()->get_terms();
         $taxonomyManager = Taxonomy::getInstance();
 
@@ -103,10 +102,10 @@ final class TermQueryBuilder
                 throw new UnexpectedValueException('Term Query result contained illegal model: ' . $model::class);
             }
 
-            $termModels->push($model);
+            $termModels[] = $model;
         }
 
-        return $termModels;
+        return new TermsCollection($termModels, $this->modelClass);
     }
 
     /**
@@ -338,44 +337,6 @@ final class TermQueryBuilder
 
         if (!$result) {
             throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' with name ' . $name);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated Use findById, findBySlug or findByName instead
-     * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
-     * @phpstan-return TValue|null
-     */
-    public function findBy(string $field, string|int $value): ?TermModel
-    {
-        if ($field === 'id' || $field === 'ID' || $field === 'term_id' || $field === 'term_taxonomy_id') {
-            return $this->findById($value);
-        }
-
-        if ($field === 'slug') {
-            return $this->findBySlug($value);
-        }
-
-        if ($field === 'name') {
-            return $this->findByName($value);
-        }
-
-        throw new InvalidArgumentException('TermQueryBuilder::findBy received invalid field value ' . $field);
-    }
-
-    /**
-     * @deprecated Use findByIdOrFail, findBySlugOrFail or findByNameOrFail instead
-     * @param string $field Either 'slug', 'name', 'term_id' 'id', 'ID' or 'term_taxonomy_id'.
-     * @phpstan-return TValue
-     */
-    public function findByOrFail(string $field, string|int $value): TermModel
-    {
-        $result = $this->findBy($field, $value);
-
-        if (!$result) {
-            throw new OffbeatModelNotFoundException('Could not find ' . static::class . ' where ' . $field . ' has a value of ' . $value);
         }
 
         return $result;

@@ -2,181 +2,33 @@
 
 namespace OffbeatWP\Content\User;
 
-use ArrayIterator;
-use OffbeatWP\Content\Common\OffbeatModelCollection;
-use OffbeatWP\Exceptions\UserModelException;
-use OffbeatWP\Support\Wordpress\User;
-use TypeError;
-use WP_User;
+use OffbeatWP\Content\Common\ReadonlyCollection;
 
 /**
- * @template TKey of array-key
+ * @template TKey of int
  * @template TValue of UserModel
- * @extends OffbeatModelCollection<TKey, TValue>
- *
- * @method UserModel|mixed pull(int|string $key, mixed $default = null)
- * @method UserModel|mixed first(callable $callback = null, mixed $default = null)
- * @method UserModel|mixed last(callable $callback = null, mixed $default = null)
- * @method UserModel|static|null pop(int $count = 1)
- * @method UserModel|static|null shift(int $count = 1)
- * @method UserModel|null reduce(callable $callback, mixed $initial = null)
- * @method UserModel offsetGet(int|string $key)
- * @phpstan-method TValue[] all()
+ * @extends ReadonlyCollection<TKey, TValue>
  */
-class UserCollection extends OffbeatModelCollection
+final class UserCollection extends ReadonlyCollection
 {
-    /** @var array<TKey, TValue> */
-    protected $items = [];
-    /** @var class-string<TValue> */
-    private string $modelClass;
-
     /**
-     * @param int[]|WP_User[]|UserModel[] $items
+     * @param list<TValue> $items
      * @param class-string<TValue> $modelClass
      */
-    final public function __construct(iterable $items = [], string $modelClass = UserModel::class)
+    public function __construct(array $items, string $modelClass = UserModel::class)
     {
-        $this->modelClass = $modelClass;
-        $users = [];
-
-        foreach ($items as $item) {
-            $userModel = $this->createValidUserModel($item);
-            if (is_a($userModel, $this->modelClass)) {
-                $users[] = $userModel;
-            }
-        }
-
-        parent::__construct($users);
+        parent::__construct($items, $modelClass);
     }
 
-    /**
-     * Retrieves all object Ids within this collection as an array.
-     * @return int[]
-     */
-    public function getIds(): array
+    /** @return TValue|null */
+    public function offsetGet(mixed $offset): ?UserModel
     {
-        return array_map(static fn (UserModel $model) => $model->getId() ?: 0, $this->items);
+        return parent::offsetGet($offset);
     }
 
-    /**
-     * @return UserModel[]
-     * @phpstan-return TValue[]
-     */
-    public function toArray()
+    /** @return TValue|null */
+    public function first(): ?UserModel
     {
-        return $this->toCollection()->toArray();
-    }
-
-    /**
-     * Push one or more items onto the end of the user collection.
-     * @param int|WP_User|UserModel ...$values
-     * @return $this
-     */
-    public function push(...$values)
-    {
-        $userModels = [];
-
-        foreach ($values as $value) {
-            $userModels[] = $this->createValidUserModel($value);
-        }
-
-        return parent::push(...$userModels);
-    }
-
-    /**
-     * Set the model given the offset.
-     * @param array-key $key
-     * @param int|WP_User|UserModel $value
-     */
-    public function offsetSet($key, $value): void
-    {
-        parent::offsetSet($key, $this->createValidUserModel($value));
-    }
-
-    /**
-     * @template T of \OffbeatWP\Content\User\UserModel
-     * @deprecated
-     * @param class-string<T> $className
-     * @return UserCollection<int, T>
-     */
-    public function as(string $className): UserCollection
-    {
-        if (!is_a($className, UserModel::class, true)) {
-            throw new UserModelException('Cannot cast items in UserCollection to a class that does not extend UserModel.');
-        }
-
-        $collection = new UserCollection([], $className);
-        foreach ($this as $user) {
-            $collection->add(new $className($user->getWpUser()));
-        }
-
-        return $collection;
-    }
-
-    /**
-     * Push a model onto the beginning of the user collection.
-     * @param int|WP_User|UserModel $value
-     * @param array-key $key
-     * @return $this
-     */
-    public function prepend($value, $key = null)
-    {
-        return parent::prepend($this->createValidUserModel($value), $key);
-    }
-
-    /**
-     * Add a model to the user collection.
-     * @param int|WP_User|UserModel $item
-     * @return $this
-     */
-    public function add($item)
-    {
-        return parent::add($this->createValidUserModel($item));
-    }
-
-    /**
-     * @param int|WP_User|UserModel $item
-     * @phpstan-return  TValue|null
-     */
-    protected function createValidUserModel($item): ?UserModel
-    {
-        if ($item instanceof UserModel) {
-            $item = $item->getWpUser();
-        }
-
-        if (is_int($item) || $item instanceof WP_User) {
-            $user = User::get($item, $this->modelClass);
-            return ($user && is_a($user, $this->modelClass)) ? $user : null;
-        }
-
-        throw new TypeError(gettype($item) . ' cannot be used to generate a UserModel.');
-    }
-
-    /**
-     * Immideatly <b>deletes all users that are part of this collection.</b><br>
-     * Be careful!
-     * @param int|null $reassign
-     * @return void
-     */
-    public function deleteAll(?int $reassign = null)
-    {
-        $this->each(function (UserModel $user) use ($reassign) {
-            $user->delete($reassign);
-        });
-
-        $this->items = [];
-    }
-
-    /** @return UserCollection<int, TValue> */
-    final public function values(): UserCollection
-    {
-        return new static(array_values($this->items), $this->modelClass);
-    }
-
-    /** @return ArrayIterator<TKey, TValue> */
-    public function getIterator(): ArrayIterator
-    {
-        /** @var ArrayIterator<TKey, TValue> */
-        return parent::getIterator();
+        return parent::first();
     }
 }
