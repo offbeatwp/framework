@@ -4,7 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use Closure;
 use Illuminate\Support\Collection;
-use OffbeatWP\Common\Singleton;
+use OffbeatWP\Content\Common\Singleton;
 
 final class Design extends Singleton
 {

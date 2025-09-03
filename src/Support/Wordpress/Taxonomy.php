@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Common\Singleton;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
 use WP_Term;
