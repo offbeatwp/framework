@@ -2,8 +2,8 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Common\Singleton;
 use OffbeatWP\Console\AbstractCommand;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Foundation\App;
 use WP_CLI;
 

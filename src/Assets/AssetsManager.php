@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Assets;
 
-use OffbeatWP\Common\Singleton;
+use OffbeatWP\Content\Common\Singleton;
 use RuntimeException;
 
 final class AssetsManager extends Singleton

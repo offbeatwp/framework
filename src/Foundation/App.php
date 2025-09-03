@@ -7,18 +7,17 @@ use DI\Container;
 use DI\ContainerBuilder;
 use DI\Definition\Helper\DefinitionHelper;
 use InvalidArgumentException;
-use OffbeatWP\Common\Singleton;
 use OffbeatWP\Config\Config;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
-
 use function DI\autowire;
 
 final class App extends Singleton
 {
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
-    public readonly Container $container;
+    public Container $container;
     protected ?Config $config = null;
 
     public function bootstrap(): void

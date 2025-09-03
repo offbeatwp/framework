@@ -1,6 +1,6 @@
 <?php
 
-namespace OffbeatWP\Common;
+namespace OffbeatWP\Content\Common;
 
 abstract class Singleton
 {

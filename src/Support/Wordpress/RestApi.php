@@ -3,7 +3,7 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Api\RestEndpointBuilder;
-use OffbeatWP\Common\Singleton;
+use OffbeatWP\Content\Common\Singleton;
 use WP_REST_Request;
 
 final class RestApi extends Singleton
