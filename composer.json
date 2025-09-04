@@ -1,32 +1,32 @@
 {
-  "name": "offbeatwp/framework",
-  "description": "The OffbeatWP framework",
-  "license": "MIT",
-  "type": "library",
-  "scripts": {
-    "phpcs": "vendor/bin/php-cs-fixer fix",
-    "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
-  },
-  "require": {
-    "php": ">=8.3",
-    "php-di/php-di": "^7.0.6",
-    "ext-dom": "*"
-  },
-  "autoload": {
-    "files": [
-      "src/Foundation/helpers.php",
-      "src/Foundation/owp-options.php"
-    ],
-    "psr-4": {
-      "OffbeatWP\\": "src"
+    "name": "offbeatwp/framework",
+    "description": "The OffbeatWP framework",
+    "license": "MIT",
+    "type": "library",
+    "scripts": {
+        "phpcs": "vendor/bin/php-cs-fixer fix",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
+    },
+    "require": {
+        "php": ">=8.3",
+        "php-di/php-di": "^7.0.6",
+        "ext-dom": "*"
+    },
+    "autoload": {
+        "files": [
+            "src/Foundation/helpers.php",
+            "src/Foundation/owp-options.php"
+        ],
+        "psr-4": {
+            "OffbeatWP\\": "src"
+        }
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "php-stubs/wp-cli-stubs": "^2.12.0",
+        "szepeviktor/phpstan-wordpress": "^2.0.2",
+        "friendsofphp/php-cs-fixer": "^3.86.0",
+        "phpstan/phpstan": "^2.1.22",
+        "phpstan/phpstan-deprecation-rules": "^2.0.3"
     }
-  },
-  "require-dev": {
-    "roave/security-advisories": "dev-latest",
-    "php-stubs/wp-cli-stubs": "^2.12.0",
-    "szepeviktor/phpstan-wordpress": "^2.0.2",
-    "friendsofphp/php-cs-fixer": "^3.86.0",
-    "phpstan/phpstan": "^2.1.22",
-    "phpstan/phpstan-deprecation-rules": "^2.0.3"
-  }
 }
