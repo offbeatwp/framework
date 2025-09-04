@@ -21,9 +21,9 @@ use OffbeatWP\Content\User\UserModel;
 abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     /** @var list<TValue> */
-    readonly protected array $items;
+    protected readonly array $items;
     /** @var class-string<TValue> */
-    readonly protected string $modelClass;
+    protected readonly string $modelClass;
 
     /**
      * @param list<TValue> $items

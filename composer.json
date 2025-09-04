@@ -25,7 +25,7 @@
         "roave/security-advisories": "dev-latest",
         "php-stubs/wp-cli-stubs": "^2.12.0",
         "szepeviktor/phpstan-wordpress": "^2.0.2",
-        "friendsofphp/php-cs-fixer": "^3.86.0",
+        "friendsofphp/php-cs-fixer": "^3.87.1",
         "phpstan/phpstan": "^2.1.22",
         "phpstan/phpstan-deprecation-rules": "^2.0.3"
     }

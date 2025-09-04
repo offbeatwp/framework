@@ -7,9 +7,15 @@ abstract class Singleton
     /** @var array<class-string<static>, static> */
     private static array $instances = [];
 
-    final protected function __construct() {}
-    final protected function __clone() {}
-    final protected function __wakeup() {}
+    final protected function __construct()
+    {
+    }
+    final protected function __clone()
+    {
+    }
+    final protected function __wakeup()
+    {
+    }
 
     final public static function getInstance(): static
     {

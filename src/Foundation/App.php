@@ -11,6 +11,7 @@ use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
+
 use function DI\autowire;
 
 final class App extends Singleton

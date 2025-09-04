@@ -5,8 +5,6 @@ namespace OffbeatWP\Content\Taxonomy;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
-use OffbeatWP\Support\Wordpress\Taxonomy;
-use UnexpectedValueException;
 use WP_Term_Query;
 
 /** @template TValue of TermModel */
@@ -101,7 +99,7 @@ final class TermQueryBuilder
     {
         /** @var \WP_Term[] $terms */
         $terms = $this->runQuery()->get_terms();
-        return new TermsCollection(array_map(fn($t) => $this->modelClass::from($t), $terms), $this->modelClass);
+        return new TermsCollection(array_map(fn ($t) => $this->modelClass::from($t), $terms), $this->modelClass);
     }
 
     /**
