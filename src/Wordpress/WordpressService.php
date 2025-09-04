@@ -37,11 +37,11 @@ final class WordpressService
     public function register(): void
     {
         add_action('after_setup_theme', [$this, 'registerMenus']);
-        $this->registerImageSizes();
-        $this->registerSidebars();
+        add_action('after_setup_theme', [$this, 'registerImageSizes']);
+        add_action('widgets_init', [$this, 'registerSidebars']);
 
         // Page Template
-        add_action('init', [$this, 'registerPageTemplate'], 99);
+        add_action('theme_page_templates', [$this, 'registerPageTemplate'], 99);
         add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10, 2);
     }
 
@@ -58,10 +58,10 @@ final class WordpressService
     {
         $images = config('images');
 
-        if (is_object($images) && $images->isNotEmpty()) {
-            $images->each(function ($image, $key) {
+        if (is_iterable($images)) {
+            foreach ($images as $key => $image) {
                 add_image_size($key, $image['width'], $image['height'], $image['crop']);
-            });
+            }
         }
     }
 
@@ -69,11 +69,11 @@ final class WordpressService
     {
         $sidebars = config('sidebars');
 
-        if (is_object($sidebars) && $sidebars->isNotEmpty()) {
-            $sidebars->each(function ($sidebar, $id) {
+        if (is_iterable($sidebars)) {
+            foreach ($sidebars as $id => $sidebar) {
                 $sidebar['id'] = $id;
                 register_sidebar($sidebar);
-            });
+            }
         }
     }
 
