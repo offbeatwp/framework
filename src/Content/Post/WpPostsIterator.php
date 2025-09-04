@@ -3,16 +3,16 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayIterator;
+use WP_Post;
 
 /**
  * @extends ArrayIterator<TKey, TValue>
- * @template TKey of int|string
+ * @template TKey of array-key
  * @template TValue of PostModel
  */
 final class WpPostsIterator extends ArrayIterator
 {
-    /** @var \WP_Post|null */
-    private $originalPost;
+    private ?WP_Post $originalPost;
     private bool $globalPostWasChanged = false;
 
     /**
