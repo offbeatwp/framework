@@ -10,7 +10,6 @@
   "require": {
     "php": ">=8.3",
     "php-di/php-di": "^7.0.6",
-    "illuminate/collections": "^v10.48.11",
     "ext-dom": "*"
   },
   "autoload": {
