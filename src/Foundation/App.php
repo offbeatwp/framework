@@ -57,7 +57,11 @@ final class App
         $containerBuilder = new ContainerBuilder();
 
         $containerBuilder->addDefinitions($this->baseBindings());
-        $this->initiateBaseServices($containerBuilder);
+
+        if (apply_filters('offbeatwp/initiate_base_services', true)) {
+            $this->initiateBaseServices($containerBuilder);
+        }
+
         $this->initiateServices($containerBuilder);
 
         $this->container = $containerBuilder->build();
