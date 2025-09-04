@@ -100,7 +100,7 @@ final class Config
 
     /**
      * @param string $key
-     * @return object|\Illuminate\Support\Collection|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config
+     * @return object|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config
      */
     public function get(string $key, bool $collect = true)
     {
@@ -111,13 +111,7 @@ final class Config
             trigger_error('Config::get $key must be a non-falsy string.', E_USER_DEPRECATED);
         }
 
-        $result = ArrayHelper::getValueFromStringArray($keys, $this->config);
-
-        if (is_array($result)) {
-            return $collect ? collect($result) : $result;
-        }
-
-        return $result;
+        return ArrayHelper::getValueFromStringArray($keys, $this->config);
     }
 
     /** @return mixed[] */
