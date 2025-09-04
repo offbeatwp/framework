@@ -99,7 +99,7 @@ class WpQueryBuilder
         }
 
         /** @var PostsCollection<int, TValue> */
-        return new PostsCollection($this->runQuery());
+        return new PostsCollection($this->runQuery(), $this->modelClass);
     }
 
     /**
@@ -481,7 +481,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param PostModel|PostsCollection<int|string, PostModel>|int $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModel|PostsCollection<int, PostModel>|int $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
      * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
      * @return $this

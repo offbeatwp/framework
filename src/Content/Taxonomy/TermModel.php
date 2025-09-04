@@ -3,7 +3,6 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use InvalidArgumentException;
-use OffbeatWP\Content\Post\WpQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
@@ -18,7 +17,8 @@ class TermModel implements TermModelInterface
     use SetMetaTrait;
     use GetMetaTrait;
 
-    public const TAXONOMY = '';
+    /** @var string|list<string> */
+    public const string|array TAXONOMY = '';
 
     public ?WP_Term $wpTerm = null;
     public ?int $id = null;

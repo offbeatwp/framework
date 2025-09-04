@@ -30,13 +30,9 @@ class PostModel implements PostModelInterface
     use SetMetaTrait;
     use GetMetaTrait;
 
-    public const POST_TYPE = 'any';
+    public const string|array POST_TYPE = 'any';
 
-    public const DEFAULT_POST_STATUS = 'publish';
-    public const DEFAULT_COMMENT_STATUS = 'closed';
-    public const DEFAULT_PING_STATUS = 'closed';
-
-    public ?WP_Post $wpPost;
+    public WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var array<string, ""> */
@@ -59,12 +55,7 @@ class PostModel implements PostModelInterface
     final public function __construct(?WP_Post $post = null)
     {
         if ($post === null) {
-            $this->wpPost = new WP_Post((object)[
-                'post_type' => static::POST_TYPE,
-                'post_status' => static::DEFAULT_POST_STATUS,
-                'comment_status' => static::DEFAULT_COMMENT_STATUS,
-                'ping_status' => static::DEFAULT_PING_STATUS
-            ]);
+            $this->wpPost = new WP_Post((object)['post_type' => static::POST_TYPE]);
         } else {
             $this->wpPost = $post;
         }
@@ -120,9 +111,9 @@ class PostModel implements PostModelInterface
     ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
-    public function getId(): ?int
+    public function getId(): int
     {
-        return $this->wpPost->ID ?? null;
+        return $this->wpPost->ID;
     }
 
     /** @return string */
@@ -187,7 +178,7 @@ class PostModel implements PostModelInterface
     /** @return $this */
     public function setAuthor(int $authorId)
     {
-        $this->wpPost->post_author = $authorId;
+        $this->wpPost->post_author = (string)$authorId;
         return $this;
     }
 
@@ -197,7 +188,7 @@ class PostModel implements PostModelInterface
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
      * @return $this
      */
-    public function setTerms($terms, string $taxonomy, bool $append = false)
+    public function setTerms(string|array $terms, string $taxonomy, bool $append = false)
     {
         $this->termsToSet[] = ['termIds' => $terms, 'taxonomy' => $taxonomy, 'append' => $append];
         return $this;
@@ -445,7 +436,7 @@ class PostModel implements PostModelInterface
     {
         $model = Taxonomy::getInstance()->getModelByTaxonomy($taxonomy);
 
-        return $model::query()->whereRelatedToPost($this->getId());
+        return $model::query()->whereRelatedToPost([$this->getId()]);
     }
 
     /** @param int[]|string[]|int|string $term */
@@ -623,7 +614,7 @@ class PostModel implements PostModelInterface
     /** Get the post object as WP_Post */
     final public function getWpPost(): WP_Post
     {
-        return $this->wpPost ?: new WP_Post((object)[]);
+        return $this->wpPost;
     }
 
     ///////////////////////
@@ -657,54 +648,35 @@ class PostModel implements PostModelInterface
      * This includes comments, post meta fields, and terms associated with the post.
      * The post is moved to Trash instead of permanently deleted unless Trash is disabled or if it is already in trash.
      * @param bool $force Whether to bypass Trash and force deletion. <i>Default false</i>.
-     * @return false|WP_Post|null
      */
-    public function delete(bool $force = true)
+    public function delete(bool $force = true): WP_Post|false|null
     {
         return wp_delete_post($this->getId(), $force);
     }
 
-    /**
-     * Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted.
-     * @return false|WP_Post|null
-     */
-    public function trash()
+    /** Move a post or page to the Trash. If Trash is disabled, the post or page is permanently deleted. */
+    public function trash(): WP_Post|false|null
     {
         return wp_trash_post($this->getId());
     }
 
-    /**
-     * Restores a post from the Trash.
-     * @return false|WP_Post|null
-     */
-    public function untrash()
+    /** Restores a post from the Trash. */
+    public function untrash(): WP_Post|false|null
     {
         return wp_untrash_post($this->getId());
-    }
-
-    /** Returns a copy of this model. Note: The ID will be set to <i>null</i> and all meta values will be copied into inputMeta. */
-    public function replicate(): self
-    {
-        $copy = clone $this;
-
-        foreach (get_object_taxonomies($this->wpPost) as $taxonomyName) {
-            $termIds = $this->getTerms($taxonomyName)->excludeEmpty(false)->ids();
-            $copy->termsToSet[] = ['termIds' => $termIds, 'taxonomy' => $taxonomyName, 'append' => false];
-        }
-
-        return $copy;
     }
 
     /** Returns the ID of the inserted/updated model, or <b>0</b> on failure */
     public function save(): int
     {
         $postData = (array)$this->wpPost;
+        $postData['post_author'] = (int)$postData['post_author'];
 
         if ($this->metaInput) {
             $postData['meta_input'] = $this->metaInput;
         }
 
-        if ($this->getId() === null) {
+        if ($this->getId() === 0) {
             // Insert post
             $updatedPostId = wp_insert_post($postData);
             $insertedPost = get_post($updatedPostId);
