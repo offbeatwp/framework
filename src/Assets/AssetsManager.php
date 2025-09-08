@@ -113,23 +113,10 @@ final class AssetsManager extends Singleton
      */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
-        $assets = $this->getAssetsByEntryPoint($entry, 'css');
-
-        foreach ($assets as $asset) {
+        foreach ($this->getAssetsByEntryPoint($entry, 'css') as $asset) {
             $asset = is_string($asset) ? ltrim($asset, './') : '';
             $handle = $this->generateHandle($asset);
-
-            if (!wp_style_is($handle)) {
-                $url = $this->getAssetsUrl($asset);
-
-                if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
-                    wp_enqueue_style($handle, $url, $dependencies);
-                } else {
-                    add_action('wp_enqueue_scripts', function () use ($handle, $url, $dependencies) {
-                        wp_enqueue_style($handle, $url, $dependencies);
-                    });
-                }
-            }
+            wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
         }
     }
 
@@ -142,25 +129,12 @@ final class AssetsManager extends Singleton
      */
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
-        $assets = $this->getAssetsByEntryPoint($entry, 'js');
         $handle = '';
 
-        foreach ($assets as $asset) {
+        foreach ($this->getAssetsByEntryPoint($entry, 'js') as $asset) {
             $asset = is_string($asset) ? ltrim($asset, './') : '';
             $handle = $this->generateHandle($asset);
-
-            if (!wp_script_is($handle)) {
-                $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
-                $url = $this->getAssetsUrl($asset);
-
-                if ($enqueueNow) {
-                    wp_enqueue_script($handle, $url, $dependencies, false, $args);
-                } else {
-                    add_action('wp_enqueue_scripts', function () use ($handle, $url, $dependencies, $args) {
-                        wp_enqueue_script($handle, $url, $dependencies, false, $args);
-                    });
-                }
-            }
+            wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, $args);
         }
 
         return new WpScriptAsset($handle);
