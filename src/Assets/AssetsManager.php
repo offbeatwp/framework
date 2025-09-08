@@ -118,18 +118,9 @@ final class AssetsManager extends Singleton
         foreach ($assets as $asset) {
             $asset = is_string($asset) ? ltrim($asset, './') : '';
             $handle = $this->generateHandle($asset);
+            $url = $this->getAssetsUrl($asset);
 
-            if (!wp_style_is($handle)) {
-                $url = $this->getAssetsUrl($asset);
-
-                if (did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts'])) {
-                    wp_enqueue_style($handle, $url, $dependencies);
-                } else {
-                    add_action('wp_enqueue_scripts', function () use ($handle, $url, $dependencies) {
-                        wp_enqueue_style($handle, $url, $dependencies);
-                    });
-                }
-            }
+            wp_enqueue_style($handle, $url, $dependencies);
         }
     }
 
@@ -148,19 +139,9 @@ final class AssetsManager extends Singleton
         foreach ($assets as $asset) {
             $asset = is_string($asset) ? ltrim($asset, './') : '';
             $handle = $this->generateHandle($asset);
+            $url = $this->getAssetsUrl($asset);
 
-            if (!wp_script_is($handle)) {
-                $enqueueNow = did_action('wp_enqueue_scripts') || in_array(current_action(), ['wp_enqueue_scripts', 'admin_enqueue_scripts', 'enqueue_block_editor_assets', 'enqueue_block_assets', 'login_enqueue_scripts']);
-                $url = $this->getAssetsUrl($asset);
-
-                if ($enqueueNow) {
-                    wp_enqueue_script($handle, $url, $dependencies, false, $args);
-                } else {
-                    add_action('wp_enqueue_scripts', function () use ($handle, $url, $dependencies, $args) {
-                        wp_enqueue_script($handle, $url, $dependencies, false, $args);
-                    });
-                }
-            }
+            wp_enqueue_script($handle, $url, $dependencies, false, $args);
         }
 
         return new WpScriptAsset($handle);
