@@ -113,9 +113,14 @@ final class AssetsManager extends Singleton
      */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
-        foreach ($this->getAssetsByEntryPoint($entry, 'css') as $asset) {
-            $data = $this->generateHandleUrl($asset);
-            wp_enqueue_style($data['handle'], $data['url'], $dependencies);
+        $assets = $this->getAssetsByEntryPoint($entry, 'css');
+
+        foreach ($assets as $asset) {
+            $asset = is_string($asset) ? ltrim($asset, './') : '';
+            $handle = $this->generateHandle($asset);
+            $url = $this->getAssetsUrl($asset);
+
+            wp_enqueue_style($handle, $url, $dependencies);
         }
     }
 
@@ -128,29 +133,28 @@ final class AssetsManager extends Singleton
      */
     public function enqueueScripts(string $entry, array $dependencies = [], array $args = ['in_footer' => true]): WpScriptAsset
     {
+        $assets = $this->getAssetsByEntryPoint($entry, 'js');
         $handle = '';
 
-        foreach ($this->getAssetsByEntryPoint($entry, 'js') as $asset) {
-            $data = $this->generateHandleUrl($asset);
-            $handle = $data['handle'];
-            wp_enqueue_script($data['handle'], $data['url'], $dependencies, false, $args);
+        foreach ($assets as $asset) {
+            $asset = is_string($asset) ? ltrim($asset, './') : '';
+            $handle = $this->generateHandle($asset);
+            $url = $this->getAssetsUrl($asset);
+
+            wp_enqueue_script($handle, $url, $dependencies, false, $args);
         }
 
         return new WpScriptAsset($handle);
     }
 
-    /** @return array{handle: non-falsy-string, url: string} */
-    private function generateHandleUrl(string $asset): array
+    /** @return non-falsy-string */
+    private function generateHandle(string $asset): string
     {
-        $url = $this->getAssetsUrl($asset);
-
-        $baseName = basename(ltrim($asset, './'));
+        $baseName = basename($asset);
         $pos = strpos($baseName, '.');
         $handle = substr($baseName, 0, is_int($pos) ? $pos : null);
 
-        return [
-            'handle' => 'owp-' . $handle,
-            'url' => $url
-        ];
+        return 'owp-' . $handle;
+
     }
 }
