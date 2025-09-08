@@ -114,9 +114,8 @@ final class AssetsManager extends Singleton
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
         foreach ($this->getAssetsByEntryPoint($entry, 'css') as $asset) {
-            $asset = is_string($asset) ? ltrim($asset, './') : '';
-            $handle = $this->generateHandle($asset);
-            wp_enqueue_style($handle, $this->getAssetsUrl($asset), $dependencies);
+            $data = $this->generateHandleUrl($asset);
+            wp_enqueue_style($data['handle'], $data['url'], $dependencies);
         }
     }
 
@@ -132,22 +131,26 @@ final class AssetsManager extends Singleton
         $handle = '';
 
         foreach ($this->getAssetsByEntryPoint($entry, 'js') as $asset) {
-            $asset = is_string($asset) ? ltrim($asset, './') : '';
-            $handle = $this->generateHandle($asset);
-            wp_enqueue_script($handle, $this->getAssetsUrl($asset), $dependencies, false, $args);
+            $data = $this->generateHandleUrl($asset);
+            $handle = $data['handle'];
+            wp_enqueue_script($data['handle'], $data['url'], $dependencies, false, $args);
         }
 
         return new WpScriptAsset($handle);
     }
 
-    /** @return non-falsy-string */
-    private function generateHandle(string $asset): string
+    /** @return array{handle: non-falsy-string, url: string} */
+    private function generateHandleUrl(string $asset): array
     {
-        $baseName = basename($asset);
+        $url = $this->getAssetsUrl($asset);
+
+        $baseName = basename(ltrim($asset, './'));
         $pos = strpos($baseName, '.');
         $handle = substr($baseName, 0, is_int($pos) ? $pos : null);
 
-        return 'owp-' . $handle;
-
+        return [
+            'handle' => 'owp-' . $handle,
+            'url' => $url
+        ];
     }
 }

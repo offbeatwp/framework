@@ -28,7 +28,7 @@ final class WpScriptAsset
 
     /**
      * @see json_encode()
-     * @param string $handle
+     * @param non-falsy-string $handle
      * @param string $varName Should be a valid JS variable name.
      * @param scalar|mixed[]|stdClass|JsonSerializable $data Data will be encodeable with Json.
      * @return bool True on success, false on failure.
