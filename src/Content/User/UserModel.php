@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\User;
 
 use BadMethodCallException;
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
@@ -17,15 +18,13 @@ use UnexpectedValueException;
 use WP_Error;
 use WP_User;
 
-class UserModel
+class UserModel extends OffbeatModel
 {
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
 
     protected WP_User $wpUser;
-    /** @var array<string, mixed>|null */
-    protected ?array $metas = null;
     /** @var array<string, string|int|float|bool|mixed[]|\stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var ("")[] */
@@ -38,7 +37,6 @@ class UserModel
     {
         if ($user === null) {
             $user = new WP_User();
-            $this->metas = [];
         }
 
         if (is_int($user)) {
@@ -158,28 +156,6 @@ class UserModel
     final public function getId(): int
     {
         return $this->wpUser->ID;
-    }
-
-    /** @return array<string, mixed> */
-    final public function getMetas(): array
-    {
-        if ($this->metas === null) {
-            $this->metas = get_user_meta($this->getId()) ?: [];
-        }
-
-        return $this->metas;
-    }
-
-    /** @return ($single is true ? mixed : mixed[]) */
-    public function getMeta(string $key, bool $single = true)
-    {
-        $metas = $this->getMetas();
-
-        if (isset($metas[$key])) {
-            return ($single && is_array($metas[$key])) ? reset($metas[$key]) : $metas[$key];
-        }
-
-        return null;
     }
 
     /** The user's login username. */
@@ -596,5 +572,10 @@ class UserModel
         }
 
         return false;
+    }
+
+    protected function getObjectType(): string
+    {
+        return 'user';
     }
 }

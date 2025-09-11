@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
@@ -11,7 +12,7 @@ use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Taxonomy;
 use WP_Term;
 
-class TermModel implements TermModelInterface
+class TermModel extends OffbeatModel implements TermModelInterface
 {
     use BaseModelTrait;
     use SetMetaTrait;
@@ -26,8 +27,6 @@ class TermModel implements TermModelInterface
     protected array $metaInput = [];
     /** @var ("")[] */
     protected array $metaToUnset = [];
-    /** @var array<string|int|float|bool|\stdClass|\Serializable>|null */
-    private ?array $meta = null;
     /** @var array{slug?: string, description?: string, parent?: int} */
     private array $args = [];
 
@@ -55,9 +54,9 @@ class TermModel implements TermModelInterface
         $this->wpTerm = clone $this->wpTerm;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
-        return $this->wpTerm->term_id ?? null;
+        return $this->wpTerm->term_id;
     }
 
     public function getName(): string
@@ -138,27 +137,6 @@ class TermModel implements TermModelInterface
     public function getAncestors(): array
     {
         return array_map(fn ($id) => static::query()->findById($id), $this->getAncestorIds());
-    }
-
-    /** @return mixed[] */
-    final public function getMetas(): array
-    {
-        if ($this->meta === null) {
-            $this->meta = get_term_meta($this->getId()) ?: [];
-        }
-
-        return $this->meta;
-    }
-
-    /**
-     * @param string $key Optional. The meta key to retrieve. By default, returns data for all keys. Default empty.
-     * @param bool $single Optional. Whether to return a single value. This parameter has no effect if `$key` is not specified. Default false.
-     * @return ($single is true ? mixed : mixed[])
-     */
-    final public function getMeta(string $key, bool $single = true): mixed
-    {
-        $value = $this->getMetas()[$key] ?? null;
-        return $single && is_array($value) ? reset($value) : $value;
     }
 
     /**
@@ -258,5 +236,10 @@ class TermModel implements TermModelInterface
     public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);
+    }
+
+    protected function getObjectType(): string
+    {
+        return 'term';
     }
 }

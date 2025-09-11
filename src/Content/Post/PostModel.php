@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
@@ -24,7 +25,7 @@ use WP_Post;
 use WP_Post_Type;
 use WP_User;
 
-class PostModel implements PostModelInterface
+class PostModel extends OffbeatModel implements PostModelInterface
 {
     use BaseModelTrait;
     use SetMetaTrait;
@@ -37,8 +38,6 @@ class PostModel implements PostModelInterface
     protected array $metaInput = [];
     /** @var array<string, ""> */
     protected array $metaToUnset = [];
-    /** @var array<string, mixed>|null */
-    protected ?array $metas = null;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
 
@@ -85,27 +84,6 @@ class PostModel implements PostModelInterface
         $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
 
         return method_exists($this, $methodName);
-    }
-
-    public function __clone()
-    {
-        // Gather all metas while we still have the original wpPost reference
-        $this->getMetas();
-        // Now clone the wpPost reference
-        $this->wpPost = clone $this->wpPost;
-        // Set ID to null
-        $this->setId(null);
-        // Since the new post is unsaved, we'll have to add all meta values
-        $this->refreshMetaInput(false);
-    }
-
-    protected function refreshMetaInput(bool $ignoreLowDashPrefix = true): void
-    {
-        foreach ($this->getMetaValues($ignoreLowDashPrefix) as $key => $value) {
-            if (!array_key_exists($key, $this->metaInput)) {
-                $this->setMeta($key, $value);
-            }
-        }
     }
 
     ///////////////////////////
@@ -319,45 +297,6 @@ class PostModel implements PostModelInterface
     public function getAuthorId(): int
     {
         return (int)$this->wpPost->post_author;
-    }
-
-    /** @return mixed[] */
-    final public function getMetas(): array
-    {
-        if ($this->metas === null) {
-            $this->metas = get_post_meta($this->getId()) ?: [];
-        }
-
-        return $this->metas;
-    }
-
-    /**
-     * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
-     * @return mixed[] An array of all values whose key is not prefixed with <i>_</i>
-     */
-    public function getMetaValues(bool $ignoreLowDashPrefix = true): array
-    {
-        $values = [];
-
-        foreach ($this->getMetas() as $key => $value) {
-            if (!$ignoreLowDashPrefix || $key[0] !== '_') {
-                $values[$key] = reset($value);
-            }
-        }
-
-        return $values;
-    }
-
-    /** @return ($single is true ? mixed : mixed[]) */
-    public function getMeta(string $key, bool $single = true)
-    {
-        if (isset($this->getMetas()[$key])) {
-            return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
-        }
-
-        return null;
     }
 
     /** Retrieves the WP Admin edit link for this post. <br>Returns <i>null</i> if the post type does not exist or does not allow an editing UI. */
@@ -743,13 +682,6 @@ class PostModel implements PostModelInterface
         return $this->relationKeyMethods ?? null;
     }
 
-    /** @return void */
-    public function refreshMetas()
-    {
-        $this->metas = null;
-        $this->getMetas();
-    }
-
     /**
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
@@ -885,5 +817,10 @@ class PostModel implements PostModelInterface
                 }
             }
         }
+    }
+
+    final protected function getObjectType(): string
+    {
+        return 'post';
     }
 }
