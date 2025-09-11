@@ -21,7 +21,7 @@ class TermModel extends OffbeatModel implements TermModelInterface
     /** @var string|list<string> */
     public const string|array TAXONOMY = '';
 
-    public ?WP_Term $wpTerm = null;
+    private WP_Term $wpTerm;
     public ?int $id = null;
     /** @var array<string, mixed> */
     protected array $metaInput = [];
@@ -37,16 +37,6 @@ class TermModel extends OffbeatModel implements TermModelInterface
         } else {
             $this->wpTerm = new WP_Term((object)[]);
         }
-
-        $this->id = $this->wpTerm->term_id;
-
-        $this->init();
-    }
-
-    /** This method is called at the end of the TermModel constructor */
-    protected function init(): void
-    {
-        // Does nothing unless overriden by parent
     }
 
     public function __clone()
@@ -75,7 +65,7 @@ class TermModel extends OffbeatModel implements TermModelInterface
             return $this->args['slug'];
         }
 
-        return $this->wpTerm->slug ?? '';
+        return $this->wpTerm->slug;
     }
 
     final public function setDescription(string $description): void
@@ -130,7 +120,7 @@ class TermModel extends OffbeatModel implements TermModelInterface
 
     public function getEditLink(): string
     {
-        return get_edit_term_link($this->wpTerm ?: $this->getId()) ?: '';
+        return get_edit_term_link($this->wpTerm) ?: '';
     }
 
     /** @return array<int, TermModel> */

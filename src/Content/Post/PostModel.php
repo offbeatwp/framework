@@ -33,7 +33,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
 
     public const string|array POST_TYPE = 'any';
 
-    public WP_Post $wpPost;
+    private WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var array<string, ""> */
@@ -49,7 +49,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
      * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
      * @see Relation
      */
-    public $relationKeyMethods = null;
+    public ?array $relationKeyMethods = null;
 
     final public function __construct(?WP_Post $post = null)
     {
@@ -94,8 +94,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return $this->wpPost->ID;
     }
 
-    /** @return string */
-    public function getTitle()
+    public function getTitle(): string
     {
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
@@ -182,32 +181,14 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string */
-    public function getPermalink()
+    public function getPermalink(): string
     {
-        return get_permalink($this->getId());
-    }
-
-    /** @return false|string */
-    public function getPostTypeLabel()
-    {
-        $postType = get_post_type_object(get_post_type($this->wpPost));
-
-        if (!$postType || !$postType->label) {
-            return false;
-        }
-
-        return $postType->label;
+        return get_permalink($this->getId()) ?: '';
     }
 
     public function getPostType(): string
     {
         return $this->wpPost->post_type;
-    }
-
-    public function getPostTypeInstance(): ?WP_Post_Type
-    {
-        return get_post_type_object(get_post_type($this->wpPost));
     }
 
     /**
@@ -280,15 +261,12 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return $excerpt;
     }
 
-    /**
-     * @return false|WP_User
-     */
-    public function getAuthor()
+    public function getAuthor(): ?WP_User
     {
         $authorId = $this->getAuthorId();
 
         if (!$authorId) {
-            return false;
+            return null;
         }
 
         return get_userdata($authorId);
@@ -674,15 +652,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
     }
 
     /**
-     * @deprecated
-     * @return string[]|null
-     */
-    protected function getRelationKeyMethods(): ?array
-    {
-        return $this->relationKeyMethods ?? null;
-    }
-
-    /**
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
      */
@@ -690,7 +659,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
     {
         $modelClass = static::class;
 
-        if (static::POST_TYPE !== 'any') {
+        if (is_string(static::POST_TYPE) && static::POST_TYPE !== 'any') {
             return get_post_type_object($modelClass::POST_TYPE);
         }
 
@@ -700,11 +669,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    /**
-     * @param string $relationKey
-     * @return null|string
-     */
-    public function getMethodByRelationKey($relationKey)
+    public function getMethodByRelationKey(string $relationKey): ?string
     {
         $method = $relationKey;
 
@@ -719,26 +684,22 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return null;
     }
 
-    /** @param string $relationKey */
-    public function hasMany($relationKey): HasMany
+    public function hasMany(string $relationKey): HasMany
     {
         return new HasMany($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function hasOne($relationKey): HasOne
+    public function hasOne(string $relationKey): HasOne
     {
         return new HasOne($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function belongsTo($relationKey): BelongsTo
+    public function belongsTo(string $relationKey): BelongsTo
     {
         return new BelongsTo($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function belongsToMany($relationKey): BelongsToMany
+    public function belongsToMany(string $relationKey): BelongsToMany
     {
         return new BelongsToMany($this, $relationKey);
     }
@@ -762,8 +723,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return new WpQueryBuilder(static::class);
     }
 
-    /** @return static */
-    final public static function from(WP_Post $wpPost)
+    final public static function from(WP_Post $wpPost): static
     {
         if ($wpPost->ID <= 0) {
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $wpPost->ID);

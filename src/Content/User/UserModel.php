@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\User;
 
-use BadMethodCallException;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -24,13 +23,12 @@ class UserModel extends OffbeatModel
     use SetMetaTrait;
     use GetMetaTrait;
 
-    protected WP_User $wpUser;
+    private WP_User $wpUser;
     /** @var array<string, string|int|float|bool|mixed[]|\stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var ("")[] */
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
-    private bool $isInitialised = false;
 
     /** @param WP_User|null $user */
     final public function __construct($user = null)
@@ -55,15 +53,8 @@ class UserModel extends OffbeatModel
         }
 
         $this->wpUser = $user;
-        $this->init();
-        $this->isInitialised = true;
     }
 
-    /** This method is called at the end of the UserModel constructor */
-    protected function init(): void
-    {
-        // Does nothing unless overriden by parent
-    }
 
     public function __clone()
     {
@@ -337,10 +328,6 @@ class UserModel extends OffbeatModel
     /** @return int|WP_Error */
     private function _save()
     {
-        if (!$this->isInitialised) {
-            throw new BadMethodCallException('The save method cannot be called before a model is initialised.');
-        }
-
         if (!$this->wpUser->user_email) {
             throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
         }
