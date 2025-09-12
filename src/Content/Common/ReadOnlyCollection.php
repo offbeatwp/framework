@@ -31,7 +31,7 @@ abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAgg
      */
     public function __construct(array $items, string $modelClass)
     {
-        $this->items = array_map(fn ($item) => new static($item), $items);
+        $this->items = array_map(fn ($item) => new $modelClass($item), $items);
         $this->modelClass = $modelClass;
     }
 
