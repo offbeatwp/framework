@@ -31,13 +31,13 @@ abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAgg
      */
     public function __construct(array $items, string $modelClass)
     {
-        $this->items = $items;
+        $this->items = array_map(fn ($item) => new static($item), $items);
         $this->modelClass = $modelClass;
     }
 
     final public function offsetExists(mixed $offset): bool
     {
-        return isset($this->items[$offset]);
+        return array_key_exists($offset, $this->items);
     }
 
     /** @phpstan-return TValue|null */
