@@ -2,10 +2,10 @@
 
 namespace OffbeatWP\Foundation;
 
-use Couchbase\View;
 use InvalidArgumentException;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Common\Singleton;
+use OffbeatWP\Contracts\View;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
 
