@@ -20,7 +20,7 @@ final class ArrayHelper
      * @param mixed[] $array2
      * @return mixed[]
      */
-    public static function mergeRecursiveAssoc(iterable $array1, iterable $array2): array
+    public static function mergeRecursiveAssoc(array $array1, array $array2): array
     {
         $array = [];
 

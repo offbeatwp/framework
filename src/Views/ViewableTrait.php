@@ -90,6 +90,7 @@ trait ViewableTrait
             $path = dirname($path);
         }
 
+
         static::$loaded[] = $path;
     }
 }
