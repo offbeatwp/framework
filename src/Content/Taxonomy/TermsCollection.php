@@ -12,7 +12,7 @@ use OffbeatWP\Content\Common\ReadonlyCollection;
 final class TermsCollection extends ReadonlyCollection
 {
     /**
-     * @param list<TValue> $items
+     * @param list<\WP_Term> $items
      * @param class-string<TValue> $modelClass
      */
     public function __construct(array $items, string $modelClass = TermModel::class)
@@ -21,13 +21,13 @@ final class TermsCollection extends ReadonlyCollection
     }
 
     /** @return TValue|null */
-    public function offsetGet(mixed $offset): ?TermModel
+    final public function offsetGet(mixed $offset): ?TermModel
     {
         return parent::offsetGet($offset);
     }
 
     /** @return TValue|null */
-    public function first(): ?TermModel
+    final public function first(): ?TermModel
     {
         return parent::first();
     }

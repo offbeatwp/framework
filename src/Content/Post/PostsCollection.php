@@ -18,7 +18,7 @@ class PostsCollection extends ReadonlyCollection
     final public function __construct(WP_Query $query, string $modelClass)
     {
         $this->query = $query;
-        /** @var list<TValue> $posts */
+        /** @var list<\WP_Post> $posts */
         $posts = $this->query->posts;
 
         parent::__construct($posts, $modelClass);

@@ -2,9 +2,7 @@
 
 namespace OffbeatWP\Content\User;
 
-use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
-use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
 use UnexpectedValueException;
 use WP_User_Query;
@@ -71,7 +69,7 @@ final class UserQueryBuilder
     /** @return UserCollection<int, TValue> */
     public function get(): UserCollection
     {
-        /** @var list<TValue> $results */
+        /** @var list<\WP_User> $results */
         $results = $this->getQueryResults();
         return new UserCollection($results, $this->modelClass);
     }

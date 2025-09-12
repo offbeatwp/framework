@@ -26,7 +26,7 @@ abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAgg
     protected readonly string $modelClass;
 
     /**
-     * @param list<TValue> $items
+     * @param list<\WP_Post|\WP_Term|\WP_User> $items
      * @param class-string<TValue> $modelClass
      */
     public function __construct(array $items, string $modelClass)

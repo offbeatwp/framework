@@ -97,9 +97,9 @@ final class TermQueryBuilder
     /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
-        /** @var \WP_Term[] $terms */
+        /** @var list<\WP_Term> $terms */
         $terms = $this->runQuery()->get_terms();
-        return new TermsCollection(array_map(fn ($t) => $this->modelClass::from($t), $terms), $this->modelClass);
+        return new TermsCollection($terms, $this->modelClass);
     }
 
     /**

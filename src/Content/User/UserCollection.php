@@ -12,7 +12,7 @@ use OffbeatWP\Content\Common\ReadonlyCollection;
 final class UserCollection extends ReadonlyCollection
 {
     /**
-     * @param list<TValue> $items
+     * @param list<\WP_User> $items
      * @param class-string<TValue> $modelClass
      */
     public function __construct(array $items, string $modelClass = UserModel::class)
@@ -21,13 +21,13 @@ final class UserCollection extends ReadonlyCollection
     }
 
     /** @return TValue|null */
-    public function offsetGet(mixed $offset): ?UserModel
+    final public function offsetGet(mixed $offset): ?UserModel
     {
         return parent::offsetGet($offset);
     }
 
     /** @return TValue|null */
-    public function first(): ?UserModel
+    final public function first(): ?UserModel
     {
         return parent::first();
     }
