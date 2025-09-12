@@ -10,19 +10,21 @@ trait ViewableTrait
 {
     /** @var list<non-falsy-string> */
     protected static array $loaded = [];
-    protected View $view;
+    protected ?View $viewBuilder = null;
 
     /**
      * @param non-falsy-string $name
      * @param array<string, mixed> $data
      */
-    public function view(string $name, array $data = [], ?View $view = null): string
+    public function view(string $name, array $data = []): string
     {
-        $this->view = $view ?: App::getInstance()->defaultView;
+        if ($this->viewBuilder === null) {
+            $this->viewBuilder = App::getInstance()->defaultView;
+        }
 
         $this->setTemplatePaths();
 
-        return $view->render($name, $data);
+        return $this->viewBuilder->render($name, $data);
     }
 
     public function setTemplatePaths(): void
@@ -47,7 +49,7 @@ trait ViewableTrait
         $moduleClass = $matches[0] . '\\' . $matches[1];
 
         $module = new $moduleClass();
-        $this->view->addTemplatePath($module->getViewsDirectory());
+        $this->viewBuilder->addTemplatePath($module->getViewsDirectory());
 
         static::$loaded[] = $name;
     }
@@ -72,7 +74,7 @@ trait ViewableTrait
         while (true) {
             $viewsPath = "{$path}/views/";
             if (is_dir($viewsPath)) {
-                $this->view->addTemplatePath($viewsPath);
+                $this->viewBuilder->addTemplatePath($viewsPath);
             }
 
             $itemI++;
@@ -95,6 +97,6 @@ trait ViewableTrait
 
         $reflector = new ReflectionClass($this);
         $directory = dirname($reflector->getFileName());
-        $this->view->addTemplatePath($directory . '/views');
+        $this->viewBuilder->addTemplatePath($directory . '/views');
     }
 }
