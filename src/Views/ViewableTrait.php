@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Views;
 
+use BadMethodCallException;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Foundation\App;
 use ReflectionClass;
@@ -10,7 +11,7 @@ trait ViewableTrait
 {
     /** @var list<non-falsy-string> */
     protected static array $loaded = [];
-    protected ?View $viewBuilder = null;
+    protected ?View $viewRenderer = null;
 
     /**
      * @param non-falsy-string $name
@@ -18,23 +19,26 @@ trait ViewableTrait
      */
     public function view(string $name, array $data = []): string
     {
-        if ($this->viewBuilder === null) {
-            $this->viewBuilder = App::getInstance()->defaultView;
+        if ($this->viewRenderer === null) {
+            $this->viewRenderer = App::getInstance()->viewRenderer;
         }
 
-        $this->setTemplatePaths();
+        if ($this->viewRenderer === null) {
+            throw new BadMethodCallException('No view renderer instance available.');
+        }
 
-        return $this->viewBuilder->render($name, $data);
-    }
-
-    public function setTemplatePaths(): void
-    {
         $this->setModuleViewsPath();
         $this->setRecursiveParentViewsPath();
-        $this->setElementViewsPath();
+
+        return $this->viewRenderer->render($name, $data);
     }
 
-    public function setModuleViewsPath(): void
+    final public function setRenderer(View $viewRenderer): void
+    {
+        $this->viewRenderer = $viewRenderer;
+    }
+
+    final protected function setModuleViewsPath(): void
     {
         $name = (new ReflectionClass($this))->getName();
 
@@ -49,12 +53,12 @@ trait ViewableTrait
         $moduleClass = $matches[0] . '\\' . $matches[1];
 
         $module = new $moduleClass();
-        $this->viewBuilder->addTemplatePath($module->getViewsDirectory());
+        $this->viewRenderer->addTemplatePath($module->getViewsDirectory());
 
         static::$loaded[] = $name;
     }
 
-    public function setRecursiveParentViewsPath(): void
+    final protected function setRecursiveParentViewsPath(): void
     {
         $reflector = new ReflectionClass($this);
         $fn = $reflector->getFileName();
@@ -64,7 +68,7 @@ trait ViewableTrait
         $this->setRecursiveViewsPath($path, 10);
     }
 
-    public function setRecursiveViewsPath(string $path, int $depth = 5): void
+    final public function setRecursiveViewsPath(string $path, int $depth = 5): void
     {
         if (in_array($path, static::$loaded, true)) {
             return;
@@ -74,7 +78,7 @@ trait ViewableTrait
         while (true) {
             $viewsPath = "{$path}/views/";
             if (is_dir($viewsPath)) {
-                $this->viewBuilder->addTemplatePath($viewsPath);
+                $this->viewRenderer->addTemplatePath($viewsPath);
             }
 
             $itemI++;
@@ -87,16 +91,5 @@ trait ViewableTrait
         }
 
         static::$loaded[] = $path;
-    }
-
-    public function setElementViewsPath(): void
-    {
-        if (!isset($this->hasViewsDirectory) || $this->hasViewsDirectory !== true) {
-            return;
-        }
-
-        $reflector = new ReflectionClass($this);
-        $directory = dirname($reflector->getFileName());
-        $this->viewBuilder->addTemplatePath($directory . '/views');
     }
 }

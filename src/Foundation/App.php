@@ -14,7 +14,7 @@ final class App extends Singleton
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
     private ?Config $config = null;
-    public View $defaultView;
+    public ?View $viewRenderer = null;
 
     public function bootstrap(): void
     {
