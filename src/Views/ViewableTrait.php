@@ -2,63 +2,63 @@
 
 namespace OffbeatWP\Views;
 
+use BadMethodCallException;
 use OffbeatWP\Contracts\View;
 use OffbeatWP\Foundation\App;
 use ReflectionClass;
 
 trait ViewableTrait
 {
-    /** @var string[] */
-    public static $loaded = [];
-    /** @var mixed|View */
-    public $view;
+    /** @var list<non-falsy-string> */
+    protected static array $loaded = [];
+    protected ?View $viewRenderer = null;
 
     /**
-     * @param string $name
-     * @param mixed[] $data
-     * @return mixed
+     * @param non-falsy-string $name
+     * @param array<string, mixed> $data
      */
-    public function view(string $name, array $data = [])
+    public function view(string $name, array $data = []): string
     {
-        $view = App::getInstance()->container->get(View::class);
-        $this->view = $view;
+        if ($this->viewRenderer === null) {
+            $this->viewRenderer = App::getInstance()->viewRenderer;
+        }
 
-        $this->setTemplatePaths();
+        if ($this->viewRenderer === null) {
+            throw new BadMethodCallException('No view renderer instance available.');
+        }
 
-        return $view->render($name, $data);
-    }
-
-    public function setTemplatePaths(): void
-    {
         $this->setModuleViewsPath();
         $this->setRecursiveParentViewsPath();
-        $this->setElementViewsPath();
+
+        return $this->viewRenderer->render($name, $data);
     }
 
-    public function setModuleViewsPath(): void
+    final public function setRenderer(View $viewRenderer): void
     {
-        $reflector = new ReflectionClass($this);
+        $this->viewRenderer = $viewRenderer;
+    }
 
-        if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $reflector->getName(), $matches)) {
+    final protected function setModuleViewsPath(): void
+    {
+        $name = (new ReflectionClass($this))->getName();
+
+        if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $name, $matches)) {
             return;
         }
 
-        if (in_array($reflector->getName(), static::$loaded, true)) {
+        if (in_array($name, static::$loaded, true)) {
             return;
         }
 
         $moduleClass = $matches[0] . '\\' . $matches[1];
 
-        if (App::getInstance()->container->has($moduleClass)) {
-            $module = App::getInstance()->container->get($moduleClass);
+        $module = new $moduleClass();
+        $this->viewRenderer->addTemplatePath($module->getViewsDirectory());
 
-            $this->view->addTemplatePath($module->getViewsDirectory());
-        }
-
-        static::$loaded[] = $reflector->getName();
+        static::$loaded[] = $name;
     }
 
-    public function setRecursiveParentViewsPath(): void
+    final protected function setRecursiveParentViewsPath(): void
     {
         $reflector = new ReflectionClass($this);
         $fn = $reflector->getFileName();
@@ -68,7 +68,7 @@ trait ViewableTrait
         $this->setRecursiveViewsPath($path, 10);
     }
 
-    public function setRecursiveViewsPath(string $path, int $depth = 5): void
+    final public function setRecursiveViewsPath(string $path, int $depth = 5): void
     {
         if (in_array($path, static::$loaded, true)) {
             return;
@@ -78,7 +78,7 @@ trait ViewableTrait
         while (true) {
             $viewsPath = "{$path}/views/";
             if (is_dir($viewsPath)) {
-                $this->view->addTemplatePath($viewsPath);
+                $this->viewRenderer->addTemplatePath($viewsPath);
             }
 
             $itemI++;
@@ -91,16 +91,5 @@ trait ViewableTrait
         }
 
         static::$loaded[] = $path;
-    }
-
-    public function setElementViewsPath(): void
-    {
-        if (!isset($this->hasViewsDirectory) || $this->hasViewsDirectory !== true) {
-            return;
-        }
-
-        $reflector = new ReflectionClass($this);
-        $directory = dirname($reflector->getFileName());
-        $this->view->addTemplatePath($directory . '/views');
     }
 }

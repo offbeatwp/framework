@@ -8,9 +8,7 @@
         "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
     },
     "require": {
-        "php": ">=8.3",
-        "php-di/php-di": "^7.0.6",
-        "ext-dom": "*"
+        "php": ">=8.3"
     },
     "autoload": {
         "files": [

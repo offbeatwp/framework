@@ -4,7 +4,6 @@ namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Console\AbstractCommand;
 use OffbeatWP\Content\Common\Singleton;
-use OffbeatWP\Foundation\App;
 use WP_CLI;
 
 final class Console extends Singleton
@@ -19,7 +18,7 @@ final class Console extends Singleton
         $command = $commandClass::COMMAND;
 
         WP_CLI::add_command($command, function ($args, $argsNamed) use ($commandClass) {
-            App::getInstance()->container->call([$commandClass, 'execute'], ['args' => $args, 'argsNamed' => $argsNamed]);
+            (new $commandClass())->execute($args, $argsNamed);
         });
     }
 
