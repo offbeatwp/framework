@@ -11,6 +11,22 @@ abstract class OffbeatModel
     abstract public function getId(): int;
     abstract protected function getObjectType(): string;
 
+    /** @return list<mixed> */
+    protected function getRawMeta(string $key): array
+    {
+        if (!array_key_exists($key, $this->metas)) {
+            $rawMeta = get_metadata_raw($this->getObjectType(), $this->getId(), $key);
+            $this->metas[$key] = is_array($rawMeta) ? $rawMeta : [];
+        }
+
+        return $this->metas[$key];
+    }
+
+    final public function hasMeta(string $key): bool
+    {
+        return (bool)$this->getRawMeta($key);
+    }
+
     /**
      * @param string $key Optional. The meta key to retrieve. By default, returns data for all keys. Default empty.
      * @param bool $single Optional. Whether to return a single value. This parameter has no effect if `$key` is not specified. Default false.
@@ -18,15 +34,13 @@ abstract class OffbeatModel
      */
     final public function getMeta(string $key, bool $single = true): mixed
     {
-        if (!array_key_exists($key, $this->metas)) {
-            $this->metas[$key] = get_metadata_raw($this->getObjectType(), $this->getId(), $key);
-        }
+        $meta = $this->getRawMeta($key);
 
         if ($single) {
-            return $this->metas[$key][0] ?? null;
+            return $meta ? $meta[0] : null;
         }
 
-        return $this->metas[$key];
+        return $meta;
     }
 
     final public function refreshMetas(): void

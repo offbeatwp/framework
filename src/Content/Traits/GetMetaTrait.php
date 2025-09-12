@@ -4,8 +4,6 @@ namespace OffbeatWP\Content\Traits;
 
 use Exception;
 use InvalidArgumentException;
-use OffbeatWP\Content\Post\PostModel;
-use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
@@ -20,50 +18,12 @@ trait GetMetaTrait
      */
     private function getRawMetaValue(string $key, $defaultValue, bool $single = true)
     {
-        if (array_key_exists($key, $this->metaToUnset)) {
-            return $defaultValue;
-        }
-
-        if (array_key_exists($key, $this->metaInput)) {
-            return $this->metaInput[$key];
-        }
-
-        $metas = $this->getMetas();
-        if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
-            return ($single) ? reset($metas[$key]) : $metas[$key];
+        $meta = $this->getMeta($key);
+        if ($meta) {
+            return $single ? reset($meta[$key]) : $meta[$key];
         }
 
         return $defaultValue;
-    }
-
-    /**
-     * Returns the metaInput value if one with the given key exists.<br>
-     * If not, returns the meta value with the given key from the database.<br>
-     * If the value isn't in metaInput or the database, <i>null</i> is returned.
-     * @param string $key
-     * @return mixed
-     */
-    public function getMetaValue(string $key)
-    {
-        return $this->getRawMetaValue($key, null);
-    }
-
-    /**
-     * Check if a meta value exists at all.
-     * @return bool True if the meta key exists, regardless of it's value. False if the meta key does not exist.
-     */
-    public function hasMeta(string $key): bool
-    {
-        if (array_key_exists($key, $this->metaToUnset)) {
-            return false;
-        }
-
-        if (array_key_exists($key, $this->metaInput)) {
-            return true;
-        }
-
-        $metas = $this->getMetas();
-        return ($metas && array_key_exists($key, $metas));
     }
 
     /**
@@ -169,25 +129,6 @@ trait GetMetaTrait
     {
         $value = $this->getRawMetaValue($key, [], $single);
         return ($single && is_serialized($value)) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
-    }
-
-    /** @return PostModel[] */
-    public function getMetaPostModels(string $key): array
-    {
-        $models = [];
-        $postHandler = Post::getInstance();
-
-        foreach ($this->getMetaArray($key) as $id) {
-            if ($id) {
-                $model = $postHandler->get($id);
-
-                if ($model) {
-                    $models[] = $model;
-                }
-            }
-        }
-
-        return $models;
     }
 
     /**
