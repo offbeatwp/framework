@@ -81,7 +81,7 @@ abstract class AbstractBlockCallback implements IBlockCallback
         return (new static($attributes, $content, $wpBlock))->render();
     }
 
-    /** @param array<non-falsy-string, scalar|null> $extraAttributes */
+    /** @param array<non-falsy-string, string> $extraAttributes */
     final protected function getBlockWrapperAttributes(array $extraAttributes = []): string
     {
         return str_replace('wp-block-', '', get_block_wrapper_attributes($extraAttributes));

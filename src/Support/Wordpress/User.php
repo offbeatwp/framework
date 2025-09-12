@@ -67,12 +67,12 @@ final class User
      */
     public static function addUserColumn(string $slug, string $header, callable $callback): void
     {
-        add_action('manage_users_columns', static function (array $columnHeaders) use ($slug, $header) {
+        add_filter('manage_users_columns', static function (array $columnHeaders) use ($slug, $header) {
             $columnHeaders[$slug] = $header;
             return $columnHeaders;
         });
 
-        add_action('manage_users_custom_column', static function (string $output, string $columnName, int $userId) use ($slug, $callback) {
+        add_filter('manage_users_custom_column', static function (string $output, string $columnName, int $userId) use ($slug, $callback) {
             if ($columnName === $slug) {
                 $output = $callback($output, $columnName, $userId);
             }

@@ -4,6 +4,7 @@ namespace OffbeatWP\Support\Wordpress;
 
 use Exception;
 use OffbeatWP\Exceptions\WpErrorException;
+use RuntimeException;
 
 final class WpFile
 {
@@ -95,7 +96,12 @@ final class WpFile
     /** @param array{name: string, tmp_name: string} $fileArray Array that represents a `$_FILES` upload array.<br>This array must have a <i>name</i> and a <i>tmp_name</i> key. */
     public static function uploadFromArray(array $fileArray): WpFile
     {
-        return self::uploadBits($fileArray['name'], file_get_contents($fileArray['tmp_name']));
+        $fileContent = file_get_contents($fileArray['tmp_name']);
+        if ($fileContent === false) {
+            throw new RuntimeException('Unable to read file: ' . sanitize_file_name($fileArray['tmp_name']));
+        }
+
+        return self::uploadBits($fileArray['name'], $fileContent);
     }
 
     /**
@@ -108,7 +114,12 @@ final class WpFile
 
         $c = count($fileArray['name']);
         for ($i = 0; $i < $c; $i++) {
-            $files[] = self::uploadBits($fileArray['name'][$i], file_get_contents($fileArray['tmp_name'][$i]));
+            $fileContent = file_get_contents($fileArray['tmp_name'][$i]);
+            if ($fileContent === false) {
+                throw new RuntimeException('Unable to read file contents: ' . sanitize_file_name($fileArray['tmp_name'][$i]));
+            }
+
+            $files[] = self::uploadBits($fileArray['name'][$i], $fileContent);
         }
 
         return $files;
@@ -145,7 +156,12 @@ final class WpFile
             throw new WpErrorException($downloadUrl->get_error_message());
         }
 
-        return self::uploadBits($fileName, file_get_contents($downloadUrl));
+        $fileContent = file_get_contents($downloadUrl);
+        if ($fileContent === false) {
+            throw new RuntimeException('Could not read the file contents.');
+        }
+
+        return self::uploadBits($fileName, $fileContent);
     }
 
     public function unlink(): bool

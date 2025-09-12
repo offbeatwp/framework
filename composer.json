@@ -5,7 +5,7 @@
     "type": "library",
     "scripts": {
         "phpcs": "vendor/bin/php-cs-fixer fix",
-        "phpstan": "vendor/bin/phpstan analyse --memory-limit=3G"
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=1G"
     },
     "require": {
         "php": ">=8.3"
