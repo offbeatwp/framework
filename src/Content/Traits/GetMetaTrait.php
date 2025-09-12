@@ -9,21 +9,9 @@ use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
 trait GetMetaTrait
 {
-    /**
-     * @param string $key
-     * @param scalar|mixed[]|null $defaultValue
-     * @param bool $single
-     * @return mixed
-     * @internal
-     */
-    private function getRawMetaValue(string $key, $defaultValue, bool $single = true)
+    private function getScalarMeta(string $key, int $filter): null|string|int|float|bool
     {
-        $meta = $this->getMeta($key);
-        if ($meta) {
-            return $single ? reset($meta[$key]) : $meta[$key];
-        }
-
-        return $defaultValue;
+        return filter_var($this->getMeta($key), $filter);
     }
 
     /**
@@ -32,7 +20,7 @@ trait GetMetaTrait
      */
     public function getMetaString(string $key): string
     {
-        return (string)$this->getRawMetaValue($key, '');
+        return (string)$this->getScalarMeta($key, FILTER_DEFAULT);
     }
 
     /**
@@ -41,7 +29,7 @@ trait GetMetaTrait
      */
     public function getMetaInt(string $key): int
     {
-        return (int)$this->getRawMetaValue($key, 0);
+        return (int)$this->getScalarMeta($key, FILTER_VALIDATE_INT);
     }
 
     /**
@@ -50,7 +38,7 @@ trait GetMetaTrait
      */
     public function getMetaFloat(string $key): float
     {
-        return (float)$this->getRawMetaValue($key, 0);
+        return (float)$this->getScalarMeta($key, FILTER_VALIDATE_FLOAT);
     }
 
     /**
@@ -117,7 +105,7 @@ trait GetMetaTrait
      */
     public function getMetaBool(string $key): bool
     {
-        return (bool)$this->getRawMetaValue($key, false);
+        return (bool)$this->getScalarMeta($key, FILTER_VALIDATE_BOOL);
     }
 
     /**
@@ -127,8 +115,8 @@ trait GetMetaTrait
      */
     public function getMetaArray(string $key, bool $single = true): array
     {
-        $value = $this->getRawMetaValue($key, [], $single);
-        return ($single && is_serialized($value)) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
+        $value = $this->getMeta($key, $single);
+        return $single && is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
     }
 
     /**
