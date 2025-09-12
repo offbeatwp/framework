@@ -27,6 +27,7 @@ final class App extends Singleton
         $services = config('services', false);
 
         if (is_array($services)) {
+            /** @var class-string<AbstractService> $service */
             foreach ($services as $service) {
                 $this->initiateService($service);
             }

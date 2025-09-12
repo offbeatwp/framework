@@ -60,22 +60,19 @@ final class User
     }
 
     /**
-     * @param string $slug
-     * @param string $header
      * @param callable(string, string, int): string $callback Expects a callback that returns a string. Callback will get the following 3 args:<br>
      * string <b>$output</b><br>
      * string <b>$columnName</b><br>
      * int <b>$userId</b>
-     * @return void
      */
-    public static function addUserColumn(string $slug, string $header, callable $callback)
+    public static function addUserColumn(string $slug, string $header, callable $callback): void
     {
-        add_action('manage_users_columns', static function ($columnHeaders) use ($slug, $header) {
+        add_action('manage_users_columns', static function (array $columnHeaders) use ($slug, $header) {
             $columnHeaders[$slug] = $header;
             return $columnHeaders;
         });
 
-        add_action('manage_users_custom_column', static function ($output, $columnName, $userId) use ($slug, $callback) {
+        add_action('manage_users_custom_column', static function (string $output, string $columnName, int $userId) use ($slug, $callback) {
             if ($columnName === $slug) {
                 $output = $callback($output, $columnName, $userId);
             }

@@ -42,24 +42,6 @@ trait GetMetaTrait
     }
 
     /**
-     * Retrieve a meta value as a localised formatted date string.
-     * @param string $key Meta key.
-     * @param string $format The date format. If not specified, will default to the date_format WordPress option.
-     * @return string <b>Formatted date string</b> if the meta key exists and is a valid date. Otherwise, an <b>empty string</b> is returned.
-     */
-    public function getMetaDate(string $key, string $format = ''): string
-    {
-        $strDate = strtotime($this->getMetaString($key));
-
-        if ($strDate) {
-            $dateFormat = $format ?: get_option('date_format') ?: 'Y-m-d H:i:s';
-            return date_i18n($dateFormat, $strDate);
-        }
-
-        return '';
-    }
-
-    /**
      * Attempt to retrieve a meta value as a WpDateTime object.<br>
      * If no meta exists or if conversion fails, <i>null</i> will be returned.
      * @param string $key Meta key.
@@ -116,7 +98,12 @@ trait GetMetaTrait
     public function getMetaArray(string $key, bool $single = true): array
     {
         $value = $this->getMeta($key, $single);
-        return $single && is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
+
+        if ($single && is_string($value) && is_serialized($value)) {
+            $value = unserialize($value, ['allowed_classes' => false]);
+        }
+
+        return (array)$value;
     }
 
     /**
@@ -144,10 +131,9 @@ trait GetMetaTrait
 
     /**
      * @param non-empty-string $metaKey
-     * @param "string"|"boolean"|"array"|"integer"|"double"|"float"|"datetime" $type
      * @return scalar|WpDateTime|null|mixed[]
      */
-    private function getMetaX(string $metaKey, string $type)
+    private function getMetaX(string $metaKey, mixed $type)
     {
         if ($type === 'string') {
             return $this->getMetaString($metaKey);

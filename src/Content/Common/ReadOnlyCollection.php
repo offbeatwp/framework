@@ -86,6 +86,7 @@ abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAgg
         return $this->items;
     }
 
+    /** @phpstan-return TValue|null */
     public function first(): PostModel|TermModel|UserModel|null
     {
         return $this->items[array_key_first($this->items)];
