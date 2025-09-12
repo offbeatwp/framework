@@ -4,6 +4,7 @@ namespace OffbeatWP\Content\Post;
 
 use DateTimeZone;
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsTo;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
@@ -24,7 +25,7 @@ use WP_Post;
 use WP_Post_Type;
 use WP_User;
 
-class PostModel implements PostModelInterface
+class PostModel extends OffbeatModel implements PostModelInterface
 {
     use BaseModelTrait;
     use SetMetaTrait;
@@ -32,13 +33,11 @@ class PostModel implements PostModelInterface
 
     public const string|array POST_TYPE = 'any';
 
-    public WP_Post $wpPost;
+    private WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var array<string, ""> */
     protected array $metaToUnset = [];
-    /** @var array<string, mixed>|null */
-    protected ?array $metas = null;
     /** @var int[][][]|bool[][]|string[][]|int[][] */
     protected array $termsToSet = [];
 
@@ -50,7 +49,7 @@ class PostModel implements PostModelInterface
      * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
      * @see Relation
      */
-    public $relationKeyMethods = null;
+    public ?array $relationKeyMethods = null;
 
     final public function __construct(?WP_Post $post = null)
     {
@@ -87,27 +86,6 @@ class PostModel implements PostModelInterface
         return method_exists($this, $methodName);
     }
 
-    public function __clone()
-    {
-        // Gather all metas while we still have the original wpPost reference
-        $this->getMetas();
-        // Now clone the wpPost reference
-        $this->wpPost = clone $this->wpPost;
-        // Set ID to null
-        $this->setId(null);
-        // Since the new post is unsaved, we'll have to add all meta values
-        $this->refreshMetaInput(false);
-    }
-
-    protected function refreshMetaInput(bool $ignoreLowDashPrefix = true): void
-    {
-        foreach ($this->getMetaValues($ignoreLowDashPrefix) as $key => $value) {
-            if (!array_key_exists($key, $this->metaInput)) {
-                $this->setMeta($key, $value);
-            }
-        }
-    }
-
     ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
@@ -116,8 +94,7 @@ class PostModel implements PostModelInterface
         return $this->wpPost->ID;
     }
 
-    /** @return string */
-    public function getTitle()
+    public function getTitle(): string
     {
         return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
@@ -204,32 +181,14 @@ class PostModel implements PostModelInterface
         return $this->getPostName();
     }
 
-    /** @return false|string */
-    public function getPermalink()
+    public function getPermalink(): string
     {
-        return get_permalink($this->getId());
-    }
-
-    /** @return false|string */
-    public function getPostTypeLabel()
-    {
-        $postType = get_post_type_object(get_post_type($this->wpPost));
-
-        if (!$postType || !$postType->label) {
-            return false;
-        }
-
-        return $postType->label;
+        return get_permalink($this->getId()) ?: '';
     }
 
     public function getPostType(): string
     {
         return $this->wpPost->post_type;
-    }
-
-    public function getPostTypeInstance(): ?WP_Post_Type
-    {
-        return get_post_type_object(get_post_type($this->wpPost));
     }
 
     /**
@@ -302,15 +261,12 @@ class PostModel implements PostModelInterface
         return $excerpt;
     }
 
-    /**
-     * @return false|WP_User
-     */
-    public function getAuthor()
+    public function getAuthor(): ?WP_User
     {
         $authorId = $this->getAuthorId();
 
         if (!$authorId) {
-            return false;
+            return null;
         }
 
         return get_userdata($authorId);
@@ -319,45 +275,6 @@ class PostModel implements PostModelInterface
     public function getAuthorId(): int
     {
         return (int)$this->wpPost->post_author;
-    }
-
-    /** @return mixed[] */
-    final public function getMetas(): array
-    {
-        if ($this->metas === null) {
-            $this->metas = get_post_meta($this->getId()) ?: [];
-        }
-
-        return $this->metas;
-    }
-
-    /**
-     * @param bool $ignoreLowDashPrefix When true, keys prefixed with '_' are ignored.
-     * @return mixed[] An array of all values whose key is not prefixed with <i>_</i>
-     */
-    public function getMetaValues(bool $ignoreLowDashPrefix = true): array
-    {
-        $values = [];
-
-        foreach ($this->getMetas() as $key => $value) {
-            if (!$ignoreLowDashPrefix || $key[0] !== '_') {
-                $values[$key] = reset($value);
-            }
-        }
-
-        return $values;
-    }
-
-    /** @return ($single is true ? mixed : mixed[]) */
-    public function getMeta(string $key, bool $single = true)
-    {
-        if (isset($this->getMetas()[$key])) {
-            return $single && is_array($this->getMetas()[$key])
-                ? reset($this->getMetas()[$key])
-                : $this->getMetas()[$key];
-        }
-
-        return null;
     }
 
     /** Retrieves the WP Admin edit link for this post. <br>Returns <i>null</i> if the post type does not exist or does not allow an editing UI. */
@@ -735,22 +652,6 @@ class PostModel implements PostModelInterface
     }
 
     /**
-     * @deprecated
-     * @return string[]|null
-     */
-    protected function getRelationKeyMethods(): ?array
-    {
-        return $this->relationKeyMethods ?? null;
-    }
-
-    /** @return void */
-    public function refreshMetas()
-    {
-        $this->metas = null;
-        $this->getMetas();
-    }
-
-    /**
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
      */
@@ -758,7 +659,7 @@ class PostModel implements PostModelInterface
     {
         $modelClass = static::class;
 
-        if (static::POST_TYPE !== 'any') {
+        if (is_string(static::POST_TYPE) && static::POST_TYPE !== 'any') {
             return get_post_type_object($modelClass::POST_TYPE);
         }
 
@@ -768,11 +669,7 @@ class PostModel implements PostModelInterface
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    /**
-     * @param string $relationKey
-     * @return null|string
-     */
-    public function getMethodByRelationKey($relationKey)
+    public function getMethodByRelationKey(string $relationKey): ?string
     {
         $method = $relationKey;
 
@@ -787,26 +684,22 @@ class PostModel implements PostModelInterface
         return null;
     }
 
-    /** @param string $relationKey */
-    public function hasMany($relationKey): HasMany
+    public function hasMany(string $relationKey): HasMany
     {
         return new HasMany($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function hasOne($relationKey): HasOne
+    public function hasOne(string $relationKey): HasOne
     {
         return new HasOne($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function belongsTo($relationKey): BelongsTo
+    public function belongsTo(string $relationKey): BelongsTo
     {
         return new BelongsTo($this, $relationKey);
     }
 
-    /** @param string $relationKey */
-    public function belongsToMany($relationKey): BelongsToMany
+    public function belongsToMany(string $relationKey): BelongsToMany
     {
         return new BelongsToMany($this, $relationKey);
     }
@@ -830,8 +723,7 @@ class PostModel implements PostModelInterface
         return new WpQueryBuilder(static::class);
     }
 
-    /** @return static */
-    final public static function from(WP_Post $wpPost)
+    final public static function from(WP_Post $wpPost): static
     {
         if ($wpPost->ID <= 0) {
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $wpPost->ID);
@@ -885,5 +777,10 @@ class PostModel implements PostModelInterface
                 }
             }
         }
+    }
+
+    final protected function getObjectType(): string
+    {
+        return 'post';
     }
 }
