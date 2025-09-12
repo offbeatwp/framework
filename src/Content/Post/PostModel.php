@@ -334,20 +334,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return $this;
     }
 
-    /**
-     * Moves a meta value from one key to another.
-     * @param string $oldMetaKey The old meta key. If this key does not exist, the meta won't be moved.
-     * @param string $newMetaKey The new meta key. If this key already exists, the meta won't be moved.
-     * @return void
-     */
-    public function moveMetaValue(string $oldMetaKey, string $newMetaKey)
-    {
-        if ($this->hasMeta($oldMetaKey) && !$this->hasMeta($newMetaKey)) {
-            $this->setMeta($newMetaKey, $this->getMetaValue($oldMetaKey));
-            $this->unsetMeta($oldMetaKey);
-        }
-    }
-
     /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
     public function getTerms(string $taxonomy): TermQueryBuilder
     {

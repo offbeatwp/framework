@@ -40,12 +40,6 @@ final class PostType extends Singleton
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }
 
-    /** @param class-string<PostModel> $modelClass */
-    public function getPostTypeByModel(string $modelClass): string
-    {
-        return array_search($modelClass, $this->postTypeModels, true);
-    }
-
     /** @return string[] Returns an array of all post types registered with an Offbeat Model */
     public function getPostTypes(): array
     {

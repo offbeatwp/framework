@@ -16,7 +16,7 @@ final class Post extends Singleton
 
     public function get(WP_Post|int|null $id = null): ?PostModel
     {
-        $post = get_post($id ?? get_the_ID());
+        $post = get_post($id ?? get_the_ID() ?: null);
 
         if ($post) {
             return $this->convertWpPostToModel($post);
