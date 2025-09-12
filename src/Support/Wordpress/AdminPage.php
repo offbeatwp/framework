@@ -3,7 +3,6 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Common\Singleton;
-use OffbeatWP\Foundation\App;
 
 final class AdminPage extends Singleton
 {
@@ -15,26 +14,14 @@ final class AdminPage extends Singleton
      * <br>Pass the name of a Dashicons helper class to use a font icon, e.g. 'dashicons-chart-pie'.
      * <br>Pass 'none' to leave div.wp-menu-image empty so an icon can be added via CSS.
      * @param int $position The position in the menu order this item should appear.
-     * @param string|null $capability The capability required for this menu to be displayed to the user. Default is 'edit_posts'.
-     * @param callable|null|string $callback Optional. The function to be called to output the content for this page.
+     * @param string $capability The capability required for this menu to be displayed to the user. Default is 'edit_posts'.
+     * @param callable|null $callback Optional. The function to be called to output the content for this page.
      */
-    public static function make(string $title, string $slug, string $icon = '', int $position = 30, ?string $capability = null, $callback = null): void
+    public static function make(string $title, string $slug, string $icon = '', int $position = 30, string $capability = 'edit_posts', ?callable $callback = null): void
     {
         if (is_admin()) {
-            if ($capability === null) {
-                $capability = 'edit_posts';
-            }
-
-            if ($callback) {
-                $callback = function () use ($callback) {
-                    App::getInstance()->container->call($callback);
-                };
-            }
-
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capability, $callback) {
-                add_menu_page($title, $title, $capability, $slug, function () use ($callback) {
-                    App::getInstance()->container->call($callback);
-                }, $icon, $position);
+                add_menu_page($title, $title, $capability, $slug, $callback, $icon, $position);
             });
         }
     }
@@ -43,23 +30,13 @@ final class AdminPage extends Singleton
      * @param string $parent The slug name for the parent menu or the file name of a standard WordPress admin page.
      * @param string $title The text to be displayed in the title tags of the page when the menu is selected.
      * @param string $slug The slug name to refer to this menu by. Should be unique for this menu and only include lowercase alphanumeric, dashes, and underscores.
-     * @param string|null $capability The capability required for this menu to be displayed to the user.
+     * @param string $capability The capability required for this menu to be displayed to the user.
      * @param callable|null|string $callback Optional. The function to be called to output the content for this page.
      * @param int|null $position Optional. The position in the menu order this item should appear.
      */
-    public static function makeSub(string $parent, string $title, string $slug, ?string $capability = null, $callback = null, ?int $position = null): void
+    public static function makeSub(string $parent, string $title, string $slug, string $capability = 'edit_posts', $callback = null, ?int $position = null): void
     {
         if (is_admin()) {
-            if ($capability === null) {
-                $capability = 'edit_posts';
-            }
-
-            if ($callback) {
-                $callback = function () use ($callback) {
-                    App::getInstance()->container->call($callback);
-                };
-            }
-
             $positions = [
                 'dashboard' => 'index.php',
                 'posts' => 'edit.php',

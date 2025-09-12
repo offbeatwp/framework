@@ -8,13 +8,8 @@ use ReflectionClass;
 
 abstract class AbstractModule extends AbstractService
 {
-    /** @var App */
-    public $app;
-
-    /** @param App $app */
-    public function __construct($app)
+    public function __construct(App $app)
     {
-        $this->app = $app;
         parent::__construct($app);
 
         if (method_exists($this, 'boot')) {
@@ -30,21 +25,18 @@ abstract class AbstractModule extends AbstractService
         }
     }
 
-    /** @return string */
-    public function getName()
+    public function getName(): string
     {
         return (new ReflectionClass($this))->getShortName();
     }
 
-    /** @return string */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         $classInfo = new ReflectionClass($this);
         return substr($classInfo->name, 0, strrpos($classInfo->name, "\\"));
     }
 
-    /** @return string */
-    public function getDirectory()
+    public function getDirectory(): string
     {
         $classInfo = new ReflectionClass($this);
         $classPath = $classInfo->getFileName();
@@ -52,8 +44,7 @@ abstract class AbstractModule extends AbstractService
         return dirname($classPath);
     }
 
-    /** @return string */
-    public function getUrl()
+    public function getUrl(): string
     {
         $path = str_replace(get_stylesheet_directory(), '', $this->getDirectory());
 

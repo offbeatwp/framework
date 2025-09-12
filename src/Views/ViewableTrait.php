@@ -8,20 +8,17 @@ use ReflectionClass;
 
 trait ViewableTrait
 {
-    /** @var string[] */
-    public static $loaded = [];
-    /** @var mixed|View */
-    public $view;
+    /** @var list<non-falsy-string> */
+    protected static array $loaded = [];
+    protected View $view;
 
     /**
-     * @param string $name
-     * @param mixed[] $data
-     * @return mixed
+     * @param non-falsy-string $name
+     * @param array<string, mixed> $data
      */
-    public function view(string $name, array $data = [])
+    public function view(string $name, array $data = [], ?View $view = null): string
     {
-        $view = App::getInstance()->container->get(View::class);
-        $this->view = $view;
+        $this->view = $view ?: App::getInstance()->defaultView;
 
         $this->setTemplatePaths();
 
@@ -37,25 +34,22 @@ trait ViewableTrait
 
     public function setModuleViewsPath(): void
     {
-        $reflector = new ReflectionClass($this);
+        $name = (new ReflectionClass($this))->getName();
 
-        if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $reflector->getName(), $matches)) {
+        if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $name, $matches)) {
             return;
         }
 
-        if (in_array($reflector->getName(), static::$loaded, true)) {
+        if (in_array($name, static::$loaded, true)) {
             return;
         }
 
         $moduleClass = $matches[0] . '\\' . $matches[1];
 
-        if (App::getInstance()->container->has($moduleClass)) {
-            $module = App::getInstance()->container->get($moduleClass);
+        $module = new $moduleClass();
+        $this->view->addTemplatePath($module->getViewsDirectory());
 
-            $this->view->addTemplatePath($module->getViewsDirectory());
-        }
-
-        static::$loaded[] = $reflector->getName();
+        static::$loaded[] = $name;
     }
 
     public function setRecursiveParentViewsPath(): void

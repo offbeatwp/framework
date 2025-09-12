@@ -10,6 +10,5 @@ parameters:
     ignoreErrors:
         - identifier: requireOnce.fileNotFound
 includes:
-    - phpstan-baseline.neon
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon

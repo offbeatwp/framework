@@ -16,18 +16,6 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('container')) {
-    /**
-     * @template T
-     * @param class-string<T>|string $definition
-     * @return T
-     */
-    function container(string $definition)
-    {
-        return App::getInstance()->container->get($definition);
-    }
-}
-
 if (!function_exists('assetUrl')) {
     /** @deprecated */
     function assetUrl(string $file): string

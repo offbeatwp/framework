@@ -3,7 +3,6 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Content\Common\Singleton;
-use OffbeatWP\Foundation\App;
 
 final class Ajax extends Singleton
 {
@@ -20,14 +19,14 @@ final class Ajax extends Singleton
 
         if ($priv) {
             add_action("wp_ajax_{$action}", function () use ($ajaxClass) {
-                App::getInstance()->container->call([$ajaxClass, 'execute']);
+                (new $ajaxClass())->execute();
                 wp_die();
             });
         }
 
         if ($noPriv) {
             add_action("wp_ajax_nopriv_{$action}", function () use ($ajaxClass) {
-                App::getInstance()->container->call([$ajaxClass, 'execute']);
+                (new $ajaxClass())->execute();
                 wp_die();
             });
         }
