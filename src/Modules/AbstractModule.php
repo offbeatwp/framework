@@ -33,12 +33,15 @@ abstract class AbstractModule extends AbstractService
     public function getNamespace(): string
     {
         $classInfo = new ReflectionClass($this);
-        return substr($classInfo->name, 0, strrpos($classInfo->name, "\\"));
+        $pos = strrpos($classInfo->name, "\\");
+
+        return substr($classInfo->name, 0, $pos === false ? null : $pos);
     }
 
     public function getDirectory(): string
     {
         $classInfo = new ReflectionClass($this);
+        /** @var string $classPath */
         $classPath = $classInfo->getFileName();
 
         return dirname($classPath);

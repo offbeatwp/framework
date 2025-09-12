@@ -13,7 +13,7 @@ final class OffbeatImageSrc implements IteratorAggregate
     private int $height;
     private bool $resized;
 
-    /** @param string[]|int[]|bool[] $imgData */
+    /** @param array{string, int, int, bool} $imgData */
     public function __construct(array $imgData)
     {
         $this->url = $imgData[0];
