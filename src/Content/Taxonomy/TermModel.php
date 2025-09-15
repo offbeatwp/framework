@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use BadMethodCallException;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -159,6 +160,10 @@ class TermModel extends OffbeatModel implements TermModelInterface
 
     final public function save(): int
     {
+        if (!is_string(static::TAXONOMY)) {
+            throw new BadMethodCallException('Cannot save a TermModel that refrences multiple taxononomies.');
+        }
+
         $currentId = $this->wpTerm->term_id;
         if ($currentId) {
             // Update

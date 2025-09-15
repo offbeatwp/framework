@@ -386,8 +386,12 @@ class UserModel extends OffbeatModel
     {
         $result = $this->_save();
 
-        if (!is_int($result) || $result <= 0) {
+        if (!is_int($result)) {
             throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
+        }
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save UserModel.');
         }
 
         return $result;
@@ -539,7 +543,7 @@ class UserModel extends OffbeatModel
     private static function _applyDefinedUserRoles(int $newUserId): ?static
     {
         if (static::definedUserRoles()) {
-            $wpUser = get_user_by('ID', $newUserId);
+            $wpUser = get_user_by('ID', $newUserId) ?: null;
             $wpUser->set_role('');
 
             foreach (static::definedUserRoles() as $role) {
