@@ -31,10 +31,10 @@ final class AdminPage extends Singleton
      * @param string $title The text to be displayed in the title tags of the page when the menu is selected.
      * @param string $slug The slug name to refer to this menu by. Should be unique for this menu and only include lowercase alphanumeric, dashes, and underscores.
      * @param string $capability The capability required for this menu to be displayed to the user.
-     * @param callable|null|string $callback Optional. The function to be called to output the content for this page.
+     * @param callable|non-empty-string $callback Optional. The function to be called to output the content for this page.
      * @param int|null $position Optional. The position in the menu order this item should appear.
      */
-    public static function makeSub(string $parent, string $title, string $slug, string $capability = 'edit_posts', $callback = null, ?int $position = null): void
+    public static function makeSub(string $parent, string $title, string $slug, string $capability = 'edit_posts', $callback = '', ?int $position = null): void
     {
         if (is_admin()) {
             $positions = [
