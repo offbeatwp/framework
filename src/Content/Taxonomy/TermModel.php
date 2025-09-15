@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
+use BadMethodCallException;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -32,11 +33,17 @@ class TermModel extends OffbeatModel implements TermModelInterface
 
     final public function __construct(?WP_Term $term)
     {
-        if ($term) {
-            $this->wpTerm = $term;
-        } else {
-            $this->wpTerm = new WP_Term((object)[]);
+        if ($term === null) {
+            $term = new WP_Term((object)['taxonomy' => static::TAXONOMY]);
+        } elseif ($term->term_id <= 0) {
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term with invalid ID: ' . $term->term_id);
         }
+
+        if (static::TAXONOMY !== $term->taxonomy) {
+            throw new InvalidArgumentException('Failed to create TermModel, unexpected taxonomy: ' . $term->taxonomy);
+        }
+
+        $this->wpTerm = $term;
     }
 
     public function __clone()
@@ -159,6 +166,10 @@ class TermModel extends OffbeatModel implements TermModelInterface
 
     final public function save(): int
     {
+        if (!is_string(static::TAXONOMY)) {
+            throw new BadMethodCallException('Cannot save a TermModel that refrences multiple taxononomies.');
+        }
+
         $currentId = $this->wpTerm->term_id;
         if ($currentId) {
             // Update

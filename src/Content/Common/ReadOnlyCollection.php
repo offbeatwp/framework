@@ -20,18 +20,18 @@ use OffbeatWP\Content\User\UserModel;
  */
 abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
-    /** @var list<TValue> */
+    /** @var array<TValue> */
     protected readonly array $items;
     /** @var class-string<TValue> */
     protected readonly string $modelClass;
 
     /**
-     * @param list<\WP_Post|\WP_Term|\WP_User> $items
+     * @param TValue[] $items
      * @param class-string<TValue> $modelClass
      */
     public function __construct(array $items, string $modelClass)
     {
-        $this->items = array_map(fn ($item) => new $modelClass($item), $items);
+        $this->items = $items;
         $this->modelClass = $modelClass;
     }
 
@@ -68,19 +68,19 @@ abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAgg
         return new ArrayIterator($this->items);
     }
 
-    /** @return list<TValue> */
+    /** @return array<TValue> */
     final public function jsonSerialize(): array
     {
         return $this->items;
     }
 
-    /** @return list<TValue> */
+    /** @return array<TValue> */
     final public function all(): array
     {
         return $this->items;
     }
 
-    /** @return list<TValue> */
+    /** @return array<TValue> */
     final public function toArray(): array
     {
         return $this->items;

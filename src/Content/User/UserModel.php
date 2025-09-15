@@ -8,8 +8,6 @@ use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
-use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
-use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Exceptions\UserRegistrationException;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -30,26 +28,12 @@ class UserModel extends OffbeatModel
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
 
-    /** @param WP_User|null $user */
-    final public function __construct($user = null)
+    final public function __construct(?WP_User $user = null)
     {
         if ($user === null) {
             $user = new WP_User();
-        }
-
-        if (is_int($user)) {
-            $userData = get_userdata($user);
-
-            if (!$userData) {
-                throw new OffbeatModelNotFoundException('Could not find WP_User with ID ' . $user);
-            }
-
-            trigger_error('Constructed UserModel with ID. Use UserModel::find instead.', E_USER_DEPRECATED);
-            $user = $userData;
-        }
-
-        if (!$user instanceof WP_User) {
-            throw new UserModelException('UserModel constructor requires a WP_User as parameter, or an integer representing the ID of an existing user.');
+        } elseif ($user->ID <= 0) {
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User with invalid ID: ' . $user->ID);
         }
 
         $this->wpUser = $user;
@@ -386,8 +370,12 @@ class UserModel extends OffbeatModel
     {
         $result = $this->_save();
 
-        if (!is_int($result) || $result <= 0) {
+        if (!is_int($result)) {
             throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
+        }
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save UserModel.');
         }
 
         return $result;
@@ -539,7 +527,7 @@ class UserModel extends OffbeatModel
     private static function _applyDefinedUserRoles(int $newUserId): ?static
     {
         if (static::definedUserRoles()) {
-            $wpUser = get_user_by('ID', $newUserId);
+            $wpUser = get_user_by('ID', $newUserId) ?: null;
             $wpUser->set_role('');
 
             foreach (static::definedUserRoles() as $role) {

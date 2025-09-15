@@ -20,6 +20,7 @@ use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use RuntimeException;
 use stdClass;
 use WP_Post;
 use WP_Post_Type;
@@ -38,7 +39,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
     protected array $metaInput = [];
     /** @var array<string, ""> */
     protected array $metaToUnset = [];
-    /** @var int[][][]|bool[][]|string[][]|int[][] */
+    /** @var list<array{termIds: string|string[]|int[], taxonomy: string, append: bool}> */
     protected array $termsToSet = [];
 
     /**
@@ -54,10 +55,16 @@ class PostModel extends OffbeatModel implements PostModelInterface
     final public function __construct(?WP_Post $post = null)
     {
         if ($post === null) {
-            $this->wpPost = new WP_Post((object)['post_type' => static::POST_TYPE]);
-        } else {
-            $this->wpPost = $post;
+            $post = new WP_Post((object)['post_type' => static::POST_TYPE]);
+        } elseif ($post->ID <= 0) {
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $post->ID);
         }
+
+        if (static::POST_TYPE !== $post->post_type) {
+            throw new InvalidArgumentException('Failed to create PostModel, unexpected post type: ' . $post->post_type);
+        }
+
+        $this->wpPost = $post;
     }
 
     /**
@@ -89,8 +96,10 @@ class PostModel extends OffbeatModel implements PostModelInterface
     ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
+    /** @return non-negative-int */
     public function getId(): int
     {
+        /** @var non-negative-int */
         return $this->wpPost->ID;
     }
 
@@ -128,8 +137,11 @@ class PostModel extends OffbeatModel implements PostModelInterface
 
         if ($didManualRestoreWpAutopHook) {
             $priority = has_filter('the_content', 'wpautop');
-            remove_filter('the_content', 'wpautop', $priority);
-            add_filter('the_content', '_restore_wpautop_hook', $priority + 1);
+
+            if ($priority) {
+                remove_filter('the_content', 'wpautop', $priority);
+                add_filter('the_content', '_restore_wpautop_hook', $priority + 1);
+            }
         }
 
         return $content;
@@ -230,19 +242,19 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return $this->getPostType() === $postType;
     }
 
-    /** @return false|string */
-    public function getPostDate(string $format = '')
+    public function getPostDate(string $format = ''): string|int|null
     {
-        return get_the_date($format, $this->wpPost);
+        $date = get_the_date($format, $this->wpPost);
+        return $date === false ? null : $date;
     }
 
-    public function getModifiedDate(string $format = ''): ?string
+    public function getModifiedDate(string $format = ''): string|int|null
     {
-        return get_the_modified_date($format, $this->wpPost) ?: null;
+        $date = get_the_modified_date($format, $this->wpPost);
+        return $date === false ? null : $date;
     }
 
-    /** @return false|string */
-    public function getExcerpt(bool $formatted = true)
+    public function getExcerpt(bool $formatted = true): string
     {
         if (!$formatted) {
             return get_the_excerpt($this->wpPost);
@@ -255,6 +267,10 @@ class PostModel extends OffbeatModel implements PostModelInterface
         ob_start();
         the_excerpt();
         $excerpt = ob_get_clean();
+
+        if (!is_string($excerpt)) {
+            throw new RuntimeException('Object buffering is not enabled.');
+        }
 
         $GLOBALS['post'] = $currentPost;
 
@@ -269,7 +285,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
             return null;
         }
 
-        return get_userdata($authorId);
+        return get_userdata($authorId) ?: null;
     }
 
     public function getAuthorId(): int
@@ -484,7 +500,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
             $GLOBALS['post'] = $currentPost;
         }
 
-        return $adjacentPost ? static::from($adjacentPost) : null;
+        return $adjacentPost instanceof WP_Post ? static::from($adjacentPost) : null;
     }
 
     /**
@@ -641,15 +657,9 @@ class PostModel extends OffbeatModel implements PostModelInterface
      * Retrieves the associated post type object.
      * Only works after the post type has been registered.
      */
-    public static function getPostTypeObject(): ?WP_Post_Type
+    public function getPostTypeObject(): ?WP_Post_Type
     {
-        $modelClass = static::class;
-
-        if (is_string(static::POST_TYPE) && static::POST_TYPE !== 'any') {
-            return get_post_type_object($modelClass::POST_TYPE);
-        }
-
-        return null;
+        return get_post_type_object($this->wpPost->post_type);
     }
 
     /////////////////////
@@ -711,14 +721,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
 
     final public static function from(WP_Post $wpPost): static
     {
-        if ($wpPost->ID <= 0) {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $wpPost->ID);
-        }
-
-        if (!in_array($wpPost->post_type, (array)static::POST_TYPE, true) && static::POST_TYPE !== 'any') {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post object: Invalid Post Type');
-        }
-
         return new static($wpPost);
     }
 

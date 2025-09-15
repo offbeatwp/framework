@@ -32,11 +32,10 @@ final class TermQueryBuilder
      *   show_option_all?: string,
      *   show_option_none?: string,
      *   style?: string,
-     *   taxonomy?: string,
      *   title_li?: string,
      *   use_desc_for_title?: bool|int,
      *   walker?: \Walker,
-     *   taxonomy?: string,
+     *   taxonomy?: string|list<string>,
      *   meta_query?: mixed[],
      *   object_ids?: int[]|int
      * }

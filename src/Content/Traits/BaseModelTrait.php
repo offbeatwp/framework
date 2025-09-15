@@ -16,14 +16,12 @@ trait BaseModelTrait
         return static::query()->findById($id);
     }
 
-    /** @return static|null */
-    public static function first()
+    public static function first(): ?static
     {
         return static::query()->first();
     }
 
-    /** @return static */
-    public static function findOrNew(?int $id)
+    public static function findOrNew(?int $id): static
     {
         return static::find($id) ?: static::create();
     }
@@ -32,10 +30,8 @@ trait BaseModelTrait
      * Will retrieve a model from the database for the given ID, or throw a <i>OffbeatModelNotFoundException</i> if no such model exists.<br>
      * If the given ID is a non-positive int then always throw an exception.
      * @throws \OffbeatWP\Exceptions\OffbeatModelNotFoundException
-     * @param positive-int $id
-     * @return static
      */
-    public static function findOrFail(int $id)
+    public static function findOrFail(int $id): static
     {
         $item = static::find($id);
         if (!$item) {
