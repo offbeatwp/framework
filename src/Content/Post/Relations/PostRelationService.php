@@ -98,7 +98,7 @@ class PostRelationService extends AbstractService
     }
 
     /**
-     * @param string[]|int[]|string[][]|int[][] $relationshipQuery
+     * @param mixed[] $relationshipQuery
      * @param string $operator
      * @param int $n
      * @return string[]

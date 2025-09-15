@@ -3,6 +3,7 @@
 namespace OffbeatWP\Support\Traits;
 
 use DateMalformedStringException;
+use DateTimeInterface;
 use DateTimeZone;
 
 trait WpDateTimeTrait
@@ -20,7 +21,7 @@ trait WpDateTimeTrait
      */
     public function i18n(string $format = ''): string
     {
-        /** @return string */
+        /** @var string */
         return wp_date($format ?: $this->getWpDateFormat(), $this->getTimestamp());
     }
 
@@ -203,8 +204,18 @@ trait WpDateTimeTrait
         return $this->format('Y-m-d H:i:s');
     }
 
+    /** Will attempt create a WpDateTime object from the passed variable. */
+    public static function make(string|DateTimeInterface $datetime, ?DateTimeZone $timezone = null): static
+    {
+        if (is_string($datetime)) {
+            return new static($datetime, $timezone);
+        }
+
+        return static::createFromInterface($datetime);
+    }
+
     private static function getMalformedStringException(): DateMalformedStringException
     {
-        return new DateMalformedStringException(reset(static::getLastErrors()['errors']) ?: 'Invalid date modify string');
+        return new DateMalformedStringException('Invalid date modify string');
     }
 }
