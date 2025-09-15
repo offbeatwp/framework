@@ -9,7 +9,7 @@ use ReflectionClass;
 
 trait ViewableTrait
 {
-    /** @var list<non-falsy-string> */
+    /** @var list<string> */
     protected static array $loaded = [];
     protected ?View $viewRenderer = null;
 
@@ -27,7 +27,6 @@ trait ViewableTrait
             throw new BadMethodCallException('No view renderer instance available.');
         }
 
-        $this->setModuleViewsPath();
         $this->setRecursiveParentViewsPath();
 
         return $this->viewRenderer->render($name, $data);
@@ -38,29 +37,10 @@ trait ViewableTrait
         $this->viewRenderer = $viewRenderer;
     }
 
-    final protected function setModuleViewsPath(): void
-    {
-        $name = (new ReflectionClass($this))->getName();
-
-        if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $name, $matches)) {
-            return;
-        }
-
-        if (in_array($name, static::$loaded, true)) {
-            return;
-        }
-
-        $moduleClass = $matches[0] . '\\' . $matches[1];
-
-        $module = new $moduleClass();
-        $this->viewRenderer->addTemplatePath($module->getViewsDirectory());
-
-        static::$loaded[] = $name;
-    }
-
     final protected function setRecursiveParentViewsPath(): void
     {
         $reflector = new ReflectionClass($this);
+        /** @var string $fn */
         $fn = $reflector->getFileName();
 
         $path = dirname($fn);
