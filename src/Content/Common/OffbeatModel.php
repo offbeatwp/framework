@@ -4,14 +4,14 @@ namespace OffbeatWP\Content\Common;
 
 abstract class OffbeatModel
 {
-    /** @var array<string, list<mixed>> */
+    /** @var array<string, array<mixed>> */
     private array $metas = [];
     private bool $hasAllMetas = false;
 
     abstract public function getId(): int;
     abstract protected function getObjectType(): string;
 
-    /** @return list<mixed> */
+    /** @return array<mixed> */
     protected function getRawMeta(string $key): array
     {
         if (!array_key_exists($key, $this->metas)) {
@@ -30,7 +30,7 @@ abstract class OffbeatModel
     /**
      * @param string $key Optional. The meta key to retrieve. By default, returns data for all keys. Default empty.
      * @param bool $single Optional. Whether to return a single value. This parameter has no effect if `$key` is not specified. Default false.
-     * @return ($single is true ? mixed : list<mixed>)
+     * @return ($single is true ? mixed : array<mixed>)
      */
     final public function getMeta(string $key, bool $single = true): mixed
     {
@@ -49,7 +49,7 @@ abstract class OffbeatModel
         $this->getMetas();
     }
 
-    /** @return array<string, list<mixed>> */
+    /** @return array<string, array<mixed>> */
     final public function getMetas(): array
     {
         if (!$this->hasAllMetas) {
