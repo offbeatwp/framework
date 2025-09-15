@@ -17,7 +17,7 @@ final class TermsCollection extends ReadonlyCollection
      */
     public function __construct(array $items, string $modelClass = TermModel::class)
     {
-        parent::__construct($items, $modelClass);
+        parent::__construct(array_map(fn ($v) => new $modelClass($v), $items), $modelClass);
     }
 
     /** @return TValue|null */

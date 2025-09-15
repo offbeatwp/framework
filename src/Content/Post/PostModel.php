@@ -89,6 +89,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
     ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
+    /** @return non-negative-int */
     public function getId(): int
     {
         return $this->wpPost->ID;

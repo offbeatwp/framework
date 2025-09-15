@@ -18,10 +18,10 @@ class PostsCollection extends ReadonlyCollection
     final public function __construct(WP_Query $query, string $modelClass)
     {
         $this->query = $query;
-        /** @var list<\WP_Post> $posts */
-        $posts = $this->query->posts;
+        /** @var list<\WP_Post> $items */
+        $items = $this->query->posts;
 
-        parent::__construct($posts, $modelClass);
+        parent::__construct(array_map(fn ($v) => new $modelClass($v), $items), $modelClass);
     }
 
     /** @return \OffbeatWP\Content\Post\WpPostsIterator<array-key, TValue> */
@@ -38,7 +38,7 @@ class PostsCollection extends ReadonlyCollection
 
     /**
      * Retrieves all object Ids within this collection as an array.
-     * @return non-negative-int[]
+     * @return array<non-negative-int>
      */
     final public function getIds(): array
     {
