@@ -21,7 +21,7 @@ final class AdminPage extends Singleton
     {
         if (is_admin()) {
             add_action('admin_menu', function () use ($title, $slug, $icon, $position, $capability, $callback) {
-                add_menu_page($title, $title, $capability, $slug, $callback, $icon, $position);
+                add_menu_page($title, $title, $capability, $slug, $callback ?? '', $icon, $position);
             });
         }
     }
@@ -31,10 +31,10 @@ final class AdminPage extends Singleton
      * @param string $title The text to be displayed in the title tags of the page when the menu is selected.
      * @param string $slug The slug name to refer to this menu by. Should be unique for this menu and only include lowercase alphanumeric, dashes, and underscores.
      * @param string $capability The capability required for this menu to be displayed to the user.
-     * @param callable|'' $callback Optional. The function to be called to output the content for this page.
+     * @param callable|null $callback Optional. The function to be called to output the content for this page.
      * @param int|null $position Optional. The position in the menu order this item should appear.
      */
-    public static function makeSub(string $parent, string $title, string $slug, string $capability = 'edit_posts', $callback = '', ?int $position = null): void
+    public static function makeSub(string $parent, string $title, string $slug, string $capability = 'edit_posts', ?callable $callback = null, ?int $position = null): void
     {
         if (is_admin()) {
             $positions = [
@@ -58,7 +58,7 @@ final class AdminPage extends Singleton
             }
 
             add_action('admin_menu', function () use ($parent, $title, $slug, $capability, $callback, $position) {
-                add_submenu_page($parent, $title, $title, $capability, $slug, $callback, $position);
+                add_submenu_page($parent, $title, $title, $capability, $slug, $callback ?? '', $position);
             });
         }
     }

@@ -60,7 +60,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $post->ID);
         }
 
-        if (static::POST_TYPE !== $post->post_type) {
+        if ($post->post_type !== static::POST_TYPE && $post->post_type !== 'any') {
             throw new InvalidArgumentException('Failed to create PostModel, unexpected post type: ' . $post->post_type);
         }
 
@@ -145,13 +145,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
         }
 
         return $content;
-    }
-
-    /** @return $this */
-    public function setId(?int $id)
-    {
-        $this->wpPost->ID = $id;
-        return $this;
     }
 
     /**

@@ -5,7 +5,6 @@ namespace OffbeatWP\Foundation;
 use InvalidArgumentException;
 use OffbeatWP\Config\Config;
 use OffbeatWP\Content\Common\Singleton;
-use OffbeatWP\Contracts\View;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
 
@@ -14,7 +13,6 @@ final class App extends Singleton
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];
     private ?Config $config = null;
-    public ?View $viewRenderer = null;
 
     public function bootstrap(): void
     {

@@ -11,6 +11,7 @@ use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\UserRegistrationException;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use RuntimeException;
 use UnexpectedValueException;
 use WP_Error;
 use WP_User;
@@ -100,7 +101,14 @@ class UserModel extends OffbeatModel
         $username = wp_strip_all_tags($userLogin);
         $username = remove_accents($username);
         $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
+        if (!$username) {
+            throw new InvalidArgumentException('Invalid username!');
+        }
+
         $username = preg_replace('/&.+?;/', '', $username);
+        if (!$username) {
+            throw new InvalidArgumentException('Invalid username!');
+        }
 
         if ($userLogin !== $username) {
             throw new InvalidArgumentException($userLogin . ' is not a valid username. You could instead use: ' . $username);
@@ -448,7 +456,7 @@ class UserModel extends OffbeatModel
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User object: Invalid User ID');
         }
 
-        foreach (static::definedUserRoles() as $expectedRole) {
+        foreach (static::definedUserRoles() ?? [] as $expectedRole) {
             if (in_array($expectedRole, $wpUser->roles, true)) {
                 return new static($wpUser);
             }
@@ -527,7 +535,11 @@ class UserModel extends OffbeatModel
     private static function _applyDefinedUserRoles(int $newUserId): ?static
     {
         if (static::definedUserRoles()) {
-            $wpUser = get_user_by('ID', $newUserId) ?: null;
+            $wpUser = get_user_by('ID', $newUserId);
+            if (!$wpUser) {
+                throw new RuntimeException('Failed to find user: ' . $newUserId);
+            }
+
             $wpUser->set_role('');
 
             foreach (static::definedUserRoles() as $role) {
