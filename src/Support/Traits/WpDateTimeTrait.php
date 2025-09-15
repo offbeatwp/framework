@@ -102,7 +102,7 @@ trait WpDateTimeTrait
 
     private function getWpDateFormat(): string
     {
-        return get_option('date_format') ?: 'Y-m-d H:i:s';
+        return owp_get_option_string('date_format') ?: 'Y-m-d H:i:s';
     }
 
     /** @return int A full numeric representation of a year, at least 4 digits, with - for years BCE. */
