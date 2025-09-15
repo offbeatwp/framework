@@ -39,7 +39,7 @@ class TermModel extends OffbeatModel implements TermModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term with invalid ID: ' . $term->term_id);
         }
 
-        if (self::TAXONOMY !== $term->taxonomy) {
+        if (static::TAXONOMY !== $term->taxonomy) {
             throw new InvalidArgumentException('Failed to create TermModel, unexpected taxonomy: ' . $term->taxonomy);
         }
 
