@@ -58,7 +58,9 @@ class PostModel extends OffbeatModel implements PostModelInterface
             $post = new WP_Post((object)['post_type' => static::POST_TYPE]);
         } elseif ($post->ID <= 0) {
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $post->ID);
-        } elseif (self::POST_TYPE !== $post->post_type) {
+        }
+
+        if (self::POST_TYPE !== $post->post_type) {
             throw new InvalidArgumentException('Failed to create PostModel, unexpected post type: ' . $post->post_type);
         }
 
