@@ -75,12 +75,6 @@ abstract class ReadonlyCollection implements ArrayAccess, Countable, IteratorAgg
     }
 
     /** @return array<TValue> */
-    final public function all(): array
-    {
-        return $this->items;
-    }
-
-    /** @return array<TValue> */
     final public function toArray(): array
     {
         return $this->items;
