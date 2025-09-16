@@ -61,32 +61,6 @@ trait OffbeatQueryTrait
     }
 
     /**
-     * @param string|string[]|null $orderBy
-     * @param string|null $order 'ASC'|'DESC'
-     * @return $this
-     */
-    public function order(string|array|null $orderBy = null, ?string $order = null)
-    {
-        if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
-            $this->queryVars['meta_key'] = $match[3];
-            $this->queryVars['orderby'] = 'meta_value';
-
-            if ($match[1] === 'meta_num') {
-                $this->queryVars['orderby'] = 'meta_value_num';
-            }
-
-        } elseif ($orderBy !== null) {
-            $this->queryVars['orderby'] = $orderBy;
-        }
-
-        if ($order !== null) {
-            $this->queryVars['order'] = $order;
-        }
-
-        return $this;
-    }
-
-    /**
      * @param string $metaKey
      * @param 'ASC'|'DESC'|'' $direction
      * @return $this

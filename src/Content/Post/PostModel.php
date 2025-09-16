@@ -32,7 +32,12 @@ class PostModel extends OffbeatModel implements PostModelInterface
     use SetMetaTrait;
     use GetMetaTrait;
 
+    /** @var string|list<string> */
     public const string|array POST_TYPE = 'any';
+    /** @var 'none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in'|('none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in')[] */
+    public const string|array ORDER_BY = 'date';
+    /** @var 'ASC'|'DESC' */
+    public const string ORDER = 'DESC';
 
     private WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
