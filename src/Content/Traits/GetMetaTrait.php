@@ -9,18 +9,13 @@ use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
 trait GetMetaTrait
 {
-    private function getScalarMeta(string $key, int $filter): null|string|int|float|bool
-    {
-        return filter_var($this->getMeta($key), $filter);
-    }
-
     /**
      * Retrieve a meta value as a string.<br>
      * If the meta value does not exist then an <b>empty string</b> is returned.
      */
     public function getMetaString(string $key): string
     {
-        return (string)$this->getScalarMeta($key, FILTER_DEFAULT);
+        return (string)filter_var($this->getMeta($key));
     }
 
     /**
@@ -29,7 +24,7 @@ trait GetMetaTrait
      */
     public function getMetaInt(string $key): int
     {
-        return (int)$this->getScalarMeta($key, FILTER_VALIDATE_INT);
+        return (int)filter_var($this->getMeta($key), FILTER_VALIDATE_INT);
     }
 
     /**
@@ -38,7 +33,7 @@ trait GetMetaTrait
      */
     public function getMetaFloat(string $key): float
     {
-        return (float)$this->getScalarMeta($key, FILTER_VALIDATE_FLOAT);
+        return (float)filter_var($this->getMeta($key), FILTER_VALIDATE_FLOAT);
     }
 
     /**
@@ -87,7 +82,7 @@ trait GetMetaTrait
      */
     public function getMetaBool(string $key): bool
     {
-        return (bool)$this->getScalarMeta($key, FILTER_VALIDATE_BOOL);
+        return (bool)filter_var($this->getMeta($key), FILTER_VALIDATE_BOOL);
     }
 
     /**

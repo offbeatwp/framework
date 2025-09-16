@@ -157,6 +157,7 @@ class TermModel extends OffbeatModel
         return $this->wpTerm->count;
     }
 
+    /** @return positive-int */
     final public function save(): int
     {
         if (!is_string(static::TAXONOMY)) {
@@ -172,6 +173,7 @@ class TermModel extends OffbeatModel
             $result = wp_insert_term($this->wpTerm->slug, static::TAXONOMY, $this->args);
         }
 
+        /** @var positive-int $newId */
         $newId = is_array($result) ? $result['term_id'] : 0;
         if ($newId) {
             $this->wpTerm->term_id = $newId;
