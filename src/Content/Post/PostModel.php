@@ -399,7 +399,7 @@ class PostModel extends OffbeatModel
     /** @return PostsCollection<int, static> Retrieves the children of this post. */
     public function getChildren(): PostsCollection
     {
-        return static::query()->wherePostParent($this->getId())->all();
+        return static::query()->wherePostParent($this->getId())->get();
     }
 
     /** @return int[] Retrieves the IDs of the ancestors of a post. */
@@ -652,12 +652,6 @@ class PostModel extends OffbeatModel
     {
         $post = Post::getInstance()->get();
         return $post instanceof static ? $post : null;
-    }
-
-    /** @return PostsCollection<int, static> */
-    public static function all(): PostsCollection
-    {
-        return static::query()->take(-1);
     }
 
     /** @return WpQueryBuilder<static> */

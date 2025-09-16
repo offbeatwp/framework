@@ -19,7 +19,7 @@ final class BelongsToMany extends BelongsToOneOrMany
     /** @return \OffbeatWP\Content\Post\PostsCollection<int, \OffbeatWP\Content\Post\PostModel> */
     public function get(): PostsCollection
     {
-        return $this->query()->all();
+        return $this->query()->get();
     }
 
     public function count(): int

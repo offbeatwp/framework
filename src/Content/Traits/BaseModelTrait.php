@@ -9,9 +9,8 @@ trait BaseModelTrait
     /**
      * Will retrieve a model from the database for the given ID, or <i>NULL</i> if it does not exist.<br>
      * If the given ID is a non-positive int or NULL then this method will immediately return <i>NULL</i> without performing a query.
-     * @return static|null
      */
-    public static function find(?int $id)
+    public static function find(?int $id): ?static
     {
         return static::query()->findById($id);
     }
@@ -51,15 +50,8 @@ trait BaseModelTrait
         return static::query()->whereIdIn([$id])->exists();
     }
 
-    /** @return array<int, static> */
-    public static function allAsArray()
+    public static function create(): static
     {
-        return static::all()->toArray();
-    }
-
-    /** @return static */
-    public static function create()
-    {
-        return new static(null);
+        return new static();
     }
 }

@@ -40,7 +40,7 @@ final class TermQueryBuilder
      *   object_ids?: int[]|int
      * }
      */
-    protected array $queryVars = [];
+    protected array $queryVars = ['number' => 0];
 
     /** @param class-string<TValue> $model */
     public function __construct(string $model)
@@ -101,29 +101,7 @@ final class TermQueryBuilder
         return new TermsCollection($terms, $this->modelClass);
     }
 
-    /**
-     * Keep in mind that empty terms are excluded by default. Set excludeEmpty to false to include empty terms
-     * @return TermsCollection<int, TValue>
-     */
-    public function all(): TermsCollection
-    {
-        return $this->take(0);
-    }
-
-    /**
-     * @param int $numberOfItems
-     * @return TermsCollection<int, TValue>
-     */
-    public function take(int $numberOfItems): TermsCollection
-    {
-        $this->queryVars['number'] = $numberOfItems;
-        return $this->get();
-    }
-
-    /**
-     * @param int $amount
-     * @return $this
-     */
+    /** @return $this */
     public function limit(int $amount)
     {
         if ($amount <= 0) {
@@ -209,7 +187,7 @@ final class TermQueryBuilder
     /** @phpstan-return TValue|null */
     public function first(): ?TermModel
     {
-        return $this->take(1)->first();
+        return $this->limit(1)->get()->first();
     }
 
     /** @phpstan-return TValue */

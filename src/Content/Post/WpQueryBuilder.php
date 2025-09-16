@@ -18,7 +18,7 @@ class WpQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var array<string, mixed> */
-    protected array $queryVars = ['post_type' => 'any'];
+    protected array $queryVars = ['post_type' => 'any', 'posts_per_page' => -1];
     /** @var class-string<TValue> */
     public readonly string $modelClass;
 
@@ -36,12 +36,6 @@ class WpQueryBuilder
         if ($this->modelClass::ORDER === 'ASC') {
             $this->orderAsc();
         }
-    }
-
-    /** @return PostsCollection<int, TValue> */
-    final public function all(): PostsCollection
-    {
-        return $this->take(-1);
     }
 
     final public function postToModel(WP_Post $post): PostModel
@@ -118,19 +112,11 @@ class WpQueryBuilder
         return $queryVars[$var] ?? null;
     }
 
-    /** @return PostsCollection<int, TValue> */
-    final public function take(int $numberOfItems): PostsCollection
-    {
-        $this->queryVars['posts_per_page'] = $numberOfItems;
-
-        return $this->get();
-    }
-
     /** @return TValue|null */
     final public function first(): ?PostModel
     {
         /** @var TValue|null */
-        return $this->take(1)->first();
+        return $this->limit(1)->get()->first();
     }
 
     /** @return TValue */

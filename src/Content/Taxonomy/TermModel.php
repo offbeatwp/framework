@@ -30,7 +30,7 @@ class TermModel extends OffbeatModel
     /** @var array{slug?: string, description?: string, parent?: int} */
     private array $args = [];
 
-    final public function __construct(?WP_Term $term)
+    final public function __construct(?WP_Term $term = null)
     {
         if ($term === null) {
             $term = new WP_Term((object)['taxonomy' => static::TAXONOMY]);
