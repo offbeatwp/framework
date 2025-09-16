@@ -180,7 +180,8 @@ class PostModel extends OffbeatModel implements PostModelInterface
      */
     public function getAttachmentUrl(string $metaKey): ?string
     {
-        return wp_get_attachment_url($this->getMeta($metaKey)) ?: null;
+        $url = wp_get_attachment_url($this->getMetaInt($metaKey));
+        return is_string($url) ? $url : null;
     }
 
     /**
@@ -294,18 +295,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
         }
 
         return null;
-    }
-
-    /** @throws PostMetaNotFoundException */
-    public function getMetaOrFail(string $key): string
-    {
-        $result = $this->getMeta($key);
-
-        if ($result === null) {
-            throw new PostMetaNotFoundException('PostMeta with key ' . $key . ' could not be found on post with ID ' . $this->wpPost->ID);
-        }
-
-        return $result;
     }
 
     /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
@@ -683,24 +672,32 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return new static($wpPost);
     }
 
-    /** @return int[] Retrieves the value of a meta field as an array of IDs. */
+    /** @return non-negative-int[] Retrieves the value of a meta field as an array of IDs. */
     private function getMetaRelationIds(string $key): array
     {
         $value = get_post_meta($this->getId(), $key, true);
 
-        if (is_serialized($value)) {
+        if (is_string($value) && is_serialized($value)) {
             $value = unserialize($value, ['allowed_classes' => false]);
         }
 
-        if (is_array($value)) {
-            return array_map('intval', $value);
+        if (!is_array($value)) {
+            $value = [$value];
         }
 
-        if (is_numeric($value)) {
-            return [(int)$value];
+        $ids = [];
+
+        foreach ($value as $item) {
+            $id = filter_var($item, FILTER_VALIDATE_INT);
+
+            if (!is_int($id) || $id < 0) {
+                throw new RuntimeException('Invalid post relation ID value!');
+            }
+
+            $ids[] = $id;
         }
 
-        return [];
+        return $ids;
     }
 
     private function updateRelation(string $key): void

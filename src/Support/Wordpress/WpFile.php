@@ -27,12 +27,6 @@ final class WpFile
         return $this->file;
     }
 
-    /** @deprecated */
-    public function getFileName(): string
-    {
-        return $this->file;
-    }
-
     public function getUrl(): string
     {
         return $this->url;

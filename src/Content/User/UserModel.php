@@ -221,12 +221,6 @@ class UserModel extends OffbeatModel
         return get_edit_user_link($this->getId());
     }
 
-    /** @deprecated */
-    public function getPhoneNumber(): string
-    {
-        return $this->getMetaString('phone_number');
-    }
-
     /** Returns the date the user registered as a WpDateTimeImmutable object. */
     final public function getRegistrationDate(): ?WpDateTimeImmutable
     {
@@ -280,17 +274,6 @@ class UserModel extends OffbeatModel
         return $roles;
     }
 
-    /**
-     * @return string[]
-     * @deprecated
-     */
-    public function getTranslatedRoles(string $domain = 'default'): array
-    {
-        return array_map(static function (string $role) use ($domain) {
-            return translate_user_role($role, $domain);
-        }, $this->wpUser->roles);
-    }
-
     /** @return string|null Returns the role at the specified index, or null if no role exists at the specified index. */
     public function getRole(int $index): ?string
     {
@@ -305,13 +288,6 @@ class UserModel extends OffbeatModel
     public function hasRole(string $role): bool
     {
         return in_array($role, $this->getRoles(), true);
-    }
-
-    /** @deprecated */
-    public function getTranslatedRole(int $index, string $domain = 'default'): ?string
-    {
-        $role = $this->getRole($index);
-        return ($role !== null) ? translate_user_role($role, $domain) : null;
     }
 
     ///////////////////////

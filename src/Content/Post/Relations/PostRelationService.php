@@ -7,6 +7,7 @@ use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Support\Wordpress\Console;
+use UnexpectedValueException;
 use WP_Query;
 
 class PostRelationService extends AbstractService
@@ -58,13 +59,15 @@ class PostRelationService extends AbstractService
         if (!empty($query->query_vars['owp-fields']) && is_array($query->query_vars['owp-fields'])) {
             global $wpdb;
 
-            $clauses['fields'] = implode(',', array_map(function (string $field) use ($wpdb) {
+            $fields = array_map(function ($field) use ($wpdb) {
                 if (!in_array($field, self::POST_FIELDS, true)) {
-                    throw new InvalidArgumentException($field . ' is not a valid post field.');
+                    throw new InvalidArgumentException('Passed OWP field is not a valid post field.');
                 }
 
                 return $wpdb->posts . '.' . $field;
-            }, $query->query_vars['owp-fields']));
+            }, $query->query_vars['owp-fields']);
+
+            $clauses['fields'] = implode(',', $fields);
         }
 
         return $clauses;
@@ -123,7 +126,7 @@ class PostRelationService extends AbstractService
         }
 
         if (is_array($relationshipQuery['id'])) {
-            $ids = array_map('intval', $relationshipQuery['id']);
+            $ids = $this->mapIds($relationshipQuery['id']);
             $idQuery = 'IN (' . implode(', ', $ids) . ')';
         } else {
             $id = (int)$relationshipQuery['id'];
@@ -134,6 +137,27 @@ class PostRelationService extends AbstractService
             'join' => " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ",
             'where' => " $operator pr{$n}.key = '{$relationshipQuery['key']}' AND pr{$n}.{$columnWhere} {$idQuery}"
         ];
+    }
+
+    /**
+     * @param mixed[] $rawIds
+     * @return list<non-negative-int>
+     */
+    private function mapIds(array $rawIds): array
+    {
+        $output = [];
+
+        foreach ($rawIds as $rawId) {
+            $id = filter_var($rawId, FILTER_VALIDATE_INT);
+
+            if (!is_int($id) || $id < 0) {
+                throw new UnexpectedValueException('Post Relationship ID is not a positive integer.');
+            }
+
+            $output[] = $id;
+        }
+
+        return $output;
     }
 
     /** @throws InvalidQueryOperatorException */

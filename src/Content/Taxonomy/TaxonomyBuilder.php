@@ -12,7 +12,7 @@ final class TaxonomyBuilder
     /** @var string[] */
     private array $postTypes;
     /**
-     * @phpstan-param array{
+     * @var array{
      *   labels?: string[],
      *   description?: string,
      *   public?: bool,
@@ -79,17 +79,17 @@ final class TaxonomyBuilder
      * @param string[] $capabilities Valid keys include: 'manage_terms', 'edit_terms', 'delete_terms' and 'assign_terms'
      * @return $this
      */
-    public function capabilities(array $capabilities = [])
+    final public function capabilities(array $capabilities = [])
     {
         $this->args['capabilities'] = $capabilities;
         return $this;
     }
 
     /**
-     * @param string[]|bool[]|int[]|bool $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
+     * @param bool|array{slug?: string, with_front?: bool, hierarchical: bool, ep_keys?: int} $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
      * @return $this
      */
-    public function rewrite($rewrite)
+    final public function rewrite(array|bool $rewrite)
     {
         $this->args['rewrite'] = $rewrite;
         return $this;
@@ -127,7 +127,7 @@ final class TaxonomyBuilder
      * @param array{name?: string, singular_name?: string, search_items?: string, popular_items?: string, all_items?: string, parent_item?: string, parent_item_colon?: string, name_field_description?: string, slug_field_description?: string, parent_field_description?: string, desc_field_description?: string, edit_item?: string, view_item?: string, update_item?: string, add_new_item?: string, new_item_name?: string, separate_items_with_commas?: string, add_or_remove_items?: string, choose_from_most_used?: string, not_found?: string, no_terms?: string, filter_by_item?: string, items_list_navigation?: string, items_list?: string, most_used?: string, back_to_items?: string, item_link?: string, item_link_description?: string} $labels
      * @return $this
      */
-    public function labels(array $labels)
+    final public function labels(array $labels)
     {
         if (!isset($this->args['labels'])) {
             $this->args['labels'] = [];
@@ -139,7 +139,7 @@ final class TaxonomyBuilder
     }
 
     /** @return $this */
-    public function hierarchyDepth(int $depth)
+    final public function hierarchyDepth(int $depth)
     {
         $this->hierarchical((bool)$depth);
 
@@ -270,11 +270,9 @@ final class TaxonomyBuilder
             $context = $_REQUEST['context'] ?? null;
 
             if ($context === 'edit' && $taxonomy->name === $this->taxonomy) {
+                /** @var array{visibility: mixed[]} $data */
                 $data = $response->get_data();
-
-                if (is_array($data['visibility'])) {
-                    $data['visibility']['show_ui'] = false;
-                }
+                $data['visibility']['show_ui'] = false;
 
                 $response->set_data($data);
             }
@@ -306,20 +304,6 @@ final class TaxonomyBuilder
 
             return $content;
         }, 10, 3);
-
-        return $this;
-    }
-
-    /**
-     * Used to render a custom metabox
-     *
-     * @param callable $metaBoxCallback
-     * @return $this
-     * @deprecated Gutenberg does not respect this setting and the devs indicated that they don't care
-     */
-    public function metaBox($metaBoxCallback)
-    {
-        $this->args['meta_box_cb'] = $metaBoxCallback;
 
         return $this;
     }
