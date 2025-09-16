@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayIterator;
+use OffbeatWP\Foundation\WpGlobals;
 use WP_Post;
 
 /**
@@ -36,7 +37,7 @@ final class WpPostsIterator extends ArrayIterator
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {
                 $this->globalPostWasChanged = true;
-                $this->originalPost = $GLOBALS['post'] ?? null;
+                $this->originalPost = WpGlobals::post();
             }
 
             $GLOBALS['post'] = $item;
