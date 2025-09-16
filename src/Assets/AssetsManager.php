@@ -7,9 +7,9 @@ use RuntimeException;
 
 final class AssetsManager extends Singleton
 {
-    /** @var mixed[] */
+    /** @var mixed[]|null */
     private ?array $manifest = null;
-    /** @var mixed[] */
+    /** @var mixed[]|null */
     private ?array $entrypoints = null;
 
     public function getUrl(string $filename): ?string

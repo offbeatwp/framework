@@ -18,6 +18,10 @@ final class Console extends Singleton
         $command = $commandClass::COMMAND;
 
         WP_CLI::add_command($command, function ($args, $argsNamed) use ($commandClass) {
+            /**
+             * @var list<string> $args
+             * @var array<string, string> $argsNamed
+             */
             (new $commandClass())->execute($args, $argsNamed);
         });
     }
