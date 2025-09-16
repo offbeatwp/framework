@@ -86,10 +86,10 @@ final class TaxonomyBuilder
     }
 
     /**
-     * @param false|array{slug?: string, with_front?: bool, hierarchical: bool, ep_keys?: int} $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
+     * @param bool|array{slug?: string, with_front?: bool, hierarchical: bool, ep_keys?: int} $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
      * @return $this
      */
-    final public function rewrite(array|false $rewrite)
+    final public function rewrite(array|bool $rewrite)
     {
         $this->args['rewrite'] = $rewrite;
         return $this;

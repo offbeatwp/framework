@@ -86,7 +86,7 @@ final class PostTypeBuilder
     }
 
     /**
-     * @param false|array{slug?: string, with_front?: bool, hierarchical?: bool, ep_mask?: int} $rewrite
+     * @param bool|array{slug?: string, with_front?: bool, hierarchical?: bool, ep_mask?: int} $rewrite
      * @return $this
      */
     public function rewrite(array|bool $rewrite)
