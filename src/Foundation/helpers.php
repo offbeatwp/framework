@@ -23,11 +23,3 @@ if (!function_exists('assetUrl')) {
         return '';
     }
 }
-
-if (!function_exists('setting')) {
-    /** @deprecated */
-    function setting(string $key): mixed
-    {
-        return get_option('options_' . $key);
-    }
-}

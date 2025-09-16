@@ -67,33 +67,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
         $this->wpPost = $post;
     }
 
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        if (method_exists($this, $methodName)) {
-            return $this->$methodName();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset($name): bool
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        return method_exists($this, $methodName);
-    }
-
-    ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
     /** @return non-negative-int */
