@@ -13,7 +13,7 @@ use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Taxonomy;
 use WP_Term;
 
-class TermModel extends OffbeatModel implements TermModelInterface
+class TermModel extends OffbeatModel
 {
     use BaseModelTrait;
     use SetMetaTrait;
@@ -23,7 +23,6 @@ class TermModel extends OffbeatModel implements TermModelInterface
     public const string|array TAXONOMY = '';
 
     private WP_Term $wpTerm;
-    public ?int $id = null;
     /** @var array<string, mixed> */
     protected array $metaInput = [];
     /** @var ("")[] */

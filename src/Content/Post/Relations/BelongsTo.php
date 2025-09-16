@@ -8,7 +8,7 @@ use OffbeatWP\Content\Post\WpQueryBuilder;
 class BelongsTo extends BelongsToOneOrMany
 {
     /** @return WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
-    public function query()
+    public function query(): WpQueryBuilder
     {
         return (new WpQueryBuilder())
             ->ignoreStickyPosts()

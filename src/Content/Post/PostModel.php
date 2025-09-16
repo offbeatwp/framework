@@ -16,7 +16,6 @@ use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
-use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\Post;
 use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
@@ -26,7 +25,7 @@ use WP_Post;
 use WP_Post_Type;
 use WP_User;
 
-class PostModel extends OffbeatModel implements PostModelInterface
+class PostModel extends OffbeatModel
 {
     use BaseModelTrait;
     use SetMetaTrait;
