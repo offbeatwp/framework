@@ -40,7 +40,6 @@ class UserModel extends OffbeatModel
         $this->wpUser = $user;
     }
 
-
     public function __clone()
     {
         $this->wpUser = clone $this->wpUser;
