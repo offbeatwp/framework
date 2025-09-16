@@ -64,7 +64,7 @@ class PostModel extends OffbeatModel
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $post->ID);
         }
 
-        if ($post->post_type !== static::POST_TYPE && $post->post_type !== 'any') {
+        if (static::POST_TYPE !== $post->post_type && static::POST_TYPE !== 'any') {
             throw new InvalidArgumentException('Failed to create PostModel, unexpected post type: ' . $post->post_type);
         }
 
