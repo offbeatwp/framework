@@ -2,10 +2,9 @@
 
 namespace OffbeatWP\Views;
 
-use BadMethodCallException;
 use OffbeatWP\Contracts\View;
-use OffbeatWP\Foundation\App;
 use ReflectionClass;
+use RuntimeException;
 
 trait ViewableTrait
 {
@@ -19,22 +18,9 @@ trait ViewableTrait
      */
     public function view(string $name, array $data = []): string
     {
-        if ($this->viewRenderer === null) {
-            $this->viewRenderer = App::getInstance()->viewRenderer;
-        }
-
-        if ($this->viewRenderer === null) {
-            throw new BadMethodCallException('No view renderer instance available.');
-        }
-
         $this->setRecursiveParentViewsPath();
 
-        return $this->viewRenderer->render($name, $data);
-    }
-
-    final public function setRenderer(View $viewRenderer): void
-    {
-        $this->viewRenderer = $viewRenderer;
+        return $this->getViewRenderer()->render($name, $data);
     }
 
     final protected function setRecursiveParentViewsPath(): void
@@ -58,7 +44,7 @@ trait ViewableTrait
         while (true) {
             $viewsPath = "{$path}/views/";
             if (is_dir($viewsPath)) {
-                $this->viewRenderer->addTemplatePath($viewsPath);
+                $this->getViewRenderer()->addTemplatePath($viewsPath);
             }
 
             $itemI++;
@@ -70,7 +56,21 @@ trait ViewableTrait
             $path = dirname($path);
         }
 
-
         static::$loaded[] = $path;
+    }
+
+    private function getViewRenderer(): View
+    {
+        if ($this->viewRenderer === null) {
+            $viewRenderer = apply_filters('offbeatwp_view_renderer', null);
+
+            if (!$viewRenderer instanceof View) {
+                throw new RuntimeException('No view renderer available.');
+            }
+
+            $this->viewRenderer = $viewRenderer;
+        }
+
+        return $this->viewRenderer;
     }
 }

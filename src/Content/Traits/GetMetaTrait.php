@@ -120,9 +120,16 @@ trait GetMetaTrait
         for ($i = 0; $i < $l; $i++) {
             $output[$i] = [];
 
-            foreach ($shape as $key => $value) {
+            foreach ($shape as $key => $type) {
                 $fullKey = $metaKey . '_' . $i . '_' . $key;
-                $output[$i][$key] = is_array($value) ? $this->getMetaRepeater($fullKey, $value) : $this->getMetaX($fullKey, $value);
+
+                if (is_array($type)) {
+                    $output[$i][$key] = $this->getMetaRepeater($fullKey, $type);
+                } elseif (is_string($type)) {
+                    $output[$i][$fullKey] =  $this->getMetaX($fullKey, $type);
+                } else {
+                    throw new InvalidArgumentException('Invalid Repeater Type was passsed as argument.');
+                }
             }
         }
 
@@ -133,7 +140,7 @@ trait GetMetaTrait
      * @param non-empty-string $metaKey
      * @return scalar|WpDateTime|null|mixed[]
      */
-    private function getMetaX(string $metaKey, mixed $type)
+    private function getMetaX(string $metaKey, string $type): string|bool|int|float|array|null|WpDateTime
     {
         if ($type === 'string') {
             return $this->getMetaString($metaKey);

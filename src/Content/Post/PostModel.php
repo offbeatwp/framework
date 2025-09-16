@@ -32,7 +32,12 @@ class PostModel extends OffbeatModel implements PostModelInterface
     use SetMetaTrait;
     use GetMetaTrait;
 
+    /** @var string|list<string> */
     public const string|array POST_TYPE = 'any';
+    /** @var 'none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in'|('none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in')[] */
+    public const string|array ORDER_BY = 'date';
+    /** @var 'ASC'|'DESC' */
+    public const string ORDER = 'DESC';
 
     private WP_Post $wpPost;
     /** @var array<string, int|float|string|bool|mixed[]|stdClass|\Serializable> */
@@ -60,40 +65,13 @@ class PostModel extends OffbeatModel implements PostModelInterface
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Post with invalid ID: ' . $post->ID);
         }
 
-        if (static::POST_TYPE !== $post->post_type) {
+        if ($post->post_type !== static::POST_TYPE && $post->post_type !== 'any') {
             throw new InvalidArgumentException('Failed to create PostModel, unexpected post type: ' . $post->post_type);
         }
 
         $this->wpPost = $post;
     }
 
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        if (method_exists($this, $methodName)) {
-            return $this->$methodName();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset($name): bool
-    {
-        $methodName = 'get' . str_replace('_', '', ucwords($name, '_'));
-
-        return method_exists($this, $methodName);
-    }
-
-    ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
     /** @return non-negative-int */
@@ -145,13 +123,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
         }
 
         return $content;
-    }
-
-    /** @return $this */
-    public function setId(?int $id)
-    {
-        $this->wpPost->ID = $id;
-        return $this;
     }
 
     /**
@@ -231,7 +202,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
      * @see PostStatus
      * @return $this
      */
-    public function setPostStatus(string $newStatus)
+    final public function setPostStatus(string $newStatus)
     {
         $this->wpPost->post_status = $newStatus;
         return $this;
@@ -337,19 +308,6 @@ class PostModel extends OffbeatModel implements PostModelInterface
         return $result;
     }
 
-    /**
-     * @param iterable<string, int|float|bool|string|mixed[]|\Serializable|stdClass> $metadata
-     * @return $this
-     */
-    public function setMetas(iterable $metadata)
-    {
-        foreach ($metadata as $key => $value) {
-            $this->setMeta($key, $value);
-        }
-
-        return $this;
-    }
-
     /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
     public function getTerms(string $taxonomy): TermQueryBuilder
     {
@@ -381,11 +339,12 @@ class PostModel extends OffbeatModel implements PostModelInterface
 
     /**
      * @param array{0: positive-int, 1: positive-int}|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @return false|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
+     * @return null|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
-    public function getFeaturedImageUrl($size = 'thumbnail')
+    public function getFeaturedImageUrl(array|string $size = 'thumbnail'): ?string
     {
-        return get_the_post_thumbnail_url($this->wpPost, $size);
+        $url = get_the_post_thumbnail_url($this->wpPost, $size);
+        return $url === false ? null : $url;
     }
 
     public function getFeaturedImageId(): int
@@ -394,21 +353,21 @@ class PostModel extends OffbeatModel implements PostModelInterface
     }
 
     /** @return $this */
-    public function setExcerpt(string $excerpt)
+    final public function setExcerpt(string $excerpt)
     {
         $this->wpPost->post_excerpt = $excerpt;
         return $this;
     }
 
     /** @return $this */
-    public function setTitle(string $title)
+    final public function setTitle(string $title)
     {
         $this->wpPost->post_title = $title;
         return $this;
     }
 
     /** @return $this */
-    public function setPostName(string $postName)
+    final public function setPostName(string $postName)
     {
         $this->wpPost->post_name = $postName;
         return $this;
@@ -450,9 +409,9 @@ class PostModel extends OffbeatModel implements PostModelInterface
     }
 
     /** @return PostsCollection<int, static> Retrieves the children of this post. */
-    public function getChildren()
+    public function getChildren(): PostsCollection
     {
-        return static::query()->where(['post_parent' => $this->getId()])->all();
+        return static::query()->wherePostParent($this->getId())->all();
     }
 
     /** @return int[] Retrieves the IDs of the ancestors of a post. */

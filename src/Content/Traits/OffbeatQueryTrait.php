@@ -12,7 +12,7 @@ trait OffbeatQueryTrait
      * @param scalar|null $value
      * @return $this
      */
-    public function whereMetaIs(string $metaKey, $value)
+    public function whereMetaIs(string $metaKey, string|int|bool|float|null $value)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => '==', 'value' => $value]);
         return $this;
@@ -24,7 +24,7 @@ trait OffbeatQueryTrait
      * @param scalar|null $value
      * @return $this
      */
-    public function whereMetaIsNot(string $metaKey, $value)
+    public function whereMetaIsNot(string $metaKey, string|int|bool|float|null $value)
     {
         $this->whereMeta([
             'relation' => 'OR',
@@ -57,32 +57,6 @@ trait OffbeatQueryTrait
     public function whereMetaNotExists(string $metaKey)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => 'NOT EXISTS']);
-        return $this;
-    }
-
-    /**
-     * @param string|string[]|null $orderBy
-     * @param string|null $order 'ASC'|'DESC'
-     * @return $this
-     */
-    public function order($orderBy = null, ?string $order = null)
-    {
-        if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
-            $this->queryVars['meta_key'] = $match[3];
-            $this->queryVars['orderby'] = 'meta_value';
-
-            if ($match[1] === 'meta_num') {
-                $this->queryVars['orderby'] = 'meta_value_num';
-            }
-
-        } elseif ($orderBy !== null) {
-            $this->queryVars['orderby'] = $orderBy;
-        }
-
-        if ($order !== null) {
-            $this->queryVars['order'] = $order;
-        }
-
         return $this;
     }
 
@@ -128,17 +102,6 @@ trait OffbeatQueryTrait
     public function exists(): bool
     {
         return (bool)$this->firstId();
-    }
-
-    /**
-     * @param array<string, mixed> $parameters
-     * @return $this
-     */
-    public function where(array $parameters)
-    {
-        $this->queryVars = array_merge($this->queryVars, $parameters);
-
-        return $this;
     }
 
     /** @return $this */

@@ -30,29 +30,12 @@ class WpQueryBuilder
     {
         $this->modelClass = $modelClass;
 
-        if ($modelClass::POST_TYPE) {
-            /** @var string|list<string> $postType */
-            $postType = $modelClass::POST_TYPE;
-            $this->wherePostType($postType);
+        $this->wherePostType($this->modelClass::POST_TYPE);
+        $this->orderBy($this->modelClass::ORDER_BY);
+
+        if ($this->modelClass::ORDER === 'ASC') {
+            $this->orderAsc();
         }
-
-        $order = $this->getModelConst('ORDER_BY');
-        $orderDirection = $this->getModelConst('ORDER');
-
-        $this->order($order, $orderDirection);
-    }
-
-    private function getModelConst(string $type): ?string
-    {
-        if (defined("{$this->modelClass}::{$type}")) {
-            $value = $this->modelClass::{$type};
-
-            if (is_string($value)) {
-                return $value;
-            }
-        }
-
-        return null;
     }
 
     /** @return PostsCollection<int, TValue> */
@@ -301,7 +284,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param string|string[] $postTypes
+     * @param string|list<string> $postTypes
      * @return $this
      */
     final public function wherePostType(string|array $postTypes)
@@ -415,6 +398,20 @@ class WpQueryBuilder
 
         $this->queryVars['meta_query'][] = $parameters;
 
+        return $this;
+    }
+
+    /** @return $this */
+    final public function ignoreStickyPosts(bool $ignoreStickyPosts = true)
+    {
+        $this->queryVars['ignore_sticky_posts'] = $ignoreStickyPosts;
+        return $this;
+    }
+
+    /** @return $this */
+    final public function wherePostParent(int $parentId)
+    {
+        $this->queryVars['post_parent'] = $parentId;
         return $this;
     }
 

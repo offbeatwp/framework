@@ -130,12 +130,6 @@ class TermModel extends OffbeatModel implements TermModelInterface
         return get_edit_term_link($this->wpTerm) ?: '';
     }
 
-    /** @return array<int, TermModel> */
-    public function getAncestors(): array
-    {
-        return array_map(fn ($id) => static::query()->findById($id), $this->getAncestorIds());
-    }
-
     /**
      * Removes a term from the database.<br>
      * If the term is a parent of other terms, then the children will be updated to that term's parent.<br>

@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Content\Post;
 
+use InvalidArgumentException;
 use OffbeatWP\Support\Wordpress\PostType;
 use WP_Post;
 use WP_Query;
@@ -227,7 +228,9 @@ final class PostTypeBuilder
                 $metaValue = get_post_meta($postId, $metaName, true);
 
                 if ($callback) {
-                    $model = $this->modelClass::find($postId);
+                    /** @var class-string<\OffbeatWP\Content\Post\PostModel> $modelClass */
+                    $modelClass = $this->modelClass;
+                    $model = $modelClass::find($postId);
                     echo $callback($model, $metaValue);
                 } else {
                     echo $metaValue;
@@ -433,6 +436,10 @@ final class PostTypeBuilder
 
     public function set(): void
     {
+        if (!$this->postType) {
+            throw new InvalidArgumentException('Cannot register an offbeat post type without specifying a post type! (Duh)');
+        }
+
         register_post_type($this->postType, $this->postTypeArgs);
 
         if ($this->modelClass !== null) {
