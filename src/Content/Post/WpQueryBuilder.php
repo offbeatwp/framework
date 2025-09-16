@@ -418,6 +418,20 @@ class WpQueryBuilder
         return $this;
     }
 
+    /** @return $this */
+    final public function ignoreStickyPosts(bool $ignoreStickyPosts = true)
+    {
+        $this->queryVars['ignore_sticky_posts'] = $ignoreStickyPosts;
+        return $this;
+    }
+
+    /** @return $this */
+    final public function wherePostParent(int $parentId)
+    {
+        $this->queryVars['post_parent'] = $parentId;
+        return $this;
+    }
+
     /**
      * @param int[]|int $ids
      * @return $this

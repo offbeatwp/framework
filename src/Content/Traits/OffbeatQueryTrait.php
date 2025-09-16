@@ -12,7 +12,7 @@ trait OffbeatQueryTrait
      * @param scalar|null $value
      * @return $this
      */
-    public function whereMetaIs(string $metaKey, $value)
+    public function whereMetaIs(string $metaKey, string|int|bool|float|null $value)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => '==', 'value' => $value]);
         return $this;
@@ -24,7 +24,7 @@ trait OffbeatQueryTrait
      * @param scalar|null $value
      * @return $this
      */
-    public function whereMetaIsNot(string $metaKey, $value)
+    public function whereMetaIsNot(string $metaKey, string|int|bool|float|null $value)
     {
         $this->whereMeta([
             'relation' => 'OR',
@@ -65,7 +65,7 @@ trait OffbeatQueryTrait
      * @param string|null $order 'ASC'|'DESC'
      * @return $this
      */
-    public function order($orderBy = null, ?string $order = null)
+    public function order(string|array|null $orderBy = null, ?string $order = null)
     {
         if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
             $this->queryVars['meta_key'] = $match[3];
@@ -128,17 +128,6 @@ trait OffbeatQueryTrait
     public function exists(): bool
     {
         return (bool)$this->firstId();
-    }
-
-    /**
-     * @param array<string, mixed> $parameters
-     * @return $this
-     */
-    public function where(array $parameters)
-    {
-        $this->queryVars = array_merge($this->queryVars, $parameters);
-
-        return $this;
     }
 
     /** @return $this */

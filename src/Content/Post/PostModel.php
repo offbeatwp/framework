@@ -445,7 +445,7 @@ class PostModel extends OffbeatModel implements PostModelInterface
     /** @return PostsCollection<int, static> Retrieves the children of this post. */
     public function getChildren()
     {
-        return static::query()->where(['post_parent' => $this->getId()])->all();
+        return static::query()->wherePostParent($this->getId())->all();
     }
 
     /** @return int[] Retrieves the IDs of the ancestors of a post. */
