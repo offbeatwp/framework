@@ -21,7 +21,7 @@ final class WpDateTime extends DateTime
      * @return WpDateTime Returns the DateTime object for method chaining. Throws Exception on failure.
      * @link https://php.net/manual/en/datetime.modify.php
      */
-    public function modify($modifier): WpDateTime
+    public function modify(string $modifier): WpDateTime
     {
         $result = parent::modify($modifier);
         if ($result === false) {

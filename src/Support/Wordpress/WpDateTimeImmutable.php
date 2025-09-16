@@ -20,7 +20,7 @@ final class WpDateTimeImmutable extends DateTimeImmutable
      * @return WpDateTimeImmutable Returns the newly created object. Throws Exception on failure.
      * @link https://secure.php.net/manual/en/datetime.formats.php
      */
-    public function modify($modifier): WpDateTimeImmutable
+    public function modify(string $modifier): WpDateTimeImmutable
     {
         $result = parent::modify($modifier);
         if ($result === false) {

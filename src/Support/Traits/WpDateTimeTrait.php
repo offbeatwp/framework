@@ -17,7 +17,7 @@ trait WpDateTimeTrait
     /**
      * Retrieves the date, in localized format. Defaults to the format defined in the blog settings.
      * <br>Note that utilises the wp_date method. As such, the output is affected by the <b>wp_date</b> filter but NOT the <b>date_i18n</b> filter.
-     * @param string $format Format in which to retrieve the date.
+     * @param string $format Format in which to retrieve the date. When omitted uses the configured WordPress date.
      */
     public function i18n(string $format = ''): string
     {

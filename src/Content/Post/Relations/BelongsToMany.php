@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Post\Relations;
 use OffbeatWP\Content\Post\PostsCollection;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
-class BelongsToMany extends BelongsToOneOrMany
+final class BelongsToMany extends BelongsToOneOrMany
 {
     /** @return \OffbeatWP\Content\Post\WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
     public function query(): WpQueryBuilder
