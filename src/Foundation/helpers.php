@@ -1,5 +1,6 @@
 <?php
 
+use OffbeatWP\Assets\AssetsManager;
 use OffbeatWP\Foundation\App;
 
 if (!function_exists('offbeat')) {
@@ -17,9 +18,8 @@ if (!function_exists('config')) {
 }
 
 if (!function_exists('assetUrl')) {
-    /** @deprecated */
-    function assetUrl(string $file): string
+    function assetUrl(string $file): ?string
     {
-        return '';
+        return AssetsManager::getInstance()->getUrl($file);
     }
 }

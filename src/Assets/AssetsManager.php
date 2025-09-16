@@ -8,7 +8,51 @@ use RuntimeException;
 final class AssetsManager extends Singleton
 {
     /** @var mixed[] */
+    private ?array $manifest = null;
+    /** @var mixed[] */
     private ?array $entrypoints = null;
+
+    public function getUrl(string $filename): ?string
+    {
+        $path = $this->getEntryFromAssetsManifest($filename);
+
+        if ($path !== null) {
+            if (str_starts_with($path, 'http')) {
+                return $path;
+            }
+
+            return $this->getAssetsUrl($path);
+        }
+
+        trigger_error('Could not retrieve url from asset manifest: ' . $filename, E_USER_WARNING);
+        return null;
+    }
+
+    private function getEntryFromAssetsManifest(string $filename): ?string
+    {
+        return $this->getAssetsManifest()->$filename ?? null;
+    }
+
+    private function getAssetsManifest(): array
+    {
+        if ($this->manifest === null) {
+            $path = $this->getAssetsPath('manifest.json', true);
+
+            if (file_exists($path)) {
+                $manifest = json_decode(file_get_contents($path), true);
+                if (!is_array($manifest)) {
+                    throw new RuntimeException('Asset manifest should be decoded into an array, but was decoded as: ' . gettype($manifest));
+                }
+            } else {
+                trigger_error('The manifest.json file could not be found!', E_USER_WARNING);
+                $manifest = [];
+            }
+
+            $this->manifest = $manifest;
+        }
+
+        return $this->manifest;
+    }
 
     /**
      * @return mixed[]
@@ -96,7 +140,6 @@ final class AssetsManager extends Singleton
 
             return $url . $path;
         }
-
 
         $url = config('app.assets.url');
         if ($url && is_string($url)) {
