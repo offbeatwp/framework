@@ -309,20 +309,6 @@ final class TaxonomyBuilder
     }
 
     /**
-     * Used to render a custom metabox
-     *
-     * @param callable $metaBoxCallback
-     * @return $this
-     * @deprecated Gutenberg does not respect this setting and the devs indicated that they don't care
-     */
-    public function metaBox($metaBoxCallback)
-    {
-        $this->args['meta_box_cb'] = $metaBoxCallback;
-
-        return $this;
-    }
-
-    /**
      * Hides the "description" field in on the Taxonomy add/edit page
      * @return $this
      */

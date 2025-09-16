@@ -74,15 +74,6 @@ final class UserQueryBuilder
         return new UserCollection($results, $this->modelClass);
     }
 
-    /**
-     * @return UserCollection<int, TValue>
-     * @deprecated Use the <b>get</b> method instead.
-     */
-    public function all(): UserCollection
-    {
-        return $this->take(0);
-    }
-
     /** @return UserCollection<int, TValue> */
     public function take(int $numberOfUsers): UserCollection
     {

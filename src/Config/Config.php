@@ -22,7 +22,6 @@ final class Config
         $this->config = [];
     }
 
-    /** @param non-falsy-string $name */
     private function loadConfig(string $name): void
     {
         if (!array_key_exists($name, $this->config)) {
@@ -33,7 +32,7 @@ final class Config
                 $this->config[$name] = $configValues;
                 $this->mergeEnvironmentConfig($name, $configValues);
 
-                if (array_key_exists($name, $this->envConfigValues) && is_iterable($this->envConfigValues[$name])) {
+                if (array_key_exists($name, $this->envConfigValues) && is_array($this->envConfigValues[$name])) {
                     $this->mergeConfigEnvFile($name, $this->envConfigValues[$name]);
                 }
             } else {
@@ -59,14 +58,16 @@ final class Config
         return [];
     }
 
-    private function mergeConfigEnvFile(string $envKey, mixed $envValue): void
+    /** @param mixed[] $envValue */
+    private function mergeConfigEnvFile(string $envKey, array $envValue): void
     {
         if ($this->get($envKey)) {
             $this->config[$envKey] = ArrayHelper::mergeRecursiveAssoc($this->config[$envKey], $envValue);
         }
     }
 
-    private function mergeEnvironmentConfig(string $key, mixed $originalValue): void
+    /** @param mixed[] $originalValue */
+    private function mergeEnvironmentConfig(string $key, array $originalValue): void
     {
         if (ArrayHelper::isAssoc($originalValue)) {
             // Get current environment
@@ -78,6 +79,7 @@ final class Config
             if ($environmentConfigs) {
                 $explicitEnvironmentConfigs = [];
 
+                /** @var array<string, mixed[]> $environmentConfigs */
                 foreach ($environmentConfigs as $environmentKey => $environmentConfig) {
                     $matched = preg_match('/^!(.*)/', $environmentKey, $matches);
 
