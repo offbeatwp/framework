@@ -293,7 +293,7 @@ final class TaxonomyBuilder
             return $columns;
         });
 
-        add_filter("manage_{$this->taxonomy}_custom_column", function ($content, $columnName, $termId) use ($metaName, $callback) {
+        add_filter("manage_{$this->taxonomy}_custom_column", function (string $content, string $columnName, int $termId) use ($metaName, $callback) {
             if ($columnName === $metaName) {
                 $content = get_term_meta($termId, $metaName, true);
 
