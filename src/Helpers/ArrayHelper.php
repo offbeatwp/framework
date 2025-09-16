@@ -59,18 +59,20 @@ final class ArrayHelper
      * @pure
      * @interal
      * @param string[] $keys
-     * @param iterable<mixed> $array
+     * @param mixed[] $array
      */
-    public static function getValueFromStringArray(array $keys, iterable $array = []): mixed
+    public static function getValueFromStringArray(array $keys, array $array = []): mixed
     {
+        $item = $array;
+
         foreach ($keys as $var) {
-            if (isset($array[$var])) {
-                $array = $array[$var];
+            if (is_array($item) && isset($item[$var])) {
+                $item = $item[$var];
             } else {
                 return null;
             }
         }
 
-        return $array;
+        return $item;
     }
 }
