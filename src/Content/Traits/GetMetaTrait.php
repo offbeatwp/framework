@@ -133,7 +133,7 @@ trait GetMetaTrait
      * @param non-empty-string $metaKey
      * @return scalar|WpDateTime|null|mixed[]
      */
-    private function getMetaX(string $metaKey, mixed $type)
+    private function getMetaX(string $metaKey, string $type): string|bool|int|float|array|null|WpDateTime
     {
         if ($type === 'string') {
             return $this->getMetaString($metaKey);

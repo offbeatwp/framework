@@ -30,7 +30,7 @@ final class ArrayHelper
                 continue;
             }
 
-            if (is_array($value1) && self::isAssoc($value1)) {
+            if (is_array($value1) && self::isAssoc($value1) && is_array($array2[$key1])) {
                 $array[$key1] = self::mergeRecursiveAssoc($value1, $array2[$key1]);
             } else {
                 $array[$key1] = $array2[$key1];
