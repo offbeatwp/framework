@@ -98,18 +98,10 @@ final class Config
         }
     }
 
-    /**
-     * @param string $key
-     * @return object|string|float|int|bool|null|mixed[]|\OffbeatWP\Config\Config
-     */
-    public function get(string $key, bool $collect = true)
+    public function get(string $key, bool $collect = true): mixed
     {
         $keys = explode('.', $key);
-        if ($keys[0]) {
-            $this->loadConfig($keys[0]);
-        } else {
-            trigger_error('Config::get $key must be a non-falsy string.', E_USER_DEPRECATED);
-        }
+        $this->loadConfig($keys[0]);
 
         return ArrayHelper::getValueFromStringArray($keys, $this->config);
     }

@@ -12,7 +12,51 @@ final class PostTypeBuilder
     /** @var null|class-string<PostModel> */
     private ?string $modelClass = null;
     private ?string $postType = null;
-    /** @var mixed[] */
+    /**
+     * @var array{
+     *   label?: string,
+     *   labels?: string[],
+     *   description?: string,
+     *   public?: bool,
+     *   hierarchical?: bool,
+     *   exclude_from_search?: bool,
+     *   publicly_queryable?: bool,
+     *   show_ui?: bool,
+     *   show_in_menu?: bool|string,
+     *   show_in_nav_menus?: bool,
+     *   show_in_admin_bar?: bool,
+     *   show_in_rest?: bool,
+     *   rest_base?: string,
+     *   rest_namespace?: string,
+     *   rest_controller_class?: string,
+     *   autosave_rest_controller_class?: string|bool,
+     *   revisions_rest_controller_class?: string|bool,
+     *   late_route_registration?: bool,
+     *   menu_position?: int,
+     *   menu_icon?: string,
+     *   capability_type?: string|mixed[],
+     *   capabilities?: string[],
+     *   map_meta_cap?: bool,
+     *   supports?: mixed[]|false,
+     *   register_meta_box_cb?: callable,
+     *   taxonomies?: string[],
+     *   has_archive?: bool|string,
+     *   rewrite?: bool|array{
+     *     slug?: string,
+     *     with_front?: bool,
+     *     feeds?: bool,
+     *     pages?: bool,
+     *     ep_mask?: int,
+     *   },
+     *   query_var?: string|bool,
+     *   can_export?: bool,
+     *   delete_with_user?: bool,
+     *   template?: mixed[],
+     *   template_lock?: string|false,
+     *   _builtin?: bool,
+     *   _edit_link?: string,
+     * } $postTypeArgs
+     */
     private array $postTypeArgs = [];
 
     /** @return $this */
@@ -42,7 +86,7 @@ final class PostTypeBuilder
     }
 
     /**
-     * @param string[]|bool[]|int[]|bool $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
+     * @param false|array{slug?: string, with_front?: bool, hierarchical?: bool, ep_mask?: int} $rewrite
      * @return $this
      */
     public function rewrite(array|bool $rewrite)
@@ -184,9 +228,13 @@ final class PostTypeBuilder
                 $model = new $this->modelClass($postId);
 
                 if (is_string($modelFunc)) {
-                    echo $model->$modelFunc();
+                    $result = $model->$modelFunc();
                 } else {
-                    echo $modelFunc($model);
+                    $result = $modelFunc($model);
+                }
+
+                if (is_string($result)) {
+                    echo $result;
                 }
             }
         }, 10, 2);
@@ -232,7 +280,7 @@ final class PostTypeBuilder
                     $modelClass = $this->modelClass;
                     $model = $modelClass::find($postId);
                     echo $callback($model, $metaValue);
-                } else {
+                } elseif (is_string($metaValue)) {
                     echo $metaValue;
                 }
             }
@@ -424,13 +472,6 @@ final class PostTypeBuilder
         $this->postTypeArgs['graphql_single_name'] = $singleName;
         $this->postTypeArgs['graphql_plural_name'] = $pluralName ?: $singleName;
 
-        return $this;
-    }
-
-    /** @return $this */
-    public function setArgument(string $key, mixed $value)
-    {
-        $this->postTypeArgs[$key] = $value;
         return $this;
     }
 

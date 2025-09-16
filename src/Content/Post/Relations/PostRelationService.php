@@ -59,9 +59,9 @@ class PostRelationService extends AbstractService
         if (!empty($query->query_vars['owp-fields']) && is_array($query->query_vars['owp-fields'])) {
             global $wpdb;
 
-            $fields = array_map(function (string $field) use ($wpdb) {
+            $fields = array_map(function ($field) use ($wpdb) {
                 if (!in_array($field, self::POST_FIELDS, true)) {
-                    throw new InvalidArgumentException($field . ' is not a valid post field.');
+                    throw new InvalidArgumentException('Passed OWP field is not a valid post field.');
                 }
 
                 return $wpdb->posts . '.' . $field;

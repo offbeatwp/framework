@@ -53,7 +53,9 @@ abstract class OffbeatModel
     final public function getMetas(): array
     {
         if (!$this->hasAllMetas) {
-            $this->metas = get_metadata_raw($this->getObjectType(), $this->getId());
+            /** @var array<string, array<mixed>> $rawMeta */
+            $rawMeta = get_metadata_raw($this->getObjectType(), $this->getId());
+            $this->metas = $rawMeta;
             $this->hasAllMetas = true;
         }
 
