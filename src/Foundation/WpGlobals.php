@@ -15,6 +15,7 @@ final class WpGlobals
 
     public static function wpAdminBar(): ?WP_Admin_Bar
     {
+        /** @var WP_Admin_Bar|null */
         return $GLOBALS['wp_admin_bar'] ?? null;
     }
 }

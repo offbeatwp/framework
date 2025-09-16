@@ -33,13 +33,19 @@ final class AssetsManager extends Singleton
         return $this->getAssetsManifest()->$filename ?? null;
     }
 
+    /** @return mixed[] */
     private function getAssetsManifest(): array
     {
         if ($this->manifest === null) {
             $path = $this->getAssetsPath('manifest.json', true);
 
             if (file_exists($path)) {
-                $manifest = json_decode(file_get_contents($path), true);
+                $fileContents = file_get_contents($path);
+                if (!is_string($fileContents)) {
+                    throw new RuntimeException('Unable to read entry points file.');
+                }
+
+                $manifest = json_decode($fileContents, true);
                 if (!is_array($manifest)) {
                     throw new RuntimeException('Asset manifest should be decoded into an array, but was decoded as: ' . gettype($manifest));
                 }

@@ -50,7 +50,7 @@ final class ArrayHelper
      * @pure
      * @param mixed[] $array
      */
-    public static function getValueFromDottedKey(string $key, iterable $array = []): mixed
+    public static function getValueFromDottedKey(string $key, array $array = []): mixed
     {
         return self::getValueFromStringArray(explode('.', $key), $array);
     }
