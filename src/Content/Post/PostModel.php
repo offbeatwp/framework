@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Post;
 use DateTimeZone;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
-use OffbeatWP\Content\Post\Relations\BelongsTo;
+use OffbeatWP\Content\Post\Relations\BelongsToOne;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
@@ -637,9 +637,9 @@ class PostModel extends OffbeatModel
         return new HasOne($this, $relationKey);
     }
 
-    public function belongsTo(string $relationKey): BelongsTo
+    public function belongsToOne(string $relationKey): BelongsToOne
     {
-        return new BelongsTo($this, $relationKey);
+        return new BelongsToOne($this, $relationKey);
     }
 
     public function belongsToMany(string $relationKey): BelongsToMany
