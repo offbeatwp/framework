@@ -2,9 +2,9 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\Common\OwpSingleton;
+use OffbeatWP\Content\Common\Singleton;
 
-final class AdminPage extends OwpSingleton
+final class AdminPage extends Singleton
 {
     /**
      * @param string $title The text to be displayed in the title tags of the page when the menu is selected.

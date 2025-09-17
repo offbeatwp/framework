@@ -4,11 +4,11 @@ namespace OffbeatWP\Foundation;
 
 use InvalidArgumentException;
 use OffbeatWP\Config\Config;
-use OffbeatWP\Content\Common\OwpSingleton;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Helpers\VarHelper;
 use OffbeatWP\Services\AbstractService;
 
-final class App extends OwpSingleton
+final class App extends Singleton
 {
     /** @var array<non-falsy-string, AbstractService> */
     private array $services = [];

@@ -2,11 +2,11 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\Common\OwpSingleton;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Content\Post\PostModel;
 use WP_Post;
 
-final class Post extends OwpSingleton
+final class Post extends Singleton
 {
     public function convertWpPostToModel(WP_Post $post): PostModel
     {

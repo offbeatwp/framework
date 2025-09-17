@@ -2,10 +2,10 @@
 
 namespace OffbeatWP\Assets;
 
-use OffbeatWP\Content\Common\OwpSingleton;
+use OffbeatWP\Content\Common\Singleton;
 use RuntimeException;
 
-final class AssetsManager extends OwpSingleton
+final class AssetsManager extends Singleton
 {
     /** @var mixed[]|null */
     private ?array $manifest = null;

@@ -2,12 +2,12 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\Common\OwpSingleton;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Content\Taxonomy\TaxonomyBuilder;
 use OffbeatWP\Content\Taxonomy\TermModel;
 use WP_Term;
 
-final class Taxonomy extends OwpSingleton
+final class Taxonomy extends Singleton
 {
     public const string DEFAULT_TERM_MODEL = TermModel::class;
 

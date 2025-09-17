@@ -2,11 +2,11 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\Common\OwpSingleton;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\PostTypeBuilder;
 
-final class PostType extends OwpSingleton
+final class PostType extends Singleton
 {
     public const string DEFAULT_POST_MODEL = PostModel::class;
 
