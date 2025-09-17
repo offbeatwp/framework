@@ -3,10 +3,10 @@
 namespace OffbeatWP\Support\Wordpress;
 
 use OffbeatWP\Console\AbstractCommand;
-use OffbeatWP\Content\Common\Singleton;
+use OffbeatWP\Content\Common\OwpSingleton;
 use WP_CLI;
 
-final class Console extends Singleton
+final class Console extends OwpSingleton
 {
     /** @param AbstractCommand|class-string<AbstractCommand> $commandClass */
     public function register(AbstractCommand|string $commandClass): void

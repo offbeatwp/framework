@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Common;
 
-abstract class Singleton
+abstract class OwpSingleton
 {
     /** @var array<class-string<static>, static> */
     private static array $instances = [];
