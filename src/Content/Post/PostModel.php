@@ -693,12 +693,6 @@ class PostModel extends OffbeatModel
         return $ids;
     }
 
-    /** @return array<non-falsy-string, non-falsy-string> */
-    public function getRelationships(): array
-    {
-        return $this->relationKeyMethods;
-    }
-
     private function updateRelation(string $key): void
     {
         $method = $this->getMethodByRelationKey($key);
