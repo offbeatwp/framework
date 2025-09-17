@@ -79,4 +79,9 @@ abstract class Relation
             $this->makeRelationship($id, $reverse);
         }
     }
+
+    /** @param int|int[] $ids */
+    abstract public function attach(int|array $ids): void;
+    abstract public function detach(int $id): void;
+    abstract public function detachAll(): void;
 }

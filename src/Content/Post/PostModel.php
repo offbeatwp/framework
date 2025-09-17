@@ -11,6 +11,7 @@ use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Post\Relations\HasOneOrMany;
+use OffbeatWP\Content\Post\Relations\Relation;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
@@ -700,16 +701,12 @@ class PostModel extends OffbeatModel
         if ($method) {
             $relation = $this->$method();
 
-            if ($relation) {
+            if ($relation instanceof Relation) {
                 $ids = $this->getMetaRelationIds($key);
 
-                if ($ids && $relation instanceof HasOneOrMany) {
+                if ($ids) {
                     $relation->attach($ids);
-                } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
-                    $relation->attach($ids);
-                } elseif ($relation instanceof HasOneOrMany) {
-                    $relation->detachAll();
-                } elseif ($relation instanceof BelongsToOneOrMany) {
+                } else {
                     $relation->detachAll();
                 }
             }

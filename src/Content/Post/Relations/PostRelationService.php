@@ -41,19 +41,7 @@ final class PostRelationService extends AbstractService
 
         /** @var scalar|null|array<scalar|null> $value */
         if ($value) {
-            if (is_array($value)) {
-                $relationshipIds = array_map('intval', $value);
-            } else {
-                $relationshipIds = [(int)$value];
-            }
-
-            if ($relation instanceof HasOneOrMany) {
-                $relation->attach($relationshipIds);
-            } else {
-                $relation->attach($relationshipIds);
-            }
-        } elseif ($relation instanceof HasOneOrMany) {
-            $relation->detachAll();
+            $relation->attach($this->mapIds((array)$value));
         } else {
             $relation->detachAll();
         }
