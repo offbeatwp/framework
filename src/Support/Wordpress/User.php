@@ -19,7 +19,7 @@ final class User
         $modelClass = null;
 
         foreach ($user->roles as $role) {
-            $modelRoleClass = UserRole::getModelByUserRole($role);
+            $modelRoleClass = UserRole::getModelClassByUserRole($role);
 
             if ($modelRoleClass) {
                 if (is_a($modelRoleClass, $preferredModel, true)) {
