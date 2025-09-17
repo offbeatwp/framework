@@ -2,14 +2,14 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use OffbeatWP\Content\Common\ReadonlyCollection;
+use OffbeatWP\Content\Common\ReadOnlyCollection;
 
 /**
  * @template TKey of int
  * @template TValue of TermModel
- * @extends ReadonlyCollection<TKey, TValue>
+ * @extends ReadOnlyCollection<TKey, TValue>
  */
-final class TermsCollection extends ReadonlyCollection
+final class TermsCollection extends ReadOnlyCollection
 {
     /**
      * @param list<\WP_Term> $items

@@ -2,15 +2,15 @@
 
 namespace OffbeatWP\Content\Post;
 
-use OffbeatWP\Content\Common\ReadonlyCollection;
+use OffbeatWP\Content\Common\ReadOnlyCollection;
 use WP_Query;
 
 /**
  * @template TKey of int
  * @template TValue of \OffbeatWP\Content\Post\PostModel
- * @extends ReadonlyCollection<TKey, TValue>
+ * @extends ReadOnlyCollection<TKey, TValue>
  */
-class PostsCollection extends ReadonlyCollection
+class PostsCollection extends ReadOnlyCollection
 {
     protected readonly WP_Query $query;
 

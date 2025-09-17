@@ -2,14 +2,14 @@
 
 namespace OffbeatWP\Content\User;
 
-use OffbeatWP\Content\Common\ReadonlyCollection;
+use OffbeatWP\Content\Common\ReadOnlyCollection;
 
 /**
  * @template TKey of int
  * @template TValue of UserModel
- * @extends ReadonlyCollection<TKey, TValue>
+ * @extends ReadOnlyCollection<TKey, TValue>
  */
-final class UserCollection extends ReadonlyCollection
+final class UserCollection extends ReadOnlyCollection
 {
     /**
      * @param list<\WP_User> $items
