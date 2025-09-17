@@ -2,10 +2,10 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
-class HasOneOrMany extends Relation
+abstract class HasOneOrMany extends Relation
 {
     /** @param int|int[] $ids */
-    public function attach(int|array $ids, bool $append = true): void
+    final public function attach(int|array $ids, bool $append = true): void
     {
         if (!$append) {
             $this->detachAll();
@@ -18,12 +18,12 @@ class HasOneOrMany extends Relation
         }
     }
 
-    public function detach(int $id): void
+    final public function detach(int $id): void
     {
         $this->removeRelationship($id);
     }
 
-    public function detachAll(): void
+    final public function detachAll(): void
     {
         $this->removeAllRelationships();
     }
