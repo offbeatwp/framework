@@ -10,7 +10,7 @@ final class PostType extends Singleton
 {
     public const string DEFAULT_POST_MODEL = PostModel::class;
 
-    /** @var class-string<PostModel>[] */
+    /** @var array<string, class-string<PostModel>> */
     private array $postTypeModels = [];
 
     /**
@@ -25,17 +25,14 @@ final class PostType extends Singleton
         return (new PostTypeBuilder())->make($name, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }
 
-    /**
-     * @param string $postType
-     * @param class-string<PostModel> $modelClass
-     */
+    /** @param class-string<PostModel> $modelClass */
     public function registerPostModel(string $postType, string $modelClass): void
     {
         $this->postTypeModels[$postType] = $modelClass;
     }
 
     /** @return class-string<PostModel> */
-    public function getModelByPostType(string $postType): string
+    public function getModelClassByPostType(string $postType): string
     {
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
     }

@@ -32,14 +32,14 @@ final class Taxonomy extends Singleton
     }
 
     /** @return class-string<TermModel> */
-    public function getModelByTaxonomy(string $taxonomy): string
+    public function getModelClassByTaxonomy(string $taxonomy): string
     {
         return $this->taxonomyModels[$taxonomy] ?? self::DEFAULT_TERM_MODEL;
     }
 
     public function convertWpTermToModel(WP_Term $term): TermModel
     {
-        $model = $this->getModelByTaxonomy($term->taxonomy);
+        $model = $this->getModelClassByTaxonomy($term->taxonomy);
         return new $model($term);
     }
 
