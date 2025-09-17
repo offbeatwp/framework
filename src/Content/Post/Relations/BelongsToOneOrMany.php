@@ -5,10 +5,10 @@ namespace OffbeatWP\Content\Post\Relations;
 class BelongsToOneOrMany extends Relation
 {
     /** @param int|int[] $ids */
-    public function associate(int|array $ids, bool $append = true): void
+    public function attach(int|array $ids, bool $append = true): void
     {
         if (!$append) {
-            $this->dissociateAll();
+            $this->detachAll();
         }
 
         if (is_array($ids)) {
@@ -18,12 +18,12 @@ class BelongsToOneOrMany extends Relation
         }
     }
 
-    public function dissociate(int $id): void
+    public function detach(int $id): void
     {
         $this->removeRelationship($id, 'reverse');
     }
 
-    public function dissociateAll(): void
+    public function detachAll(): void
     {
         $this->removeAllRelationships('reverse');
     }

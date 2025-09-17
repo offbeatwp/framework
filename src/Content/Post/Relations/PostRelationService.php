@@ -50,12 +50,12 @@ final class PostRelationService extends AbstractService
             if ($relation instanceof HasOneOrMany) {
                 $relation->attach($relationshipIds, false);
             } else {
-                $relation->associate($relationshipIds, false);
+                $relation->attach($relationshipIds, false);
             }
         } elseif ($relation instanceof HasOneOrMany) {
             $relation->detachAll();
         } else {
-            $relation->dissociateAll();
+            $relation->detachAll();
         }
     }
 

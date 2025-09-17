@@ -706,11 +706,11 @@ class PostModel extends OffbeatModel
                 if ($ids && $relation instanceof HasOneOrMany) {
                     $relation->attach($ids, false);
                 } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
-                    $relation->associate($ids, false);
+                    $relation->attach($ids, false);
                 } elseif ($relation instanceof HasOneOrMany) {
                     $relation->detachAll();
                 } elseif ($relation instanceof BelongsToOneOrMany) {
-                    $relation->dissociateAll();
+                    $relation->detachAll();
                 }
             }
         }
