@@ -37,6 +37,17 @@ class UserModel extends OffbeatModel
             throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User with invalid ID: ' . $user->ID);
         }
 
+        $definedRoles = static::definedUserRoles();
+        if ($definedRoles) {
+            if (count($definedRoles) > 1) {
+                throw new InvalidArgumentException('Failed to create UserModel from WP_User: Cannot instantiate UserModel with more than one defined role.');
+            }
+
+            if (!in_array($definedRoles[0], $user->roles, true)) {
+                throw new InvalidArgumentException('Failed to create UserModel from WP_User as it is missing role: ' . $definedRoles[0]);
+            }
+        }
+
         $this->wpUser = $user;
     }
 
@@ -292,8 +303,7 @@ class UserModel extends OffbeatModel
     ///////////////////////
     /// Special Methods ///
     ///////////////////////
-    /** @return int|WP_Error */
-    private function _save()
+    private function _save(): int|WP_Error
     {
         if (!$this->wpUser->user_email) {
             throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
@@ -391,19 +401,19 @@ class UserModel extends OffbeatModel
     /// Query Methods ///
     /////////////////////
     /** @return static|null Returns the user that is currently logged in, or null if no user is logged in. */
-    public static function getCurrentUser()
+    public static function getCurrentUser(): ?static
     {
         return self::query()->findById(get_current_user_id());
     }
 
     /** @return static Returns the user that is currently logged in, or throws an exception if no user is logged in. */
-    public static function getCurrentUserOrFail()
+    public static function getCurrentUserOrFail(): static
     {
         return self::query()->findByIdOrFail(get_current_user_id());
     }
 
     /** @return static|null Returns a user with the specified email address */
-    public static function findByEmail(string $email)
+    public static function findByEmail(string $email): ?static
     {
         $wpUser = get_user_by('email', $email);
 
@@ -424,20 +434,9 @@ class UserModel extends OffbeatModel
         return $this->getMetaBool('default_password_nag');
     }
 
-    /** @return static */
-    final public static function from(WP_User $wpUser)
+    final public static function from(WP_User $wpUser): static
     {
-        if ($wpUser->ID <= 0) {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User object: Invalid User ID');
-        }
-
-        foreach (static::definedUserRoles() ?? [] as $expectedRole) {
-            if (in_array($expectedRole, $wpUser->roles, true)) {
-                return new static($wpUser);
-            }
-        }
-
-        throw new InvalidArgumentException('Cannot create UserModel from WP_User object: Invalid Role');
+        return new static($wpUser);
     }
 
     /**
