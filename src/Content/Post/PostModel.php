@@ -5,7 +5,7 @@ namespace OffbeatWP\Content\Post;
 use DateTimeZone;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
-use OffbeatWP\Content\Post\Relations\BelongsTo;
+use OffbeatWP\Content\Post\Relations\BelongsToOne;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
 use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
@@ -47,14 +47,14 @@ class PostModel extends OffbeatModel
     protected array $termsToSet = [];
 
     /**
-     * @var array<non-empty-string, non-empty-string>|null
+     * @var array<non-falsy-string, non-falsy-string>
      * This should be an associative string array<br>
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
      * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
      * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
      * @see Relation
      */
-    public ?array $relationKeyMethods = null;
+    public array $relationKeyMethods = [];
 
     final public function __construct(?WP_Post $post = null)
     {
@@ -616,7 +616,7 @@ class PostModel extends OffbeatModel
     {
         $method = $relationKey;
 
-        if (is_array($this->relationKeyMethods) && isset($this->relationKeyMethods[$relationKey])) {
+        if (isset($this->relationKeyMethods[$relationKey])) {
             $method = $this->relationKeyMethods[$relationKey];
         }
 
@@ -637,9 +637,9 @@ class PostModel extends OffbeatModel
         return new HasOne($this, $relationKey);
     }
 
-    public function belongsTo(string $relationKey): BelongsTo
+    public function belongsTo(string $relationKey): BelongsToOne
     {
-        return new BelongsTo($this, $relationKey);
+        return new BelongsToOne($this, $relationKey);
     }
 
     public function belongsToMany(string $relationKey): BelongsToMany
@@ -691,6 +691,12 @@ class PostModel extends OffbeatModel
         }
 
         return $ids;
+    }
+
+    /** @return array<non-falsy-string, non-falsy-string> */
+    public function getRelationships(): array
+    {
+        return $this->relationKeyMethods;
     }
 
     private function updateRelation(string $key): void
