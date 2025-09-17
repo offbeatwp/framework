@@ -9,26 +9,20 @@ abstract class Relation
     protected readonly PostModel $model;
     protected readonly string $relationKey;
 
-    /**
-     * @final
-     * @param PostModel $model
-     * @param string $relationKey
-     */
-    final public function __construct($model, $relationKey)
+    final public function __construct(PostModel $model, string $relationKey)
     {
         $this->model = $model;
         $this->relationKey = $relationKey;
     }
 
-    /** @return int|false */
-    public function removeRelationship(int $id, ?string $direction = null)
+    public function removeRelationship(int $id, bool $isReverse = false): ?int
     {
         global $wpdb;
 
         $column1 = 'relation_from';
         $column2 = 'relation_to';
 
-        if ($direction === 'reverse') {
+        if ($isReverse) {
             $column1 = 'relation_to';
             $column2 = 'relation_from';
         }
@@ -36,51 +30,68 @@ abstract class Relation
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column1} = %d AND {$column2} = %d";
         $params = [$this->relationKey, $this->model->getId(), $id];
 
-        return $wpdb->query($wpdb->prepare($query, $params));
+        $result = $wpdb->query($wpdb->prepare($query, $params));
+        if ($result === false) {
+            trigger_error('Failed to delete OWP relation from database.', E_USER_WARNING);
+            return null;
+        }
+
+        return $result;
     }
 
-    /** @return int|false */
-    public function removeAllRelationships(?string $direction = null)
+    public function removeAllRelationships(bool $isReverse = false): ?int
     {
         global $wpdb;
 
         $column = 'relation_from';
 
-        if ($direction === 'reverse') {
+        if ($isReverse) {
             $column = 'relation_to';
         }
 
         $query = "DELETE FROM {$wpdb->prefix}post_relationships WHERE `key` = %s AND {$column} = %d";
         $params = [$this->relationKey, $this->model->getId()];
 
-        return $wpdb->query($wpdb->prepare($query, $params));
+        $result = $wpdb->query($wpdb->prepare($query, $params));
+        if ($result === false) {
+            trigger_error('Failed to delete OWP relation from database.', E_USER_WARNING);
+            return null;
+        }
+
+        return $result;
     }
 
-    /** @return int|false */
-    public function makeRelationship(int $id, ?string $direction = null)
+    public function makeRelationship(int $id, bool $isReverse = false): ?int
     {
         global $wpdb;
 
         $column1 = 'relation_from';
         $column2 = 'relation_to';
 
-        if ($direction === 'reverse') {
+        if ($isReverse) {
             $column1 = 'relation_to';
             $column2 = 'relation_from';
         }
 
-        return $wpdb->insert(
+        $result =  $wpdb->insert(
             $wpdb->prefix . 'post_relationships',
             ['key' => $this->relationKey, $column1 => $this->model->getId(), $column2 => $id],
             ['%s', '%d', '%d']
         );
+
+        if ($result === false) {
+            trigger_error('Failed to delete OWP relation from database.', E_USER_WARNING);
+            return null;
+        }
+
+        return $result;
     }
 
     /** @param iterable<int> $ids */
-    public function makeRelationships(iterable $ids, ?string $direction = null): void
+    public function makeRelationships(iterable $ids, bool $isReverse = false): void
     {
         foreach ($ids as $id) {
-            $this->makeRelationship($id, $direction);
+            $this->makeRelationship($id, $isReverse);
         }
     }
 }
