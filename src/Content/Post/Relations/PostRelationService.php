@@ -7,6 +7,7 @@ use OffbeatWP\Content\Post\Relations\Console\Install;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
 use OffbeatWP\Services\AbstractService;
 use OffbeatWP\Support\Wordpress\Console;
+use OffbeatWP\Support\Wordpress\Post;
 use UnexpectedValueException;
 use WP_Query;
 
@@ -18,8 +19,44 @@ final class PostRelationService extends AbstractService
     {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
         add_filter('posts_clauses', [$this, 'insertFieldsSql'], 10, 2);
+        add_action('updated_post_meta', [$this, 'updatedPostMeta'], 10, 4);
 
         Console::getInstance()->register(Install::class);
+    }
+
+    public function updatedPostMeta(int $metaId, int $postId, string $metaKey, mixed $value): void
+    {
+        $post = Post::getInstance()->get($postId);
+        if (!$post) {
+            return;
+        }
+
+        $method = $post->getMethodByRelationKey($metaKey);
+        if (!$method || !is_callable([$post, $method])) {
+            return;
+        }
+
+        /** @var \OffbeatWP\Content\Post\Relations\HasOneOrMany|\OffbeatWP\Content\Post\Relations\BelongsToOneOrMany $relation */
+        $relation = $post->$method();
+
+        /** @var scalar|null|array<scalar|null> $value */
+        if ($value) {
+            if (is_array($value)) {
+                $relationshipIds = array_map('intval', $value);
+            } else {
+                $relationshipIds = [(int)$value];
+            }
+
+            if ($relation instanceof HasOneOrMany) {
+                $relation->attach($relationshipIds, false);
+            } else {
+                $relation->associate($relationshipIds, false);
+            }
+        } elseif ($relation instanceof HasOneOrMany) {
+            $relation->detachAll();
+        } else {
+            $relation->dissociateAll();
+        }
     }
 
     /**
