@@ -299,7 +299,7 @@ class PostModel extends OffbeatModel
     /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
     public function getTerms(string $taxonomy): TermQueryBuilder
     {
-        $model = Taxonomy::getInstance()->getModelByTaxonomy($taxonomy);
+        $model = Taxonomy::getInstance()->getModelClassByTaxonomy($taxonomy);
 
         return $model::query()->whereRelatedToPost([$this->getId()]);
     }
@@ -637,7 +637,7 @@ class PostModel extends OffbeatModel
         return new HasOne($this, $relationKey);
     }
 
-    public function belongsTo(string $relationKey): BelongsToOne
+    public function belongsToOne(string $relationKey): BelongsToOne
     {
         return new BelongsToOne($this, $relationKey);
     }
