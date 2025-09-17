@@ -12,19 +12,19 @@ class BelongsToOneOrMany extends Relation
         }
 
         if (is_array($ids)) {
-            $this->makeRelationships($ids, 'reverse');
+            $this->makeRelationships($ids, true);
         } else {
-            $this->makeRelationship($ids, 'reverse');
+            $this->makeRelationship($ids, true);
         }
     }
 
     public function detach(int $id): void
     {
-        $this->removeRelationship($id, 'reverse');
+        $this->removeRelationship($id, true);
     }
 
     public function detachAll(): void
     {
-        $this->removeAllRelationships('reverse');
+        $this->removeAllRelationships(true);
     }
 }
