@@ -47,7 +47,7 @@ class PostModel extends OffbeatModel
     protected array $termsToSet = [];
 
     /**
-     * @var array<non-empty-string, non-empty-string>
+     * @var array<non-falsy-string, non-falsy-string>
      * This should be an associative string array<br>
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
      * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
@@ -299,7 +299,7 @@ class PostModel extends OffbeatModel
     /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
     public function getTerms(string $taxonomy): TermQueryBuilder
     {
-        $model = Taxonomy::getInstance()->getModelClassByTaxonomy($taxonomy);
+        $model = Taxonomy::getInstance()->getModelByTaxonomy($taxonomy);
 
         return $model::query()->whereRelatedToPost([$this->getId()]);
     }
@@ -637,7 +637,7 @@ class PostModel extends OffbeatModel
         return new HasOne($this, $relationKey);
     }
 
-    public function belongsToOne(string $relationKey): BelongsToOne
+    public function belongsTo(string $relationKey): BelongsToOne
     {
         return new BelongsToOne($this, $relationKey);
     }
@@ -691,6 +691,12 @@ class PostModel extends OffbeatModel
         }
 
         return $ids;
+    }
+
+    /** @return array<non-falsy-string, non-falsy-string> */
+    public function getRelationships(): array
+    {
+        return $this->relationKeyMethods;
     }
 
     private function updateRelation(string $key): void
