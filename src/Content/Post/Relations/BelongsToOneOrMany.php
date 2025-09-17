@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
-abstract class BelongsToOneOrMany extends Relation
+class BelongsToOneOrMany extends Relation
 {
     /** @param int|int[] $ids */
     final public function associate(int|array $ids, bool $append = true): void

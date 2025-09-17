@@ -6,18 +6,14 @@ use OffbeatWP\Content\Post\PostModel;
 
 enum PostRelationType
 {
-    case BELONGS_TO_ONE;
-    case BELONGS_TO_MANY;
-    case HAS_ONE;
-    case HAS_MANY;
+    case HAS_ONE_OR_MANY;
+    case BELONGS_TO_ONE_OR_MANY;
 
-    final public function get(PostModel $post, string $relationKey): BelongsToOne|BelongsToMany|HasOne|HasMany
+    final public function get(PostModel $post, string $key): HasOneOrMany|BelongsToOneOrMany
     {
         return match ($this) {
-            self::BELONGS_TO_ONE => new BelongsToOne($post, $relationKey),
-            self::BELONGS_TO_MANY => new BelongsToMany($post, $relationKey),
-            self::HAS_ONE => new HasOne($post, $relationKey),
-            self::HAS_MANY => new HasMany($post, $relationKey)
+            self::HAS_ONE_OR_MANY => new HasOneOrMany($post, $key),
+            self::BELONGS_TO_ONE_OR_MANY => new BelongsToOneOrMany($post, $key)
         };
     }
 }
