@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\Taxonomy;
 
 use OffbeatWP\Content\Common\ReadOnlyCollection;
+use WP_Term_Query;
 
 /**
  * @template TKey of int
@@ -11,12 +12,15 @@ use OffbeatWP\Content\Common\ReadOnlyCollection;
  */
 final class TermsCollection extends ReadOnlyCollection
 {
-    /**
-     * @param list<\WP_Term> $items
-     * @param class-string<TValue> $modelClass
-     */
-    public function __construct(array $items, string $modelClass = TermModel::class)
+    protected readonly WP_Term_Query $query;
+
+    /** @param class-string<TValue> $modelClass */
+    public function __construct(WP_Term_Query $query, string $modelClass = TermModel::class)
     {
+        $this->query = $query;
+        /** @var list<\WP_Term> $items */
+        $items = $this->query->get_terms();
+
         parent::__construct(array_map(fn ($v) => new $modelClass($v), $items), $modelClass);
     }
 

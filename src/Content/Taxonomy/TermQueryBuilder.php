@@ -96,9 +96,7 @@ final class TermQueryBuilder
     /** @return TermsCollection<int, TValue> */
     public function get(): TermsCollection
     {
-        /** @var list<\WP_Term> $terms */
-        $terms = $this->runQuery()->get_terms();
-        return new TermsCollection($terms, $this->modelClass);
+        return new TermsCollection($this->createQuery(), $this->modelClass);
     }
 
     /** @return $this */
@@ -120,7 +118,7 @@ final class TermQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         /** @var array<non-negative-int, positive-int> */
-        return $this->runQuery()->get_terms();
+        return $this->createQuery()->get_terms();
     }
 
     /**
@@ -134,7 +132,7 @@ final class TermQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         /** @var array<non-negative-int, positive-int> */
-        return $this->runQuery()->get_terms();
+        return $this->createQuery()->get_terms();
     }
 
     public function count(): int
@@ -143,7 +141,7 @@ final class TermQueryBuilder
         $this->queryVars['fields'] = 'count';
         $this->queryVars['no_found_rows'] = true;
 
-        return (int)$this->runQuery()->get_terms();
+        return (int)$this->createQuery()->get_terms();
     }
 
     /**
@@ -157,7 +155,7 @@ final class TermQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         /** @var array<non-negative-int, string> */
-        return $this->runQuery()->get_terms();
+        return $this->createQuery()->get_terms();
     }
 
     public function firstName(): ?string
@@ -176,7 +174,7 @@ final class TermQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         /** @var array<non-negative-int, string> */
-        return $this->runQuery()->get_terms();
+        return $this->createQuery()->get_terms();
     }
 
     public function firstSlug(): ?string
@@ -368,7 +366,7 @@ final class TermQueryBuilder
         return $this;
     }
 
-    private function runQuery(): WP_Term_Query
+    private function createQuery(): WP_Term_Query
     {
         // This is a fix for to ensure that passing an empty array to include returns no results.
         if (isset($this->queryVars['include']) && $this->queryVars['include'] === [0]) {

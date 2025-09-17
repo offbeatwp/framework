@@ -3,6 +3,7 @@
 namespace OffbeatWP\Content\User;
 
 use OffbeatWP\Content\Common\ReadOnlyCollection;
+use WP_User_Query;
 
 /**
  * @template TKey of int
@@ -11,12 +12,15 @@ use OffbeatWP\Content\Common\ReadOnlyCollection;
  */
 final class UserCollection extends ReadOnlyCollection
 {
-    /**
-     * @param list<\WP_User> $items
-     * @param class-string<TValue> $modelClass
-     */
-    public function __construct(array $items, string $modelClass = UserModel::class)
+    protected readonly WP_User_Query $query;
+
+    /** @param class-string<TValue> $modelClass */
+    public function __construct(WP_User_Query $query, string $modelClass = UserModel::class)
     {
+        $this->query = $query;
+        /** @var list<\WP_User> $items */
+        $items = $this->query->get_results();
+
         parent::__construct(array_map(fn ($v) => new $modelClass($v), $items), $modelClass);
     }
 
