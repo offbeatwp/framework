@@ -69,9 +69,7 @@ final class UserQueryBuilder
     /** @return UserCollection<int, TValue> */
     public function get(): UserCollection
     {
-        /** @var list<\WP_User> $results */
-        $results = $this->getQueryResults();
-        return new UserCollection($results, $this->modelClass);
+        return new UserCollection($this->createQuery(), $this->modelClass);
     }
 
     /** @return UserCollection<int, TValue> */
@@ -239,6 +237,15 @@ final class UserQueryBuilder
         return $this->getQueryResults()[0] ?? null;
     }
 
+    private function createQuery(): WP_User_Query
+    {
+        $query = new WP_User_Query($this->queryVars);
+
+        self::$lastRequest = $query->request;
+
+        return $query;
+    }
+
     /** @return mixed[] */
     private function getQueryResults(): array
     {
@@ -246,10 +253,6 @@ final class UserQueryBuilder
             return [];
         }
 
-        $query = new WP_User_Query($this->queryVars);
-
-        self::$lastRequest = $query->request;
-
-        return $query->get_results();
+        return $this->createQuery()->get_results();
     }
 }

@@ -19,7 +19,7 @@ class PostsCollection extends ReadOnlyCollection
     {
         $this->query = $query;
         /** @var list<\WP_Post> $items */
-        $items = $this->query->posts;
+        $items = $this->query->get_posts();
 
         parent::__construct(array_map(fn ($v) => new $modelClass($v), $items), $modelClass);
     }
