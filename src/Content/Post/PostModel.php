@@ -704,9 +704,9 @@ class PostModel extends OffbeatModel
                 $ids = $this->getMetaRelationIds($key);
 
                 if ($ids && $relation instanceof HasOneOrMany) {
-                    $relation->attach($ids, false);
+                    $relation->attach($ids);
                 } elseif ($ids && $relation instanceof BelongsToOneOrMany) {
-                    $relation->attach($ids, false);
+                    $relation->attach($ids);
                 } elseif ($relation instanceof HasOneOrMany) {
                     $relation->detachAll();
                 } elseif ($relation instanceof BelongsToOneOrMany) {

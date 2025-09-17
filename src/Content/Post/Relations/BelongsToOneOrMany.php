@@ -5,11 +5,9 @@ namespace OffbeatWP\Content\Post\Relations;
 class BelongsToOneOrMany extends Relation
 {
     /** @param int|int[] $ids */
-    public function attach(int|array $ids, bool $append = true): void
+    public function attach(int|array $ids): void
     {
-        if (!$append) {
-            $this->detachAll();
-        }
+        $this->detachAll();
 
         if (is_array($ids)) {
             $this->makeRelationships($ids, true);
