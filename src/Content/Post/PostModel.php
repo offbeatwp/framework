@@ -47,14 +47,14 @@ class PostModel extends OffbeatModel
     protected array $termsToSet = [];
 
     /**
-     * @var array<non-falsy-string, non-falsy-string>
+     * @var array<non-falsy-string, \OffbeatWP\Content\Post\Relations\PostRelationType>
      * This should be an associative string array<br>
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
      * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
      * <i>EG:</i> ['meta_key_therapist_id' => 'TherapistRelation']
      * @see Relation
      */
-    public array $relationKeyMethods = [];
+    public array $relations = [];
 
     final public function __construct(?WP_Post $post = null)
     {
@@ -616,8 +616,8 @@ class PostModel extends OffbeatModel
     {
         $method = $relationKey;
 
-        if (isset($this->relationKeyMethods[$relationKey])) {
-            $method = $this->relationKeyMethods[$relationKey];
+        if (isset($this->relations[$relationKey])) {
+            $method = $this->relations[$relationKey];
         }
 
         if (method_exists($this, $method)) {
@@ -696,7 +696,7 @@ class PostModel extends OffbeatModel
     /** @return array<non-falsy-string, non-falsy-string> */
     public function getRelationships(): array
     {
-        return $this->relationKeyMethods;
+        return $this->relations;
     }
 
     private function updateRelation(string $key): void
