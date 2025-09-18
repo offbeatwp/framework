@@ -6,13 +6,11 @@ use DateTimeZone;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\Relations\Relation;
-use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Support\Wordpress\Post;
-use OffbeatWP\Support\Wordpress\Taxonomy;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use RuntimeException;
 use stdClass;
@@ -291,14 +289,6 @@ class PostModel extends OffbeatModel
         return null;
     }
 
-    /** @return TermQueryBuilder<\OffbeatWP\Content\Taxonomy\TermModel> */
-    public function getTerms(string $taxonomy): TermQueryBuilder
-    {
-        $model = Taxonomy::getInstance()->getModelClassByTaxonomy($taxonomy);
-
-        return $model::query()->whereRelatedToPost([$this->getId()]);
-    }
-
     /** @param int[]|string[]|int|string $term */
     public function hasTerm(array|int|string $term, string $taxonomy): bool
     {
@@ -330,9 +320,10 @@ class PostModel extends OffbeatModel
         return $url === false ? null : $url;
     }
 
-    public function getFeaturedImageId(): int
+    public function getFeaturedImageId(): ?int
     {
-        return (int)get_post_thumbnail_id($this->wpPost);
+        $id = get_post_thumbnail_id($this->wpPost);
+        return $id === false ? null : $id;
     }
 
     /** @return $this */
