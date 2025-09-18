@@ -32,8 +32,12 @@ final class PostRelationService extends AbstractService
         }
 
         $method = $post->relationKeyMethods[$metaKey] ?? null;
-        if (!$method || !is_string($method) || !is_callable([$post, $method])) {
-            throw new InvalidArgumentException('Relationship method not found on ' . basename($post::class));
+        if (!$method) {
+            return;
+        }
+
+        if (!is_string($method || !is_callable([$post, $method]))) {
+            throw new InvalidArgumentException('Relationship defined on ' . basename($post::class) . ' is invalid');
         }
 
         $relation = $post->$method();
