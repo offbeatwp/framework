@@ -7,10 +7,8 @@ use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\Relations\BelongsToOne;
 use OffbeatWP\Content\Post\Relations\BelongsToMany;
-use OffbeatWP\Content\Post\Relations\BelongsToOneOrMany;
 use OffbeatWP\Content\Post\Relations\HasMany;
 use OffbeatWP\Content\Post\Relations\HasOne;
-use OffbeatWP\Content\Post\Relations\HasOneOrMany;
 use OffbeatWP\Content\Post\Relations\Relation;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -565,13 +563,7 @@ class PostModel extends OffbeatModel
         }
 
         if ($updatedPostId) {
-            // Attach Terms to post
             $this->attachTerms($updatedPostId);
-
-            // Update the relations
-            foreach (array_keys($this->metaInput + $this->metaToUnset) as $key) {
-                $this->updateRelation($key);
-            }
         }
 
         return $updatedPostId;
@@ -692,25 +684,6 @@ class PostModel extends OffbeatModel
         }
 
         return $ids;
-    }
-
-    private function updateRelation(string $key): void
-    {
-        $method = $this->getMethodByRelationKey($key);
-
-        if ($method) {
-            $relation = $this->$method();
-
-            if ($relation instanceof Relation) {
-                $ids = $this->getMetaRelationIds($key);
-
-                if ($ids) {
-                    $relation->attach($ids);
-                } else {
-                    $relation->detachAll();
-                }
-            }
-        }
     }
 
     final protected function getObjectType(): string
