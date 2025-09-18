@@ -226,8 +226,13 @@ class TermModel extends OffbeatModel
         return new TermQueryBuilder(static::class);
     }
 
-    protected function getObjectType(): string
+    final protected function getObjectType(): string
     {
         return 'term';
+    }
+
+    final public function getWpObject(): WP_Term
+    {
+        return $this->wpTerm;
     }
 }

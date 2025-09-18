@@ -5,10 +5,6 @@ namespace OffbeatWP\Content\Post;
 use DateTimeZone;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
-use OffbeatWP\Content\Post\Relations\BelongsToOne;
-use OffbeatWP\Content\Post\Relations\BelongsToMany;
-use OffbeatWP\Content\Post\Relations\HasMany;
-use OffbeatWP\Content\Post\Relations\HasOne;
 use OffbeatWP\Content\Post\Relations\Relation;
 use OffbeatWP\Content\Taxonomy\TermQueryBuilder;
 use OffbeatWP\Content\Traits\BaseModelTrait;
@@ -471,7 +467,7 @@ class PostModel extends OffbeatModel
     }
 
     /** Get the <b>raw</b> post object */
-    public function getWpObject(): WP_Post
+    final public function getWpObject(): WP_Post
     {
         return $this->wpPost;
     }
