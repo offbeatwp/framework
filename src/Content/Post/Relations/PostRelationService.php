@@ -31,15 +31,16 @@ final class PostRelationService extends AbstractService
             return;
         }
 
-        $method = $post->getMethodByRelationKey($metaKey);
-        if (!$method || !is_callable([$post, $method])) {
-            return;
+        $method = $post->relationKeyMethods[$metaKey] ?? null;
+        if (!$method || !is_string($method) || !is_callable([$post, $method])) {
+            throw new InvalidArgumentException('Relationship method not found on ' . basename($post::class));
         }
 
-        /** @var \OffbeatWP\Content\Post\Relations\HasOneOrMany|\OffbeatWP\Content\Post\Relations\BelongsToOneOrMany $relation */
         $relation = $post->$method();
+        if (!$relation instanceof Relation) {
+            throw new UnexpectedValueException('Relationship method ' . basename($post::class) . '::' . $method . ' does not return a Relation instance');
+        }
 
-        /** @var scalar|null|array<scalar|null> $value */
         if ($value) {
             $relation->attach($this->parseIds((array)$value));
         } else {

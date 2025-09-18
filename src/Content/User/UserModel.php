@@ -141,7 +141,7 @@ class UserModel extends OffbeatModel
     ///////////////
     /// Getters ///
     ///////////////
-    final public function getWpUser(): WP_User
+    final public function getWpObject(): WP_User
     {
         return $this->wpUser;
     }

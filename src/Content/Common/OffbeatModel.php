@@ -2,6 +2,11 @@
 
 namespace OffbeatWP\Content\Common;
 
+use WP_Comment;
+use WP_Post;
+use WP_Term;
+use WP_User;
+
 abstract class OffbeatModel
 {
     /** @var array<string, array<mixed>> */
@@ -9,6 +14,7 @@ abstract class OffbeatModel
     private bool $hasAllMetas = false;
 
     abstract public function getId(): int;
+    abstract public function getWpObject(): WP_Post|WP_Term|WP_User|WP_Comment;
     abstract protected function getObjectType(): string;
 
     /** @return array<mixed> */
