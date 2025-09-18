@@ -466,10 +466,10 @@ class WpQueryBuilder
     /**
      * @param PostModel|PostsCollection<int, PostModel>|int $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
-     * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
+     * @param bool $reverse Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, ?string $direction = null)
+    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, bool $reverse = false)
     {
         if ($postModelOrCollection instanceof PostsCollection) {
             $id = $postModelOrCollection->getIds();
@@ -482,7 +482,7 @@ class WpQueryBuilder
         $this->queryVars['relationships'] = [
             'id' => $id,
             'key' => $relationKey,
-            'direction' => $direction,
+            'direction' => $reverse ? 'reverse' : null
         ];
 
         return $this;
@@ -491,15 +491,15 @@ class WpQueryBuilder
     /**
      * @param int[] $ids Array of ID's to check a relation
      * @param string $relationKey The relation key
-     * @param bool $inverted Set to <i>true</i> to reverse the relation
+     * @param bool $reverse Set to <i>true</i> to reverse the relation
      * @return $this
      */
-    final public function whereRelatedTo(array $ids, string $relationKey, bool $inverted = false)
+    final public function whereRelatedTo(array $ids, string $relationKey, bool $reverse = false)
     {
         $this->queryVars['relationships'] = [
             'id' => $ids,
             'key' => $relationKey,
-            'direction' => ($inverted) ? 'reverse' : null,
+            'direction' => $reverse ? 'reverse' : null,
         ];
 
         return $this;

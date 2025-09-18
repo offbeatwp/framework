@@ -13,7 +13,7 @@ final class BelongsToMany extends BelongsToOneOrMany
         return (new WpQueryBuilder())
             ->ignoreStickyPosts()
             ->wherePostType('any')
-            ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
+            ->hasRelationshipWith($this->model, $this->relationKey, true);
     }
 
     /** @return \OffbeatWP\Content\Post\PostsCollection<int, \OffbeatWP\Content\Post\PostModel> */
