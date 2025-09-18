@@ -41,7 +41,7 @@ final class PostRelationService extends AbstractService
 
         /** @var scalar|null|array<scalar|null> $value */
         if ($value) {
-            $relation->attach($this->mapIds((array)$value));
+            $relation->attach($this->parseIds((array)$value));
         } else {
             $relation->detachAll();
         }
@@ -151,7 +151,7 @@ final class PostRelationService extends AbstractService
         }
 
         if (is_array($relationshipQuery['id'])) {
-            $ids = $this->mapIds($relationshipQuery['id']);
+            $ids = $this->parseIds($relationshipQuery['id']);
             $idQuery = 'IN (' . implode(', ', $ids) . ')';
         } else {
             $id = (int)$relationshipQuery['id'];
@@ -168,7 +168,7 @@ final class PostRelationService extends AbstractService
      * @param mixed[] $rawIds
      * @return list<non-negative-int>
      */
-    private function mapIds(array $rawIds): array
+    private function parseIds(array $rawIds): array
     {
         $output = [];
 
