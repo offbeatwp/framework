@@ -2,7 +2,7 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
-class HasOneOrMany extends Relation
+abstract class HasOneOrMany extends Relation
 {
     /** @@inheritDoc */
     final public function attach(int|array $ids): void

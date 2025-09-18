@@ -471,13 +471,7 @@ class PostModel extends OffbeatModel
     }
 
     /** Get the <b>raw</b> post object */
-    public function getPostObject(): ?WP_Post
-    {
-        return $this->wpPost;
-    }
-
-    /** Get the post object as WP_Post */
-    final public function getWpPost(): WP_Post
+    public function getWpObject(): WP_Post
     {
         return $this->wpPost;
     }
@@ -531,7 +525,7 @@ class PostModel extends OffbeatModel
         return wp_untrash_post($this->getId());
     }
 
-    /** Returns the ID of the inserted/updated model, or <b>0</b> on failure */
+    /** @return non-negative-int Returns the ID of the inserted/updated model, or <b>0</b> on failure */
     public function save(): int
     {
         $postData = (array)$this->wpPost;
@@ -563,34 +557,24 @@ class PostModel extends OffbeatModel
         }
 
         if ($updatedPostId) {
-            $this->attachTerms($updatedPostId);
+            foreach ($this->termsToSet as $term) {
+                wp_set_post_terms($updatedPostId, $term['termIds'], $term['taxonomy'], $term['append']);
+            }
         }
 
         return $updatedPostId;
     }
 
-    private function attachTerms(int $id): void
-    {
-        foreach ($this->termsToSet as $term) {
-            wp_set_post_terms($id, $term['termIds'], $term['taxonomy'], $term['append']);
-        }
-    }
-
-    /** @return positive-int */
+    /** @return positive-int Returns the ID of the inserted/updated model. */
     public function saveOrFail(): int
     {
         $result = $this->save();
 
         if ($result <= 0) {
-            throw new OffbeatInvalidModelException('Failed to save ' . $this->getBaseClassName());
+            throw new OffbeatInvalidModelException('Failed to save ' . basename($this::class));
         }
 
         return $result;
-    }
-
-    protected function getBaseClassName(): string
-    {
-        return str_replace(__NAMESPACE__ . '\\', '', __CLASS__);
     }
 
     /**
@@ -605,41 +589,6 @@ class PostModel extends OffbeatModel
     /////////////////////
     /// Query Methods ///
     /////////////////////
-    public function getMethodByRelationKey(string $relationKey): ?string
-    {
-        $method = $relationKey;
-
-        if (isset($this->relationKeyMethods[$relationKey])) {
-            $method = $this->relationKeyMethods[$relationKey];
-        }
-
-        if (method_exists($this, $method)) {
-            return $method;
-        }
-
-        return null;
-    }
-
-    public function hasMany(string $relationKey): HasMany
-    {
-        return new HasMany($this, $relationKey);
-    }
-
-    public function hasOne(string $relationKey): HasOne
-    {
-        return new HasOne($this, $relationKey);
-    }
-
-    public function belongsToOne(string $relationKey): BelongsToOne
-    {
-        return new BelongsToOne($this, $relationKey);
-    }
-
-    public function belongsToMany(string $relationKey): BelongsToMany
-    {
-        return new BelongsToMany($this, $relationKey);
-    }
-
     /** Retrieves the current post from the wordpress loop, provided the PostModel is or extends the PostModel class that it is called on. */
     final public static function current(): ?static
     {
@@ -656,34 +605,6 @@ class PostModel extends OffbeatModel
     final public static function from(WP_Post $wpPost): static
     {
         return new static($wpPost);
-    }
-
-    /** @return non-negative-int[] Retrieves the value of a meta field as an array of IDs. */
-    private function getMetaRelationIds(string $key): array
-    {
-        $value = get_post_meta($this->getId(), $key, true);
-
-        if (is_string($value) && is_serialized($value)) {
-            $value = unserialize($value, ['allowed_classes' => false]);
-        }
-
-        if (!is_array($value)) {
-            $value = [$value];
-        }
-
-        $ids = [];
-
-        foreach ($value as $item) {
-            $id = filter_var($item, FILTER_VALIDATE_INT);
-
-            if (!is_int($id) || $id < 0) {
-                throw new RuntimeException('Invalid post relation ID value!');
-            }
-
-            $ids[] = $id;
-        }
-
-        return $ids;
     }
 
     final protected function getObjectType(): string
