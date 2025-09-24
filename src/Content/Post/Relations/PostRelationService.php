@@ -36,7 +36,7 @@ final class PostRelationService extends AbstractService
             return;
         }
 
-        if (!is_string($method || !is_callable([$post, $method]))) {
+        if (!is_callable([$post, $method])) {
             throw new InvalidArgumentException('Relationship defined on ' . basename($post::class) . ' is invalid');
         }
 

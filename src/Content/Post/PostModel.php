@@ -40,7 +40,7 @@ class PostModel extends OffbeatModel
     protected array $termsToSet = [];
 
     /**
-     * @var array<non-empty-string, non-empty-string>
+     * @var array<non-falsy-string, non-falsy-string>
      * This should be an associative string array<br>
      * The index should represent the metaKey of the field that contains the relation ID(s)<br>
      * The value should the <b>method name</b> of the method on this model that returns a relation object<br>
