@@ -42,10 +42,16 @@ final class WpFile
         return $this->error;
     }
 
-    /** @return int<0, max>|null */
-    public function getFileSize(): ?int
+    /** @return non-negative-int */
+    public function getFileSize(): int
     {
-        return filesize($this->file) ?: null;
+        $size = filesize($this->file);
+
+        if ($size === false) {
+            throw new RuntimeException('Could not get file size.');
+        }
+
+        return $size;
     }
 
     /** @return int|null Returns the ID of the inserted attachment or <i>null</i> if the insert action failed. */

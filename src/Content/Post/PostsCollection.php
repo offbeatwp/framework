@@ -38,10 +38,11 @@ class PostsCollection extends ReadOnlyCollection
 
     /**
      * Retrieves all object Ids within this collection as an array.
-     * @return array<non-negative-int>
+     * @return list<positive-int>
      */
     final public function getIds(): array
     {
-        return array_map(static fn (PostModel $model) => $model->getId() ?: 0, $this->items);
+        /** @var list<positive-int> */
+        return array_map(static fn (PostModel $model) => $model->getId(), $this->items);
     }
 }
