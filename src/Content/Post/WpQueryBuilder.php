@@ -49,7 +49,7 @@ class WpQueryBuilder
      * One example where total post count is required is pagination.
      * @return $this
      */
-    final public function noFoundRows(bool $noFoundRows)
+    final public function noFoundRows(bool $noFoundRows): static
     {
         $this->queryVars['no_found_rows'] = $noFoundRows;
         return $this;
@@ -59,7 +59,7 @@ class WpQueryBuilder
      * Shows all posts rather than paginating.
      * @return $this
      */
-    final public function noPaging()
+    final public function noPaging(): static
     {
         $this->queryVars['nopaging'] = true;
         unset($this->queryVars['paged']);
@@ -183,7 +183,7 @@ class WpQueryBuilder
     }
 
     /** @return $this */
-    final public function limit(int $amount)
+    final public function limit(int $amount): static
     {
         if ($amount < 0 && $amount !== -1) {
             throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
@@ -352,7 +352,7 @@ class WpQueryBuilder
      * @param string[] $postStatus Array containing the post statuses to include
      * @return $this
      */
-    final public function wherePostStatus(array $postStatus)
+    final public function wherePostStatus(array $postStatus): static
     {
         $this->queryVars['post_status'] = $postStatus;
         return $this;
@@ -388,14 +388,14 @@ class WpQueryBuilder
     }
 
     /** @return $this */
-    final public function ignoreStickyPosts(bool $ignoreStickyPosts = true)
+    final public function ignoreStickyPosts(bool $ignoreStickyPosts = true): static
     {
         $this->queryVars['ignore_sticky_posts'] = $ignoreStickyPosts;
         return $this;
     }
 
     /** @return $this */
-    final public function wherePostParent(int $parentId)
+    final public function wherePostParent(int $parentId): static
     {
         $this->queryVars['post_parent'] = $parentId;
         return $this;
@@ -405,7 +405,7 @@ class WpQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    final public function whereIdNotIn($ids)
+    final public function whereIdNotIn(array|int $ids): static
     {
         $this->queryVars['post__not_in'] = (array)$ids;
         return $this;
@@ -415,7 +415,7 @@ class WpQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    final public function whereIdIn(array|int $ids)
+    final public function whereIdIn(array|int $ids): static
     {
         $this->queryVars['post__in'] = (array)$ids ?: [0];
         return $this;
@@ -425,7 +425,7 @@ class WpQueryBuilder
      * @param int[] $ids
      * @return $this
      */
-    final public function whereAuthorIdIn(array $ids)
+    final public function whereAuthorIdIn(array $ids): static
     {
         $this->queryVars['author__in'] = $ids;
         return $this;
@@ -438,7 +438,7 @@ class WpQueryBuilder
      * @param bool|int $paginated
      * @return $this
      */
-    final public function paginated(int|bool $paginated = true)
+    final public function paginated(int|bool $paginated = true): static
     {
         if ($paginated) {
             $this->noFoundRows(false);
@@ -457,7 +457,7 @@ class WpQueryBuilder
     }
 
     /** @return $this */
-    final public function suppressFilters(bool $suppress = true)
+    final public function suppressFilters(bool $suppress = true): static
     {
         $this->queryVars['suppress_filters'] = $suppress;
         return $this;
@@ -469,7 +469,7 @@ class WpQueryBuilder
      * @param bool $reverse Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, bool $reverse = false)
+    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, bool $reverse = false): static
     {
         if ($postModelOrCollection instanceof PostsCollection) {
             $id = $postModelOrCollection->getIds();
@@ -494,7 +494,7 @@ class WpQueryBuilder
      * @param bool $reverse Set to <i>true</i> to reverse the relation
      * @return $this
      */
-    final public function whereRelatedTo(array $ids, string $relationKey, bool $reverse = false)
+    final public function whereRelatedTo(array $ids, string $relationKey, bool $reverse = false): static
     {
         $this->queryVars['relationships'] = [
             'id' => $ids,
@@ -512,7 +512,7 @@ class WpQueryBuilder
      * <i>null</i> for all posts with and without passwords
      * @return $this
      */
-    final public function hasPassword(?bool $hasPassword)
+    final public function hasPassword(?bool $hasPassword): static
     {
         $this->queryVars['has_password'] = $hasPassword;
         return $this;
@@ -522,7 +522,7 @@ class WpQueryBuilder
      * Display posts with a particular password.
      * @return $this
      */
-    final public function postPassword(string $password)
+    final public function postPassword(string $password): static
     {
         $this->queryVars['post_password'] = $password;
         return $this;
@@ -552,7 +552,7 @@ class WpQueryBuilder
      * @param 'none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in'|('none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in')[] $orderBy
      * @return $this
      */
-    final public function orderBy(string|array $orderBy)
+    final public function orderBy(string|array $orderBy): static
     {
         $this->queryVars['orderby'] = $orderBy;
         return $this;
@@ -562,7 +562,7 @@ class WpQueryBuilder
      * Whether to cache post information. Default true.
      * @return $this
      */
-    final public function cacheResults(bool $cacheResults)
+    final public function cacheResults(bool $cacheResults): static
     {
         $this->queryVars['cache_results'] = $cacheResults;
         return $this;

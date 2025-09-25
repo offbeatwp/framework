@@ -112,7 +112,7 @@ final class UserQueryBuilder
      * @param string[]|string $properties Sort retrieved users by parameter. Defaults to <i>login</i>.
      * @return $this
      */
-    public function orderBy($properties)
+    public function orderBy($properties): static
     {
         $this->queryVars['orderby'] = $properties;
         return $this;
@@ -122,7 +122,7 @@ final class UserQueryBuilder
      * @param string $email Must be a valid email address, or an exception will be thrown.
      * @return $this
      */
-    public function whereEmail(string $email)
+    public function whereEmail(string $email): static
     {
         $this->queryVars['search'] = $email;
         $this->queryVars['search_columns'] = ['user_email'];
@@ -134,7 +134,7 @@ final class UserQueryBuilder
      * @param string[] $roles An array of role names that users must match to be included in results. Note that this is an inclusive list: users must match <i>each</i> role.
      * @return $this
      */
-    public function withRoles(array $roles)
+    public function withRoles(array $roles): static
     {
         $this->queryVars['role'] = $roles;
         return $this;
@@ -144,7 +144,7 @@ final class UserQueryBuilder
      * @param string[] $roles An array of role names. Matched users must have at least one of these roles.
      * @return $this
      */
-    public function whereRoleIn(array $roles)
+    public function whereRoleIn(array $roles): static
     {
         $this->queryVars['role__in'] = $roles;
         return $this;
@@ -164,7 +164,7 @@ final class UserQueryBuilder
      * @param mixed[] $metaQueryArray
      * @return $this
      */
-    public function whereMeta(array $metaQueryArray)
+    public function whereMeta(array $metaQueryArray): static
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -179,7 +179,7 @@ final class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdIn($ids)
+    public function whereIdIn(array|int $ids): static
     {
         $this->skipOnInclude = !$ids;
         $this->queryVars['include'] = (array)$ids;
@@ -190,7 +190,7 @@ final class UserQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    public function whereIdNotIn($ids)
+    public function whereIdNotIn(array|int $ids): static
     {
         $this->queryVars['exclude'] = (array)$ids;
 
@@ -198,7 +198,7 @@ final class UserQueryBuilder
     }
 
     /** @return $this */
-    public function limit(int $amount)
+    public function limit(int $amount): static
     {
         $this->skipOnLimit = ($amount <= 0);
         $this->queryVars['number'] = $amount;

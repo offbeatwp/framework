@@ -57,7 +57,7 @@ final class TermQueryBuilder
      * @param int[] $ids Array of term IDs to include.
      * @return $this
      */
-    public function include(array $ids)
+    public function include(array $ids): static
     {
         $this->queryVars['include'] = $ids ?: [0];
         return $this;
@@ -67,7 +67,7 @@ final class TermQueryBuilder
      * @param int[] $ids Array of term IDs to exclude.
      * @return $this
      */
-    public function exclude(array $ids)
+    public function exclude(array $ids): static
     {
         $this->queryVars['exclude'] = $ids;
         return $this;
@@ -77,7 +77,7 @@ final class TermQueryBuilder
      * @param int[] $ids Array of term IDs to exclude along with all of their descendant terms. If include is non-empty, excludeTree is ignored
      * @return $this
      */
-    public function excludeTree(array $ids)
+    public function excludeTree(array $ids): static
     {
         $this->queryVars['exclude_tree'] = $ids;
         return $this;
@@ -87,7 +87,7 @@ final class TermQueryBuilder
      * True to limit results to terms that have no children.<br>This parameter has no effect on non-hierarchical taxonomies.
      * @return $this
      */
-    public function childless(bool $childless = true)
+    public function childless(bool $childless = true): static
     {
         $this->queryVars['childless'] = true;
         return $this;
@@ -100,7 +100,7 @@ final class TermQueryBuilder
     }
 
     /** @return $this */
-    public function limit(int $amount)
+    public function limit(int $amount): static
     {
         if ($amount <= 0) {
             throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
@@ -306,7 +306,7 @@ final class TermQueryBuilder
      * @param string[] $slugs Array of slugs to return term(s) for.
      * @return $this
      */
-    public function whereSlugIn(array $slugs)
+    public function whereSlugIn(array $slugs): static
     {
         $this->queryVars['slug'] = $slugs;
         return $this;
@@ -316,7 +316,7 @@ final class TermQueryBuilder
      * @param int $parentId
      * @return $this
      */
-    public function whereParent(int $parentId)
+    public function whereParent(int $parentId): static
     {
         $this->queryVars['parent'] = $parentId;
         return $this;
@@ -328,7 +328,7 @@ final class TermQueryBuilder
      * @param string $compare
      * @return $this
      */
-    public function whereMeta($key, $value = '', string $compare = '=')
+    public function whereMeta(string|array $key, string|int|array $value = '', string $compare = '='): static
     {
         if (!isset($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
@@ -353,14 +353,14 @@ final class TermQueryBuilder
      * @param int[] $postIds
      * @return $this
      */
-    public function whereRelatedToPost(array $postIds)
+    public function whereRelatedToPost(array $postIds): static
     {
         $this->queryVars['object_ids'] = $postIds ?: [0];
         return $this;
     }
 
     /** @return $this */
-    public function excludeEmpty(bool $hideEmpty = true)
+    public function excludeEmpty(bool $hideEmpty = true): static
     {
         $this->queryVars['hide_empty'] = $hideEmpty;
         return $this;

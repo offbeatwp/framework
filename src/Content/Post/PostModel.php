@@ -64,6 +64,7 @@ class PostModel extends OffbeatModel
         $this->wpPost = $post;
     }
 
+    ///////////////////////////
     /// Getters and Setters ///
     ///////////////////////////
     /** @return non-negative-int */
@@ -73,14 +74,13 @@ class PostModel extends OffbeatModel
         return $this->wpPost->ID;
     }
 
-    public function getTitle(): string
+    public function getTitle(bool $raw = false): string
     {
-        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
-    }
+        if ($raw) {
+            return $this->wpPost->post_title;
+        }
 
-    public function getUnfilteredTitle(): string
-    {
-        return $this->wpPost->post_title;
+        return apply_filters('the_title', $this->wpPost->post_title, $this->getId());
     }
 
     public function getContent(): string
@@ -121,14 +121,14 @@ class PostModel extends OffbeatModel
      * Set the (unfiltered) post content.
      * @return $this
      */
-    public function setContent(string $content)
+    public function setContent(string $content): static
     {
         $this->wpPost->post_content = $content;
         return $this;
     }
 
     /** @return $this */
-    public function setAuthor(int $authorId)
+    public function setAuthor(int $authorId): static
     {
         $this->wpPost->post_author = (string)$authorId;
         return $this;
@@ -140,7 +140,7 @@ class PostModel extends OffbeatModel
      * @param bool $append If <i>true</i>, don't delete existing term, just add on. If <i>false</i>, replace the term with the new term. Default <i>false</i>.
      * @return $this
      */
-    public function setTerms(string|array $terms, string $taxonomy, bool $append = false)
+    public function setTerms(string|array $terms, string $taxonomy, bool $append = false): static
     {
         $this->termsToSet[] = ['termIds' => $terms, 'taxonomy' => $taxonomy, 'append' => $append];
         return $this;
@@ -195,7 +195,7 @@ class PostModel extends OffbeatModel
      * @see PostStatus
      * @return $this
      */
-    final public function setPostStatus(string $newStatus)
+    final public function setPostStatus(string $newStatus): static
     {
         $this->wpPost->post_status = $newStatus;
         return $this;
@@ -327,21 +327,21 @@ class PostModel extends OffbeatModel
     }
 
     /** @return $this */
-    final public function setExcerpt(string $excerpt)
+    final public function setExcerpt(string $excerpt): static
     {
         $this->wpPost->post_excerpt = $excerpt;
         return $this;
     }
 
     /** @return $this */
-    final public function setTitle(string $title)
+    final public function setTitle(string $title): static
     {
         $this->wpPost->post_title = $title;
         return $this;
     }
 
     /** @return $this */
-    final public function setPostName(string $postName)
+    final public function setPostName(string $postName): static
     {
         $this->wpPost->post_name = $postName;
         return $this;

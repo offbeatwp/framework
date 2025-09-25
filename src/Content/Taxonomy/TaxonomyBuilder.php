@@ -64,7 +64,7 @@ final class TaxonomyBuilder
      * @param string $singularLabel
      * @return TaxonomyBuilder
      */
-    public function make(string $taxonomy, string|array $postTypes, string $pluralName, string $singularLabel = ''): TaxonomyBuilder
+    public function make(string $taxonomy, string|array $postTypes, string $pluralName, string $singularLabel = ''): static
     {
         $this->taxonomy = $taxonomy;
         $this->postTypes = (array)$postTypes;
@@ -79,7 +79,7 @@ final class TaxonomyBuilder
      * @param string[] $capabilities Valid keys include: 'manage_terms', 'edit_terms', 'delete_terms' and 'assign_terms'
      * @return $this
      */
-    final public function capabilities(array $capabilities = [])
+    final public function capabilities(array $capabilities = []): static
     {
         $this->args['capabilities'] = $capabilities;
         return $this;
@@ -89,7 +89,7 @@ final class TaxonomyBuilder
      * @param bool|array{slug?: string, with_front?: bool, hierarchical: bool, ep_keys?: int} $rewrite Valid rewrite array keys include: 'slug', 'with_front', 'hierarchical', 'ep_mask'
      * @return $this
      */
-    final public function rewrite(array|bool $rewrite)
+    final public function rewrite(array|bool $rewrite): static
     {
         $this->args['rewrite'] = $rewrite;
         return $this;
@@ -127,7 +127,7 @@ final class TaxonomyBuilder
      * @param array{name?: string, singular_name?: string, search_items?: string, popular_items?: string, all_items?: string, parent_item?: string, parent_item_colon?: string, name_field_description?: string, slug_field_description?: string, parent_field_description?: string, desc_field_description?: string, edit_item?: string, view_item?: string, update_item?: string, add_new_item?: string, new_item_name?: string, separate_items_with_commas?: string, add_or_remove_items?: string, choose_from_most_used?: string, not_found?: string, no_terms?: string, filter_by_item?: string, items_list_navigation?: string, items_list?: string, most_used?: string, back_to_items?: string, item_link?: string, item_link_description?: string} $labels
      * @return $this
      */
-    final public function labels(array $labels)
+    final public function labels(array $labels): static
     {
         if (!isset($this->args['labels'])) {
             $this->args['labels'] = [];
@@ -139,7 +139,7 @@ final class TaxonomyBuilder
     }
 
     /** @return $this */
-    final public function hierarchyDepth(int $depth)
+    final public function hierarchyDepth(int $depth): static
     {
         $this->hierarchical((bool)$depth);
 
@@ -155,7 +155,7 @@ final class TaxonomyBuilder
     }
 
     /** @return $this */
-    public function hierarchical(bool $hierarchical = false)
+    public function hierarchical(bool $hierarchical = false): static
     {
         $this->args['hierarchical'] = $hierarchical;
         return $this;
@@ -165,7 +165,7 @@ final class TaxonomyBuilder
      * @param class-string<TermModel> $modelClass
      * @return $this
      */
-    public function model(string $modelClass)
+    public function model(string $modelClass): static
     {
         $this->modelClass = $modelClass;
         return $this;
@@ -176,14 +176,14 @@ final class TaxonomyBuilder
      * If not set, the default is inherited from <b>public</b>.
      * @return $this
      */
-    public function publiclyQueryable(bool $publiclyQueryable)
+    public function publiclyQueryable(bool $publiclyQueryable): static
     {
         $this->args['publicly_queryable'] = $publiclyQueryable;
         return $this;
     }
 
     /** @return $this */
-    public function notPubliclyQueryable()
+    public function notPubliclyQueryable(): static
     {
         $this->args['publicly_queryable'] = false;
         return $this;
@@ -193,7 +193,7 @@ final class TaxonomyBuilder
      * Whether a taxonomy is intended for use publicly either via the admin interface or by front-end users
      * @return $this
      */
-    public function public(bool $public = true)
+    public function public(bool $public = true): static
     {
         $this->args['public'] = $public;
         return $this;
@@ -203,7 +203,7 @@ final class TaxonomyBuilder
      * Whether to generate and allow a UI for managing terms in this taxonomy in the admin
      * @return $this
      */
-    public function showUi(bool $showUi = true)
+    public function showUi(bool $showUi = true): static
     {
         $this->args['show_ui'] = $showUi;
         return $this;
@@ -223,7 +223,7 @@ final class TaxonomyBuilder
      * Whether to list the taxonomy in the Tag Cloud Widget controls
      * @return $this
      */
-    public function showTagCloud(bool $show = true)
+    public function showTagCloud(bool $show = true): static
     {
         $this->args['show_tagcloud'] = $show;
         return $this;
@@ -233,7 +233,7 @@ final class TaxonomyBuilder
      * Whether this taxonomy should be shown in the admin menu
      * @return $this
      */
-    public function inMenu(bool $menu)
+    public function inMenu(bool $menu): static
     {
         $this->args['show_in_menu'] = $menu;
         return $this;
@@ -243,7 +243,7 @@ final class TaxonomyBuilder
      * Whether to include the taxonomy in the REST API
      * @return $this
      */
-    public function inRest(bool $rest = true)
+    public function inRest(bool $rest = true): static
     {
         $this->args['show_in_rest'] = $rest;
         return $this;
@@ -253,7 +253,7 @@ final class TaxonomyBuilder
      * Whether to display a column for the taxonomy on its post type listing screens
      * @return $this
      */
-    public function showAdminColumn(bool $showAdminColumn = true)
+    public function showAdminColumn(bool $showAdminColumn = true): static
     {
         $this->args['show_admin_column'] = $showAdminColumn;
         return $this;
@@ -263,7 +263,7 @@ final class TaxonomyBuilder
      * Used to disable the metabox of this taxonomy
      * @return $this
      */
-    public function hideMetaBox()
+    public function hideMetaBox(): static
     {
         // Block Editor
         add_filter('rest_prepare_taxonomy', function (WP_REST_Response $response, WP_Taxonomy $taxonomy) {
@@ -286,7 +286,7 @@ final class TaxonomyBuilder
     }
 
     /** @return $this */
-    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null)
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): static
     {
         add_filter("manage_edit-{$this->taxonomy}_columns", static function ($columns) use ($metaName, $label) {
             $columns[$metaName] = $label ?: $metaName;
@@ -312,7 +312,7 @@ final class TaxonomyBuilder
      * Hides the "description" field in on the Taxonomy add/edit page
      * @return $this
      */
-    public function hideDescriptionField()
+    public function hideDescriptionField(): static
     {
         add_action($this->taxonomy . '_edit_form', function () {
             $this->_hideTermDescriptionWrap();
@@ -334,7 +334,7 @@ final class TaxonomyBuilder
      * <b>Note:</b> This will also hide the "add new term" option on all post edit/add pages.
      * @return $this
      */
-    public function hideParentField()
+    public function hideParentField(): static
     {
         add_action($this->taxonomy . '_edit_form', function () {
             $this->_hideTermParentWrap();
@@ -357,7 +357,7 @@ final class TaxonomyBuilder
      * @param string $pluralName Must be CamelCase. Defaults to singlename if omitted.
      * @return $this
      */
-    public function showInGraphQl(string $singleName, string $pluralName = '')
+    public function showInGraphQl(string $singleName, string $pluralName = ''): static
     {
         $this->args['show_in_graphql'] = true;
         $this->args['graphql_single_name'] = $singleName;
@@ -375,7 +375,7 @@ final class TaxonomyBuilder
     {
         if ($taxonomy) {
             $targetElm = "#{$taxonomy}-adder";
-            echo '<style>' . $targetElm . ' { display:none; } </style>';
+            echo '<style>' . $targetElm . ' {display:none;} </style>';
         }
     }
 

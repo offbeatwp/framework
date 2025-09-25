@@ -63,42 +63,42 @@ class UserModel extends OffbeatModel
      * The user's email address. <b>Setting this is required.</b>
      * @return $this
      */
-    final public function setEmail(string $email)
+    final public function setEmail(string $email): static
     {
         $this->wpUser->user_email = $email;
         return $this;
     }
 
     /** @return $this */
-    final public function setNickname(string $nickname)
+    final public function setNickname(string $nickname): static
     {
         $this->wpUser->nickname = $nickname;
         return $this;
     }
 
     /** @return $this */
-    final public function setDisplayName(string $displayName)
+    final public function setDisplayName(string $displayName): static
     {
         $this->wpUser->display_name = $displayName;
         return $this;
     }
 
     /** @return $this */
-    final public function setFirstName(string $firstName)
+    final public function setFirstName(string $firstName): static
     {
         $this->wpUser->first_name = $firstName;
         return $this;
     }
 
     /** @return $this */
-    final public function setLastName(string $lastName)
+    final public function setLastName(string $lastName): static
     {
         $this->wpUser->last_name = $lastName;
         return $this;
     }
 
     /** @return $this */
-    final public function setLogin(string $userLogin)
+    final public function setLogin(string $userLogin): static
     {
         if (!$userLogin) {
             throw new InvalidArgumentException('Username cannot be empty');
@@ -132,7 +132,7 @@ class UserModel extends OffbeatModel
     }
 
     /** @return $this */
-    final public function setUrl(string $url)
+    final public function setUrl(string $url): static
     {
         $this->wpUser->user_url = $url;
         return $this;

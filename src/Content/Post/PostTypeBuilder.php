@@ -60,7 +60,7 @@ final class PostTypeBuilder
     private array $postTypeArgs = [];
 
     /** @return $this */
-    public function make(string $postType, string $pluralLabel, string $singularLabel = '')
+    public function make(string $postType, string $pluralLabel, string $singularLabel = ''): static
     {
         $this->postType = $postType;
         $this->postTypeArgs = [
@@ -79,7 +79,7 @@ final class PostTypeBuilder
     }
 
     /** @return $this */
-    public function isHierarchical(bool $hierarchical = true)
+    public function isHierarchical(bool $hierarchical = true): static
     {
         $this->postTypeArgs['hierarchical'] = $hierarchical;
         return $this;
@@ -89,7 +89,7 @@ final class PostTypeBuilder
      * @param bool|array{slug?: string, with_front?: bool, hierarchical?: bool, ep_mask?: int} $rewrite
      * @return $this
      */
-    public function rewrite(array|bool $rewrite)
+    public function rewrite(array|bool $rewrite): static
     {
         $this->postTypeArgs['rewrite'] = $rewrite;
         return $this;
@@ -157,7 +157,7 @@ final class PostTypeBuilder
      * A short descriptive summary of what the post type is.
      * @return $this
      */
-    public function description(string $description)
+    public function description(string $description): static
     {
         $this->postTypeArgs['description'] = $description;
         return $this;
@@ -169,7 +169,7 @@ final class PostTypeBuilder
      * @param class-string<PostModel> $modelClass The class of the model. Must extend PostModel.
      * @return $this
      */
-    public function model(string $modelClass)
+    public function model(string $modelClass): static
     {
         $this->modelClass = $modelClass;
         return $this;
@@ -181,7 +181,7 @@ final class PostTypeBuilder
      * @param string[]|int[] $choices An array of choices to choose from, keyed by their meta value. Falsy values will be treated as an 'all' option.
      * @return $this
      */
-    public function addAdminTableFilter(string $metaKey, iterable $choices)
+    public function adminTableFilter(string $metaKey, iterable $choices)
     {
         add_action('restrict_manage_posts', function () use ($metaKey, $choices) {
             $screen = get_current_screen();
@@ -216,7 +216,7 @@ final class PostTypeBuilder
      * @param string $metaKeyForSorting
      * @return $this
      */
-    public function addAdminTableColumn(string $name, string $label, $modelFunc, string $metaKeyForSorting = '')
+    public function addAdminTableColumn(string $name, string $label, string|callable $modelFunc, string $metaKeyForSorting = ''): static
     {
         add_filter("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($label, $name) {
             $postColumns[$name] = $label;
@@ -264,7 +264,7 @@ final class PostTypeBuilder
      * @param null|callable $callback Optional. Provide a callback to modify the data before it is rendered. <br><b>The sorting will still happen based on the original meta value.</b>
      * @return $this
      */
-    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null)
+    public function addAdminMetaColumn(string $metaName, string $label = '', string $orderBy = 'meta_value', ?callable $callback = null): static
     {
         add_filter("manage_{$this->postType}_posts_columns", static function (array $postColumns) use ($metaName, $label) {
             $postColumns[$metaName] = $label ?: $metaName;
@@ -302,7 +302,7 @@ final class PostTypeBuilder
     }
 
     /** @return $this */
-    public function setAdminTableColumnLabel(string $name, string $newLabel)
+    public function setAdminTableColumnLabel(string $name, string $newLabel): static
     {
         add_filter("manage_{$this->postType}_posts_columns", static function (array $columns) use ($name, $newLabel) {
             $columns[$name] = $newLabel;
@@ -313,7 +313,7 @@ final class PostTypeBuilder
     }
 
     /** @return $this */
-    public function removeAdminTableColumn(string $name)
+    public function removeAdminTableColumn(string $name): static
     {
         add_filter("manage_{$this->postType}_posts_columns", static function (array $columns) use ($name) {
             unset($columns[$name]);
@@ -329,14 +329,14 @@ final class PostTypeBuilder
      * @param string[] $supports
      * @return $this
      */
-    public function supports(array $supports)
+    public function supports(array $supports): static
     {
         $this->postTypeArgs['supports'] = $supports;
         return $this;
     }
 
     /** @return $this */
-    public function notPubliclyQueryable()
+    public function notPubliclyQueryable(): static
     {
         $this->postTypeArgs['publicly_queryable'] = false;
         return $this;
@@ -346,7 +346,7 @@ final class PostTypeBuilder
      * Whether a post type is intended for use publicly either via the admin interface or by front-end users.
      * @return $this
      */
-    public function public(bool $public = true)
+    public function public(bool $public = true): static
     {
         $this->postTypeArgs['public'] = $public;
         return $this;
@@ -356,7 +356,7 @@ final class PostTypeBuilder
      * Whether to exclude posts with this post type from front end search results.
      * @return $this
      */
-    public function excludeFromSearch(bool $exclude = true)
+    public function excludeFromSearch(bool $exclude = true): static
     {
         $this->postTypeArgs['exclude_from_search'] = $exclude;
         return $this;
@@ -366,7 +366,7 @@ final class PostTypeBuilder
      * Whether to generate and allow a UI for managing this post type in the admin.
      * @return $this
      */
-    public function showUI(bool $showUi = true)
+    public function showUI(bool $showUi = true): static
     {
         $this->postTypeArgs['show_ui'] = $showUi;
         return $this;
@@ -377,7 +377,7 @@ final class PostTypeBuilder
      * @see parse_request()
      * @return $this
      */
-    public function publiclyQueryable(bool $publiclyQueryable)
+    public function publiclyQueryable(bool $publiclyQueryable): static
     {
         $this->postTypeArgs['publicly_queryable'] = $publiclyQueryable;
         return $this;
@@ -390,7 +390,7 @@ final class PostTypeBuilder
      * Defaults to use the posts icon.
      * @return $this
      */
-    public function icon(string $icon)
+    public function icon(string $icon): static
     {
         $this->postTypeArgs['menu_icon'] = $icon;
         return $this;
@@ -401,7 +401,7 @@ final class PostTypeBuilder
      * @param bool|string $menu
      * @return $this
      */
-    public function inMenu($menu)
+    public function inMenu(bool|string $menu): static
     {
         $this->postTypeArgs['show_in_menu'] = $menu;
         return $this;
@@ -411,7 +411,7 @@ final class PostTypeBuilder
      * @param string[] $taxonomies An array of registered taxonomies like category or post_tag that will be used with this post type.
      * @return $this
      */
-    public function taxonomies(array $taxonomies)
+    public function taxonomies(array $taxonomies): static
     {
         $this->postTypeArgs['taxonomies'] = $taxonomies;
         return $this;
@@ -422,7 +422,7 @@ final class PostTypeBuilder
      * Must be true to enable the Gutenberg editor.
      * @return $this
      */
-    public function inRest(bool $showInRest = true)
+    public function inRest(bool $showInRest = true): static
     {
         $this->postTypeArgs['show_in_rest'] = $showInRest;
         return $this;
@@ -434,7 +434,7 @@ final class PostTypeBuilder
      * @param string $plural Plural capability name. Same as singular name if omitted.
      * @return $this
      */
-    public function capabilityType(string $single, string $plural = '')
+    public function capabilityType(string $single, string $plural = ''): static
     {
         $this->postTypeArgs['capability_type'] = ($plural) ? [$single, $plural] : $single;
         return $this;
@@ -445,7 +445,7 @@ final class PostTypeBuilder
      * @param string[] $capabilities
      * @return $this
      */
-    public function capabilities(array $capabilities = [])
+    public function capabilities(array $capabilities = []): static
     {
         $this->postTypeArgs['capabilities'] = $capabilities;
         return $this;
@@ -455,7 +455,7 @@ final class PostTypeBuilder
      * Whether to use the internal default meta capability handling.
      * @return $this
      */
-    public function mapMetaCap(bool $mapMetaCap = true)
+    public function mapMetaCap(bool $mapMetaCap = true): static
     {
         $this->postTypeArgs['map_meta_cap'] = $mapMetaCap;
         return $this;
@@ -466,7 +466,7 @@ final class PostTypeBuilder
      * @param string $pluralName Must be CamelCase. Defaults to singlename if omitted.
      * @return $this
      */
-    public function showInGraphQl(string $singleName, string $pluralName = '')
+    public function showInGraphQl(string $singleName, string $pluralName = ''): static
     {
         $this->postTypeArgs['show_in_graphql'] = true;
         $this->postTypeArgs['graphql_single_name'] = $singleName;

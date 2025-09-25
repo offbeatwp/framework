@@ -24,7 +24,7 @@ final class RestEndpointBuilder
     }
 
     /** @return $this */
-    public function method(string $method)
+    public function method(string $method): static
     {
         $this->method = $method;
         return $this;
@@ -34,7 +34,7 @@ final class RestEndpointBuilder
      * Validate a particular endpoint argument against a callback.
      * @return $this
      */
-    public function validate(string $key, callable $callback)
+    public function validate(string $key, callable $callback): static
     {
         if (!isset($this->args[$key])) {
             $this->args[$key] = [];
@@ -51,7 +51,7 @@ final class RestEndpointBuilder
      * The permissions callback is run after remote authentication, which sets the current user.
      * @return $this
      */
-    public function permission(callable $callback)
+    public function permission(callable $callback): static
     {
         $this->permissionCallback = $callback;
         return $this;
