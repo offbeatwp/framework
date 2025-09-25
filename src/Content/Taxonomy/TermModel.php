@@ -124,9 +124,9 @@ class TermModel extends OffbeatModel
         return get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy');
     }
 
-    public function getEditLink(): string
+    public function getEditLink(): ?string
     {
-        return get_edit_term_link($this->wpTerm) ?: '';
+        return get_edit_term_link($this->wpTerm);
     }
 
     /**

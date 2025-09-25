@@ -146,6 +146,10 @@ class PostModel extends OffbeatModel
         return $this;
     }
 
+    /**
+     * Alias for getSlug
+     * @see \OffbeatWP\Content\Post\PostModel::getSlug()
+     */
     public function getPostName(): string
     {
         return $this->wpPost->post_name;
@@ -156,9 +160,10 @@ class PostModel extends OffbeatModel
         return $this->getPostName();
     }
 
-    public function getPermalink(): string
+    public function getPermalink(): ?string
     {
-        return get_permalink($this->getId()) ?: '';
+        $result = get_permalink($this->getId());
+        return is_string($result) ? $result : null;
     }
 
     public function getPostType(): string
@@ -245,7 +250,7 @@ class PostModel extends OffbeatModel
     {
         $authorId = $this->getAuthorId();
 
-        if (!$authorId) {
+        if ($authorId <= 0) {
             return null;
         }
 
@@ -312,18 +317,22 @@ class PostModel extends OffbeatModel
 
     /**
      * @param array{0: positive-int, 1: positive-int}|string $size Registered image size to retrieve the source for or a flat array of height and width dimensions
-     * @return null|string The post thumbnail URL or false if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
+     * @return null|string The post thumbnail URL or null if no image is available. If `$size` does not match any registered image size, the original image URL will be returned.
      */
     public function getFeaturedImageUrl(array|string $size = 'thumbnail'): ?string
     {
         $url = get_the_post_thumbnail_url($this->wpPost, $size);
-        return $url === false ? null : $url;
+        return is_string($url) ? $url : null;
     }
 
+    /**
+     * Retrieves the post thumbnail ID.
+     * @return int|null Post thumbnail ID (which can be 0 if the thumbnail is not set), or null if the post does not exist.
+     */
     public function getFeaturedImageId(): ?int
     {
         $id = get_post_thumbnail_id($this->wpPost);
-        return $id === false ? null : $id;
+        return is_int($id) ? $id : null;
     }
 
     /** @return $this */
@@ -340,11 +349,21 @@ class PostModel extends OffbeatModel
         return $this;
     }
 
-    /** @return $this */
+    /**
+     * Alias for setSlug
+     * @return $this
+     * @see \OffbeatWP\Content\Post\PostModel::setSlug()
+     */
     final public function setPostName(string $postName): static
     {
         $this->wpPost->post_name = $postName;
         return $this;
+    }
+
+    /** @return $this */
+    final public function setSlug(string $postSlug): static
+    {
+        return $this->setPostName($postSlug);
     }
 
     public function getParentId(): ?int
@@ -451,10 +470,11 @@ class PostModel extends OffbeatModel
         return get_the_password_form($this->wpPost);
     }
 
-    /** @return non-empty-string|null The page template slug used by this post or <i>null</i> if it is not found. */
+    /** @return string|null The page template slug used by this post or <i>null</i> if it is not found. */
     public function getPageTemplate(): ?string
     {
-        return get_page_template_slug($this->wpPost) ?: null;
+        $slug = get_page_template_slug($this->wpPost);
+        return is_string($slug) ? $slug : null;
     }
 
     /** Get the <b>raw</b> post object */
