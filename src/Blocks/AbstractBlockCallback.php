@@ -50,6 +50,11 @@ abstract class AbstractBlockCallback implements IBlockCallback
         return $this->wpBlock->context;
     }
 
+    final public function getContextValue(string $key): mixed
+    {
+        return $this->wpBlock->context[$key] ?? null;
+    }
+
     /** @param array<string, mixed> $attributes */
     final public static function renderBlock(array $attributes, string $content, WP_Block $wpBlock): string
     {
