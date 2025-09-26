@@ -2,15 +2,15 @@
 
 namespace OffbeatWP\Content\User;
 
-use OffbeatWP\Content\Common\ReadOnlyCollection;
+use OffbeatWP\Content\Common\OffbeatCollection;
 use WP_User_Query;
 
 /**
  * @template TKey of int
  * @template TValue of UserModel
- * @extends ReadOnlyCollection<TKey, TValue>
+ * @extends OffbeatCollection<TKey, TValue>
  */
-final class UserCollection extends ReadOnlyCollection
+final class UserCollection extends OffbeatCollection
 {
     protected readonly WP_User_Query $query;
 

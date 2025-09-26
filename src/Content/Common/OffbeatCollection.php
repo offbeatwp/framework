@@ -18,7 +18,7 @@ use OffbeatWP\Content\User\UserModel;
  * @implements ArrayAccess<TKey, TValue>
  * @implements IteratorAggregate<TKey, TValue>
  */
-abstract class ReadOnlyCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
+abstract class OffbeatCollection implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable
 {
     /** @var array<TValue> */
     protected readonly array $items;

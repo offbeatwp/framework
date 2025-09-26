@@ -2,15 +2,15 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use OffbeatWP\Content\Common\ReadOnlyCollection;
+use OffbeatWP\Content\Common\OffbeatCollection;
 use WP_Term_Query;
 
 /**
  * @template TKey of int
  * @template TValue of TermModel
- * @extends ReadOnlyCollection<TKey, TValue>
+ * @extends OffbeatCollection<TKey, TValue>
  */
-final class TermsCollection extends ReadOnlyCollection
+final class TermsCollection extends OffbeatCollection
 {
     protected readonly WP_Term_Query $query;
 
