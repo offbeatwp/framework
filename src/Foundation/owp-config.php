@@ -6,7 +6,7 @@
  * If the option does not exist or is not a string then <i>NULL</i> is returned.
  * @param non-falsy-string $config
  */
-function owp_get_config_string(string $config): ?string
+function owp_config_string(string $config): ?string
 {
     return filter_var(config($config), FILTER_DEFAULT, FILTER_NULL_ON_FAILURE);
 }
@@ -17,7 +17,7 @@ function owp_get_config_string(string $config): ?string
  * If the option does not exist or is not an integer then <i>NULL</i> is returned.
  * @param non-falsy-string $config
  */
-function owp_get_config_int(string $config): ?int
+function owp_config_int(string $config): ?int
 {
     return filter_var(config($config), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 }
@@ -28,7 +28,7 @@ function owp_get_config_int(string $config): ?int
  * If the option does not exist or is not a float then <i>NULL</i> is returned.
  * @param non-falsy-string $config
  */
-function owp_get_config_float(string $config): ?float
+function owp_config_float(string $config): ?float
 {
     return filter_var(config($config), FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
 }
@@ -39,7 +39,7 @@ function owp_get_config_float(string $config): ?float
  * If the option does not exist or is not a boolean then <i>NULL</i> is returned.
  * @param non-falsy-string $config
  */
-function owp_get_config_bool(string $config): ?bool
+function owp_config_bool(string $config): ?bool
 {
     return filter_var(config($config), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
 }
@@ -51,8 +51,8 @@ function owp_get_config_bool(string $config): ?bool
  * @param non-falsy-string $config
  * @return positive-int|null
  */
-function owp_get_config_positive_int(string $config): ?int
+function owp_config_positive_int(string $config): ?int
 {
-    $v = owp_get_config_int($config);
+    $v = owp_config_int($config);
     return $v && $v > 0 ? $v : null;
 }
