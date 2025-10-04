@@ -2,6 +2,7 @@
 
 namespace OffbeatWP\Assets;
 
+use InvalidArgumentException;
 use OffbeatWP\Content\Common\Singleton;
 use RuntimeException;
 
@@ -76,12 +77,11 @@ final class AssetsManager extends Singleton
                     throw new RuntimeException('Unable to read entry points file.');
                 }
 
-                $data = json_decode($fileContents, true, 8, JSON_THROW_ON_ERROR);
-                if (!is_array($data) || !array_key_exists('entrypoints', $data) || !is_array($data['entrypoints'])) {
-                    throw new RuntimeException('Asset entrypoints should be decoded into an array, but was decoded as: ' . gettype($data));
-                }
+                $entrypoints = json_decode($fileContents, true, 8, JSON_THROW_ON_ERROR);
 
-                $entrypoints = $data['entrypoints'];
+                if (!is_array($entrypoints)) {
+                    throw new RuntimeException('Asset entrypoints should be decoded into an array, but was decoded as: ' . gettype($entrypoints));
+                }
             } else {
                 trigger_error('The entrypoints.json file could not be found!', E_USER_WARNING);
                 $entrypoints = [];
@@ -186,14 +186,36 @@ final class AssetsManager extends Singleton
         $handle = '';
 
         foreach ($assets as $asset) {
+            $assetDetails = $this->getJsAssetInfo($asset);
+
+            if (!$assetDetails) {
+                throw new InvalidArgumentException("No asset info found for '{$asset}'");
+            }
+
+            $assetDependencies = $assetDetails['dependencies'] ?? [];
+
             $asset = is_string($asset) ? ltrim($asset, './') : '';
             $handle = $this->generateHandle($asset);
-            $url = $this->getAssetsUrl($asset);
 
-            wp_enqueue_script($handle, $url, $dependencies, false, $args);
+            $url = $this->getAssetsUrl($asset);
+            
+            wp_enqueue_script($handle, $url, array_merge($assetDependencies , $dependencies), $assetDetails['version'] ?? false, $args);
         }
 
         return new WpScriptAsset($handle);
+    }
+
+    public function getJsAssetInfo(string $asset): ?array {
+        $count = 0;
+        $assetFile = preg_replace('/.js$/', '.asset.php', $asset, -1, $count);
+        
+        if (!$count) {
+            return null;
+        }
+
+        $assetFile = $this->getAssetsPath($assetFile);
+        
+        return file_exists($assetFile) ? include $assetFile : null;
     }
 
     /** @return non-falsy-string */
