@@ -100,14 +100,16 @@ trait WpDateTimeTrait
         return parent::format($format ?: $this->getWpDateFormat() . ' ' . $this->getWpTimeFormat());
     }
 
-    public function formatDate(): string
+    /** Retrieves the date, formatted according to the configured WordPress date format. */
+    public function wpDate(): string
     {
-        return $this->format($this->getWpDateFormat());
+        return $this->i18n($this->getWpDateFormat());
     }
 
-    public function formatTime(): string
+    /** Retrieves the time, formatted according to the configured WordPress time format. */
+    public function wpTime(): string
     {
-        return $this->format($this->getWpTimeFormat());
+        return $this->i18n($this->getWpTimeFormat());
     }
 
     private function getWpDateFormat(): string
