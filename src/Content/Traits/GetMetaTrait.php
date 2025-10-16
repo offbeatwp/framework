@@ -50,7 +50,7 @@ trait GetMetaTrait
         }
 
         try {
-            return WpDateTime::make($datetime);
+            return WpDateTime::create($datetime);
         } catch (Exception) {
             return null;
         }
@@ -70,7 +70,7 @@ trait GetMetaTrait
         }
 
         try {
-            return WpDateTimeImmutable::make($datetime);
+            return WpDateTimeImmutable::create($datetime);
         } catch (Exception) {
             return null;
         }

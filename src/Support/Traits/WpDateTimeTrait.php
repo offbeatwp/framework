@@ -3,7 +3,6 @@
 namespace OffbeatWP\Support\Traits;
 
 use DateMalformedStringException;
-use DateTimeInterface;
 use DateTimeZone;
 
 trait WpDateTimeTrait
@@ -21,7 +20,7 @@ trait WpDateTimeTrait
      */
     public function i18n(string $format = ''): string
     {
-        /** @var string */
+        /** @var string Timestamp is always valid so wp_date will never return false here. */
         return wp_date($format ?: $this->getWpDateFormat() . ' ' . $this->getWpTimeFormat(), $this->getTimestamp());
     }
 
@@ -60,7 +59,7 @@ trait WpDateTimeTrait
         return $this->setTime($this->getHour(), $this->getMinute(), $second, $this->getMicro());
     }
 
-    /** @param int $micro 0 through 999999. */
+    /** @param int<0, 999999> $micro 0 through 999999. */
     public function setMicro(int $micro): static
     {
         return $this->setTime($this->getHour(), $this->getMinute(), $this->getSecond(), $micro);
@@ -221,14 +220,14 @@ trait WpDateTimeTrait
         return $this->format('Y-m-d H:i:s');
     }
 
-    /** Will attempt create a WpDateTime object from the passed variable. */
-    public static function make(string|DateTimeInterface $datetime, ?DateTimeZone $timezone = null): static
+    /**
+     * Attempt to create a DateTime object from a datetime string.
+     * Works exactly like the new DateTime constructor, but will return NULL if not DateTime object can be created.
+     * @see \DateTime::__construct
+     */
+    public static function create(string $datetime, ?DateTimeZone $timezone = null): static
     {
-        if (is_string($datetime)) {
-            return new static($datetime, $timezone);
-        }
-
-        return static::createFromInterface($datetime);
+        return new static($datetime, $timezone);
     }
 
     private static function getMalformedStringException(): DateMalformedStringException

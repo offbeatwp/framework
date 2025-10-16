@@ -2,7 +2,6 @@
 
 namespace OffbeatWP\Content\Post;
 
-use DateTimeZone;
 use InvalidArgumentException;
 use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Post\Relations\Relation;
@@ -274,7 +273,7 @@ class PostModel extends OffbeatModel
             $gmt = get_post_datetime($this->getId(), 'date', 'gmt');
 
             if ($gmt) {
-                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
+                return WpDateTimeImmutable::createFromInterface($gmt);
             }
         }
 
@@ -287,7 +286,7 @@ class PostModel extends OffbeatModel
             $gmt = get_post_datetime($this->getId(), 'modified', 'gmt');
 
             if ($gmt) {
-                return WpDateTimeImmutable::make($gmt, new DateTimeZone('UTC'));
+                return WpDateTimeImmutable::createFromInterface($gmt);
             }
         }
 
