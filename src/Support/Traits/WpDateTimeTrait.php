@@ -22,7 +22,7 @@ trait WpDateTimeTrait
     public function i18n(string $format = ''): string
     {
         /** @var string */
-        return wp_date($format ?: $this->getWpDateFormat(), $this->getTimestamp());
+        return wp_date($format ?: $this->getWpDateFormat() . ' ' . $this->getWpTimeFormat(), $this->getTimestamp());
     }
 
     public function setYear(int $year): static
@@ -97,12 +97,27 @@ trait WpDateTimeTrait
      */
     public function format(string $format = ''): string
     {
-        return parent::format($format ?: $this->getWpDateFormat());
+        return parent::format($format ?: $this->getWpDateFormat() . ' ' . $this->getWpTimeFormat());
+    }
+
+    public function formatDate(): string
+    {
+        return $this->format($this->getWpDateFormat());
+    }
+
+    public function formatTime(): string
+    {
+        return $this->format($this->getWpTimeFormat());
     }
 
     private function getWpDateFormat(): string
     {
-        return owp_get_option_string('date_format') ?: 'Y-m-d H:i:s';
+        return owp_get_option_string('date_format') ?: 'Y-m-d';
+    }
+
+    private function getWpTimeFormat(): string
+    {
+        return owp_get_option_string('time_format') ?: 'H:i:s';
     }
 
     /** @return int A full numeric representation of a year, at least 4 digits, with - for years BCE. */
