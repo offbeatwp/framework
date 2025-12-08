@@ -32,7 +32,7 @@ trait BaseModelTrait
      * Will retrieve a model from the database for the given ID, or throw a <i>OffbeatModelNotFoundException</i> if no such model exists.<br>
      * If the given ID is a non-positive int then always throw an exception.
      * @throws \OffbeatWP\Exceptions\OffbeatModelNotFoundException
-     * @param positive-int $id
+     * @param int $id
      * @return static
      */
     public static function findOrFail(int $id)
