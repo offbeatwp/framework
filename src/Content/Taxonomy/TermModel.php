@@ -10,6 +10,7 @@ use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use WP_Block_Template;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -323,6 +324,15 @@ class TermModel implements TermModelInterface
         }
 
         return static::query()->excludeEmpty(false)->include([$id])->exists();
+    }
+
+    final public function getBlockTemplate(): ?WP_Block_Template
+    {
+        if (!$this->wpTerm) {
+            return null;
+        }
+
+        return get_block_template('taxonomy-' . $this->wpTerm->taxonomy, $this->wpTerm);
     }
 
     /** @return TermQueryBuilder<static> */

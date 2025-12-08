@@ -20,6 +20,7 @@ use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\PostMetaNotFoundException;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 use stdClass;
+use WP_Block_Template;
 use WP_Post;
 use WP_Post_Type;
 use WP_User;
@@ -1025,5 +1026,10 @@ class PostModel implements PostModelInterface
                 }
             }
         }
+    }
+
+    final public function getBlockTemplate(): ?WP_Block_Template
+    {
+        return get_block_template('single', $this->getWpPost());
     }
 }
