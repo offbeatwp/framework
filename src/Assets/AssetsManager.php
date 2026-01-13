@@ -162,6 +162,7 @@ final class AssetsManager extends Singleton
      */
     public function enqueueStyles(string $entry, array $dependencies = []): void
     {
+        /** @var string[] $assets */
         $assets = $this->getAssetsByEntryPoint($entry, 'css');
 
         foreach ($assets as $asset) {
@@ -185,6 +186,7 @@ final class AssetsManager extends Singleton
         $assets = $this->getAssetsByEntryPoint($entry, 'js');
         $handle = '';
 
+        /** @var string[] $assets */
         foreach ($assets as $asset) {
             $assetDetails = $this->getJsAssetInfo($asset);
 
@@ -192,6 +194,7 @@ final class AssetsManager extends Singleton
                 throw new InvalidArgumentException("No asset info found for '{$asset}'");
             }
 
+            /** @var array<int, string> $assetDependencies */
             $assetDependencies = $assetDetails['dependencies'] ?? [];
 
             $asset = is_string($asset) ? ltrim($asset, './') : '';
@@ -205,11 +208,12 @@ final class AssetsManager extends Singleton
         return new WpScriptAsset($handle);
     }
 
+    /** @return mixed[]|null */
     public function getJsAssetInfo(string $asset): ?array {
         $count = 0;
         $assetFile = preg_replace('/.js$/', '.asset.php', $asset, -1, $count);
         
-        if (!$count) {
+        if (!$count || !$assetFile) {
             return null;
         }
 
