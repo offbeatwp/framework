@@ -3,16 +3,17 @@
 namespace OffbeatWP\Content\Post;
 
 use ArrayIterator;
+use OffbeatWP\Foundation\WpGlobals;
+use WP_Post;
 
 /**
  * @extends ArrayIterator<TKey, TValue>
- * @template TKey of int|string
+ * @template TKey of array-key
  * @template TValue of PostModel
  */
 final class WpPostsIterator extends ArrayIterator
 {
-    /** @var \WP_Post|null */
-    private $originalPost;
+    private ?WP_Post $originalPost;
     private bool $globalPostWasChanged = false;
 
     /**
@@ -31,12 +32,12 @@ final class WpPostsIterator extends ArrayIterator
     public function valid(): bool
     {
         if ($this->key() !== null) {
-            $item = $this->current()->wpPost;
+            $item = $this->current()->getWpObject();
 
             // Remember the old value of the post global so that we can put it back after the loop is finished.
             if (!$this->globalPostWasChanged) {
                 $this->globalPostWasChanged = true;
-                $this->originalPost = $GLOBALS['post'] ?? null;
+                $this->originalPost = WpGlobals::post();
             }
 
             $GLOBALS['post'] = $item;

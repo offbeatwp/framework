@@ -2,41 +2,21 @@
 
 namespace OffbeatWP\Services;
 
-use OffbeatWP\Contracts\SiteSettings;
-use OffbeatWP\SiteSettings\SettingsScripts;
-
-class ServiceScripts extends AbstractService
+final class ServiceScripts extends AbstractService
 {
-    /** @var SiteSettings|null */
-    protected $settings;
-
-    /** @return void */
-    public function register(SiteSettings $settings)
+    public function register(): void
     {
-        $this->settings = $settings;
-
         add_action('wp_head', [$this, 'scriptsHead']);
-        add_action('body_open', [$this, 'scriptsBodyOpen']);
         add_action('wp_footer', [$this, 'scriptsFooter']);
-
-        $settings->addPage(SettingsScripts::class);
     }
 
-    /** @return void */
-    public function scriptsHead()
+    public function scriptsHead(): void
     {
-        echo $this->settings->get('scripts_head');
+        echo owp_get_option_string('options_scripts_head');
     }
 
-    /** @return void */
-    public function scriptsBodyOpen()
+    public function scriptsFooter(): void
     {
-        echo $this->settings->get('scripts_open_body');
-    }
-
-    /** @return void */
-    public function scriptsFooter()
-    {
-        echo $this->settings->get('scripts_footer');
+        echo owp_get_option_string('scripts_footer');
     }
 }

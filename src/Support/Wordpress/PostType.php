@@ -2,14 +2,15 @@
 
 namespace OffbeatWP\Support\Wordpress;
 
-use OffbeatWP\Content\Post\PostTypeBuilder;
+use OffbeatWP\Content\Common\Singleton;
 use OffbeatWP\Content\Post\PostModel;
+use OffbeatWP\Content\Post\PostTypeBuilder;
 
-final class PostType
+final class PostType extends Singleton
 {
-    public const DEFAULT_POST_MODEL = PostModel::class;
+    public const string DEFAULT_POST_MODEL = PostModel::class;
 
-    /** @var class-string<PostModel>[] */
+    /** @var array<string, class-string<PostModel>> */
     private array $postTypeModels = [];
 
     /**
@@ -19,30 +20,21 @@ final class PostType
      * @return PostTypeBuilder
      * @see sanitize_key()
      */
-    public static function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
+    public function make(string $name, string $pluralName = '', string $singleName = ''): PostTypeBuilder
     {
         return (new PostTypeBuilder())->make($name, $pluralName ?: $name, $singleName ?: $pluralName ?: $name);
     }
 
-    /**
-     * @param string $postType
-     * @param class-string<PostModel> $modelClass
-     */
+    /** @param class-string<PostModel> $modelClass */
     public function registerPostModel(string $postType, string $modelClass): void
     {
         $this->postTypeModels[$postType] = $modelClass;
     }
 
     /** @return class-string<PostModel> */
-    public function getModelByPostType(string $postType): string
+    public function getModelClassByPostType(string $postType): string
     {
         return $this->postTypeModels[$postType] ?? self::DEFAULT_POST_MODEL;
-    }
-
-    /** @param class-string<PostModel> $modelClass */
-    public function getPostTypeByModel(string $modelClass): string
-    {
-        return array_search($modelClass, $this->postTypeModels, true);
     }
 
     /** @return string[] Returns an array of all post types registered with an Offbeat Model */

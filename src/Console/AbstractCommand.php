@@ -9,38 +9,25 @@ use WP_Error;
 
 abstract class AbstractCommand
 {
-    public const COMMAND = '';
+    public const string COMMAND = '';
 
     /**
-     * @param string[] $args
-     * @param string[] $argsNamed
-     * @return mixed
+     * @param list<string> $args
+     * @param array<string, string> $argsNamed
      */
-    abstract public function execute(array $args, array $argsNamed);
+    abstract public function execute(array $args, array $argsNamed): void;
 
-    /**
-     * @param Exception|string|Throwable|WP_Error $message
-     * @return never-return
-     */
-    public function error($message)
+    public function error(string|WP_Error|Exception|Throwable $message): never
     {
         WP_CLI::error($message);
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    public function log(string $message)
+    public function log(string $message): void
     {
         WP_CLI::log($message);
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    public function success(string $message)
+    public function success(string $message): void
     {
         WP_CLI::success($message);
     }

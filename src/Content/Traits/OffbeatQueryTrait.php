@@ -12,7 +12,7 @@ trait OffbeatQueryTrait
      * @param scalar|null $value
      * @return $this
      */
-    public function whereMetaIs(string $metaKey, $value)
+    final public function whereMetaIs(string $metaKey, string|int|bool|float|null $value)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => '==', 'value' => $value]);
         return $this;
@@ -24,7 +24,7 @@ trait OffbeatQueryTrait
      * @param scalar|null $value
      * @return $this
      */
-    public function whereMetaIsNot(string $metaKey, $value)
+    final public function whereMetaIsNot(string $metaKey, string|int|bool|float|null $value)
     {
         $this->whereMeta([
             'relation' => 'OR',
@@ -40,14 +40,14 @@ trait OffbeatQueryTrait
      * @param mixed[] $values
      * @return $this
      */
-    public function whereMetaIn(string $metaKey, array $values)
+    final public function whereMetaIn(string $metaKey, array $values)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => 'IN', 'value' => $values]);
         return $this;
     }
 
     /** @return $this */
-    public function whereMetaExists(string $metaKey)
+    final public function whereMetaExists(string $metaKey)
     {
         $this->whereMeta(['key' => $metaKey, 'compare' => 'EXISTS']);
         return $this;
@@ -61,37 +61,11 @@ trait OffbeatQueryTrait
     }
 
     /**
-     * @param string|string[]|null $orderBy
-     * @param string|null $order 'ASC'|'DESC'
-     * @return $this
-     */
-    public function order($orderBy = null, ?string $order = null)
-    {
-        if (is_string($orderBy) && preg_match('/^(meta(_num)?):(.+)$/', $orderBy, $match)) {
-            $this->queryVars['meta_key'] = $match[3];
-            $this->queryVars['orderby'] = 'meta_value';
-
-            if ($match[1] === 'meta_num') {
-                $this->queryVars['orderby'] = 'meta_value_num';
-            }
-
-        } elseif ($orderBy !== null) {
-            $this->queryVars['orderby'] = $orderBy;
-        }
-
-        if ($order !== null) {
-            $this->queryVars['order'] = $order;
-        }
-
-        return $this;
-    }
-
-    /**
      * @param string $metaKey
      * @param 'ASC'|'DESC'|'' $direction
      * @return $this
      */
-    public function orderByMeta(string $metaKey, string $direction = '')
+    final public function orderByMeta(string $metaKey, string $direction = '')
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value';
@@ -108,7 +82,7 @@ trait OffbeatQueryTrait
      * @param 'ASC'|'DESC'|'' $direction
      * @return $this
      */
-    public function orderByMetaNum(string $metaKey, string $direction = '')
+    final public function orderByMetaNum(string $metaKey, string $direction = '')
     {
         $this->queryVars['meta_key'] = $metaKey;
         $this->queryVars['orderby'] = 'meta_value_num';
@@ -120,25 +94,14 @@ trait OffbeatQueryTrait
         return $this;
     }
 
-    public function firstId(): ?int
+    final public function firstId(): ?int
     {
         return $this->limit(1)->ids()[0] ?? null;
     }
 
-    public function exists(): bool
+    final public function exists(): bool
     {
         return (bool)$this->firstId();
-    }
-
-    /**
-     * @param mixed[]|null $parameters
-     * @return $this
-     */
-    public function where(?array $parameters)
-    {
-        $this->queryVars = array_merge($this->queryVars, $parameters);
-
-        return $this;
     }
 
     /** @return $this */
@@ -156,7 +119,7 @@ trait OffbeatQueryTrait
     }
 
     /** @return string Returns the last executed query as raw query string. */
-    public static function getLastRequest(): string
+    final public static function getLastRequest(): string
     {
         return self::$lastRequest;
     }

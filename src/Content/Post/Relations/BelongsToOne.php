@@ -2,21 +2,21 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
+use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Content\Post\WpQueryBuilder;
 
-class BelongsTo extends BelongsToOneOrMany
+final class BelongsToOne extends BelongsToOneOrMany
 {
     /** @return WpQueryBuilder<\OffbeatWP\Content\Post\PostModel> */
-    public function query()
+    public function query(): WpQueryBuilder
     {
         return (new WpQueryBuilder())
-            ->where(['ignore_sticky_posts' => 1])
+            ->ignoreStickyPosts()
             ->wherePostType('any')
-            ->hasRelationshipWith($this->model, $this->relationKey, 'reverse');
+            ->hasRelationshipWith($this->model, $this->relationKey, true);
     }
 
-    /** @return \OffbeatWP\Content\Post\PostModel */
-    public function get()
+    public function get(): ?PostModel
     {
         return $this->query()->first();
     }

@@ -1,17 +1,14 @@
 # phpstan.neon
 parameters:
-    level: 6
-    phpVersion: 80200
+    level: 9
+    phpVersion: 80300
     treatPhpDocTypesAsCertain: false
     paths:
         - src
     scanFiles:
         - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
-    excludePaths:
-        - src/Components/GenericWidget.php
     ignoreErrors:
         - identifier: requireOnce.fileNotFound
 includes:
-    - phpstan-baseline.neon
     - vendor/szepeviktor/phpstan-wordpress/extension.neon
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon

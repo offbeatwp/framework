@@ -9,21 +9,18 @@ trait BaseModelTrait
     /**
      * Will retrieve a model from the database for the given ID, or <i>NULL</i> if it does not exist.<br>
      * If the given ID is a non-positive int or NULL then this method will immediately return <i>NULL</i> without performing a query.
-     * @return static|null
      */
-    public static function find(?int $id)
+    public static function find(?int $id): ?static
     {
         return static::query()->findById($id);
     }
 
-    /** @return static|null */
-    public static function first()
+    public static function first(): ?static
     {
         return static::query()->first();
     }
 
-    /** @return static */
-    public static function findOrNew(?int $id)
+    public static function findOrNew(?int $id): static
     {
         return static::find($id) ?: static::create();
     }
@@ -32,10 +29,8 @@ trait BaseModelTrait
      * Will retrieve a model from the database for the given ID, or throw a <i>OffbeatModelNotFoundException</i> if no such model exists.<br>
      * If the given ID is a non-positive int then always throw an exception.
      * @throws \OffbeatWP\Exceptions\OffbeatModelNotFoundException
-     * @param int $id
-     * @return static
      */
-    public static function findOrFail(int $id)
+    public static function findOrFail(int $id): static
     {
         $item = static::find($id);
         if (!$item) {
@@ -55,15 +50,8 @@ trait BaseModelTrait
         return static::query()->whereIdIn([$id])->exists();
     }
 
-    /** @return array<int, static> */
-    public static function allAsArray()
+    public static function create(): static
     {
-        return static::all()->toArray();
-    }
-
-    /** @return static */
-    public static function create()
-    {
-        return new static(null);
+        return new static();
     }
 }

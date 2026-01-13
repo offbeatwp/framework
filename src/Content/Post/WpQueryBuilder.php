@@ -5,8 +5,9 @@ namespace OffbeatWP\Content\Post;
 use Generator;
 use InvalidArgumentException;
 use OffbeatWP\Content\Traits\OffbeatQueryTrait;
-use OffbeatWP\Contracts\IWpQuerySubstitute;
+use OffbeatWP\Exceptions\OffbeatInvalidModelException;
 use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
+use OffbeatWP\Support\Wordpress\Post;
 use UnexpectedValueException;
 use WP_Post;
 use WP_Query;
@@ -17,22 +18,29 @@ class WpQueryBuilder
     use OffbeatQueryTrait;
 
     /** @var array<string, mixed> */
-    protected array $queryVars = ['post_type' => 'any'];
-    private string $wpQueryClass = WP_Query::class;
-
-    /** @return PostsCollection<int, TValue> */
-    final public function all(): PostsCollection
-    {
-        return $this->take(-1);
-    }
+    protected array $queryVars = ['post_type' => 'any', 'posts_per_page' => -1];
+    /** @var class-string<TValue> */
+    public readonly string $modelClass;
 
     /**
-     * @param WP_Post $post
-     * @return PostModel|null
+     * @throws OffbeatInvalidModelException
+     * @param class-string<TValue> $modelClass
      */
-    public function postToModel($post)
+    final public function __construct(string $modelClass = PostModel::class)
     {
-        return offbeat('post')->convertWpPostToModel($post);
+        $this->modelClass = $modelClass;
+
+        $this->wherePostType($this->modelClass::POST_TYPE);
+        $this->orderBy($this->modelClass::ORDER_BY);
+
+        if ($this->modelClass::ORDER === 'ASC') {
+            $this->orderAsc();
+        }
+    }
+
+    final public function postToModel(WP_Post $post): PostModel
+    {
+        return Post::getInstance()->convertWpPostToModel($post);
     }
 
     /**
@@ -41,7 +49,7 @@ class WpQueryBuilder
      * One example where total post count is required is pagination.
      * @return $this
      */
-    final public function noFoundRows(bool $noFoundRows)
+    final public function noFoundRows(bool $noFoundRows): static
     {
         $this->queryVars['no_found_rows'] = $noFoundRows;
         return $this;
@@ -51,7 +59,7 @@ class WpQueryBuilder
      * Shows all posts rather than paginating.
      * @return $this
      */
-    final public function noPaging()
+    final public function noPaging(): static
     {
         $this->queryVars['nopaging'] = true;
         unset($this->queryVars['paged']);
@@ -67,9 +75,8 @@ class WpQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
-        $query = $this->runQuery();
-
-        return apply_filters('offbeatwp/posts/query/get', new PostsCollection($query), $this);
+        /** @var PostsCollection<int, TValue> */
+        return new PostsCollection($this->runQuery(), $this->modelClass);
     }
 
     /**
@@ -83,8 +90,12 @@ class WpQueryBuilder
             $this->queryVars['no_found_rows'] = !$isPaged;
         }
 
-        foreach ($this->runQuery()->get_posts() as $post) {
-            yield offbeat('post')->convertWpPostToModel($post);
+        $this->queryVars['fields'] = 'all';
+        /** @var WP_Post[] $posts Always posts since 'fields' is set to 'all' */
+        $posts = $this->runQuery()->get_posts();
+
+        foreach ($posts as $post) {
+            yield $this->modelClass::from($post);
         }
     }
 
@@ -94,28 +105,22 @@ class WpQueryBuilder
         return $this->queryVars;
     }
 
-    /** @return scalar|mixed[]|null */
-    final public function getQueryVar(string $var)
+    final public function getQueryVar(string $var): mixed
     {
         $queryVars = $this->getQueryVars();
 
         return $queryVars[$var] ?? null;
     }
 
-    /** @return PostsCollection<int, TValue> */
-    final public function take(int $numberOfItems): PostsCollection
+    /** @return TValue|null */
+    final public function first(): ?PostModel
     {
-        $this->queryVars['posts_per_page'] = $numberOfItems;
-
-        return $this->get();
+        /** @var TValue|null */
+        return $this->limit(1)->get()->first();
     }
 
-    public function first(): ?PostModel
-    {
-        return $this->take(1)->first();
-    }
-
-    public function firstOrFail(): PostModel
+    /** @return TValue */
+    final public function firstOrFail(): PostModel
     {
         $result = $this->first();
 
@@ -139,7 +144,7 @@ class WpQueryBuilder
     }
 
     /** @phpstan-return TValue */
-    public function findByIdOrFail(int $id): PostModel
+    final public function findByIdOrFail(int $id): PostModel
     {
         $result = $this->findById($id);
 
@@ -150,12 +155,12 @@ class WpQueryBuilder
         return $result;
     }
 
-    public function findBySlug(string $slug): ?PostModel
+    final public function findBySlug(string $slug): ?PostModel
     {
         return $this->whereSlug($slug)->first();
     }
 
-    public function findBySlugOrFail(string $slug): PostModel
+    final public function findBySlugOrFail(string $slug): PostModel
     {
         $result = $this->findBySlug($slug);
 
@@ -166,22 +171,10 @@ class WpQueryBuilder
         return $result;
     }
 
-    /** @deprecated Find a post based by it's <b>slug</b>. Consider using <b>findBySlug</b> instead. */
-    final public function findByName(string $slug): ?PostModel
-    {
-        return $this->findBySlug($slug);
-    }
-
-    /** @deprecated Find a post based by it's <b>slug</b>, or throw an Exception if no post with the provided slug was found. Consider using <b>findBySlugOrFail</b> instead. */
-    final public function findByNameOrFail(string $slug): PostModel
-    {
-        return $this->findBySlugOrFail($slug);
-    }
-
-    private function runQuery(): WP_Query|IWpQuerySubstitute
+    private function runQuery(): WP_Query
     {
         do_action('offbeatwp/posts/query/before_get', $this);
-        $query = new $this->wpQueryClass($this->queryVars);
+        $query = new WP_Query($this->queryVars);
         do_action('offbeatwp/posts/query/after_get', $this);
 
         self::$lastRequest = $query->request;
@@ -190,7 +183,7 @@ class WpQueryBuilder
     }
 
     /** @return $this */
-    final public function limit(int $amount)
+    final public function limit(int $amount): static
     {
         if ($amount < 0 && $amount !== -1) {
             throw new InvalidArgumentException("Limit expects a positive number, but received {$amount}.");
@@ -208,6 +201,7 @@ class WpQueryBuilder
         $this->queryVars['fields'] = 'ids';
         $this->queryVars['no_found_rows'] = true;
 
+        /** @var array<int, positive-int> Always returns int array since 'fields' is set to 'ids' */
         return $this->runQuery()->posts;
     }
 
@@ -239,16 +233,6 @@ class WpQueryBuilder
         $this->queryVars['no_found_rows'] = true;
 
         return $this->runQuery()->post_count;
-    }
-
-    /**
-     * @param class-string<WP_Query|IWpQuerySubstitute> $queryObjectClassName
-     * @return $this
-     */
-    final public function useQuery(string $queryObjectClassName)
-    {
-        $this->wpQueryClass = $queryObjectClassName;
-        return $this;
     }
 
     /**
@@ -286,7 +270,7 @@ class WpQueryBuilder
     }
 
     /**
-     * @param string|string[] $postTypes
+     * @param string|list<string> $postTypes
      * @return $this
      */
     final public function wherePostType(string|array $postTypes)
@@ -318,7 +302,7 @@ class WpQueryBuilder
             $operator = 'IN';
         }
 
-        if (!isset($this->queryVars['tax_query'])) {
+        if (!isset($this->queryVars['tax_query']) || !is_array($this->queryVars['tax_query'])) {
             $this->queryVars['tax_query'] = [];
         }
 
@@ -342,7 +326,7 @@ class WpQueryBuilder
      */
     final public function whereDate(array $args)
     {
-        if (!isset($this->queryVars['date_query'])) {
+        if (!isset($this->queryVars['date_query']) || !is_array($this->queryVars['date_query'])) {
             $this->queryVars['date_query'] = [];
         }
 
@@ -368,7 +352,7 @@ class WpQueryBuilder
      * @param string[] $postStatus Array containing the post statuses to include
      * @return $this
      */
-    final public function wherePostStatus(array $postStatus)
+    final public function wherePostStatus(array $postStatus): static
     {
         $this->queryVars['post_status'] = $postStatus;
         return $this;
@@ -383,7 +367,7 @@ class WpQueryBuilder
      */
     final public function whereMeta($key, $value = '', string $compare = '=', string $type = 'CHAR')
     {
-        if (!isset($this->queryVars['meta_query'])) {
+        if (!isset($this->queryVars['meta_query']) || !is_array($this->queryVars['meta_query'])) {
             $this->queryVars['meta_query'] = [];
         }
 
@@ -403,11 +387,25 @@ class WpQueryBuilder
         return $this;
     }
 
+    /** @return $this */
+    final public function ignoreStickyPosts(bool $ignoreStickyPosts = true): static
+    {
+        $this->queryVars['ignore_sticky_posts'] = $ignoreStickyPosts;
+        return $this;
+    }
+
+    /** @return $this */
+    final public function wherePostParent(int $parentId): static
+    {
+        $this->queryVars['post_parent'] = $parentId;
+        return $this;
+    }
+
     /**
      * @param int[]|int $ids
      * @return $this
      */
-    final public function whereIdNotIn($ids)
+    final public function whereIdNotIn(array|int $ids): static
     {
         $this->queryVars['post__not_in'] = (array)$ids;
         return $this;
@@ -417,7 +415,7 @@ class WpQueryBuilder
      * @param int[]|int $ids
      * @return $this
      */
-    final public function whereIdIn(array|int $ids)
+    final public function whereIdIn(array|int $ids): static
     {
         $this->queryVars['post__in'] = (array)$ids ?: [0];
         return $this;
@@ -427,7 +425,7 @@ class WpQueryBuilder
      * @param int[] $ids
      * @return $this
      */
-    final public function whereAuthorIdIn(array $ids)
+    final public function whereAuthorIdIn(array $ids): static
     {
         $this->queryVars['author__in'] = $ids;
         return $this;
@@ -440,7 +438,7 @@ class WpQueryBuilder
      * @param bool|int $paginated
      * @return $this
      */
-    final public function paginated(int|bool $paginated = true)
+    final public function paginated(int|bool $paginated = true): static
     {
         if ($paginated) {
             $this->noFoundRows(false);
@@ -459,19 +457,19 @@ class WpQueryBuilder
     }
 
     /** @return $this */
-    final public function suppressFilters(bool $suppress = true)
+    final public function suppressFilters(bool $suppress = true): static
     {
         $this->queryVars['suppress_filters'] = $suppress;
         return $this;
     }
 
     /**
-     * @param PostModel|PostsCollection<int|string, PostModel>|int $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
+     * @param PostModel|PostsCollection<int, PostModel>|int $postModelOrCollection Either a PostModel or PostCollection to check a relation with.
      * @param string $relationKey The relation key.
-     * @param string|null $direction Pass <b>'reverse'</b> to reverse the relation.
+     * @param bool $reverse Pass <b>'true'</b> to reverse the relation.
      * @return $this
      */
-    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, ?string $direction = null)
+    final public function hasRelationshipWith(PostModel|PostsCollection|int $postModelOrCollection, string $relationKey, bool $reverse = false): static
     {
         if ($postModelOrCollection instanceof PostsCollection) {
             $id = $postModelOrCollection->getIds();
@@ -484,7 +482,7 @@ class WpQueryBuilder
         $this->queryVars['relationships'] = [
             'id' => $id,
             'key' => $relationKey,
-            'direction' => $direction,
+            'direction' => $reverse ? 'reverse' : null
         ];
 
         return $this;
@@ -493,15 +491,15 @@ class WpQueryBuilder
     /**
      * @param int[] $ids Array of ID's to check a relation
      * @param string $relationKey The relation key
-     * @param bool $inverted Set to <i>true</i> to reverse the relation
+     * @param bool $reverse Set to <i>true</i> to reverse the relation
      * @return $this
      */
-    final public function whereRelatedTo(array $ids, string $relationKey, bool $inverted = false)
+    final public function whereRelatedTo(array $ids, string $relationKey, bool $reverse = false): static
     {
         $this->queryVars['relationships'] = [
             'id' => $ids,
             'key' => $relationKey,
-            'direction' => ($inverted) ? 'reverse' : null,
+            'direction' => $reverse ? 'reverse' : null,
         ];
 
         return $this;
@@ -514,7 +512,7 @@ class WpQueryBuilder
      * <i>null</i> for all posts with and without passwords
      * @return $this
      */
-    final public function hasPassword(?bool $hasPassword)
+    final public function hasPassword(?bool $hasPassword): static
     {
         $this->queryVars['has_password'] = $hasPassword;
         return $this;
@@ -524,7 +522,7 @@ class WpQueryBuilder
      * Display posts with a particular password.
      * @return $this
      */
-    final public function postPassword(string $password)
+    final public function postPassword(string $password): static
     {
         $this->queryVars['post_password'] = $password;
         return $this;
@@ -554,7 +552,7 @@ class WpQueryBuilder
      * @param 'none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in'|('none'|'ID'|'author'|'title'|'name'|'type'|'date'|'modified'|'parent'|'rand'|'comment_count'|'relevance'|'menu_order'|'meta_value'|'meta_value_num'|'post__in'|'post_name__in'|'post_parent__in')[] $orderBy
      * @return $this
      */
-    final public function orderBy(string|array $orderBy)
+    final public function orderBy(string|array $orderBy): static
     {
         $this->queryVars['orderby'] = $orderBy;
         return $this;
@@ -564,7 +562,7 @@ class WpQueryBuilder
      * Whether to cache post information. Default true.
      * @return $this
      */
-    final public function cacheResults(bool $cacheResults)
+    final public function cacheResults(bool $cacheResults): static
     {
         $this->queryVars['cache_results'] = $cacheResults;
         return $this;
@@ -583,8 +581,10 @@ class WpQueryBuilder
             throw new InvalidArgumentException('WpQueryBuilder::only method cannot receive an empty array.');
         }
 
+        $this->queryVars['fields'] = 'all';
         $this->queryVars['owp-fields'] = $columns;
 
+        /** @var WP_Post[] Always returns posts since 'fields' is set to 'all'  */
         return $this->runQuery()->get_posts();
     }
 
@@ -610,5 +610,11 @@ class WpQueryBuilder
         }
 
         return array_map(fn ($post) => $post->$column, $this->only([$column]));
+    }
+
+    /** @phpstan-return TValue|PostModel */
+    final public function firstOrNew(): PostModel
+    {
+        return $this->first() ?: new $this->modelClass(null);
     }
 }

@@ -2,33 +2,27 @@
 
 namespace OffbeatWP\Assets;
 
+use JsonSerializable;
+use stdClass;
+
 final class WpScriptAsset
 {
-    private string $handle;
-    private bool $enqueueNow;
+    public readonly string $handle;
 
-    public function __construct(string $handle, bool $enqueueNow)
+    public function __construct(string $handle)
     {
         $this->handle = $handle;
-        $this->enqueueNow = $enqueueNow;
     }
 
     /**
      * @see json_encode()
      * @param string $varName Should be a valid JS variable name.
-     * @param mixed $data Data will be encodeable with Json.
+     * @param scalar|mixed[]|stdClass|JsonSerializable $data Data will be encodeable with Json.
      * @return $this
      */
-    public function with(string $varName, $data)
+    public function with(string $varName, string|int|float|bool|array|stdClass|JsonSerializable $data): self
     {
-        if ($this->enqueueNow) {
-            WpScriptAsset::addInlineScript($this->handle, $varName, $data);
-        } else {
-            add_action('wp_enqueue_scripts', function () use ($varName, $data) {
-                WpScriptAsset::addInlineScript($this->handle, $varName, $data);
-            });
-        }
-
+        WpScriptAsset::addInlineScript($this->handle, $varName, $data);
         return $this;
     }
 
@@ -36,10 +30,10 @@ final class WpScriptAsset
      * @see json_encode()
      * @param string $handle
      * @param string $varName Should be a valid JS variable name.
-     * @param mixed $data Data will be encodeable with Json.
+     * @param scalar|mixed[]|stdClass|JsonSerializable $data Data will be encodeable with Json.
      * @return bool True on success, false on failure.
      */
-    public static function addInlineScript(string $handle, string $varName, $data): bool
+    public static function addInlineScript(string $handle, string $varName, string|int|float|bool|array|stdClass|JsonSerializable $data): bool
     {
         $encodedData = json_encode($data, JSON_THROW_ON_ERROR);
         return wp_add_inline_script($handle, 'var ' . $varName . ' = ' . $encodedData . ';', 'before');

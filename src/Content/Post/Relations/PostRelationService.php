@@ -4,27 +4,52 @@ namespace OffbeatWP\Content\Post\Relations;
 
 use InvalidArgumentException;
 use OffbeatWP\Content\Post\Relations\Console\Install;
-use OffbeatWP\Contracts\IWpQuerySubstitute;
 use OffbeatWP\Exceptions\InvalidQueryOperatorException;
-use OffbeatWP\Form\Filters\LoadFieldIconsFilter;
 use OffbeatWP\Services\AbstractService;
+use OffbeatWP\Support\Wordpress\Console;
+use OffbeatWP\Support\Wordpress\Post;
+use UnexpectedValueException;
 use WP_Query;
 
-class Service extends AbstractService
+final class PostRelationService extends AbstractService
 {
-    private const POST_FIELDS = ['ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count'];
+    private const array POST_FIELDS = ['ID', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count'];
 
-    /** @return void */
-    public function register()
+    public function register(): void
     {
         add_filter('posts_clauses', [$this, 'insertRelationshipsSql'], 10, 2);
         add_filter('posts_clauses', [$this, 'insertFieldsSql'], 10, 2);
+        add_action('updated_post_meta', [$this, 'updatedPostMeta'], 10, 4);
 
-        if (offbeat('console')::isConsole()) {
-            offbeat('console')->register(Install::class);
+        Console::getInstance()->register(Install::class);
+    }
+
+    public function updatedPostMeta(int $metaId, int $postId, string $metaKey, mixed $value): void
+    {
+        $post = Post::getInstance()->get($postId);
+        if (!$post) {
+            return;
         }
 
-        offbeat('hooks')->addFilter('acf/load_field', LoadFieldIconsFilter::class);
+        $method = $post->relationKeyMethods[$metaKey] ?? null;
+        if (!$method) {
+            return;
+        }
+
+        if (!is_callable([$post, $method])) {
+            throw new InvalidArgumentException('Relationship defined on ' . basename($post::class) . ' is invalid');
+        }
+
+        $relation = $post->$method();
+        if (!$relation instanceof Relation) {
+            throw new UnexpectedValueException('Relationship method ' . basename($post::class) . '::' . $method . ' does not return a Relation instance');
+        }
+
+        if ($value) {
+            $relation->attach($this->parseIds((array)$value));
+        } else {
+            $relation->detachAll();
+        }
     }
 
     /**
@@ -64,13 +89,15 @@ class Service extends AbstractService
         if (!empty($query->query_vars['owp-fields']) && is_array($query->query_vars['owp-fields'])) {
             global $wpdb;
 
-            $clauses['fields'] = implode(',', array_map(function (string $field) use ($wpdb) {
+            $fields = array_map(function ($field) use ($wpdb) {
                 if (!in_array($field, self::POST_FIELDS, true)) {
-                    throw new InvalidArgumentException($field . ' is not a valid post field.');
+                    throw new InvalidArgumentException('Passed OWP field is not a valid post field.');
                 }
 
                 return $wpdb->posts . '.' . $field;
-            }, $query->query_vars['owp-fields']));
+            }, $query->query_vars['owp-fields']);
+
+            $clauses['fields'] = implode(',', $fields);
         }
 
         return $clauses;
@@ -104,7 +131,7 @@ class Service extends AbstractService
     }
 
     /**
-     * @param string[]|int[]|string[][]|int[][] $relationshipQuery
+     * @param mixed[] $relationshipQuery
      * @param string $operator
      * @param int $n
      * @return string[]
@@ -129,7 +156,7 @@ class Service extends AbstractService
         }
 
         if (is_array($relationshipQuery['id'])) {
-            $ids = array_map('intval', $relationshipQuery['id']);
+            $ids = $this->parseIds($relationshipQuery['id']);
             $idQuery = 'IN (' . implode(', ', $ids) . ')';
         } else {
             $id = (int)$relationshipQuery['id'];
@@ -140,6 +167,27 @@ class Service extends AbstractService
             'join' => " INNER JOIN {$wpdb->prefix}post_relationships AS pr{$n} ON ({$wpdb->posts}.ID = pr{$n}.{$columnOn}) ",
             'where' => " $operator pr{$n}.key = '{$relationshipQuery['key']}' AND pr{$n}.{$columnWhere} {$idQuery}"
         ];
+    }
+
+    /**
+     * @param mixed[] $rawIds
+     * @return list<non-negative-int>
+     */
+    private function parseIds(array $rawIds): array
+    {
+        $output = [];
+
+        foreach ($rawIds as $rawId) {
+            $id = filter_var($rawId, FILTER_VALIDATE_INT);
+
+            if (!is_int($id) || $id < 0) {
+                throw new UnexpectedValueException('Post Relationship ID is not a positive integer.');
+            }
+
+            $output[] = $id;
+        }
+
+        return $output;
     }
 
     /** @throws InvalidQueryOperatorException */

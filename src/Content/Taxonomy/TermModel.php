@@ -2,105 +2,47 @@
 
 namespace OffbeatWP\Content\Taxonomy;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Traits\Macroable;
+use BadMethodCallException;
 use InvalidArgumentException;
-use OffbeatWP\Content\Post\WpQueryBuilder;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
+use OffbeatWP\Support\Wordpress\Taxonomy;
 use WP_Taxonomy;
 use WP_Term;
 
-class TermModel implements TermModelInterface
+class TermModel extends OffbeatModel
 {
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
-    public const TAXONOMY = '';
 
-    public ?WP_Term $wpTerm = null;
-    public ?int $id = null;
+    /** @var string|list<string> */
+    public const string|array TAXONOMY = '';
+
+    private WP_Term $wpTerm;
     /** @var array<string, mixed> */
     protected array $metaInput = [];
     /** @var ("")[] */
     protected array $metaToUnset = [];
-    /** @var array<string|int|float|bool|\stdClass|\Serializable>|null */
-    private ?array $meta = null;
     /** @var array{slug?: string, description?: string, parent?: int} */
     private array $args = [];
 
-    /** @final */
-    public function __construct(int|null|WP_Term $term)
+    final public function __construct(?WP_Term $term = null)
     {
-        if ($term instanceof WP_Term) {
-            $this->wpTerm = $term;
-        } elseif (is_numeric($term)) {
-            trigger_error('Constructed TermModel with ID. Use TermModel::find instead.', E_USER_DEPRECATED);
-            $retrievedTerm = get_term($term, static::TAXONOMY);
-            if ($retrievedTerm instanceof WP_Term) {
-                $this->wpTerm = $retrievedTerm;
-            }
+        if ($term === null) {
+            $term = new WP_Term((object)['taxonomy' => static::TAXONOMY]);
+        } elseif ($term->term_id <= 0) {
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term with invalid ID: ' . $term->term_id);
         }
 
-        if (isset($this->wpTerm)) {
-            $this->id = $this->wpTerm->term_id;
+        if (static::TAXONOMY !== '' && static::TAXONOMY !== $term->taxonomy) {
+            throw new InvalidArgumentException('Failed to create TermModel, unexpected taxonomy: ' . $term->taxonomy);
         }
 
-        $this->init();
-    }
-
-    /** This method is called at the end of the TermModel constructor */
-    protected function init(): void
-    {
-        // Does nothing unless overriden by parent
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return static::macroCallStatic($method, $parameters);
-        }
-
-        return static::query()->$method(...$parameters);
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (static::hasMacro($method)) {
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpPost->$method)) {
-            return $this->wpPost->$method;
-        }
-
-        $hookValue = offbeat('hooks')->applyFilters('term_attribute', null, $method, $this);
-        if ($hookValue !== null) {
-            return $hookValue;
-        }
-
-        if (method_exists(TermQueryBuilder::class, $method)) {
-            trigger_error('Called TermQueryBuilder method on a model instance through magic method. Please use the static TermModel::query method instead.', E_USER_DEPRECATED);
-            return static::query()->$method(...$parameters);
-        }
-
-        return false;
+        $this->wpTerm = $term;
     }
 
     public function __clone()
@@ -108,9 +50,9 @@ class TermModel implements TermModelInterface
         $this->wpTerm = clone $this->wpTerm;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
-        return $this->wpTerm->term_id ?? null;
+        return $this->wpTerm->term_id;
     }
 
     public function getName(): string
@@ -129,7 +71,7 @@ class TermModel implements TermModelInterface
             return $this->args['slug'];
         }
 
-        return $this->wpTerm->slug ?? '';
+        return $this->wpTerm->slug;
     }
 
     final public function setDescription(string $description): void
@@ -176,60 +118,15 @@ class TermModel implements TermModelInterface
         return static::find($this->getParentId());
     }
 
-    /** @return Collection<int, int> */
-    public function getAncestorIds(): Collection
+    /** @return array<int, int> */
+    public function getAncestorIds(): array
     {
-        return collect(get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy'));
+        return get_ancestors($this->getId(), $this->getTaxonomy(), 'taxonomy');
     }
 
-    public function getEditLink(): string
+    public function getEditLink(): ?string
     {
-        return get_edit_term_link($this->wpTerm ?: $this->getId()) ?: '';
-    }
-
-    /** @return Collection<int, TermModel> */
-    public function getAncestors(): Collection
-    {
-        return $this->getAncestorIds()->map(function ($ancestorId) {
-            return static::query()->findById($ancestorId);
-        });
-    }
-
-    /** @return mixed[] */
-    final public function getMetas(): array
-    {
-        if ($this->meta === null) {
-            $this->meta = get_term_meta($this->getId()) ?: [];
-        }
-
-        return $this->meta;
-    }
-
-    /**
-     * @param string $key Optional. The meta key to retrieve. By default, returns data for all keys. Default empty.
-     * @param bool $single Optional. Whether to return a single value. This parameter has no effect if `$key` is not specified. Default false.
-     * @return ($single is true ? mixed : mixed[])
-     */
-    final public function getMeta(string $key, bool $single = true): mixed
-    {
-        $value = $this->getMetas()[$key] ?? null;
-        return $single && is_array($value) ? reset($value) : $value;
-    }
-
-    /**
-     * @param string|string[]|null $postTypes
-     * @return WpQueryBuilder<\OffbeatWP\Content\Post\PostModel>
-     */
-    public function getPosts($postTypes = null): WpQueryBuilder
-    {
-        global $wp_taxonomies;
-
-        // If no posttypes defined, get posttypes where the taxonomy is assigned to
-        if (!$postTypes) {
-            $postTypes = isset($wp_taxonomies[static::TAXONOMY]) ? $wp_taxonomies[static::TAXONOMY]->object_type : ['any'];
-        }
-
-        return (new WpQueryBuilder())->wherePostType($postTypes)->whereTerm(static::TAXONOMY, $this->getId(), 'term_id');
+        return get_edit_term_link($this->wpTerm);
     }
 
     /**
@@ -246,7 +143,7 @@ class TermModel implements TermModelInterface
     /** Retrieves the current term from the wordpress loop, provided the TermModel is or extends the TermModel class that it is called on. */
     final public static function current(): ?static
     {
-        $taxonomy = offbeat('taxonomy')->get();
+        $taxonomy = Taxonomy::getInstance()->get();
         return ($taxonomy instanceof static) ? $taxonomy : null;
     }
 
@@ -260,8 +157,13 @@ class TermModel implements TermModelInterface
         return $this->wpTerm->count;
     }
 
+    /** @return positive-int */
     final public function save(): int
     {
+        if (!is_string(static::TAXONOMY)) {
+            throw new BadMethodCallException('Cannot save a TermModel that refrences multiple taxononomies.');
+        }
+
         $currentId = $this->wpTerm->term_id;
         if ($currentId) {
             // Update
@@ -271,6 +173,7 @@ class TermModel implements TermModelInterface
             $result = wp_insert_term($this->wpTerm->slug, static::TAXONOMY, $this->args);
         }
 
+        /** @var positive-int $newId */
         $newId = is_array($result) ? $result['term_id'] : 0;
         if ($newId) {
             $this->wpTerm->term_id = $newId;
@@ -298,14 +201,6 @@ class TermModel implements TermModelInterface
 
     final public static function from(WP_Term $wpTerm): static
     {
-        if ($wpTerm->term_id <= 0) {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid ID');
-        }
-
-        if (static::TAXONOMY && !in_array($wpTerm->taxonomy, (array)static::TAXONOMY, true)) {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_Term object: Invalid Taxonomy');
-        }
-
         return new static($wpTerm);
     }
 
@@ -329,5 +224,15 @@ class TermModel implements TermModelInterface
     public static function query(): TermQueryBuilder
     {
         return new TermQueryBuilder(static::class);
+    }
+
+    final protected function getObjectType(): string
+    {
+        return 'term';
+    }
+
+    final public function getWpObject(): WP_Term
+    {
+        return $this->wpTerm;
     }
 }

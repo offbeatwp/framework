@@ -2,96 +2,53 @@
 
 namespace OffbeatWP\Content\User;
 
-use BadMethodCallException;
-use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
+use OffbeatWP\Content\Common\OffbeatModel;
 use OffbeatWP\Content\Traits\BaseModelTrait;
 use OffbeatWP\Content\Traits\GetMetaTrait;
 use OffbeatWP\Content\Traits\SetMetaTrait;
 use OffbeatWP\Exceptions\OffbeatInvalidModelException;
-use OffbeatWP\Exceptions\OffbeatModelNotFoundException;
-use OffbeatWP\Exceptions\UserModelException;
 use OffbeatWP\Exceptions\UserRegistrationException;
 use OffbeatWP\Support\Wordpress\User;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
+use RuntimeException;
 use UnexpectedValueException;
 use WP_Error;
 use WP_User;
 
-class UserModel
+class UserModel extends OffbeatModel
 {
     use BaseModelTrait;
     use SetMetaTrait;
     use GetMetaTrait;
-    use Macroable {
-        Macroable::__call as macroCall;
-        Macroable::__callStatic as macroCallStatic;
-    }
 
-    protected WP_User $wpUser;
-    /** @var array<string, mixed>|null */
-    protected ?array $metas = null;
+    private WP_User $wpUser;
     /** @var array<string, string|int|float|bool|mixed[]|\stdClass|\Serializable> */
     protected array $metaInput = [];
     /** @var ("")[] */
     protected array $metaToUnset = [];
     private string $newUserLogin = '';
-    private bool $isInitialised = false;
 
-    /** @param WP_User|null $user */
-    final public function __construct($user = null)
+    final public function __construct(?WP_User $user = null)
     {
         if ($user === null) {
             $user = new WP_User();
-            $this->metas = [];
+        } elseif ($user->ID <= 0) {
+            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User with invalid ID: ' . $user->ID);
         }
 
-        if (is_int($user)) {
-            $userData = get_userdata($user);
-
-            if (!$userData) {
-                throw new OffbeatModelNotFoundException('Could not find WP_User with ID ' . $user);
+        $definedRoles = static::definedUserRoles();
+        if ($definedRoles) {
+            if (count($definedRoles) > 1) {
+                throw new InvalidArgumentException('Failed to create UserModel from WP_User: Cannot instantiate UserModel with more than one defined role.');
             }
 
-            trigger_error('Constructed UserModel with ID. Use UserModel::find instead.', E_USER_DEPRECATED);
-            $user = $userData;
-        }
-
-        if (!$user instanceof WP_User) {
-            throw new UserModelException('UserModel constructor requires a WP_User as parameter, or an integer representing the ID of an existing user.');
+            if (!in_array($definedRoles[0], $user->roles, true)) {
+                throw new InvalidArgumentException('Failed to create UserModel from WP_User as it is missing role: ' . $definedRoles[0]);
+            }
         }
 
         $this->wpUser = $user;
-        $this->init();
-        $this->isInitialised = true;
-    }
-
-    /** This method is called at the end of the UserModel constructor */
-    protected function init(): void
-    {
-        // Does nothing unless overriden by parent
-    }
-
-    /**
-     * @param string $method
-     * @param mixed[] $parameters
-     * @return mixed|void
-     */
-    public function __call($method, $parameters)
-    {
-        $className = $this::class;
-
-        if (static::hasMacro($method)) {
-            trigger_error("Macro method was accessed on {$className}::{$method}.", E_USER_DEPRECATED);
-            return $this->macroCall($method, $parameters);
-        }
-
-        if (isset($this->wpUser->$method)) {
-            trigger_error("{$className}::{$method} accessed a WP_User method.", E_USER_DEPRECATED);
-            return $this->wpUser->$method;
-        }
-
-        throw new BadMethodCallException("Call to undefined UserModel method {$className}::{$method}");
     }
 
     public function __clone()
@@ -106,42 +63,42 @@ class UserModel
      * The user's email address. <b>Setting this is required.</b>
      * @return $this
      */
-    final public function setEmail(string $email)
+    final public function setEmail(string $email): static
     {
         $this->wpUser->user_email = $email;
         return $this;
     }
 
     /** @return $this */
-    final public function setNickname(string $nickname)
+    final public function setNickname(string $nickname): static
     {
         $this->wpUser->nickname = $nickname;
         return $this;
     }
 
     /** @return $this */
-    final public function setDisplayName(string $displayName)
+    final public function setDisplayName(string $displayName): static
     {
         $this->wpUser->display_name = $displayName;
         return $this;
     }
 
     /** @return $this */
-    final public function setFirstName(string $firstName)
+    final public function setFirstName(string $firstName): static
     {
         $this->wpUser->first_name = $firstName;
         return $this;
     }
 
     /** @return $this */
-    final public function setLastName(string $lastName)
+    final public function setLastName(string $lastName): static
     {
         $this->wpUser->last_name = $lastName;
         return $this;
     }
 
     /** @return $this */
-    final public function setLogin(string $userLogin)
+    final public function setLogin(string $userLogin): static
     {
         if (!$userLogin) {
             throw new InvalidArgumentException('Username cannot be empty');
@@ -154,7 +111,14 @@ class UserModel
         $username = wp_strip_all_tags($userLogin);
         $username = remove_accents($username);
         $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
+        if (!$username) {
+            throw new InvalidArgumentException('Invalid username!');
+        }
+
         $username = preg_replace('/&.+?;/', '', $username);
+        if (!$username) {
+            throw new InvalidArgumentException('Invalid username!');
+        }
 
         if ($userLogin !== $username) {
             throw new InvalidArgumentException($userLogin . ' is not a valid username. You could instead use: ' . $username);
@@ -168,7 +132,7 @@ class UserModel
     }
 
     /** @return $this */
-    final public function setUrl(string $url)
+    final public function setUrl(string $url): static
     {
         $this->wpUser->user_url = $url;
         return $this;
@@ -177,7 +141,7 @@ class UserModel
     ///////////////
     /// Getters ///
     ///////////////
-    final public function getWpUser(): WP_User
+    final public function getWpObject(): WP_User
     {
         return $this->wpUser;
     }
@@ -185,28 +149,6 @@ class UserModel
     final public function getId(): int
     {
         return $this->wpUser->ID;
-    }
-
-    /** @return array<string, mixed> */
-    final public function getMetas(): array
-    {
-        if ($this->metas === null) {
-            $this->metas = get_user_meta($this->getId()) ?: [];
-        }
-
-        return $this->metas;
-    }
-
-    /** @return ($single is true ? mixed : mixed[]) */
-    public function getMeta(string $key, bool $single = true)
-    {
-        $metas = $this->getMetas();
-
-        if (isset($metas[$key])) {
-            return ($single && is_array($metas[$key])) ? reset($metas[$key]) : $metas[$key];
-        }
-
-        return null;
     }
 
     /** The user's login username. */
@@ -289,12 +231,6 @@ class UserModel
         return get_edit_user_link($this->getId());
     }
 
-    /** @deprecated */
-    public function getPhoneNumber(): string
-    {
-        return $this->getMetaString('phone_number');
-    }
-
     /** Returns the date the user registered as a WpDateTimeImmutable object. */
     final public function getRegistrationDate(): ?WpDateTimeImmutable
     {
@@ -348,17 +284,6 @@ class UserModel
         return $roles;
     }
 
-    /**
-     * @return string[]
-     * @deprecated
-     */
-    public function getTranslatedRoles(string $domain = 'default'): array
-    {
-        return array_map(static function (string $role) use ($domain) {
-            return translate_user_role($role, $domain);
-        }, $this->wpUser->roles);
-    }
-
     /** @return string|null Returns the role at the specified index, or null if no role exists at the specified index. */
     public function getRole(int $index): ?string
     {
@@ -375,23 +300,11 @@ class UserModel
         return in_array($role, $this->getRoles(), true);
     }
 
-    /** @deprecated */
-    public function getTranslatedRole(int $index, string $domain = 'default'): ?string
-    {
-        $role = $this->getRole($index);
-        return ($role !== null) ? translate_user_role($role, $domain) : null;
-    }
-
     ///////////////////////
     /// Special Methods ///
     ///////////////////////
-    /** @return int|WP_Error */
-    private function _save()
+    private function _save(): int|WP_Error
     {
-        if (!$this->isInitialised) {
-            throw new BadMethodCallException('The save method cannot be called before a model is initialised.');
-        }
-
         if (!$this->wpUser->user_email) {
             throw new UnexpectedValueException('A user cannot be registered without an e-mail address.');
         }
@@ -450,8 +363,12 @@ class UserModel
     {
         $result = $this->_save();
 
-        if (!is_int($result) || $result <= 0) {
+        if (!is_int($result)) {
             throw new OffbeatInvalidModelException('Failed to save UserModel: ' . $result->get_error_message());
+        }
+
+        if ($result <= 0) {
+            throw new OffbeatInvalidModelException('Failed to save UserModel.');
         }
 
         return $result;
@@ -484,19 +401,19 @@ class UserModel
     /// Query Methods ///
     /////////////////////
     /** @return static|null Returns the user that is currently logged in, or null if no user is logged in. */
-    public static function getCurrentUser()
+    public static function getCurrentUser(): ?static
     {
         return self::query()->findById(get_current_user_id());
     }
 
     /** @return static Returns the user that is currently logged in, or throws an exception if no user is logged in. */
-    public static function getCurrentUserOrFail()
+    public static function getCurrentUserOrFail(): static
     {
         return self::query()->findByIdOrFail(get_current_user_id());
     }
 
     /** @return static|null Returns a user with the specified email address */
-    public static function findByEmail(string $email)
+    public static function findByEmail(string $email): ?static
     {
         $wpUser = get_user_by('email', $email);
 
@@ -517,20 +434,9 @@ class UserModel
         return $this->getMetaBool('default_password_nag');
     }
 
-    /** @return static */
-    final public static function from(WP_User $wpUser)
+    final public static function from(WP_User $wpUser): static
     {
-        if ($wpUser->ID <= 0) {
-            throw new InvalidArgumentException('Cannot create ' . static::class . ' from WP_User object: Invalid User ID');
-        }
-
-        foreach (static::definedUserRoles() as $expectedRole) {
-            if (in_array($expectedRole, $wpUser->roles, true)) {
-                return new static($wpUser);
-            }
-        }
-
-        throw new InvalidArgumentException('Cannot create UserModel from WP_User object: Invalid Role');
+        return new static($wpUser);
     }
 
     /**
@@ -604,6 +510,10 @@ class UserModel
     {
         if (static::definedUserRoles()) {
             $wpUser = get_user_by('ID', $newUserId);
+            if (!$wpUser) {
+                throw new RuntimeException('Failed to find user: ' . $newUserId);
+            }
+
             $wpUser->set_role('');
 
             foreach (static::definedUserRoles() as $role) {
@@ -623,5 +533,10 @@ class UserModel
         }
 
         return false;
+    }
+
+    protected function getObjectType(): string
+    {
+        return 'user';
     }
 }

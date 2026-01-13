@@ -2,35 +2,27 @@
 
 namespace OffbeatWP\Content\Post\Relations;
 
-class BelongsToOneOrMany extends Relation
+abstract class BelongsToOneOrMany extends Relation
 {
-    /**
-     * @param int|int[] $ids
-     * @param bool $append
-     * @return void
-     */
-    public function associate($ids, $append = true)
+    /** @inheritDoc */
+    final public function attach(int|array $ids): void
     {
-        if (!$append) {
-            $this->dissociateAll();
-        }
+        $this->detachAll();
 
         if (is_array($ids)) {
-            $this->makeRelationships($ids, 'reverse');
+            $this->makeRelationships($ids, true);
         } else {
-            $this->makeRelationship($ids, 'reverse');
+            $this->makeRelationship($ids, true);
         }
     }
 
-    /** @return void */
-    public function dissociate(int $id)
+    final public function detach(int $id): void
     {
-        $this->removeRelationship($id, 'reverse');
+        $this->removeRelationship($id, true);
     }
 
-    /** @return void */
-    public function dissociateAll()
+    final public function detachAll(): void
     {
-        $this->removeAllRelationships('reverse');
+        $this->removeAllRelationships(true);
     }
 }

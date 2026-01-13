@@ -3,64 +3,30 @@
 namespace OffbeatWP\Views;
 
 use OffbeatWP\Contracts\View;
-use OffbeatWP\Foundation\App;
 use ReflectionClass;
+use RuntimeException;
 
 trait ViewableTrait
 {
-    /** @var string[] */
-    public static $loaded = [];
-    /** @var mixed|View */
-    public $view;
+    /** @var list<string> */
+    protected static array $loaded = [];
+    protected ?View $viewRenderer = null;
 
     /**
-     * @param string $name
-     * @param mixed[] $data
-     * @return mixed
+     * @param non-falsy-string $name
+     * @param array<string, mixed> $data
      */
-    public function view(string $name, array $data = [])
+    public function view(string $name, array $data = []): string
     {
-        $view = App::singleton()->container->get(View::class);
-        $this->view = $view;
-
-        $this->setTemplatePaths();
-
-        return $view->render($name, $data);
-    }
-
-    public function setTemplatePaths(): void
-    {
-        $this->setModuleViewsPath();
         $this->setRecursiveParentViewsPath();
-        $this->setElementViewsPath();
+
+        return $this->getViewRenderer()->render($name, $data);
     }
 
-    public function setModuleViewsPath(): void
+    final protected function setRecursiveParentViewsPath(): void
     {
         $reflector = new ReflectionClass($this);
-
-        if (!preg_match('/^App\\\Modules\\\([^\\\]+)/', $reflector->getName(), $matches)) {
-            return;
-        }
-
-        if (in_array($reflector->getName(), static::$loaded, true)) {
-            return;
-        }
-
-        $moduleClass = $matches[0] . '\\' . $matches[1];
-
-        if (App::singleton()->container->has($moduleClass)) {
-            $module = App::singleton()->container->get($moduleClass);
-
-            $this->view->addTemplatePath($module->getViewsDirectory());
-        }
-
-        static::$loaded[] = $reflector->getName();
-    }
-
-    public function setRecursiveParentViewsPath(): void
-    {
-        $reflector = new ReflectionClass($this);
+        /** @var string $fn */
         $fn = $reflector->getFileName();
 
         $path = dirname($fn);
@@ -68,7 +34,7 @@ trait ViewableTrait
         $this->setRecursiveViewsPath($path, 10);
     }
 
-    public function setRecursiveViewsPath(string $path, int $depth = 5): void
+    final public function setRecursiveViewsPath(string $path, int $depth = 5): void
     {
         if (in_array($path, static::$loaded, true)) {
             return;
@@ -78,7 +44,7 @@ trait ViewableTrait
         while (true) {
             $viewsPath = "{$path}/views/";
             if (is_dir($viewsPath)) {
-                $this->view->addTemplatePath($viewsPath);
+                $this->getViewRenderer()->addTemplatePath($viewsPath);
             }
 
             $itemI++;
@@ -93,14 +59,18 @@ trait ViewableTrait
         static::$loaded[] = $path;
     }
 
-    public function setElementViewsPath(): void
+    private function getViewRenderer(): View
     {
-        if (!isset($this->hasViewsDirectory) || $this->hasViewsDirectory !== true) {
-            return;
+        if ($this->viewRenderer === null) {
+            $viewRenderer = apply_filters('offbeatwp_view_renderer', null);
+
+            if (!$viewRenderer instanceof View) {
+                throw new RuntimeException('No view renderer available.');
+            }
+
+            $this->viewRenderer = $viewRenderer;
         }
 
-        $reflector = new ReflectionClass($this);
-        $directory = dirname($reflector->getFileName());
-        $this->view->addTemplatePath($directory . '/views');
+        return $this->viewRenderer;
     }
 }

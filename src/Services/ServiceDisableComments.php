@@ -2,15 +2,15 @@
 
 namespace OffbeatWP\Services;
 
+use OffbeatWP\Foundation\WpGlobals;
+
 class ServiceDisableComments extends AbstractService
 {
     public function register(): void
     {
         add_action('wp_before_admin_bar_render', function () {
             if (is_admin_bar_showing() && wp_count_comments()->total_comments === 0) {
-                /** @global \WP_Admin_Bar $wp_admin_bar */
-                global $wp_admin_bar;
-                $wp_admin_bar->remove_menu('comments');
+                WpGlobals::wpAdminBar()?->remove_menu('comments');
             }
         });
 

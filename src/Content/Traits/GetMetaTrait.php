@@ -3,76 +3,19 @@
 namespace OffbeatWP\Content\Traits;
 
 use Exception;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use OffbeatWP\Content\Post\PostModel;
 use OffbeatWP\Support\Wordpress\WpDateTime;
 use OffbeatWP\Support\Wordpress\WpDateTimeImmutable;
 
 trait GetMetaTrait
 {
     /**
-     * @param string $key
-     * @param scalar|mixed[]|null $defaultValue
-     * @param bool $single
-     * @return mixed
-     * @internal
-     */
-    private function getRawMetaValue(string $key, $defaultValue, bool $single = true)
-    {
-        if (array_key_exists($key, $this->metaToUnset)) {
-            return $defaultValue;
-        }
-
-        if (array_key_exists($key, $this->metaInput)) {
-            return $this->metaInput[$key];
-        }
-
-        $metas = $this->getMetas();
-        if ($metas && array_key_exists($key, $metas) && is_array($metas[$key])) {
-            return ($single) ? reset($metas[$key]) : $metas[$key];
-        }
-
-        return $defaultValue;
-    }
-
-    /**
-     * Returns the metaInput value if one with the given key exists.<br>
-     * If not, returns the meta value with the given key from the database.<br>
-     * If the value isn't in metaInput or the database, <i>null</i> is returned.
-     * @param string $key
-     * @return mixed
-     */
-    public function getMetaValue(string $key)
-    {
-        return $this->getRawMetaValue($key, null);
-    }
-
-    /**
-     * Check if a meta value exists at all.
-     * @return bool True if the meta key exists, regardless of it's value. False if the meta key does not exist.
-     */
-    public function hasMeta(string $key): bool
-    {
-        if (array_key_exists($key, $this->metaToUnset)) {
-            return false;
-        }
-
-        if (array_key_exists($key, $this->metaInput)) {
-            return true;
-        }
-
-        $metas = $this->getMetas();
-        return ($metas && array_key_exists($key, $metas));
-    }
-
-    /**
      * Retrieve a meta value as a string.<br>
      * If the meta value does not exist then an <b>empty string</b> is returned.
      */
     public function getMetaString(string $key): string
     {
-        return (string)$this->getRawMetaValue($key, '');
+        return (string)filter_var($this->getMeta($key));
     }
 
     /**
@@ -81,7 +24,7 @@ trait GetMetaTrait
      */
     public function getMetaInt(string $key): int
     {
-        return (int)$this->getRawMetaValue($key, 0);
+        return (int)filter_var($this->getMeta($key), FILTER_VALIDATE_INT);
     }
 
     /**
@@ -90,25 +33,7 @@ trait GetMetaTrait
      */
     public function getMetaFloat(string $key): float
     {
-        return (float)$this->getRawMetaValue($key, 0);
-    }
-
-    /**
-     * Retrieve a meta value as a localised formatted date string.
-     * @param string $key Meta key.
-     * @param string $format The date format. If not specified, will default to the date_format WordPress option.
-     * @return string <b>Formatted date string</b> if the meta key exists and is a valid date. Otherwise, an <b>empty string</b> is returned.
-     */
-    public function getMetaDate(string $key, string $format = ''): string
-    {
-        $strDate = strtotime($this->getMetaString($key));
-
-        if ($strDate) {
-            $dateFormat = $format ?: get_option('date_format') ?: 'Y-m-d H:i:s';
-            return date_i18n($dateFormat, $strDate);
-        }
-
-        return '';
+        return (float)filter_var($this->getMeta($key), FILTER_VALIDATE_FLOAT);
     }
 
     /**
@@ -125,7 +50,7 @@ trait GetMetaTrait
         }
 
         try {
-            return WpDateTime::make($datetime);
+            return WpDateTime::create($datetime);
         } catch (Exception) {
             return null;
         }
@@ -145,7 +70,7 @@ trait GetMetaTrait
         }
 
         try {
-            return WpDateTimeImmutable::make($datetime);
+            return WpDateTimeImmutable::create($datetime);
         } catch (Exception) {
             return null;
         }
@@ -157,7 +82,7 @@ trait GetMetaTrait
      */
     public function getMetaBool(string $key): bool
     {
-        return (bool)$this->getRawMetaValue($key, false);
+        return (bool)filter_var($this->getMeta($key), FILTER_VALIDATE_BOOL);
     }
 
     /**
@@ -167,35 +92,13 @@ trait GetMetaTrait
      */
     public function getMetaArray(string $key, bool $single = true): array
     {
-        $value = $this->getRawMetaValue($key, [], $single);
-        return ($single && is_serialized($value)) ? unserialize($value, ['allowed_classes' => false]) : (array)$value;
-    }
+        $value = $this->getMeta($key, $single);
 
-    /** @return PostModel[] */
-    public function getMetaPostModels(string $key): array
-    {
-        $models = [];
-
-        foreach ($this->getMetaArray($key) as $id) {
-            if ($id) {
-                $model = offbeat('post')->get($id);
-
-                if ($model) {
-                    $models[] = $model;
-                }
-            }
+        if ($single && is_string($value) && is_serialized($value)) {
+            $value = unserialize($value, ['allowed_classes' => false]);
         }
 
-        return $models;
-    }
-
-    /**
-     * @deprecated Use <i>collect($model->getMetas())</i> instead
-     * @return Collection<int|string, mixed>
-     */
-    public function getMetaCollection(string $key): Collection
-    {
-        return collect($this->getMetaArray($key));
+        return (array)$value;
     }
 
     /**
@@ -212,9 +115,16 @@ trait GetMetaTrait
         for ($i = 0; $i < $l; $i++) {
             $output[$i] = [];
 
-            foreach ($shape as $key => $value) {
+            foreach ($shape as $key => $type) {
                 $fullKey = $metaKey . '_' . $i . '_' . $key;
-                $output[$i][$key] = is_array($value) ? $this->getMetaRepeater($fullKey, $value) : $this->getMetaX($fullKey, $value);
+
+                if (is_array($type)) {
+                    $output[$i][$key] = $this->getMetaRepeater($fullKey, $type);
+                } elseif (is_string($type)) {
+                    $output[$i][$fullKey] =  $this->getMetaX($fullKey, $type);
+                } else {
+                    throw new InvalidArgumentException('Invalid Repeater Type was passsed as argument.');
+                }
             }
         }
 
@@ -223,10 +133,9 @@ trait GetMetaTrait
 
     /**
      * @param non-empty-string $metaKey
-     * @param "string"|"boolean"|"array"|"integer"|"double"|"float"|"datetime" $type
      * @return scalar|WpDateTime|null|mixed[]
      */
-    private function getMetaX(string $metaKey, string $type)
+    private function getMetaX(string $metaKey, string $type): string|bool|int|float|array|null|WpDateTime
     {
         if ($type === 'string') {
             return $this->getMetaString($metaKey);
