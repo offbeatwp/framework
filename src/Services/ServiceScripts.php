@@ -17,6 +17,6 @@ final class ServiceScripts extends AbstractService
 
     public function scriptsFooter(): void
     {
-        echo owp_get_option_string('scripts_footer');
+        echo owp_get_option_string('options_scripts_footer');
     }
 }
