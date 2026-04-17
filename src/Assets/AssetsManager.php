@@ -31,7 +31,7 @@ final class AssetsManager extends Singleton
 
     private function getEntryFromAssetsManifest(string $filename): ?string
     {
-        return $this->getAssetsManifest()->$filename ?? null;
+        return $this->getAssetsManifest()[$filename] ?? null;
     }
 
     /** @return mixed[] */
