@@ -7,12 +7,18 @@ final class ServiceScripts extends AbstractService
     public function register(): void
     {
         add_action('wp_head', [$this, 'scriptsHead']);
+        add_action('wp_body_open', [$this, 'scriptsBody']);
         add_action('wp_footer', [$this, 'scriptsFooter']);
     }
 
     public function scriptsHead(): void
     {
         echo owp_get_option_string('options_scripts_head');
+    }
+
+    public function scriptsBody(): void
+    {
+        echo owp_get_option_string('options_scripts_body');
     }
 
     public function scriptsFooter(): void
