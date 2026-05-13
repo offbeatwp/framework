@@ -111,9 +111,6 @@ trait GetMetaTrait
         $output = [];
 
         $l = $this->getMetaInt($metaKey);
-        if ($l <= 0) {
-            return [];
-        }
 
         for ($i = 0; $i < $l; $i++) {
             $output[$i] = [];
