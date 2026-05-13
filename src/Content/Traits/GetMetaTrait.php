@@ -104,13 +104,16 @@ trait GetMetaTrait
     /**
      * @param string $metaKey
      * @param mixed[] $shape
-     * @return mixed[]
+     * @return list<mixed[]>
      */
     public function getMetaRepeater(string $metaKey, array $shape): array
     {
         $output = [];
 
         $l = $this->getMetaInt($metaKey);
+        if ($l <= 0) {
+            return [];
+        }
 
         for ($i = 0; $i < $l; $i++) {
             $output[$i] = [];
