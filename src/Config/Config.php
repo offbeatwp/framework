@@ -140,6 +140,10 @@ final class Config
     /** @return mixed[] */
     public function all(): array
     {
+        foreach (glob($this->baseConfigPath . '*.php') as $configFile) {
+            $this->loadConfig(basename($configFile, '.php'));
+        }
+
         return $this->config;
     }
 }
