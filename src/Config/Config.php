@@ -23,7 +23,7 @@ final class Config
     }
 
     /** @param non-falsy-string $name */
-    private function loadConfig(string $name): void
+    public function loadConfig(string $name): void
     {
         if (!array_key_exists($name, $this->config)) {
             $path = $this->baseConfigPath . $name . '.php';
