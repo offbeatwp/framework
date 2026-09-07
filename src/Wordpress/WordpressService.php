@@ -41,8 +41,8 @@ final class WordpressService
         add_action('widgets_init', [$this, 'registerSidebars']);
 
         // Page Template
-        add_action('theme_page_templates', [$this, 'registerPageTemplate'], 99);
-        add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10, 2);
+        add_action('after_setup_theme', [$this, 'setupPageTemplates']);
+        
     }
 
     public function registerMenus(): void
@@ -74,6 +74,14 @@ final class WordpressService
                 $sidebar['id'] = $id;
                 register_sidebar($sidebar);
             }
+        }
+    }
+
+    public function setupPageTemplates(): void
+    {
+        if (apply_filters('offbeatwp/wordpress/custom-page-templates', true)) {
+            add_action('init', [$this, 'registerPageTemplate'], 99);
+            add_filter('offbeatwp/controller/template', [$this, 'applyPageTemplate'], 10, 2);
         }
     }
 
