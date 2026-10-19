@@ -10,16 +10,6 @@ class ServiceDisableComments extends AbstractService
         add_filter('comments_open', '__return_false', 20);
         add_filter('pings_open', '__return_false', 20);
 
-        // Remove comment/trackback support from all post types
-        add_action('init', function (): void {
-            foreach (get_post_types() as $postType) {
-                if (post_type_supports($postType, 'comments')) {
-                    remove_post_type_support($postType, 'comments');
-                    remove_post_type_support($postType, 'trackbacks');
-                }
-            }
-        }, 100);
-
         // Remove admin menu items and redirect direct access
         add_action('admin_menu', function (): void {
             remove_menu_page('edit-comments.php');
@@ -64,6 +54,7 @@ class ServiceDisableComments extends AbstractService
         add_action('wp_enqueue_scripts', function (): void {
             wp_dequeue_script('comment-reply');
         }, 100);
+
         add_action('widgets_init', function (): void {
             unregister_widget('WP_Widget_Recent_Comments');
         });
