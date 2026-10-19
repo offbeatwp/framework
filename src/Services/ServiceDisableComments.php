@@ -2,6 +2,8 @@
 
 namespace OffbeatWP\Services;
 
+use WP_Admin_Bar;
+
 class ServiceDisableComments extends AbstractService
 {
     public function register(): void
